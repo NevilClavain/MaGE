@@ -1,0 +1,340 @@
+
+
+
+
+
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :: rendering target access content activation
+ 
+	1/ create target texture with content access activation:
+	
+		m_rendering_quad_texture = new Texture("rendering_quad_texture", Texture::Format::TEXTURE_RGB, w_width, w_height, Texture::ContentAccessMode::CONTENT_ACCESS);
+ 
+	2/ Access to texture content via TextureContentCopyService :
+	
+		void* myBuffer;
+		size_t myBufferSize;
+
+		core::services::TextureContentCopyService::getInstance()->readTextureContent(m_name, &myBuffer, &myBufferSize);
+		
+	3/ Access to texture content via a Buffer :
+	
+ 		core::Buffer<core::maths::RGBAColor> texture_content;
+		m_rendering_quad_texture->getTextureContent(texture_content);
+
+		const auto pixels{ texture_content.getData() };
+		const auto pixel{ pixels[100] };
+ 
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :: typical deffered shading entity graph
+ 
+ 
+	+--------------------+                                                                                                                                                                                                                           
+	|                    |                                                                                                                                                                                                                           
+	|                    |                                                                                                                                                                                                                           
+	|  appWindowEntity   |                                                                                                                                                                                                                           
+	|                    |                                                                                                                                                                                                                           
+	|                    |                                                                                                                                                                                                                           
+	+--------------------+                                                                                                                                                                                                                           
+			   ^                                                                                                                                                                                                                                     
+			   |                                                                                                                                                                                                                                     
+			   |                                                                                                                                                                                                                                     
+			   |                                                                                                                                                                                                                                     
+			   |    +-------------------------+                                                                                                                                                                                                      
+			   |    |                         |  renderingAspect                                                                                                                                                                                     
+			   |    |                         |                                                                                                                                                                                                      
+			   +----+  screenRenderingEntity  |             screenRenderingQueue                                                                                                                                                                     
+					|                         |                                                                                                                                                                                                      
+					|                         |                                                                                                                                                                                                      
+					+-------------------------+                                                                                                                                                                                                      
+						  ^     ^                                                                                                                                                                                                                    
+						  |     |                                                                                                                                                                                                                    
+						  |     |                                                                                                                                                                                                                    
+						  |     |                                                                                                                                                                                                                    
+						  |     |               +-------------------------------+                                                                                                                                                                    
+						  |     |               |                               | cameraAspect                                                                                                                                                       
+						  |     |               |                               |                                                                                                                                                                    
+						  |     +---------------+    ScreenRenderingViewEntity  |          projection                                                                                                                                                
+						  |                     |                               |                                                                                                                                                                    
+						  |                     |                               |                                                                                                                                                                    
+						  |                     +-------------------------------+                                                                                                                                                                    
+						  |                                                                                                                                                                                                                          
+						  |                                                                                                                                                                                                                          
+						  |                                                                                                                                                                                                                          
+						  |                    +------------------------------+                                                                                                                                                                      
+						  |                    |                              |   resourcesAspect                                                                                                                                                                                                                                                                                                                    
+						  +--------------------+  screenRenderingQuadEntity   |             rendering_quad_texture                                                                                                                                   
+											   |                              |                                                                                                                                                                      
+											   |                              |             texture_vs                                                                                                                                               
+											   +------------------------------+                                                                                                                                                                      
+															  ^                             texture_ps       
+															  |
+															  |                   worldAspect                                                                                                                                                        
+															  |                             animator_positioning                                                                                                                                     
+															  |                                                                                                                                                                                      
+															  |               +-----------------------------+                                                                                                                                        
+															  |               |                             | renderingAspect                                                                                                                        
+															  +---------------+    bufferRenderingEntity    |                                                                                                                                        
+																			  |                             |            screenRenderingQueue                                                                                                        
+																			  |                             |                                                                                                                                        
+																			  +-----------------------------+                                                                                                                                        
+																					   ^          ^                                                                                                                                                  
+																					   |          |                                                                                                                                                  
+																					   |          |               +---------------------+                                                                                                            
+																					   |          |               |                     | cameraAspect                                                                                               
+																					   |          |               |                     |                                                                                                            
+																					   |          +---------------+    cameraEntity     |          projection                                                                                        
+																					   |                          |                     |                                                                                                            
+																					   |                          |                     |  worldAspect                                                                                               
+																					   |                          +---------------------+                                                                                                            
+																					   |                                                           camera_position                                                                                   
+																					   |                                                                                                                                                             
+																					   |                                                           animator_positioning                                                                              
+																					   |                                                                                                                                                             
+																					   |                                                                                                                                                             
+																					   |                                                                                                                                                             
+																					   |                                                                                                                                                             
+																					   |                                                                                                                                                             
+																					   +---------------------------- scene objects...                                                                                                                
+	 
+ 
+ 
+	8.796 [3680] Helpers DEBUG [ renderMe::helpers::logEntitygraph >>>>>>>>>>>>>>> ENTITY GRAPH DUMP BEGIN <<<<<<<<<<<<<<<<<<<<<<<< ]
+	8.812 [3680] Helpers DEBUG [ renderMe::helpers::logEntitygraph::<lambda_4bde718e665936a149f7dfb14f8d0f6f>::operator () appWindowEntity
+		renderingAspect
+			fonts class std::vector<class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> >,class std::allocator<class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > > >
+			aspect int
+			gpuName class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> >
+			renderingTarget enum renderMe::core::renderingAspect::renderingTarget
+			fullscreen bool
+			windowWidth int
+			windowHWND struct HWND__ *
+			windowHeight int
+			widthResol int
+			heightResol int
+			viewportWidth float
+			viewportHeight float
+			d3d11DriverDescr class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> >
+			gpuDriver class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > ]
+	8.812 [3680] Helpers DEBUG [ renderMe::helpers::logEntitygraph::<lambda_4bde718e665936a149f7dfb14f8d0f6f>::operator () 	screenRenderingEntity
+			renderingAspect
+				aspect int
+				screenRenderingQueue struct renderMe::rendering::Queue ]
+	8.812 [3680] Helpers DEBUG [ renderMe::helpers::logEntitygraph::<lambda_4bde718e665936a149f7dfb14f8d0f6f>::operator () 		ScreenRenderingViewEntity
+				cameraAspect
+					aspect int
+					projection class renderMe::core::maths::Matrix
+				worldAspect
+					aspect int
+					camera_position struct renderMe::transform::WorldPosition ]
+	8.812 [3680] Helpers DEBUG [ renderMe::helpers::logEntitygraph::<lambda_4bde718e665936a149f7dfb14f8d0f6f>::operator () 		screenRenderingQuadEntity
+				renderingAspect
+					aspect int
+					renderingTarget enum renderMe::core::renderingAspect::renderingTarget
+					renderStates class std::vector<class renderMe::rendering::RenderState,class std::allocator<class renderMe::rendering::RenderState> >
+					screenRenderingQuad struct renderMe::rendering::DrawingControl
+				timeAspect
+					aspect int
+				resourcesAspect
+					aspect int
+					texture_vs class renderMe::Shader
+					texture_ps class renderMe::Shader
+					quad class renderMe::TriangleMeshe
+					rendering_quad_texture struct std::pair<unsigned int,class renderMe::Texture>
+				worldAspect
+					aspect int
+					animator_positioning struct renderMe::transform::Animator
+					position struct renderMe::transform::WorldPosition ]
+	8.812 [3680] Helpers DEBUG [ renderMe::helpers::logEntitygraph::<lambda_4bde718e665936a149f7dfb14f8d0f6f>::operator () 			bufferRenderingEntity
+					renderingAspect
+						aspect int
+						renderingQueue struct renderMe::rendering::Queue ]
+	8.812 [3680] Helpers DEBUG [ renderMe::helpers::logEntitygraph::<lambda_4bde718e665936a149f7dfb14f8d0f6f>::operator () 				cameraEntity
+						timeAspect
+							aspect int
+						cameraAspect
+							aspect int
+							projection class renderMe::core::maths::Matrix
+						worldAspect
+							aspect int
+							camera_position struct renderMe::transform::WorldPosition
+							animator_positioning struct renderMe::transform::Animator ]
+	8.812 [3680] Helpers DEBUG [ renderMe::helpers::logEntitygraph::<lambda_4bde718e665936a149f7dfb14f8d0f6f>::operator () 				quadEntity2
+						renderingAspect
+							aspect int
+							renderStates class std::vector<class renderMe::rendering::RenderState,class std::allocator<class renderMe::rendering::RenderState> >
+							quad2 struct renderMe::rendering::DrawingControl
+						timeAspect
+							aspect int
+						resourcesAspect
+							aspect int
+							pixelShader class renderMe::Shader
+							vertexShader class renderMe::Shader
+							square class renderMe::TriangleMeshe
+							texture struct std::pair<unsigned int,class renderMe::Texture>
+						worldAspect
+							aspect int
+							animator_positioning struct renderMe::transform::Animator
+							position struct renderMe::transform::WorldPosition ]
+	8.812 [3680] Helpers DEBUG [ renderMe::helpers::logEntitygraph >>>>>>>>>>>>>>> ENTITY GRAPH DUMP END <<<<<<<<<<<<<<<<<<<<<<<< ]
+	
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :: camera selection
+ 
+	// retrieve entity that owns the rendering queue :
+	core::Entitygraph::Node& bufferRenderingQueueNode{ m_entitygraph.node("bufferRenderingEntity") };
+	const auto bufferRenderingQueueEntity { bufferRenderingQueueNode.data() };
+	
+	// activate camera/view in the rendering queue
+	const auto& renderingAspect{ bufferRenderingQueueEntity->aspectAccess(core::renderingAspect::id) };
+	renderingAspect.getComponent<rendering::Queue>("renderingQueue")->getPurpose().setCurrentView("cameraEntity");
+	
+	
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :: add time aspect
+ 
+	auto& quad_time_aspect{ myEntity->makeAspect(core::timeAspect::id) };
+ 
+ 
+ 
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :: rendering queue logging 
+ 
+ 
+	auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
+	auto renderingQueueSystemInstance{ dynamic_cast<renderMe::RenderingQueueSystem*>(renderingQueueSystem) };
+
+	// arg : name of entity that owns the rendering queue we need to log
+	renderingQueueSystemInstance->requestRenderingqueueLogging("bufferRenderingEntity");
+		
+		
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :: log entitygraph content
+ 
+	helpers::logEntitygraph(m_entitygraph);
+
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :: New font for text rendering
+ 
+	1/ Generate font file with MakeSpriteFont tool:
+	
+		MakeSpriteFont "Courier New" CourierNew.32.spritefont /FontSize:32
+		
+	2/ copy this font file in \SYSTEM_d3d11\fonts
+	
+	3/ SYSTEM_d3d11 cmake file already insures the font files are deployed in /apps/$<CONFIGURATION>/fonts : 
+				
+		#deploy DirectXTK fonts
+		install(DIRECTORY ${CMAKE_SOURCE_DIR}/SYSTEM_d3d11/fonts DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>)
+
+	4/ add new font in rt window settings json : config_deployment\rt_config\windows_settings.json :
+	
+		{
+		  "fullscreen": false,
+		  "width": 1920,
+		  "height": 1080,
+		  "fonts": 
+		  [
+			{ "name" : "CourierNew.10.spritefont" },
+			{ "name" : "CourierNew.32.spritefont" },
+			{ "name" : "Bahnschrift.16.spritefont" }
+		  ]
+		}
+		
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ : Create new App Module : steps ->
+ 
+	1/ duplicate from functional template the following files:
+		'src' folder
+		CMakeList.txt
+		
+	2/ open CMakeList.txt and update project : all module_xxx strings
+	
+	3/ declare new project in root CMakeList.txt : add_subdirectory(module_anims)
+	
+	4/ add new project in .gitignore file:
+	
+		/renderme/module_xxx/CMakeFiles/
+		/renderme/module_xxx/*.sln
+		/renderme/module_xxx/*.vcxproj*
+		
+	5/ add new 'module_xxx_config' folder under 'config' folder:
+		create and edit 'logconf.json' file (duplicate from existing examples)		
+		
+	6/ duplicate this new 'module_xxx_config' folder under config_deployment folder
+	
+	7/ edit module_impl.cpp :
+	
+		std::string ModuleImpl::getModuleName() const
+		{
+			return "xxx";
+		}
+
+		std::string ModuleImpl::getModuleDescr() const
+		{
+			return "xxx module example";
+		}	
+		
+	8/ edit module_impl_init.cpp and adapt : 
+	
+	void ModuleImpl::init(const std::string p_appWindowsEntityName)
+	{
+		/////////// logging conf
+
+		renderMe::core::FileContent<char> logConfFileContent("./module_xxx_config/logconf.json");	
+			
+		
+	
+	9/ run 'generate_vs2022.bat'
+	
+	and it's all set ! :)
+
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+ get/update component from entity:
+
+	auto& raptorEntityNode{ m_entitygraph.node("raptorEntity") };
+	const auto raptorEntity{ raptorEntityNode.data() };
+	auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
+	auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose()};
+
+		
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+  standard components : 
+	"eg.std.xxx..."
+
+
+  standard datacloud objects :
+
+	"std.xxx..."	

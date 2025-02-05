@@ -1,0 +1,11 @@
+{
+  "fullscreen": false,
+  "width": 1920,
+  "height": 1080,
+  "fonts": 
+  [
+    { "name" : "CourierNew.10.spritefont" },
+	  { "name" : "CourierNew.32.spritefont" },
+	  { "name" : "Bahnschrift.16.spritefont" }
+  ]
+}
