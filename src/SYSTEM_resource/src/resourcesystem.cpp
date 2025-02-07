@@ -360,32 +360,6 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 				const auto current_driver{ dataCloud->readDataValue<std::string>("std.gpu_driver") };
 
 				bool update_driver_text{ false };
-
-				if (fileSystem::exists(m_shadersCachePath + "/driverversion.text"))
-				{
-					// file exists
-					mage::core::FileContent<const char> driverversion_content(m_shadersCachePath + "/driverversion.text");
-					driverversion_content.load();
-
-					const std::string last_driverversion(driverversion_content.getData(), driverversion_content.getDataSize());
-
-					if (current_driver != last_driverversion)
-					{
-						update_driver_text = true;
-					}
-				}
-				else
-				{
-					update_driver_text = true;
-				}
-				
-				if(update_driver_text) // update driver text and so rebuild shaders
-				{
-					mage::core::FileContent<const char> driverversion_content(m_shadersCachePath + "/driverversion.text");
-					driverversion_content.save(current_driver.c_str(), current_driver.length());
-
-					generate_cache_entry = true;
-				}
 				
 				///////// check if shader exists in cache...
 
@@ -395,10 +369,48 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 
 					// create all
 					fileSystem::createDirectory(shaderCacheDirectory);
+
+					mage::core::FileContent<const char> driverversion_content(m_shadersCachePath + "/driverversion.text");
+					driverversion_content.save(current_driver.c_str(), current_driver.length());
+
 					generate_cache_entry = true;
 				}
 				else
 				{
+					///////////////////////////////////////////////////////////////////////////////
+
+					if (fileSystem::exists(m_shadersCachePath + "/driverversion.text"))
+					{
+						// file exists
+						mage::core::FileContent<const char> driverversion_content(m_shadersCachePath + "/driverversion.text");
+						driverversion_content.load();
+
+						const std::string last_driverversion(driverversion_content.getData(), driverversion_content.getDataSize());
+
+						if (current_driver != last_driverversion)
+						{
+							update_driver_text = true;
+						}
+					}
+					else
+					{
+						update_driver_text = true;
+					}
+
+					if (update_driver_text) // update driver text and so rebuild shaders
+					{
+						mage::core::FileContent<const char> driverversion_content(m_shadersCachePath + "/driverversion.text");
+						driverversion_content.save(current_driver.c_str(), current_driver.length());
+						m_forceAllShadersRegeneration = true;
+					}
+
+					///////////////////////////////////////////////////////////////////////////////
+
+					if (m_forceAllShadersRegeneration)
+					{
+						generate_cache_entry = true;
+					}
+
 					_MAGE_TRACE(m_localLoggerRunner, std::string("cache directory exists : ") + shaderCacheDirectory);
 
 					// check if cache md5 file exists AND compiled shader exists
