@@ -27,6 +27,12 @@
 #include <map>
 #include <list>
 
+#include "logger_service.h"
+#include "logsink.h"
+#include "logconf.h"
+#include "logging.h"
+
+
 #include "animations.h"
 #include "animationssystem.h"
 #include "scenenode.h"
@@ -464,6 +470,9 @@ void AnimationsSystem::run()
 
 									if (!animationkeys.is_transition)
 									{
+										auto& eventsLogger{ services::LoggerSharing::getInstance()->getLogger("Events") };
+										_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> ANIMATION_START : " + p_entity->getId() + " " + animationId);
+
 										for (const auto& call : m_callbacks)
 										{
 											call(AnimationSystemEvent::ANIMATION_START, p_entity->getId(), animationId);
@@ -488,6 +497,10 @@ void AnimationsSystem::run()
 										animationIdList.pop_front();
 
 										meshe.setPreviousAnimation(currentAnimationId);
+
+										auto& eventsLogger{ services::LoggerSharing::getInstance()->getLogger("Events") };
+										_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> ANIMATION_END : " + p_entity->getId() + " " + currentAnimationId);
+
 										for (const auto& call : m_callbacks)
 										{
 											call(AnimationSystemEvent::ANIMATION_END, p_entity->getId(), currentAnimationId);
