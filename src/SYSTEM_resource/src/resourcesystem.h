@@ -29,10 +29,13 @@
 #include <map>
 #include <string>
 
-#include "system.h"
+
 #include "logsink.h"
 #include "logconf.h"
 #include "logging.h"
+
+
+#include "system.h"
 #include "runner.h"
 #include "eventsource.h"
 #include "buffer.h"
