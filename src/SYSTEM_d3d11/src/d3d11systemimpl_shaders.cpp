@@ -25,6 +25,10 @@
 #include "d3d11systemimpl.h"
 #include <d3dcompiler.h>
 
+#include "logsink.h"
+#include "logconf.h"
+#include "logging.h"
+
 
 D3D10Include::D3D10Include(const std::string& p_basepath, mage::core::logger::Sink& p_logger) :
 m_basepath(p_basepath),

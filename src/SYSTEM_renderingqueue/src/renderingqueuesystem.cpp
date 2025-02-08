@@ -41,6 +41,11 @@
 #include "worldposition.h"
 #include "datacloud.h"
 
+#include "logsink.h"
+#include "logconf.h"
+#include "logging.h"
+
+
 using namespace mage;
 using namespace mage::core;
 

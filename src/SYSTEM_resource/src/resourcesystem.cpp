@@ -39,6 +39,11 @@
 
 #include "logger_service.h"
 
+#include "logsink.h"
+#include "logconf.h"
+#include "logging.h"
+
+
 #include "shaders_service.h"
 #include "shader.h"
 #include "texture.h"

@@ -25,6 +25,11 @@
 
 #include "d3d11systemimpl.h"
 
+#include "logsink.h"
+#include "logconf.h"
+#include "logging.h"
+
+
 bool D3D11SystemImpl::createLineMeshe(const mage::LineMeshe& p_lm)
 {
     DECLARE_D3D11ASSERT_VARS

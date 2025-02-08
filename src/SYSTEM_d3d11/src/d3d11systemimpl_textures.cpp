@@ -26,6 +26,11 @@
 #include "WICTextureLoader.h"
 #include "exception"
 
+#include "logsink.h"
+#include "logconf.h"
+#include "logging.h"
+
+
 bool D3D11SystemImpl::createTexture(mage::Texture& p_texture)
 {
 	DECLARE_D3D11ASSERT_VARS

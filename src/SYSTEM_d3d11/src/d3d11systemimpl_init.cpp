@@ -26,6 +26,11 @@
 #include "d3d11systemimpl.h"
 #include "aspects.h"
 
+#include "logsink.h"
+#include "logconf.h"
+#include "logging.h"
+
+
 bool D3D11SystemImpl::init(mage::core::Entity* p_mainWindow)
 {
 	DECLARE_D3D11ASSERT_VARS
