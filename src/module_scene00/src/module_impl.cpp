@@ -96,10 +96,10 @@ void ModuleImpl::registerSubscriber(const Callback& p_callback)
 		call(mage::interfaces::ModuleEvents::MOUSE_DISPLAY_CHANGED, (int)m_show_mouse_cursor);
 	}
 
-	// send immediately m_mouse_circular_mode value
+	// send immediately m_mouse_relative_mode value
 	for (const auto& call : m_callbacks)
 	{
-		call(mage::interfaces::ModuleEvents::MOUSE_CIRCULARMODE_CHANGED, (int)m_mouse_circular_mode);
+		call(mage::interfaces::ModuleEvents::MOUSE_MODE_CHANGED, (int)m_mouse_relative_mode);
 	}
 }
 

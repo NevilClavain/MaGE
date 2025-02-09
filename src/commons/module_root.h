@@ -41,7 +41,7 @@ namespace mage
     {
         enum class ModuleEvents
         {
-            MOUSE_CIRCULARMODE_CHANGED,
+            MOUSE_MODE_CHANGED,
             MOUSE_DISPLAY_CHANGED,
             CLOSE_APP
         };

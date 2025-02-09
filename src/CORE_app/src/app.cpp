@@ -114,9 +114,9 @@ App::App()
                 this->onModuleMouseVisible(p_evt_value);
                 break;
 
-            case interfaces::ModuleEvents::MOUSE_CIRCULARMODE_CHANGED:
+            case interfaces::ModuleEvents::MOUSE_MODE_CHANGED:
                 
-                this->onModuleMouseCircularModeUpdate(p_evt_value);
+                this->onModuleMouseModeUpdate(p_evt_value);
                 break;
         }
     };
@@ -303,7 +303,7 @@ void App::processInputEvents(void)
             m_mousemoving_curr_x = x_m;
             m_mousemoving_curr_y = y_m;
 
-            if (m_mouse_circularmode)
+            if (m_mouse_relativemode)
             {
                 /*
                 const long    width_resol{ m_renderer_characteristics.width_resol };
@@ -566,9 +566,9 @@ void App::onModuleMouseVisible(bool p_state)
     }
 }
 
-void App::onModuleMouseCircularModeUpdate(bool p_state)
+void App::onModuleMouseModeUpdate(bool p_state)
 {
-    m_mouse_circularmode = p_state;
+    m_mouse_relativemode = p_state;
 
     /*
     // ne pas appeler ::ShowCursor() quand c'est inutile (par ex. ShowCursor( true ) si le curseur est deja visible), car sinon

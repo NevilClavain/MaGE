@@ -83,7 +83,7 @@ private:
     static constexpr int                    dataPrintSystemSlot{ 5 };
 
     bool                                    m_show_mouse_cursor{ true };
-    bool                                    m_mouse_circular_mode{ false };
+    bool                                    m_mouse_relative_mode{ false };
 
     mage::core::Entitygraph             m_entitygraph;
 

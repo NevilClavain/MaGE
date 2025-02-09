@@ -67,7 +67,7 @@ namespace mage
             long                                    m_mousemoving_last_y    { 0 };
             long                                    m_mousemoving_curr_x    { 0 };
             long                                    m_mousemoving_curr_y    { 0 };
-            long                                    m_mouse_circularmode    { false };
+            long                                    m_mouse_relativemode    { false };
 
             bool                                    m_mousecursor_visible   { true };
 
@@ -121,7 +121,7 @@ namespace mage
 
             // event from loaded module
             void    onModuleMouseVisible(bool p_state);
-            void    onModuleMouseCircularModeUpdate(bool p_state);
+            void    onModuleMouseModeUpdate(bool p_state);
             void    onModuleCloseapp(int p_code);
 
             void    quit(int p_code);

@@ -112,19 +112,19 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		}
 		else if (VK_F2 == p_key)
 		{
-			if (m_mouse_circular_mode)
+			if (m_mouse_relative_mode)
 			{
-				m_mouse_circular_mode = false;
+				m_mouse_relative_mode = false;
 			}
 			else
 			{
-				m_mouse_circular_mode = true;
+				m_mouse_relative_mode = true;
 			}
 
-			_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> MOUSE_CIRCULARMODE_CHANGED");
+			_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> MOUSE_MODE_CHANGED");
 			for (const auto& call : m_callbacks)
 			{
-				call(mage::interfaces::ModuleEvents::MOUSE_CIRCULARMODE_CHANGED, (int)m_mouse_circular_mode);
+				call(mage::interfaces::ModuleEvents::MOUSE_MODE_CHANGED, (int)m_mouse_relative_mode);
 			}
 		}
 

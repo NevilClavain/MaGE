@@ -90,15 +90,15 @@ private:
     static constexpr int                                        animationsSystemSlot{ 6 };
 
     bool                                                        m_show_mouse_cursor{ false };
-    bool                                                        m_mouse_circular_mode{ true };
+    bool                                                        m_mouse_relative_mode{ true };
 
-    mage::core::Entitygraph                                 m_entitygraph;
+    mage::core::Entitygraph                                     m_entitygraph;
 
-    mage::rendering::Queue*                                 m_windowRenderingQueue{ nullptr };
+    mage::rendering::Queue*                                     m_windowRenderingQueue{ nullptr };
 
-    mage::rendering::Queue*                                 m_bufferRenderingQueue{ nullptr };
+    mage::rendering::Queue*                                     m_bufferRenderingQueue{ nullptr };
 
-    std::unordered_map<std::string, mage::AnimationKeys>    m_raptor_animations;
+    std::unordered_map<std::string, mage::AnimationKeys>        m_raptor_animations;
 
     std::default_random_engine                                  m_random_engine;
     std::uniform_int_distribution<int>*                         m_distribution;
