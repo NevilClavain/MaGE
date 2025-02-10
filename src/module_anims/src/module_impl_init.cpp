@@ -332,8 +332,8 @@ void ModuleImpl::d3d11_system_events()
 						"screenRenderingQuadEntity",
 						"ScreenRenderingViewEntity",
 						m_windowRenderingQueue,
-						"texture_vs",
-						"texture_ps",
+						"pass_texture1stage_vs",
+						"pass_texture1stage_ps",
 						{
 							std::make_pair(Texture::STAGE_0, rendering_quad_texture)
 						}
