@@ -536,7 +536,7 @@ void ModuleImpl::d3d11_system_events()
 
 
 						const auto tree_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRenderingEntity", "treeEntity",
-														"texture_fog_keycolor_vs", "texture_fog_keycolor_ps",
+														"scene_texture1stage_keycolor_vs", "scene_texture1stage_keycolor_ps",
 														"tree0.ac", "Plane.001",
 														tree_rs_list,
 														1000,
