@@ -566,9 +566,6 @@ void ModuleImpl::d3d11_system_events()
 
 						rendering::DrawingControl& drawingControl { tree_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
 						drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
-						drawingControl.pshaders_map.push_back(std::make_pair("std.fog_color", "fog_color"));
-						drawingControl.pshaders_map.push_back(std::make_pair("std.fog_density", "fog_density"));
-
 
 					}
 
@@ -588,7 +585,7 @@ void ModuleImpl::d3d11_system_events()
 
 
 						const auto raptor_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRenderingEntity", "raptorEntity",
-														"texture_fog_keycolor_skanim_vs", "texture_fog_keycolor_skanim_ps",
+														"scene_texture1stage_skinning_vs", "scene_texture1stage_skinning_ps",
 														"raptor.fbx", "raptorMesh",
 														raptor_rs_list,
 														1000,
@@ -619,11 +616,6 @@ void ModuleImpl::d3d11_system_events()
 						));
 
 						auto& raptor_rendering_aspect{ raptor_entity->aspectAccess(core::renderingAspect::id) };
-
-						rendering::DrawingControl& drawingControl{ raptor_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-						drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
-						drawingControl.pshaders_map.push_back(std::make_pair("std.fog_color", "fog_color"));
-						drawingControl.pshaders_map.push_back(std::make_pair("std.fog_density", "fog_density"));
 
 						auto& raptor_animations_aspect{ raptor_entity->makeAspect(core::animationsAspect::id) };
 						raptor_animations_aspect.addComponent<int>("eg.std.animationbonesArrayArgIndex", 0);
