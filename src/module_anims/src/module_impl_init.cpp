@@ -157,7 +157,7 @@ void ModuleImpl::createEntities(const std::string p_appWindowsEntityName)
 
 	auto& appwindowNode{ m_entitygraph.node(p_appWindowsEntityName) };
 
-	auto& screenRenderingPassNode{ m_entitygraph.add(appwindowNode, "screenRenderingEntity") };
+	auto& screenRenderingPassNode{ m_entitygraph.add(appwindowNode, "screenPassEntity") };
 	const auto screenRenderingPassEntity{ screenRenderingPassNode.data() };
 
 	auto& screenRendering_rendering_aspect{ screenRenderingPassEntity->makeAspect(core::renderingAspect::id) };
@@ -328,9 +328,9 @@ void ModuleImpl::d3d11_system_events()
 
 					mage::helpers::plugRenderingQuadView(m_entitygraph,
 						characteristics_v_width, characteristics_v_height,
-						"screenRenderingEntity",
-						"screenRenderingQuadEntity",
-						"ScreenRenderingViewEntity",
+						"screenPassEntity",
+						"screenPassQuadEntity",
+						"screenPassViewEntity",
 						m_windowRenderingQueue,
 						"pass_texture1stage_vs",
 						"pass_texture1stage_ps",
@@ -346,10 +346,10 @@ void ModuleImpl::d3d11_system_events()
 					bufferRenderingQueue.enableTargetDepthClearing(true);
 					bufferRenderingQueue.setTargetStage(Texture::STAGE_0);
 
-					mage::helpers::plugRenderingQueue(m_entitygraph, bufferRenderingQueue, "screenRenderingQuadEntity", "bufferRenderingEntity");
+					mage::helpers::plugRenderingQueue(m_entitygraph, bufferRenderingQueue, "screenPassQuadEntity", "bufferSceneTexturesChannelEntity");
 
 
-					auto& bufferRenderingNode{ m_entitygraph.node("bufferRenderingEntity") };
+					auto& bufferRenderingNode{ m_entitygraph.node("bufferSceneTexturesChannelEntity") };
 
 
 					/////////// commons shaders params
@@ -426,7 +426,7 @@ void ModuleImpl::d3d11_system_events()
 
 
 
-						const auto ground_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRenderingEntity", "groundEntity",
+						const auto ground_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferSceneTexturesChannelEntity", "groundEntity",
 														"scene_recursive_texture_vs", "scene_recursive_texture_ps",
 														"ground.ac", "rect",													
 														ground_rs_list,
@@ -482,7 +482,7 @@ void ModuleImpl::d3d11_system_events()
 
 
 
-						const auto clouds_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRenderingEntity", "cloudsEntity",
+						const auto clouds_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferSceneTexturesChannelEntity", "cloudsEntity",
 														"scene_flatclouds_vs", "scene_flatclouds_ps",
 														"flatclouds.ac", "rect",
 														clouds_rs_list,
@@ -527,7 +527,7 @@ void ModuleImpl::d3d11_system_events()
 						const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
 
 
-						const auto tree_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRenderingEntity", "treeEntity",
+						const auto tree_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferSceneTexturesChannelEntity", "treeEntity",
 														"scene_texture1stage_keycolor_vs", "scene_texture1stage_keycolor_ps",
 														"tree0.ac", "Plane.001",
 														tree_rs_list,
@@ -576,7 +576,7 @@ void ModuleImpl::d3d11_system_events()
 						const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> raptor_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("raptorDif2.png", Texture())) };
 
 
-						const auto raptor_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRenderingEntity", "raptorEntity",
+						const auto raptor_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferSceneTexturesChannelEntity", "raptorEntity",
 														"scene_texture1stage_skinning_vs", "scene_texture1stage_skinning_ps",
 														"raptor.fbx", "raptorMesh",
 														raptor_rs_list,
@@ -648,7 +648,7 @@ void ModuleImpl::d3d11_system_events()
 																		};
 						
 
-						const auto skydome_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRenderingEntity", "skydomeEntity",
+						const auto skydome_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferSceneTexturesChannelEntity", "skydomeEntity",
 														"skydome_vs", "skydome_ps",
 														"skydome.ac", "sphere",
 														skydome_rs_list, 900) };
@@ -730,7 +730,7 @@ void ModuleImpl::d3d11_system_events()
 
 					///////Select camera
 
-					core::Entitygraph::Node& bufferRenderingQueueNode{ m_entitygraph.node("bufferRenderingEntity") };
+					core::Entitygraph::Node& bufferRenderingQueueNode{ m_entitygraph.node("bufferSceneTexturesChannelEntity") };
 					const auto bufferRenderingQueueEntity{ bufferRenderingQueueNode.data() };
 					const auto& renderingAspect{ bufferRenderingQueueEntity->aspectAccess(core::renderingAspect::id) };
 
