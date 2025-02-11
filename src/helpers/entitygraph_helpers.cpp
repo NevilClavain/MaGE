@@ -122,7 +122,7 @@ namespace mage
 					{
 						logstr += "\t";
 					}					
-					logstr += "ENTITY ID = " + p_node.id;
+					logstr += "ENTITY_ID = " + p_node.id;
 
 					// aspects of this entity
 					const std::map<int, std::string> aspects_translate

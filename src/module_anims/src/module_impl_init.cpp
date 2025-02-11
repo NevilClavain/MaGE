@@ -329,8 +329,8 @@ void ModuleImpl::d3d11_system_events()
 					mage::helpers::plugRenderingQuadView(m_entitygraph,
 						characteristics_v_width, characteristics_v_height,
 						"screenPassEntity",
-						"screenPassQuadEntity",
-						"screenPassViewEntity",
+						"alignedQuadEntity",
+						"alignedViewEntity",
 						m_windowRenderingQueue,
 						"pass_texture1stage_vs",
 						"pass_texture1stage_ps",
@@ -346,7 +346,7 @@ void ModuleImpl::d3d11_system_events()
 					bufferRenderingQueue.enableTargetDepthClearing(true);
 					bufferRenderingQueue.setTargetStage(Texture::STAGE_0);
 
-					mage::helpers::plugRenderingQueue(m_entitygraph, bufferRenderingQueue, "screenPassQuadEntity", "bufferSceneTexturesChannelEntity");
+					mage::helpers::plugRenderingQueue(m_entitygraph, bufferRenderingQueue, "alignedQuadEntity", "bufferSceneTexturesChannelEntity");
 
 
 					auto& bufferRenderingNode{ m_entitygraph.node("bufferSceneTexturesChannelEntity") };
