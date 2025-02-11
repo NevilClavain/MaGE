@@ -29,29 +29,24 @@ cbuffer constargs : register(b0)
 };
 
 
-Texture2D txDiffuse         : register(t0);
-SamplerState sam            : register(s0);
+Texture2D txDiffuse : register(t0);
+SamplerState sam : register(s0);
 
-struct PS_INTPUT 
+struct PS_INTPUT
 {
-    float4 Position     : SV_POSITION;
-	float2 TexCoord0    : TEXCOORD0;
-    float4 TexCoord1    : TEXCOORD1;
+    float4 Position : SV_POSITION;
+    float2 TexCoord0 : TEXCOORD0;
+    float4 TexCoord1 : TEXCOORD1;
 };
 
 #include "commons.hlsl"
 
 float4 ps_main(PS_INTPUT input) : SV_Target
-{          
+{
     float4 vw_pos = input.TexCoord1;
     
     float pixel_depth = 0.04 * abs(vw_pos.z);
     float4 tex_color = fractal_texture(txDiffuse, sam, input.TexCoord0, pixel_depth);
-    
-    float4 fog_color = vec[24];
-    float4 fog_density = vec[25].x;
-        
-    float4 final_color = saturate(lerp(fog_color, tex_color, computeExp2Fog(vw_pos.z, fog_density)));
-           
-    return final_color;   
+            
+    return tex_color;
 }

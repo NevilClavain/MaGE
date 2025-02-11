@@ -427,7 +427,7 @@ void ModuleImpl::d3d11_system_events()
 
 
 						const auto ground_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRenderingEntity", "groundEntity",
-														"ground_vs", "ground_ps",
+														"scene_recursive_texture_vs", "scene_recursive_texture_ps",
 														"ground.ac", "rect",													
 														ground_rs_list,
 														1000,
@@ -452,14 +452,6 @@ void ModuleImpl::d3d11_system_events()
 								wp.local_pos = wp.local_pos * positionmat;
 							}
 						));
-
-
-						auto& ground_rendering_aspect{ ground_entity->aspectAccess(core::renderingAspect::id) };
-
-						rendering::DrawingControl& drawingControl{ ground_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-
-						drawingControl.pshaders_map.push_back(std::make_pair("std.fog_color", "fog_color"));
-						drawingControl.pshaders_map.push_back(std::make_pair("std.fog_density", "fog_density"));
 
 						
 
@@ -491,7 +483,7 @@ void ModuleImpl::d3d11_system_events()
 
 
 						const auto clouds_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRenderingEntity", "cloudsEntity",
-														"flatclouds_vs", "flatclouds_ps",
+														"scene_flatclouds_vs", "scene_flatclouds_ps",
 														"flatclouds.ac", "rect",
 														clouds_rs_list,
 														999,
@@ -615,8 +607,6 @@ void ModuleImpl::d3d11_system_events()
 							}
 						));
 
-						auto& raptor_rendering_aspect{ raptor_entity->aspectAccess(core::renderingAspect::id) };
-
 						auto& raptor_animations_aspect{ raptor_entity->makeAspect(core::animationsAspect::id) };
 						raptor_animations_aspect.addComponent<int>("eg.std.animationbonesArrayArgIndex", 0);
 
@@ -636,8 +626,6 @@ void ModuleImpl::d3d11_system_events()
 						raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationTicksProgress");
 						raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationSecondsProgress");
 					}
-
-
 
 
 					///// skydome
