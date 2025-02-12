@@ -41,9 +41,83 @@ using namespace mage::core;
 
 void ModuleImpl::onKeyPress(long p_key)
 {
-	if (m_bufferRenderingQueue)
+	if ('Q' == p_key)
 	{
-		const auto current_view_entity_id{ m_bufferRenderingQueue->getCurrentView() };
+		if (m_texturesChannelRenderingQueue)
+		{
+			const auto current_view_entity_id{ m_texturesChannelRenderingQueue->getCurrentView() };
+
+			if ("cameraEntity" == current_view_entity_id)
+			{
+				auto& gblJointEntityNode{ m_entitygraph.node("gblJointEntity") };
+				const auto gblJointEntity{ gblJointEntityNode.data() };
+
+				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
+
+				double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
+
+				speed = 0.1;
+			}
+		}
+
+		if (m_fogChannelRenderingQueue)
+		{
+			const auto current_view_entity_id{ m_fogChannelRenderingQueue->getCurrentView() };
+
+			if ("fogCameraEntity" == current_view_entity_id)
+			{
+				auto& gblJointEntityNode{ m_entitygraph.node("fogGblJointEntity") };
+				const auto gblJointEntity{ gblJointEntityNode.data() };
+
+				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
+
+				double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
+
+				speed = 0.1;
+			}
+		}
+	}
+	else if ('W' == p_key)
+	{
+		if (m_texturesChannelRenderingQueue)
+		{
+			const auto current_view_entity_id{ m_texturesChannelRenderingQueue->getCurrentView() };
+
+			if ("cameraEntity" == current_view_entity_id)
+			{
+				auto& gblJointEntityNode{ m_entitygraph.node("gblJointEntity") };
+				const auto gblJointEntity{ gblJointEntityNode.data() };
+
+				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
+
+				double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
+
+				speed = -0.1;
+			}
+		}
+
+		if (m_fogChannelRenderingQueue)
+		{
+			const auto current_view_entity_id{ m_fogChannelRenderingQueue->getCurrentView() };
+
+			if ("cameraEntity" == current_view_entity_id)
+			{
+				auto& gblJointEntityNode{ m_entitygraph.node("fogGblJointEntity") };
+				const auto gblJointEntity{ gblJointEntityNode.data() };
+
+				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
+
+				double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
+
+				speed = -0.1;
+			}
+		}
+	}
+
+	/*
+	if (m_texturesChannelRenderingQueue)
+	{
+		const auto current_view_entity_id{ m_texturesChannelRenderingQueue->getCurrentView() };
 
 		if ('Q' == p_key)
 		{
@@ -74,139 +148,139 @@ void ModuleImpl::onKeyPress(long p_key)
 			}
 		}
 	}
+	*/
 }
 
 void ModuleImpl::onEndKeyPress(long p_key)
 {
 	auto& eventsLogger{ services::LoggerSharing::getInstance()->getLogger("Events") };
 
-	if (m_bufferRenderingQueue)
+
+	if (VK_ESCAPE == p_key)
 	{
-
-		const auto current_view_entity_id{ m_bufferRenderingQueue->getCurrentView() };
-
-		if (VK_ESCAPE == p_key)
+		_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> CLOSE_APP");
+		for (const auto& call : m_callbacks)
 		{
-			_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> CLOSE_APP");
-			for (const auto& call : m_callbacks)
-			{
-				call(mage::interfaces::ModuleEvents::CLOSE_APP, 0);
-			}
+			call(mage::interfaces::ModuleEvents::CLOSE_APP, 0);
 		}
-		else if (VK_F1 == p_key)
+	}
+	else if (VK_F1 == p_key)
+	{
+		if (m_show_mouse_cursor)
 		{
-			if (m_show_mouse_cursor)
-			{
-				m_show_mouse_cursor = false;
-			}
-			else
-			{
-				m_show_mouse_cursor = true;
-			}
-
-			_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> MOUSE_DISPLAY_CHANGED");
-			for (const auto& call : m_callbacks)
-			{
-				call(mage::interfaces::ModuleEvents::MOUSE_DISPLAY_CHANGED, (int)m_show_mouse_cursor);
-			}
+			m_show_mouse_cursor = false;
 		}
-		else if (VK_F2 == p_key)
+		else
 		{
-			if (m_mouse_relative_mode)
-			{
-				m_mouse_relative_mode = false;
-			}
-			else
-			{
-				m_mouse_relative_mode = true;
-			}
-
-			_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> MOUSE_MODE_CHANGED");
-			for (const auto& call : m_callbacks)
-			{
-				call(mage::interfaces::ModuleEvents::MOUSE_MODE_CHANGED, (int)m_mouse_relative_mode);
-			}
+			m_show_mouse_cursor = true;
 		}
 
-		else if (VK_F3 == p_key)
+		_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> MOUSE_DISPLAY_CHANGED");
+		for (const auto& call : m_callbacks)
 		{
-			// play animation
-
-			auto& raptorEntityNode{ m_entitygraph.node("raptorEntity") };
-			const auto raptorEntity{ raptorEntityNode.data() };
-			auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
-			auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose()};
-
-			animationsIdList.push_back("eat");			
+			call(mage::interfaces::ModuleEvents::MOUSE_DISPLAY_CHANGED, (int)m_show_mouse_cursor);
+		}
+	}
+	else if (VK_F2 == p_key)
+	{
+		if (m_mouse_relative_mode)
+		{
+			m_mouse_relative_mode = false;
+		}
+		else
+		{
+			m_mouse_relative_mode = true;
 		}
 
-		else if (VK_F4 == p_key)
+		_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> MOUSE_MODE_CHANGED");
+		for (const auto& call : m_callbacks)
 		{
-			// play animation
-
-			auto& raptorEntityNode{ m_entitygraph.node("raptorEntity") };
-			const auto raptorEntity{ raptorEntityNode.data() };
-			auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
-			auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose() };
-
-			animationsIdList.push_back("walk");
+			call(mage::interfaces::ModuleEvents::MOUSE_MODE_CHANGED, (int)m_mouse_relative_mode);
 		}
+	}
 
-		else if (VK_F5 == p_key)
+	else if (VK_F3 == p_key)
+	{
+		// play animation
+
+		auto& raptorEntityNode{ m_entitygraph.node("raptorEntity") };
+		const auto raptorEntity{ raptorEntityNode.data() };
+		auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
+		auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose()};
+
+		animationsIdList.push_back("eat");			
+	}
+
+	else if (VK_F4 == p_key)
+	{
+		// play animation
+
+		auto& raptorEntityNode{ m_entitygraph.node("raptorEntity") };
+		const auto raptorEntity{ raptorEntityNode.data() };
+		auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
+		auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose() };
+
+		animationsIdList.push_back("walk");
+	}
+
+	else if (VK_F5 == p_key)
+	{
+		// play animation
+
+		auto& raptorEntityNode{ m_entitygraph.node("raptorEntity") };
+		const auto raptorEntity{ raptorEntityNode.data() };
+		auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
+		auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose() };
+
+		animationsIdList.push_back("idle");
+	}
+
+	else if (VK_F6 == p_key)
+	{
+		// play animation
+
+		auto& raptorEntityNode{ m_entitygraph.node("raptorEntity") };
+		const auto raptorEntity{ raptorEntityNode.data() };
+		auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
+		auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose() };
+
+		animationsIdList.push_back("Alert");
+	}
+
+	else if (VK_F7 == p_key)
+	{
+		auto tc{ TimeControl::getInstance() };
+
+		auto mode{ tc->getTimeFactor() };
+		if (TimeControl::TimeScale::DIV4_TIME == mode)
 		{
-			// play animation
-
-			auto& raptorEntityNode{ m_entitygraph.node("raptorEntity") };
-			const auto raptorEntity{ raptorEntityNode.data() };
-			auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
-			auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose() };
-
-			animationsIdList.push_back("idle");
+			tc->setTimeFactor(TimeControl::TimeScale::NORMAL_TIME);
 		}
-
-		else if (VK_F6 == p_key)
+		else if (TimeControl::TimeScale::NORMAL_TIME == mode)
 		{
-			// play animation
-
-			auto& raptorEntityNode{ m_entitygraph.node("raptorEntity") };
-			const auto raptorEntity{ raptorEntityNode.data() };
-			auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
-			auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose() };
-
-			animationsIdList.push_back("Alert");
+			tc->setTimeFactor(TimeControl::TimeScale::DIV4_TIME);
 		}
+	}
 
-		else if (VK_F7 == p_key)
+	else if (VK_F8 == p_key)
+	{
+		auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
+		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
+
+		renderingQueueSystemInstance->requestRenderingqueueLogging("bufferRenderingEntity");
+	}
+
+	else if (VK_F9 == p_key)
+	{
+		helpers::logEntitygraph(m_entitygraph);
+	}
+
+	else if ('Q' == p_key)
+	{
+		if (m_texturesChannelRenderingQueue)
 		{
-			auto tc{ TimeControl::getInstance() };
+			const auto current_view_entity_id{ m_texturesChannelRenderingQueue->getCurrentView() };
 
-			auto mode{ tc->getTimeFactor() };
-			if (TimeControl::TimeScale::DIV4_TIME == mode)
-			{
-				tc->setTimeFactor(TimeControl::TimeScale::NORMAL_TIME);
-			}
-			else if (TimeControl::TimeScale::NORMAL_TIME == mode)
-			{
-				tc->setTimeFactor(TimeControl::TimeScale::DIV4_TIME);
-			}
-		}
-
-		else if (VK_F8 == p_key)
-		{
-			auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
-			auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
-
-			renderingQueueSystemInstance->requestRenderingqueueLogging("bufferRenderingEntity");
-		}
-
-		else if (VK_F9 == p_key)
-		{
-			helpers::logEntitygraph(m_entitygraph);
-		}
-
-
-		else if ('Q' == p_key)
-		{
 			if ("cameraEntity" == current_view_entity_id)
 			{
 				auto& gblJointEntityNode{ m_entitygraph.node("gblJointEntity") };
@@ -220,11 +294,50 @@ void ModuleImpl::onEndKeyPress(long p_key)
 			}
 		}
 
-		else if ('W' == p_key)
+		if (m_fogChannelRenderingQueue)
 		{
+			const auto current_view_entity_id{ m_fogChannelRenderingQueue->getCurrentView() };
+
+			if ("fogCameraEntity" == current_view_entity_id)
+			{
+				auto& gblJointEntityNode{ m_entitygraph.node("fogGblJointEntity") };
+				const auto gblJointEntity{ gblJointEntityNode.data() };
+
+				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
+
+				double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
+
+				speed = 0.0;
+			}
+		}
+	}
+
+	else if ('W' == p_key)
+	{
+		if (m_texturesChannelRenderingQueue)
+		{
+			const auto current_view_entity_id{ m_texturesChannelRenderingQueue->getCurrentView() };
+
 			if ("cameraEntity" == current_view_entity_id)
 			{
 				auto& gblJointEntityNode{ m_entitygraph.node("gblJointEntity") };
+				const auto gblJointEntity{ gblJointEntityNode.data() };
+
+				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
+
+				double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
+
+				speed = 0.0;
+			}
+		}
+
+		if (m_fogChannelRenderingQueue)
+		{
+			const auto current_view_entity_id{ m_fogChannelRenderingQueue->getCurrentView() };
+
+			if ("cameraEntity" == current_view_entity_id)
+			{
+				auto& gblJointEntityNode{ m_entitygraph.node("fogGblJointEntity") };
 				const auto gblJointEntity{ gblJointEntityNode.data() };
 
 				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };

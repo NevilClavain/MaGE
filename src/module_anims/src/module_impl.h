@@ -96,7 +96,8 @@ private:
 
     mage::rendering::Queue*                                     m_windowRenderingQueue{ nullptr };
 
-    mage::rendering::Queue*                                     m_bufferRenderingQueue{ nullptr };
+    mage::rendering::Queue*                                     m_texturesChannelRenderingQueue{ nullptr };
+    mage::rendering::Queue*                                     m_fogChannelRenderingQueue{ nullptr };
 
     std::unordered_map<std::string, mage::AnimationKeys>        m_raptor_animations;
 
