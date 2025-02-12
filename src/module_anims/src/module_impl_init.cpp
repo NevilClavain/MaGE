@@ -339,18 +339,6 @@ void ModuleImpl::d3d11_system_events()
 						}
 					);
 
-					// buffer rendering queue
-					rendering::Queue bufferRenderingQueue("buffer_pass_queue");
-					bufferRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					bufferRenderingQueue.enableTargetClearing(true);
-					bufferRenderingQueue.enableTargetDepthClearing(true);
-					bufferRenderingQueue.setTargetStage(Texture::STAGE_0);
-
-					mage::helpers::plugRenderingQueue(m_entitygraph, bufferRenderingQueue, "alignedQuadEntity", "bufferSceneTexturesChannelEntity");
-
-
-					auto& bufferRenderingNode{ m_entitygraph.node("bufferSceneTexturesChannelEntity") };
-
 
 					/////////// commons shaders params
 
@@ -404,6 +392,23 @@ void ModuleImpl::d3d11_system_events()
 
 					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_5");
 					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_5", maths::Real4Vector(0.0, 0.0, 0.0, 1));
+
+
+
+
+
+
+					// textures channels rendering queue
+					rendering::Queue texturesChannelsRenderingQueue("buffer_pass_queue");
+					texturesChannelsRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+					texturesChannelsRenderingQueue.enableTargetClearing(true);
+					texturesChannelsRenderingQueue.enableTargetDepthClearing(true);
+					texturesChannelsRenderingQueue.setTargetStage(Texture::STAGE_0);
+
+					mage::helpers::plugRenderingQueue(m_entitygraph, texturesChannelsRenderingQueue, "alignedQuadEntity", "bufferSceneTexturesChannelEntity");
+
+
+					auto& bufferRenderingNode{ m_entitygraph.node("bufferSceneTexturesChannelEntity") };
 
 
 
