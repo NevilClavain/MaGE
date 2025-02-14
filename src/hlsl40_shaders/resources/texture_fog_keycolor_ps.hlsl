@@ -43,7 +43,7 @@ struct PS_INTPUT
 
 float4 ps_main(PS_INTPUT input) : SV_Target
 {
-    float4 vw_pos = input.TexCoord1;        
+    float4 vw_pos = input.TexCoord1;
     float pixel_depth = 0.04 * abs(vw_pos.z);    
     
     float4 tex_color = txDiffuse.Sample(sam, input.TexCoord0);    
