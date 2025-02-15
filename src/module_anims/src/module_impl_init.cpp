@@ -107,6 +107,12 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	dataCloud->registerData<double>("current_animation.ticks_duration");
 	dataCloud->registerData<double>("current_animation.seconds_duration");
 
+	dataCloud->registerData<std::string>("current_animation2.id");
+	dataCloud->registerData<double>("current_animation2.ticks_progress");
+	dataCloud->registerData<double>("current_animation2.seconds_progress");
+	dataCloud->registerData<double>("current_animation2.ticks_duration");
+	dataCloud->registerData<double>("current_animation2.seconds_duration");
+
 
 	/////////// systems
 
@@ -129,6 +135,7 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
 	dataPrintSystem->addDatacloudFilter("resources_event");
 	dataPrintSystem->addDatacloudFilter("current_animation");
+	dataPrintSystem->addDatacloudFilter("current_animation2");
 
 	///////////////////////////
 
@@ -248,21 +255,25 @@ void ModuleImpl::resource_system_events()
 
 					if ("raptor.fbx" == p_resourceName)
 					{
-						const auto raptor_entity{ m_entitygraph.node("raptorEntity").data() };
-
-						const auto& resources_aspect{ raptor_entity->aspectAccess(core::resourcesAspect::id) };
-
-						const auto& meshe_comp{ resources_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe") };
-
-						const auto& meshe_descr{ meshe_comp->getPurpose() };
-						const TriangleMeshe& meshe{ meshe_descr.second };
-
-						std::unordered_map<std::string, AnimationKeys> animations_list{ meshe.getAnimationsKeys() };
-
-						m_raptor_animations = animations_list;
-						m_distribution = new std::uniform_int_distribution<int>(0, m_raptor_animations.size() - 1);
+						m_nb_raptormeshe_loaded++;
 						
-						choose_animation();
+						if (2 == m_nb_raptormeshe_loaded)
+						{
+							const auto raptor_entity{ m_entitygraph.node("raptorEntity").data() };
+
+							const auto& resources_aspect{ raptor_entity->aspectAccess(core::resourcesAspect::id) };
+
+							const auto& meshe_comp{ resources_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe") };
+
+							const auto& meshe_descr{ meshe_comp->getPurpose() };
+							const TriangleMeshe& meshe{ meshe_descr.second };
+
+							m_raptor_animations = meshe.getAnimationsKeys();
+							m_distribution = new std::uniform_int_distribution<int>(0, m_raptor_animations.size() - 1);
+
+							choose_animation();
+						}
+						
 					}
 					break;
 			}
@@ -276,7 +287,7 @@ void ModuleImpl::resource_system_events()
 
 void ModuleImpl::choose_animation()
 {
-	/*
+	
 	int anim_index = (*m_distribution)(m_random_engine);
 	std::vector<std::string> anims_names;
 
@@ -287,13 +298,25 @@ void ModuleImpl::choose_animation()
 
 	const std::string choosen_anim{ anims_names.at(anim_index) };
 
-	auto& raptorEntityNode{ m_entitygraph.node("raptorEntity") };
-	const auto raptorEntity{ raptorEntityNode.data() };
-	auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
-	auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose() };
+	// apply anim to meshe on all passes
 
-	animationsIdList.push_back(choosen_anim);
-	*/
+	{
+		auto& raptorEntityNode{ m_entitygraph.node("raptorEntity") };
+		const auto raptorEntity{ raptorEntityNode.data() };
+		auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
+		auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose() };
+
+		animationsIdList.push_back(choosen_anim);
+	}
+
+	{
+		auto& raptorEntityNode{ m_entitygraph.node("fogRaptorEntity") };
+		const auto raptorEntity{ raptorEntityNode.data() };
+		auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
+		auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose() };
+
+		animationsIdList.push_back(choosen_anim);
+	}	
 }
 
 
@@ -327,7 +350,8 @@ void ModuleImpl::d3d11_system_events()
 					const int w_height{ window_dims.y() };
 
 					const auto rendering_quad_textures_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-					const auto rendering_quad_fog_channnel{ Texture(Texture::Format::TEXTURE_FLOAT32, w_width, w_height) };
+					//const auto rendering_quad_fog_channnel{ Texture(Texture::Format::TEXTURE_FLOAT32, w_width, w_height) };
+					const auto rendering_quad_fog_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
 					
 					mage::helpers::plugRenderingQuadView(m_entitygraph,
 						characteristics_v_width, characteristics_v_height,
@@ -335,8 +359,8 @@ void ModuleImpl::d3d11_system_events()
 						"alignedQuadEntity",
 						"alignedViewEntity",
 						m_windowRenderingQueue,
-						"pass_texture1stage_vs",
-						"pass_texture1stage_ps",
+						"pass_switch_texture2stages_vs",
+						"pass_switch_texture2stages_ps",
 						{
 							std::make_pair(Texture::STAGE_0, rendering_quad_textures_channnel),
 							std::make_pair(Texture::STAGE_1, rendering_quad_fog_channnel)
@@ -763,7 +787,7 @@ void ModuleImpl::d3d11_system_events()
 					
 					{
 
-						/*
+						
 						RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
 						RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
 						RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
@@ -786,8 +810,8 @@ void ModuleImpl::d3d11_system_events()
 														1000,
 														ground_textures
 														) };
-														*/
-
+														
+						/*
 						
 						RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
 						RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
@@ -805,6 +829,7 @@ void ModuleImpl::d3d11_system_events()
 														{}
 														) };
 														
+														*/
 
 						auto& ground_world_aspect{ ground_entity->aspectAccess(core::worldAspect::id) };
 
@@ -846,7 +871,7 @@ void ModuleImpl::d3d11_system_events()
 
 					// raptor
 					{
-						/*
+						
 						RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
 						RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
 						RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
@@ -867,9 +892,9 @@ void ModuleImpl::d3d11_system_events()
 														raptor_textures
 														) };
 
-														*/
+														
 
-						
+						/*
 						RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
 						RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
 						RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
@@ -884,7 +909,7 @@ void ModuleImpl::d3d11_system_events()
 														1000,
 														{}
 														) };
-						
+						*/
 
 						auto& raptor_world_aspect{ raptor_entity->aspectAccess(core::worldAspect::id) };
 

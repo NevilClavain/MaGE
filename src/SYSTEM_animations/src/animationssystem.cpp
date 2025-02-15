@@ -340,9 +340,7 @@ void AnimationsSystem::run()
 							auto& animationsList{ p_animation_components.getComponent<std::list<std::pair<std::string,AnimationKeys>>>("eg.std.animationsList")->getPurpose() };
 
 							auto& animationsTimeMark{ p_animation_components.getComponent<core::TimeMark>("eg.std.animationsTimeMark")->getPurpose() };
-
-							//auto& currentAnimationId{ p_animation_components.getComponent<std::string>("eg.std.currentAnimationId")->getPurpose() };
-
+						
 							auto& currentAnimationTicksDuration{ p_animation_components.getComponent<double>("eg.std.currentAnimationTicksDuration")->getPurpose() };
 							auto& currentAnimationSecondsDuration{ p_animation_components.getComponent<double>("eg.std.currentAnimationSecondsDuration")->getPurpose() };
 

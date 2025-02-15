@@ -216,13 +216,13 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		auto tc{ TimeControl::getInstance() };
 
 		auto mode{ tc->getTimeFactor() };
-		if (TimeControl::TimeScale::DIV4_TIME == mode)
+		if (TimeControl::TimeScale::FREEZE == mode)
 		{
 			tc->setTimeFactor(TimeControl::TimeScale::NORMAL_TIME);
 		}
 		else if (TimeControl::TimeScale::NORMAL_TIME == mode)
 		{
-			tc->setTimeFactor(TimeControl::TimeScale::DIV4_TIME);
+			tc->setTimeFactor(TimeControl::TimeScale::FREEZE);
 		}
 	}
 

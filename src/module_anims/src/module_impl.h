@@ -100,6 +100,7 @@ private:
     mage::rendering::Queue*                                     m_fogChannelRenderingQueue{ nullptr };
 
     std::unordered_map<std::string, mage::AnimationKeys>        m_raptor_animations;
+    int                                                         m_nb_raptormeshe_loaded{ 0 };
 
     std::default_random_engine                                  m_random_engine;
     std::uniform_int_distribution<int>*                         m_distribution;
