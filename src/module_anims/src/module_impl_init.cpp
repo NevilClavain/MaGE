@@ -276,6 +276,7 @@ void ModuleImpl::resource_system_events()
 
 void ModuleImpl::choose_animation()
 {
+	/*
 	int anim_index = (*m_distribution)(m_random_engine);
 	std::vector<std::string> anims_names;
 
@@ -292,6 +293,7 @@ void ModuleImpl::choose_animation()
 	auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose() };
 
 	animationsIdList.push_back(choosen_anim);
+	*/
 }
 
 
@@ -325,9 +327,8 @@ void ModuleImpl::d3d11_system_events()
 					const int w_height{ window_dims.y() };
 
 					const auto rendering_quad_textures_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-					const auto rendering_quad_fog_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-
-
+					const auto rendering_quad_fog_channnel{ Texture(Texture::Format::TEXTURE_FLOAT32, w_width, w_height) };
+					
 					mage::helpers::plugRenderingQuadView(m_entitygraph,
 						characteristics_v_width, characteristics_v_height,
 						"screenPassEntity",
@@ -761,6 +762,33 @@ void ModuleImpl::d3d11_system_events()
 
 					
 					{
+
+						/*
+						RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
+						RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
+						RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
+						RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
+
+						RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
+
+						const std::vector<RenderState> ground_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
+
+
+						const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> ground_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("grass08.jpg", Texture())) };
+
+
+
+
+						const auto ground_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferSceneColorsChannelEntity", "fogGroundEntity",
+														"scene_recursive_texture_vs", "scene_recursive_texture_ps",
+														"ground.ac", "rect",
+														ground_rs_list,
+														1000,
+														ground_textures
+														) };
+														*/
+
+						
 						RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
 						RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
 						RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
@@ -770,12 +798,13 @@ void ModuleImpl::d3d11_system_events()
 
 
 						const auto ground_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferSceneColorsChannelEntity", "fogGroundEntity",
-														"scene_flatcolor_vs", "scene_flatcolor_ps",
+														"scene_zdepth_vs", "scene_zdepth_ps",
 														"ground.ac", "rect",
 														{ rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend },
 														1000,
 														{}
 														) };
+														
 
 						auto& ground_world_aspect{ ground_entity->aspectAccess(core::worldAspect::id) };
 
@@ -814,6 +843,92 @@ void ModuleImpl::d3d11_system_events()
 
 
 					}
+
+					// raptor
+					{
+						/*
+						RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
+						RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
+						RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
+						RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
+
+						RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
+
+						const std::vector<RenderState> raptor_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
+
+						const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> raptor_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("raptorDif2.png", Texture())) };
+
+
+						const auto raptor_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferSceneColorsChannelEntity", "fogRaptorEntity",
+														"scene_texture1stage_skinning_vs", "scene_texture1stage_skinning_ps",
+														"raptor.fbx", "raptorMesh",
+														raptor_rs_list,
+														1000,
+														raptor_textures
+														) };
+
+														*/
+
+						
+						RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
+						RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
+						RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
+						RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
+
+						RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
+
+						const auto raptor_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferSceneColorsChannelEntity", "fogRaptorEntity",
+														"scene_zdepth_skinning_vs", "scene_zdepth_skinning_ps",
+														"raptor.fbx", "raptorMesh",
+														{ rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend },
+														1000,
+														{}
+														) };
+						
+
+						auto& raptor_world_aspect{ raptor_entity->aspectAccess(core::worldAspect::id) };
+
+						raptor_world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
+						(
+							{},
+							[=](const core::ComponentContainer& p_world_aspect,
+								const core::ComponentContainer& p_time_aspect,
+								const transform::WorldPosition&,
+								const std::unordered_map<std::string, std::string>&)
+							{
+
+								maths::Matrix positionmat;
+								positionmat.translation(-40.0, skydomeInnerRadius + groundLevel, -30.0);
+
+								maths::Matrix scalemat;
+								scalemat.scale(0.03, 0.03, 0.03);
+
+
+								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+								wp.local_pos = /* wp.local_pos * */ scalemat * positionmat;
+							}
+						));
+
+						auto& raptor_animations_aspect{ raptor_entity->makeAspect(core::animationsAspect::id) };
+						raptor_animations_aspect.addComponent<int>("eg.std.animationbonesArrayArgIndex", 0);
+
+
+						raptor_animations_aspect.addComponent<std::list<std::string>>("eg.std.animationsIdList");
+						raptor_animations_aspect.addComponent<std::list<std::pair<std::string, AnimationKeys>>>("eg.std.animationsList");
+
+						raptor_animations_aspect.addComponent<core::TimeMark>("eg.std.animationsTimeMark", TimeControl::getInstance()->buildTimeMark());
+
+						raptor_animations_aspect.addComponent<std::string>("eg.std.currentAnimationId");
+						raptor_animations_aspect.addComponent<AnimationKeys>("eg.std.currentAnimation");
+
+
+						raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationTicksDuration");
+						raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationSecondsDuration");
+
+						raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationTicksProgress");
+						raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationSecondsProgress");
+					}
+
 
 
 					/////////////// add camera with gimbal lock jointure ////////////////
