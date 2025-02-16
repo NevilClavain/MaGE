@@ -60,30 +60,6 @@ void ModuleImpl::onMouseMove(long p_xm, long p_ym, long p_dx, long p_dy)
 			}
 		}
 	}
-
-	if (m_fogChannelRenderingQueue)
-	{
-		const auto current_view_entity_id{ m_fogChannelRenderingQueue->getCurrentView() };
-
-		if ("fogCameraEntity" == current_view_entity_id)
-		{
-			const auto tc{ TimeControl::getInstance() };
-			if (tc->isReady())
-			{
-
-				auto& gblJointEntityNode{ m_entitygraph.node("fogGblJointEntity") };
-				const auto gblJointEntity{ gblJointEntityNode.data() };
-
-				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
-
-				double& fps_theta{ world_aspect.getComponent<double>("gbl_theta")->getPurpose() };
-				double& fps_phi{ world_aspect.getComponent<double>("gbl_phi")->getPurpose() };
-
-				tc->angleSpeedInc(&fps_theta, -p_dx);
-				tc->angleSpeedInc(&fps_phi, -p_dy);
-			}
-		}
-	}
 }
 
 void ModuleImpl::onMouseWheel(long p_delta)

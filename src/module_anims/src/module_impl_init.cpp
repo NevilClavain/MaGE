@@ -107,13 +107,6 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	dataCloud->registerData<double>("current_animation.ticks_duration");
 	dataCloud->registerData<double>("current_animation.seconds_duration");
 
-	dataCloud->registerData<std::string>("current_animation2.id");
-	dataCloud->registerData<double>("current_animation2.ticks_progress");
-	dataCloud->registerData<double>("current_animation2.seconds_progress");
-	dataCloud->registerData<double>("current_animation2.ticks_duration");
-	dataCloud->registerData<double>("current_animation2.seconds_duration");
-
-
 	/////////// systems
 
 	auto sysEngine{ SystemEngine::getInstance() };
@@ -135,7 +128,6 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
 	dataPrintSystem->addDatacloudFilter("resources_event");
 	dataPrintSystem->addDatacloudFilter("current_animation");
-	dataPrintSystem->addDatacloudFilter("current_animation2");
 
 	///////////////////////////
 
@@ -255,25 +247,19 @@ void ModuleImpl::resource_system_events()
 
 					if ("raptor.fbx" == p_resourceName)
 					{
-						m_nb_raptormeshe_loaded++;
-						
-						if (2 == m_nb_raptormeshe_loaded)
-						{
-							const auto raptor_entity{ m_entitygraph.node("raptorEntity").data() };
+						const auto raptor_entity{ m_entitygraph.node("raptorEntity").data() };
 
-							const auto& resources_aspect{ raptor_entity->aspectAccess(core::resourcesAspect::id) };
+						const auto& resources_aspect{ raptor_entity->aspectAccess(core::resourcesAspect::id) };
 
-							const auto& meshe_comp{ resources_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe") };
+						const auto& meshe_comp{ resources_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe") };
 
-							const auto& meshe_descr{ meshe_comp->getPurpose() };
-							const TriangleMeshe& meshe{ meshe_descr.second };
+						const auto& meshe_descr{ meshe_comp->getPurpose() };
+						const TriangleMeshe& meshe{ meshe_descr.second };
 
-							m_raptor_animations = meshe.getAnimationsKeys();
-							m_distribution = new std::uniform_int_distribution<int>(0, m_raptor_animations.size() - 1);
+						m_raptor_animations = meshe.getAnimationsKeys();
+						m_distribution = new std::uniform_int_distribution<int>(0, m_raptor_animations.size() - 1);
 
-							choose_animation();
-						}
-						
+						choose_animation();						
 					}
 					break;
 			}
@@ -309,14 +295,6 @@ void ModuleImpl::choose_animation()
 		animationsIdList.push_back(choosen_anim);
 	}
 
-	{
-		auto& raptorEntityNode{ m_entitygraph.node("fogRaptorEntity") };
-		const auto raptorEntity{ raptorEntityNode.data() };
-		auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
-		auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose() };
-
-		animationsIdList.push_back(choosen_anim);
-	}	
 }
 
 
@@ -350,8 +328,6 @@ void ModuleImpl::d3d11_system_events()
 					const int w_height{ window_dims.y() };
 
 					const auto rendering_quad_textures_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-					//const auto rendering_quad_fog_channnel{ Texture(Texture::Format::TEXTURE_FLOAT32, w_width, w_height) };
-					const auto rendering_quad_fog_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
 					
 					mage::helpers::plugRenderingQuadView(m_entitygraph,
 						characteristics_v_width, characteristics_v_height,
@@ -359,11 +335,11 @@ void ModuleImpl::d3d11_system_events()
 						"alignedQuadEntity",
 						"alignedViewEntity",
 						m_windowRenderingQueue,
-						"pass_switch_texture2stages_vs",
-						"pass_switch_texture2stages_ps",
+						"pass_texture1stage_vs",
+						"pass_texture1stage_ps",
+
 						{
-							std::make_pair(Texture::STAGE_0, rendering_quad_textures_channnel),
-							std::make_pair(Texture::STAGE_1, rendering_quad_fog_channnel)
+							std::make_pair(Texture::STAGE_0, rendering_quad_textures_channnel)
 						}
 					);
 
@@ -766,243 +742,6 @@ void ModuleImpl::d3d11_system_events()
 						m_texturesChannelRenderingQueue->setCurrentView("cameraEntity");
 
 					}
-
-
-
-
-
-				
-
-					// colors channels rendering queue
-					rendering::Queue fogChannelsRenderingQueue("fog_channel_queue");
-					fogChannelsRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					fogChannelsRenderingQueue.enableTargetClearing(true);
-					fogChannelsRenderingQueue.enableTargetDepthClearing(true);
-					fogChannelsRenderingQueue.setTargetStage(Texture::STAGE_1);
-
-					mage::helpers::plugRenderingQueue(m_entitygraph, fogChannelsRenderingQueue, "alignedQuadEntity", "bufferSceneColorsChannelEntity");
-
-					///////////////	add ground
-
-					
-					{
-
-						
-						RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
-						RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-						RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-						RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
-
-						RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-						const std::vector<RenderState> ground_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
-
-
-						const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> ground_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("grass08.jpg", Texture())) };
-
-
-
-
-						const auto ground_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferSceneColorsChannelEntity", "fogGroundEntity",
-														"scene_recursive_texture_vs", "scene_recursive_texture_ps",
-														"ground.ac", "rect",
-														ground_rs_list,
-														1000,
-														ground_textures
-														) };
-														
-						/*
-						
-						RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
-						RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-						RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-						RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
-
-						RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-
-						const auto ground_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferSceneColorsChannelEntity", "fogGroundEntity",
-														"scene_zdepth_vs", "scene_zdepth_ps",
-														"ground.ac", "rect",
-														{ rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend },
-														1000,
-														{}
-														) };
-														
-														*/
-
-						auto& ground_world_aspect{ ground_entity->aspectAccess(core::worldAspect::id) };
-
-						ground_world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
-						(
-							{},
-							[=](const core::ComponentContainer& p_world_aspect,
-								const core::ComponentContainer& p_time_aspect,
-								const transform::WorldPosition&,
-								const std::unordered_map<std::string, std::string>&)
-							{
-
-								maths::Matrix positionmat;
-								positionmat.translation(0.0, skydomeInnerRadius + groundLevel, 0.0);
-
-								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-								wp.local_pos = wp.local_pos * positionmat;
-							}
-						));
-
-
-						auto& ground_rendering_aspect{ ground_entity->aspectAccess(core::renderingAspect::id) };
-
-
-						dataCloud->registerData<maths::Real4Vector>("ground_color");						
-						maths::Real4Vector mycolor;
-						mycolor[0] = 1.0;
-						mycolor[1] = 0.0;
-						mycolor[2] = 0.0;
-						mycolor[3] = 1.0;
-						dataCloud->updateDataValue("ground_color", mycolor);
-
-						rendering::DrawingControl& drawingControl{ ground_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-						drawingControl.pshaders_map.push_back(std::make_pair("ground_color", "color"));
-
-
-
-					}
-
-					// raptor
-					{
-						
-						RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
-						RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-						RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-						RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
-
-						RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-						const std::vector<RenderState> raptor_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
-
-						const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> raptor_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("raptorDif2.png", Texture())) };
-
-
-						const auto raptor_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferSceneColorsChannelEntity", "fogRaptorEntity",
-														"scene_texture1stage_skinning_vs", "scene_texture1stage_skinning_ps",
-														"raptor.fbx", "raptorMesh",
-														raptor_rs_list,
-														1000,
-														raptor_textures
-														) };
-
-														
-
-						/*
-						RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
-						RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-						RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-						RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
-
-						RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-						const auto raptor_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferSceneColorsChannelEntity", "fogRaptorEntity",
-														"scene_zdepth_skinning_vs", "scene_zdepth_skinning_ps",
-														"raptor.fbx", "raptorMesh",
-														{ rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend },
-														1000,
-														{}
-														) };
-						*/
-
-						auto& raptor_world_aspect{ raptor_entity->aspectAccess(core::worldAspect::id) };
-
-						raptor_world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
-						(
-							{},
-							[=](const core::ComponentContainer& p_world_aspect,
-								const core::ComponentContainer& p_time_aspect,
-								const transform::WorldPosition&,
-								const std::unordered_map<std::string, std::string>&)
-							{
-
-								maths::Matrix positionmat;
-								positionmat.translation(-40.0, skydomeInnerRadius + groundLevel, -30.0);
-
-								maths::Matrix scalemat;
-								scalemat.scale(0.03, 0.03, 0.03);
-
-
-								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-								wp.local_pos = /* wp.local_pos * */ scalemat * positionmat;
-							}
-						));
-
-						auto& raptor_animations_aspect{ raptor_entity->makeAspect(core::animationsAspect::id) };
-						raptor_animations_aspect.addComponent<int>("eg.std.animationbonesArrayArgIndex", 0);
-
-
-						raptor_animations_aspect.addComponent<std::list<std::string>>("eg.std.animationsIdList");
-						raptor_animations_aspect.addComponent<std::list<std::pair<std::string, AnimationKeys>>>("eg.std.animationsList");
-
-						raptor_animations_aspect.addComponent<core::TimeMark>("eg.std.animationsTimeMark", TimeControl::getInstance()->buildTimeMark());
-
-						raptor_animations_aspect.addComponent<std::string>("eg.std.currentAnimationId");
-						raptor_animations_aspect.addComponent<AnimationKeys>("eg.std.currentAnimation");
-
-
-						raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationTicksDuration");
-						raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationSecondsDuration");
-
-						raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationTicksProgress");
-						raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationSecondsProgress");
-					}
-
-
-
-					/////////////// add camera with gimbal lock jointure ////////////////
-
-					{
-
-						auto& gblJointEntityNode{ m_entitygraph.add(m_entitygraph.node("bufferSceneColorsChannelEntity"), "fogGblJointEntity") };
-
-						const auto gblJointEntity{ gblJointEntityNode.data() };
-
-						gblJointEntity->makeAspect(core::timeAspect::id);
-						auto& gbl_world_aspect{ gblJointEntity->makeAspect(core::worldAspect::id) };
-
-						gbl_world_aspect.addComponent<transform::WorldPosition>("gbl_output");
-
-						gbl_world_aspect.addComponent<double>("gbl_theta", 0);
-						gbl_world_aspect.addComponent<double>("gbl_phi", 0);
-						gbl_world_aspect.addComponent<double>("gbl_speed", 0);
-						gbl_world_aspect.addComponent<maths::Real3Vector>("gbl_pos", maths::Real3Vector(-50.0, skydomeInnerRadius + groundLevel + 5, 1.0));
-
-						gbl_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
-							{
-								// input-output/components keys id mapping
-								{"gimbalLockJointAnim.theta", "gbl_theta"},
-								{"gimbalLockJointAnim.phi", "gbl_phi"},
-								{"gimbalLockJointAnim.position", "gbl_pos"},
-								{"gimbalLockJointAnim.speed", "gbl_speed"},
-								{"gimbalLockJointAnim.output", "gbl_output"}
-
-							}, helpers::animators::makeGimbalLockJointAnimator()));
-
-
-
-						// add camera
-						maths::Matrix projection;
-						projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
-						helpers::plugView(m_entitygraph, projection, "fogGblJointEntity", "fogCameraEntity");
-
-						///////Select camera
-
-						core::Entitygraph::Node& bufferRenderingQueueNode{ m_entitygraph.node("bufferSceneColorsChannelEntity") };
-						const auto bufferRenderingQueueEntity{ bufferRenderingQueueNode.data() };
-						const auto& renderingAspect{ bufferRenderingQueueEntity->aspectAccess(core::renderingAspect::id) };
-
-						m_fogChannelRenderingQueue = &renderingAspect.getComponent<rendering::Queue>("renderingQueue")->getPurpose();
-						m_fogChannelRenderingQueue->setCurrentView("fogCameraEntity");
-
-					}
-					
 
 				}
 				break;
