@@ -147,6 +147,8 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	createEntities(p_appWindowsEntityName);
 
 	//////////////////////////
+
+	m_appWindowsEntityName = p_appWindowsEntityName;
 }
 
 
@@ -344,6 +346,9 @@ void ModuleImpl::d3d11_system_events()
 					);
 
 
+					//////////////////////////////////////////
+
+
 					/////////// commons shaders params
 
 					dataCloud->registerData<maths::Real4Vector>("texture_keycolor_ps.key_color");
@@ -379,6 +384,45 @@ void ModuleImpl::d3d11_system_events()
 					constexpr double skydomeScaleDepth{ 0.25 };
 
 
+					/////////////// add camera with gimbal lock jointure ////////////////
+
+					auto& gblJointEntityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "gblJointEntity") };
+
+					const auto gblJointEntity{ gblJointEntityNode.data() };
+
+					gblJointEntity->makeAspect(core::timeAspect::id);
+					auto& gbl_world_aspect{ gblJointEntity->makeAspect(core::worldAspect::id) };
+
+					gbl_world_aspect.addComponent<transform::WorldPosition>("gbl_output");
+
+					gbl_world_aspect.addComponent<double>("gbl_theta", 0);
+					gbl_world_aspect.addComponent<double>("gbl_phi", 0);
+					gbl_world_aspect.addComponent<double>("gbl_speed", 0);
+					gbl_world_aspect.addComponent<maths::Real3Vector>("gbl_pos", maths::Real3Vector(-50.0, skydomeInnerRadius + groundLevel + 5, 1.0));
+
+					gbl_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
+						{
+							// input-output/components keys id mapping
+							{"gimbalLockJointAnim.theta", "gbl_theta"},
+							{"gimbalLockJointAnim.phi", "gbl_phi"},
+							{"gimbalLockJointAnim.position", "gbl_pos"},
+							{"gimbalLockJointAnim.speed", "gbl_speed"},
+							{"gimbalLockJointAnim.output", "gbl_output"}
+
+						}, helpers::animators::makeGimbalLockJointAnimator()));
+
+
+					// add camera
+					maths::Matrix projection;
+					projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
+					helpers::plugView(m_entitygraph, projection, "gblJointEntity", "cameraEntity");
+
+
+					//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
 					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_0");
 					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_0", maths::Real4Vector(skydomeOuterRadius, skydomeInnerRadius, skydomeOuterRadius * skydomeOuterRadius, skydomeInnerRadius * skydomeInnerRadius));
 
@@ -399,7 +443,7 @@ void ModuleImpl::d3d11_system_events()
 
 
 
-
+					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 					// textures channels rendering queue
@@ -693,44 +737,12 @@ void ModuleImpl::d3d11_system_events()
 						drawingControl.pshaders_map.push_back(std::make_pair("skydome_ps.atmo_scattering_flag_4", "atmo_scattering_flag_4"));
 						drawingControl.pshaders_map.push_back(std::make_pair("skydome_ps.atmo_scattering_flag_5", "atmo_scattering_flag_5"));
 
-
-
-
 					}
 
-					/////////////// add camera with gimbal lock jointure ////////////////
+
 
 					{
-						auto& gblJointEntityNode{ m_entitygraph.add(m_entitygraph.node("bufferSceneTexturesChannelEntity"), "gblJointEntity") };
 
-						const auto gblJointEntity{ gblJointEntityNode.data() };
-
-						gblJointEntity->makeAspect(core::timeAspect::id);
-						auto& gbl_world_aspect{ gblJointEntity->makeAspect(core::worldAspect::id) };
-
-						gbl_world_aspect.addComponent<transform::WorldPosition>("gbl_output");
-
-						gbl_world_aspect.addComponent<double>("gbl_theta", 0);
-						gbl_world_aspect.addComponent<double>("gbl_phi", 0);
-						gbl_world_aspect.addComponent<double>("gbl_speed", 0);
-						gbl_world_aspect.addComponent<maths::Real3Vector>("gbl_pos", maths::Real3Vector(-50.0, skydomeInnerRadius + groundLevel + 5, 1.0));
-
-						gbl_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
-							{
-								// input-output/components keys id mapping
-								{"gimbalLockJointAnim.theta", "gbl_theta"},
-								{"gimbalLockJointAnim.phi", "gbl_phi"},
-								{"gimbalLockJointAnim.position", "gbl_pos"},
-								{"gimbalLockJointAnim.speed", "gbl_speed"},
-								{"gimbalLockJointAnim.output", "gbl_output"}
-
-							}, helpers::animators::makeGimbalLockJointAnimator()));
-
-
-						// add camera
-						maths::Matrix projection;
-						projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
-						helpers::plugView(m_entitygraph, projection, "gblJointEntity", "cameraEntity");
 
 						///////Select camera
 
@@ -742,6 +754,7 @@ void ModuleImpl::d3d11_system_events()
 						m_texturesChannelRenderingQueue->setCurrentView("cameraEntity");
 
 					}
+
 
 				}
 				break;

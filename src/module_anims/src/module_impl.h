@@ -92,6 +92,8 @@ private:
     bool                                                        m_show_mouse_cursor{ false };
     bool                                                        m_mouse_relative_mode{ true };
 
+    std::string                                                 m_appWindowsEntityName;
+
     mage::core::Entitygraph                                     m_entitygraph;
 
     mage::rendering::Queue*                                     m_windowRenderingQueue{ nullptr };
