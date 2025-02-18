@@ -41,13 +41,13 @@ void ModuleImpl::onMouseMove(long p_xm, long p_ym, long p_dx, long p_dy)
 	{
 		const auto current_view_entity_id{ m_texturesChannelRenderingQueue->getCurrentView() };
 
-		if ("cameraEntity" == current_view_entity_id)
+		if ("camera_Entity" == current_view_entity_id)
 		{
 			const auto tc{ TimeControl::getInstance() };
 			if (tc->isReady())
 			{
 
-				auto& gblJointEntityNode{ m_entitygraph.node("gblJointEntity") };
+				auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
 				const auto gblJointEntity{ gblJointEntityNode.data() };
 
 				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };

@@ -47,9 +47,9 @@ void ModuleImpl::onKeyPress(long p_key)
 		{
 			const auto current_view_entity_id{ m_texturesChannelRenderingQueue->getCurrentView() };
 
-			if ("cameraEntity" == current_view_entity_id)
+			if ("camera_Entity" == current_view_entity_id)
 			{
-				auto& gblJointEntityNode{ m_entitygraph.node("gblJointEntity") };
+				auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
 				const auto gblJointEntity{ gblJointEntityNode.data() };
 
 				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
@@ -66,9 +66,9 @@ void ModuleImpl::onKeyPress(long p_key)
 		{
 			const auto current_view_entity_id{ m_texturesChannelRenderingQueue->getCurrentView() };
 
-			if ("cameraEntity" == current_view_entity_id)
+			if ("camera_Entity" == current_view_entity_id)
 			{
-				auto& gblJointEntityNode{ m_entitygraph.node("gblJointEntity") };
+				auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
 				const auto gblJointEntity{ gblJointEntityNode.data() };
 
 				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
@@ -133,7 +133,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 	{
 		// play animation
 
-		auto& raptorEntityNode{ m_entitygraph.node("raptorEntity") };
+		auto& raptorEntityNode{ m_entitygraph.node("raptor_TexturesChannel_Proxy_Entity") };
 		const auto raptorEntity{ raptorEntityNode.data() };
 		auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
 		auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose()};
@@ -145,7 +145,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 	{
 		// play animation
 
-		auto& raptorEntityNode{ m_entitygraph.node("raptorEntity") };
+		auto& raptorEntityNode{ m_entitygraph.node("raptor_TexturesChannel_Proxy_Entity") };
 		const auto raptorEntity{ raptorEntityNode.data() };
 		auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
 		auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose() };
@@ -157,7 +157,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 	{
 		// play animation
 
-		auto& raptorEntityNode{ m_entitygraph.node("raptorEntity") };
+		auto& raptorEntityNode{ m_entitygraph.node("raptor_TexturesChannel_Proxy_Entity") };
 		const auto raptorEntity{ raptorEntityNode.data() };
 		auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
 		auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose() };
@@ -169,7 +169,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 	{
 		// play animation
 
-		auto& raptorEntityNode{ m_entitygraph.node("raptorEntity") };
+		auto& raptorEntityNode{ m_entitygraph.node("raptor_TexturesChannel_Proxy_Entity") };
 		const auto raptorEntity{ raptorEntityNode.data() };
 		auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
 		auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose() };
@@ -211,9 +211,9 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		{
 			const auto current_view_entity_id{ m_texturesChannelRenderingQueue->getCurrentView() };
 
-			if ("cameraEntity" == current_view_entity_id)
+			if ("camera_Entity" == current_view_entity_id)
 			{
-				auto& gblJointEntityNode{ m_entitygraph.node("gblJointEntity") };
+				auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
 				const auto gblJointEntity{ gblJointEntityNode.data() };
 
 				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
@@ -231,9 +231,9 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		{
 			const auto current_view_entity_id{ m_texturesChannelRenderingQueue->getCurrentView() };
 
-			if ("cameraEntity" == current_view_entity_id)
+			if ("camera_Entity" == current_view_entity_id)
 			{
-				auto& gblJointEntityNode{ m_entitygraph.node("gblJointEntity") };
+				auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
 				const auto gblJointEntity{ gblJointEntityNode.data() };
 
 				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };

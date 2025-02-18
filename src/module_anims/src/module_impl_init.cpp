@@ -158,7 +158,7 @@ void ModuleImpl::createEntities(const std::string p_appWindowsEntityName)
 
 	auto& appwindowNode{ m_entitygraph.node(p_appWindowsEntityName) };
 
-	auto& screenRenderingPassNode{ m_entitygraph.add(appwindowNode, "screenRenderingQueueEntity") };
+	auto& screenRenderingPassNode{ m_entitygraph.add(appwindowNode, "screenRendering_Pass_DirectForward_Entity") };
 	const auto screenRenderingPassEntity{ screenRenderingPassNode.data() };
 
 	auto& screenRendering_rendering_aspect{ screenRenderingPassEntity->makeAspect(core::renderingAspect::id) };
@@ -249,7 +249,7 @@ void ModuleImpl::resource_system_events()
 
 					if ("raptor.fbx" == p_resourceName)
 					{
-						const auto raptor_entity{ m_entitygraph.node("raptorEntity").data() };
+						const auto raptor_entity{ m_entitygraph.node("raptor_TexturesChannel_Proxy_Entity").data() };
 
 						const auto& resources_aspect{ raptor_entity->aspectAccess(core::resourcesAspect::id) };
 
@@ -289,7 +289,7 @@ void ModuleImpl::choose_animation()
 	// apply anim to meshe on all passes
 
 	{
-		auto& raptorEntityNode{ m_entitygraph.node("raptorEntity") };
+		auto& raptorEntityNode{ m_entitygraph.node("raptor_TexturesChannel_Proxy_Entity") };
 		const auto raptorEntity{ raptorEntityNode.data() };
 		auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
 		auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose() };
@@ -333,9 +333,9 @@ void ModuleImpl::d3d11_system_events()
 					
 					mage::helpers::plugRenderingQuadView(m_entitygraph,
 						characteristics_v_width, characteristics_v_height,
-						"screenRenderingQueueEntity",
-						"screenAlignedQuadEntity",
-						"screenAlignedViewEntity",
+						"screenRendering_Pass_DirectForward_Entity",
+						"screen_AlignedQuad_Entity",
+						"screen_AlignedView_Entity",
 						m_windowRenderingQueue,
 						"pass_texture1stage_vs",
 						"pass_texture1stage_ps",
@@ -386,7 +386,7 @@ void ModuleImpl::d3d11_system_events()
 
 					/////////////// add camera with gimbal lock jointure ////////////////
 
-					auto& gblJointEntityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "gblJointEntity") };
+					auto& gblJointEntityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "gblJoint_Entity") };
 
 					const auto gblJointEntity{ gblJointEntityNode.data() };
 
@@ -415,7 +415,7 @@ void ModuleImpl::d3d11_system_events()
 					// add camera
 					maths::Matrix projection;
 					projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
-					helpers::plugView(m_entitygraph, projection, "gblJointEntity", "cameraEntity");
+					helpers::plugView(m_entitygraph, projection, "gblJoint_Entity", "camera_Entity");
 
 
 					//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -453,7 +453,7 @@ void ModuleImpl::d3d11_system_events()
 					texturesChannelsRenderingQueue.enableTargetDepthClearing(true);
 					texturesChannelsRenderingQueue.setTargetStage(Texture::STAGE_0);
 
-					mage::helpers::plugRenderingQueue(m_entitygraph, texturesChannelsRenderingQueue, "screenAlignedQuadEntity", "bufferSceneTexturesChannelEntity");
+					mage::helpers::plugRenderingQueue(m_entitygraph, texturesChannelsRenderingQueue, "screen_AlignedQuad_Entity", "bufferRendering_Scene_TexturesChannel_Entity");
 
 
 					///////////////	add ground
@@ -475,7 +475,7 @@ void ModuleImpl::d3d11_system_events()
 
 
 
-						const auto ground_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferSceneTexturesChannelEntity", "groundEntity",
+						const auto ground_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "ground_TexturesChannel_Proxy_Entity",
 														"scene_recursive_texture_vs", "scene_recursive_texture_ps",
 														"ground.ac", "rect",													
 														ground_rs_list,
@@ -531,7 +531,7 @@ void ModuleImpl::d3d11_system_events()
 
 
 
-						const auto clouds_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferSceneTexturesChannelEntity", "cloudsEntity",
+						const auto clouds_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "clouds_TexturesChannel_Proxy_Entity",
 														"scene_flatclouds_vs", "scene_flatclouds_ps",
 														"flatclouds.ac", "rect",
 														clouds_rs_list,
@@ -576,7 +576,7 @@ void ModuleImpl::d3d11_system_events()
 						const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
 
 
-						const auto tree_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferSceneTexturesChannelEntity", "treeEntity",
+						const auto tree_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "tree_TexturesChannel_Proxy_Entity",
 														"scene_texture1stage_keycolor_vs", "scene_texture1stage_keycolor_ps",
 														"tree0.ac", "Plane.001",
 														tree_rs_list,
@@ -625,7 +625,7 @@ void ModuleImpl::d3d11_system_events()
 						const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> raptor_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("raptorDif2.png", Texture())) };
 
 
-						const auto raptor_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferSceneTexturesChannelEntity", "raptorEntity",
+						const auto raptor_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "raptor_TexturesChannel_Proxy_Entity",
 														"scene_texture1stage_skinning_vs", "scene_texture1stage_skinning_ps",
 														"raptor.fbx", "raptorMesh",
 														raptor_rs_list,
@@ -697,7 +697,7 @@ void ModuleImpl::d3d11_system_events()
 																		};
 						
 
-						const auto skydome_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferSceneTexturesChannelEntity", "skydomeEntity",
+						const auto skydome_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "skydome_TexturesChannel_Proxy_Entity",
 														"skydome_vs", "skydome_ps",
 														"skydome.ac", "sphere",
 														skydome_rs_list, 900) };
@@ -746,12 +746,12 @@ void ModuleImpl::d3d11_system_events()
 
 						///////Select camera
 
-						core::Entitygraph::Node& bufferRenderingQueueNode{ m_entitygraph.node("bufferSceneTexturesChannelEntity") };
+						core::Entitygraph::Node& bufferRenderingQueueNode{ m_entitygraph.node("bufferRendering_Scene_TexturesChannel_Entity") };
 						const auto bufferRenderingQueueEntity{ bufferRenderingQueueNode.data() };
 						const auto& renderingAspect{ bufferRenderingQueueEntity->aspectAccess(core::renderingAspect::id) };
 
 						m_texturesChannelRenderingQueue = &renderingAspect.getComponent<rendering::Queue>("renderingQueue")->getPurpose();
-						m_texturesChannelRenderingQueue->setCurrentView("cameraEntity");
+						m_texturesChannelRenderingQueue->setCurrentView("camera_Entity");
 
 					}
 
