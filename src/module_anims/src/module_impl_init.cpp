@@ -158,7 +158,7 @@ void ModuleImpl::createEntities(const std::string p_appWindowsEntityName)
 
 	auto& appwindowNode{ m_entitygraph.node(p_appWindowsEntityName) };
 
-	auto& screenRenderingPassNode{ m_entitygraph.add(appwindowNode, "screenPassEntity") };
+	auto& screenRenderingPassNode{ m_entitygraph.add(appwindowNode, "screenRenderingQueueEntity") };
 	const auto screenRenderingPassEntity{ screenRenderingPassNode.data() };
 
 	auto& screenRendering_rendering_aspect{ screenRenderingPassEntity->makeAspect(core::renderingAspect::id) };
@@ -333,9 +333,9 @@ void ModuleImpl::d3d11_system_events()
 					
 					mage::helpers::plugRenderingQuadView(m_entitygraph,
 						characteristics_v_width, characteristics_v_height,
-						"screenPassEntity",
-						"alignedQuadEntity",
-						"alignedViewEntity",
+						"screenRenderingQueueEntity",
+						"screenAlignedQuadEntity",
+						"screenAlignedViewEntity",
 						m_windowRenderingQueue,
 						"pass_texture1stage_vs",
 						"pass_texture1stage_ps",
@@ -453,7 +453,7 @@ void ModuleImpl::d3d11_system_events()
 					texturesChannelsRenderingQueue.enableTargetDepthClearing(true);
 					texturesChannelsRenderingQueue.setTargetStage(Texture::STAGE_0);
 
-					mage::helpers::plugRenderingQueue(m_entitygraph, texturesChannelsRenderingQueue, "alignedQuadEntity", "bufferSceneTexturesChannelEntity");
+					mage::helpers::plugRenderingQueue(m_entitygraph, texturesChannelsRenderingQueue, "screenAlignedQuadEntity", "bufferSceneTexturesChannelEntity");
 
 
 					///////////////	add ground
