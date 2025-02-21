@@ -55,7 +55,10 @@ void WorldSystem::run()
 			auto& entity_worldposition_list { p_world_components.getComponentsByType<transform::WorldPosition>() };
 			if (0 == entity_worldposition_list.size())
 			{
-				_EXCEPTION("Entity world aspect : missing world position " + p_entity->getId());
+				//_EXCEPTION("Entity world aspect : missing world position " + p_entity->getId());
+
+				// just ignore
+				return;
 			}
 
 			auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose()};
@@ -72,7 +75,8 @@ void WorldSystem::run()
 
 				if (0 == parententity_worldpositions_list.size())
 				{
-					_EXCEPTION("Parent entity world aspect : missing world position " + parent_entity->getId());
+					// _EXCEPTION("Parent entity world aspect : missing world position " + parent_entity->getId());
+					// just ignore
 				}
 				else
 				{
@@ -100,7 +104,6 @@ void WorldSystem::run()
 					}
 
 					///////////////////////
-
 
 					switch (entity_worldposition.composition_operation)
 					{

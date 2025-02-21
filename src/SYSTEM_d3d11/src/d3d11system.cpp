@@ -479,12 +479,23 @@ void D3D11System::collectWorldTransformations() const
 				const auto& worldpositions_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
 
 				if (0 == worldpositions_list.size())
-				{
-					_EXCEPTION("entity world aspect : missing world position " + p_entity->getId());
+				{					
+					// try ptr version of the component
+					const auto& worldpositions_ptr_list{ world_aspect.getComponentsByType<transform::WorldPosition*>() };
+					
+					if (0 == worldpositions_ptr_list.size())
+					{
+						_EXCEPTION("entity world aspect : missing world position " + p_entity->getId());
+					}
+					else
+					{
+						const transform::WorldPosition* entity_worldposition{ worldpositions_ptr_list.at(0)->getPurpose() };
+						drawing_control.world = entity_worldposition->global_pos;
+					}						
 				}
 				else
 				{
-					auto& entity_worldposition{ worldpositions_list.at(0)->getPurpose() };
+					const transform::WorldPosition entity_worldposition{ worldpositions_list.at(0)->getPurpose() };
 					drawing_control.world = entity_worldposition.global_pos;
 				}
 			}

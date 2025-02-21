@@ -177,7 +177,7 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 							for (const auto& drawing : linemeshe.second.drawing_list)
 							{
 								const auto drawing_id{ drawing.first };
-								_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t-> drawing : " + drawing_id);
+								_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t-> linemeshe drawing : " + drawing_id);
 
 								const auto drawing_body{ drawing.second };
 
@@ -219,7 +219,7 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 							for (const auto& drawing : trianglemeshe.second.drawing_list)
 							{
 								const auto drawing_id{ drawing.first };
-								_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t-> drawing : " + drawing_id);
+								_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t-> trianglemeshe drawing : " + drawing_id);
 
 								const auto drawing_body{ drawing.second };
 
@@ -266,7 +266,7 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 									for (const auto& drawing : textureSetPayload.drawing_list)
 									{
 										const auto drawing_id{ drawing.first };
-										_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t-> drawing : " + drawing_id);
+										_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t-> trianglemeshe drawing : " + drawing_id);
 
 										const auto drawing_body{ drawing.second };
 
@@ -785,6 +785,7 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 			const auto triangleMeshes{ p_resourceAspect.getComponentsByType<TriangleMeshe>() };
 
 			// search for triangleMeshe loaded from files
+
 			const auto fromFileTriangleMeshes{ p_resourceAspect.getComponentsByType<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>() };
 
 
@@ -1461,7 +1462,7 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								_EXCEPTION("Cannot update queue : no linemeshe or trianglemeshe provided with entity : " + p_entity_id)
 							}
 						}							
-					}					
+					}
 				}
 			}
 			p_renderingQueue.setQueueNodes(queueNodes);

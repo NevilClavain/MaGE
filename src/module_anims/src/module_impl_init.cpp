@@ -384,6 +384,61 @@ void ModuleImpl::d3d11_system_events()
 					constexpr double skydomeScaleDepth{ 0.25 };
 
 
+
+
+
+
+					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_0");
+					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_0", maths::Real4Vector(skydomeOuterRadius, skydomeInnerRadius, skydomeOuterRadius * skydomeOuterRadius, skydomeInnerRadius * skydomeInnerRadius));
+
+					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_1");
+					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_1", maths::Real4Vector(skydomeScaleDepth, 1.0 / skydomeScaleDepth, 1.0 / (skydomeOuterRadius - skydomeInnerRadius), (1.0 / (skydomeOuterRadius - skydomeInnerRadius)) / skydomeScaleDepth));
+
+					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_2");
+					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_2", maths::Real4Vector(1.0 / std::pow(skydomeWaveLength_x, 4.0), 1.0 / std::pow(skydomeWaveLength_y, 4.0), 1.0 / std::pow(skydomeWaveLength_z, 4.0), 0));
+
+					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_3");
+					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_3", maths::Real4Vector(skydomeKr, skydomeKm, 4.0 * skydomeKr * 3.1415927, 4.0 * skydomeKm * 3.1415927));
+
+					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_4");
+					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_4", maths::Real4Vector(skydomeSkyfromspace_ESun, skydomeSkyfromatmo_ESun, skydomeGroundfromspace_ESun, skydomeGroundfromatmo_ESun));
+
+					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_5");
+					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_5", maths::Real4Vector(0.0, 0.0, 0.0, 1));
+
+
+					///////////////////////////////////////////////////////////////////////////////////////////////////////////
+					// SCENEGRAPH
+
+					{
+						auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "ground_Entity") };
+						const auto entity{ entityNode.data() };
+
+						auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
+						entity->makeAspect(core::timeAspect::id);
+
+						world_aspect.addComponent<transform::WorldPosition>("position");
+
+						world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
+						(
+							{},
+							[=](const core::ComponentContainer& p_world_aspect,
+								const core::ComponentContainer& p_time_aspect,
+								const transform::WorldPosition&,
+								const std::unordered_map<std::string, std::string>&)
+							{
+
+								maths::Matrix positionmat;
+								positionmat.translation(0.0, skydomeInnerRadius + groundLevel, 0.0);
+
+								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+								wp.local_pos = wp.local_pos * positionmat;
+							}
+						));
+
+						m_groundEntity = entity;
+					}
+
 					/////////////// add camera with gimbal lock jointure ////////////////
 
 					auto& gblJointEntityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "gblJoint_Entity") };
@@ -418,29 +473,9 @@ void ModuleImpl::d3d11_system_events()
 					helpers::plugView(m_entitygraph, projection, "gblJoint_Entity", "camera_Entity");
 
 
-					//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-
-					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_0");
-					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_0", maths::Real4Vector(skydomeOuterRadius, skydomeInnerRadius, skydomeOuterRadius * skydomeOuterRadius, skydomeInnerRadius * skydomeInnerRadius));
-
-					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_1");
-					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_1", maths::Real4Vector(skydomeScaleDepth, 1.0 / skydomeScaleDepth, 1.0 / (skydomeOuterRadius - skydomeInnerRadius), (1.0 / (skydomeOuterRadius - skydomeInnerRadius)) / skydomeScaleDepth));
-
-					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_2");
-					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_2", maths::Real4Vector(1.0 / std::pow(skydomeWaveLength_x, 4.0), 1.0 / std::pow(skydomeWaveLength_y, 4.0), 1.0 / std::pow(skydomeWaveLength_z, 4.0), 0));
-
-					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_3");
-					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_3", maths::Real4Vector(skydomeKr, skydomeKm, 4.0 * skydomeKr * 3.1415927, 4.0 * skydomeKm * 3.1415927));
-
-					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_4");
-					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_4", maths::Real4Vector(skydomeSkyfromspace_ESun, skydomeSkyfromatmo_ESun, skydomeGroundfromspace_ESun, skydomeGroundfromatmo_ESun));
-
-					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_5");
-					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_5", maths::Real4Vector(0.0, 0.0, 0.0, 1));
-
+					///////////////////////////////////////////////////////////////////////////////////////////////////////////
+					// RENDERGRAPH
 
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -470,37 +505,45 @@ void ModuleImpl::d3d11_system_events()
 						const std::vector<RenderState> ground_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
 
 
-						const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> ground_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("grass08.jpg", Texture())) };
+						const std::vector<std::pair<size_t, std::pair<std::string, Texture>>> ground_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("grass08.jpg", Texture())) };
 
 
+						
+						const auto ground_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "ground_TexturesChannel_Proxy_Entity",
+																			"scene_recursive_texture_vs", "scene_recursive_texture_ps",
+																			ground_rs_list,
+																			1000,
+																			ground_textures) };
 
+						auto& proxy_resource_aspect{ ground_entity->aspectAccess(core::resourcesAspect::id) };
 
-						const auto ground_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "ground_TexturesChannel_Proxy_Entity",
+						proxy_resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("rect", "ground.ac"), TriangleMeshe()));
+
+																			
+						/*
+						const auto ground_entity{ helpers::plugMeshe(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "ground_TexturesChannel_Proxy_Entity",
 														"scene_recursive_texture_vs", "scene_recursive_texture_ps",
-														"ground.ac", "rect",													
+														"ground.ac", "rect",
 														ground_rs_list,
 														1000,
 														ground_textures
 														) };
+														*/
 						
-						auto& ground_world_aspect{ ground_entity->aspectAccess(core::worldAspect::id) };
+						
 
-						ground_world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
-						(
-							{},
-							[=](const core::ComponentContainer& p_world_aspect,
-								const core::ComponentContainer& p_time_aspect,
-								const transform::WorldPosition&,
-								const std::unordered_map<std::string, std::string>&)
-							{
+						
+						auto& ground_world_aspect{ m_groundEntity->aspectAccess(core::worldAspect::id) };
+						transform::WorldPosition* position_ref{ &ground_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+						
 
-								maths::Matrix positionmat;
-								positionmat.translation(0.0, skydomeInnerRadius + groundLevel, 0.0);
+						auto& proxy_world_aspect{ ground_entity->makeAspect(core::worldAspect::id) };
 
-								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-								wp.local_pos = wp.local_pos * positionmat;
-							}
-						));
+						proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
+						
+
+
+						
 
 						
 
@@ -531,7 +574,7 @@ void ModuleImpl::d3d11_system_events()
 
 
 
-						const auto clouds_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "clouds_TexturesChannel_Proxy_Entity",
+						const auto clouds_entity{ helpers::plugMeshe(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "clouds_TexturesChannel_Proxy_Entity",
 														"scene_flatclouds_vs", "scene_flatclouds_ps",
 														"flatclouds.ac", "rect",
 														clouds_rs_list,
@@ -576,7 +619,7 @@ void ModuleImpl::d3d11_system_events()
 						const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
 
 
-						const auto tree_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "tree_TexturesChannel_Proxy_Entity",
+						const auto tree_entity{ helpers::plugMeshe(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "tree_TexturesChannel_Proxy_Entity",
 														"scene_texture1stage_keycolor_vs", "scene_texture1stage_keycolor_ps",
 														"tree0.ac", "Plane.001",
 														tree_rs_list,
@@ -625,7 +668,7 @@ void ModuleImpl::d3d11_system_events()
 						const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> raptor_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("raptorDif2.png", Texture())) };
 
 
-						const auto raptor_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "raptor_TexturesChannel_Proxy_Entity",
+						const auto raptor_entity{ helpers::plugMeshe(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "raptor_TexturesChannel_Proxy_Entity",
 														"scene_texture1stage_skinning_vs", "scene_texture1stage_skinning_ps",
 														"raptor.fbx", "raptorMesh",
 														raptor_rs_list,
@@ -697,7 +740,7 @@ void ModuleImpl::d3d11_system_events()
 																		};
 						
 
-						const auto skydome_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "skydome_TexturesChannel_Proxy_Entity",
+						const auto skydome_entity{ helpers::plugMeshe(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "skydome_TexturesChannel_Proxy_Entity",
 														"skydome_vs", "skydome_ps",
 														"skydome.ac", "sphere",
 														skydome_rs_list, 900) };

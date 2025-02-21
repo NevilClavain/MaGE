@@ -197,7 +197,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
 		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
 
-		renderingQueueSystemInstance->requestRenderingqueueLogging("bufferRenderingEntity");
+		renderingQueueSystemInstance->requestRenderingqueueLogging("bufferRendering_Scene_TexturesChannel_Entity");
 	}
 
 	else if (VK_F9 == p_key)

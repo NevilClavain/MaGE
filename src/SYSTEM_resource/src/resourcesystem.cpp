@@ -75,22 +75,7 @@ m_localLoggerRunner("ResourceSystemRunner", mage::core::logger::Configuration::g
 		{
 			if (mage::core::RunnerEvent::TASK_ERROR == p_event)
 			{
-				if ("load_shader" == p_action_descr)
-				{
-					// rethrow in current thread
-					_EXCEPTION(std::string("failed action ") + p_action_descr + " on target " + p_target_descr );
-				}
-				if ("load_texture" == p_action_descr)
-				{
-					// rethrow in current thread
-					_EXCEPTION(std::string("failed action ") + p_action_descr + " on target " + p_target_descr);
-				}
-				if ("load_meshe" == p_action_descr)
-				{
-					// rethrow in current thread
-					_EXCEPTION(std::string("failed action ") + p_action_descr + " on target " + p_target_descr);
-				}
-
+				_EXCEPTION(std::string("failed action ") + p_action_descr + " on target " + p_target_descr);
 			}
 			else if (mage::core::RunnerEvent::TASK_DONE == p_event)
 			{
