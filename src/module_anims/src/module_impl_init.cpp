@@ -417,6 +417,9 @@ void ModuleImpl::d3d11_system_events()
 						auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
 						entity->makeAspect(core::timeAspect::id);
 
+						auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
+						resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("rect", "ground.ac"), TriangleMeshe()));
+
 						world_aspect.addComponent<transform::WorldPosition>("position");
 
 						world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
@@ -478,9 +481,6 @@ void ModuleImpl::d3d11_system_events()
 					// RENDERGRAPH
 
 
-					///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 					// textures channels rendering queue
 					rendering::Queue texturesChannelsRenderingQueue("textures_channel_queue");
 					texturesChannelsRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
@@ -517,36 +517,13 @@ void ModuleImpl::d3d11_system_events()
 
 						auto& proxy_resource_aspect{ ground_entity->aspectAccess(core::resourcesAspect::id) };
 
-						proxy_resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("rect", "ground.ac"), TriangleMeshe()));
-
-																			
-						/*
-						const auto ground_entity{ helpers::plugMeshe(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "ground_TexturesChannel_Proxy_Entity",
-														"scene_recursive_texture_vs", "scene_recursive_texture_ps",
-														"ground.ac", "rect",
-														ground_rs_list,
-														1000,
-														ground_textures
-														) };
-														*/
-						
-						
-
+						proxy_resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("rect", "ground.ac"), TriangleMeshe()));				
 						
 						auto& ground_world_aspect{ m_groundEntity->aspectAccess(core::worldAspect::id) };
-						transform::WorldPosition* position_ref{ &ground_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-						
-
+						transform::WorldPosition* position_ref{ &ground_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };					
 						auto& proxy_world_aspect{ ground_entity->makeAspect(core::worldAspect::id) };
-
 						proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
 						
-
-
-						
-
-						
-
 					}
 
 
