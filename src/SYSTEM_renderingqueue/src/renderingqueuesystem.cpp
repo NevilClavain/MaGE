@@ -779,7 +779,24 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 			auto queueNodes{ p_renderingQueue.getQueueNodes() };
 
 			// search for lineMeshe
-			const auto lineMeshes{ p_resourceAspect.getComponentsByType<LineMeshe>() };
+			LineMeshe* line_meshe_ref{ nullptr };
+			{
+				const auto lineMeshes{ p_resourceAspect.getComponentsByType<LineMeshe>() };
+
+				if (lineMeshes.size() > 0)
+				{
+					line_meshe_ref = &lineMeshes.at(0)->getPurpose();
+				}
+				else
+				{
+					const auto lineMeshesRef{ p_resourceAspect.getComponentsByType<LineMeshe*>() };
+
+					if (lineMeshesRef.size() > 0)
+					{
+						line_meshe_ref = lineMeshesRef.at(0)->getPurpose();
+					}
+				}
+			}
 
 			// search for plain triangleMeshe
 			TriangleMeshe* triangle_meshe_ref{ nullptr };
@@ -883,9 +900,9 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 
 					//////////////////////////////// check meshes are D3D11 ready
 
-					if (lineMeshes.size() > 0)
+					if (line_meshe_ref)
 					{
-						if (LineMeshe::State::RENDERERLOADED != lineMeshes.at(0)->getPurpose().getState())
+						if (LineMeshe::State::RENDERERLOADED != line_meshe_ref->getState())
 						{
 							resources_D3D11ready = false;
 						}
@@ -922,7 +939,7 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 						}
 					}
 
-					if (resources_D3D11ready && rsStates.size() > 0 && (lineMeshes.size() > 0 || triangle_meshe_ref || file_triangle_meshe_ref))
+					if (resources_D3D11ready && rsStates.size() > 0 && (line_meshe_ref || triangle_meshe_ref || file_triangle_meshe_ref))
 					{
 						// ok, can update queue
 						
@@ -963,17 +980,17 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 
 									auto& renderStatePayload{ pixelShaderPayload.list.at(rs_list_id) };
 
-									if (lineMeshes.size() > 0)
+									if (line_meshe_ref)
 									{											
-										if (renderStatePayload.linemeshes_list.count(lineMeshes.at(0)->getPurpose().getResourceUID()))
+										if (renderStatePayload.linemeshes_list.count(line_meshe_ref->getResourceUID()))
 										{
 											// linemeshe entry exists
 
 											_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
 												+ " updated with new entity : " + p_entity_id
-												+ " : adding under existing linemeshe branch : " + lineMeshes.at(0)->getPurpose().getResourceUID())
+												+ " : adding under existing linemeshe branch : " + line_meshe_ref->getResourceUID())
 									
-											auto& lineMeshePayload{ renderStatePayload.linemeshes_list.at(lineMeshes.at(0)->getPurpose().getResourceUID())};
+											auto& lineMeshePayload{ renderStatePayload.linemeshes_list.at(line_meshe_ref->getResourceUID())};
 
 											for (const auto& dc : drawingControls)
 											{
@@ -1012,10 +1029,10 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 
 											_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
 												+ " updated with new entity : " + p_entity_id
-												+ " : adding new linemeshe branch : " + lineMeshes.at(0)->getPurpose().getResourceUID())
+												+ " : adding new linemeshe branch : " + line_meshe_ref->getResourceUID())
 
 											const auto lineMeshePayload{ build_LineMeshePayload(m_callbacks, m_localLogger, drawingControls, vshader, pshader) };
-											renderStatePayload.linemeshes_list[lineMeshes.at(0)->getPurpose().getResourceUID()] = lineMeshePayload;
+											renderStatePayload.linemeshes_list[line_meshe_ref->getResourceUID()] = lineMeshePayload;
 										}
 									}
 									else if (triangle_meshe_ref)
@@ -1350,10 +1367,10 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 									rendering::Queue::RenderStatePayload renderStatePayload;
 									bool renderStatePayloadSet{ false };
 
-									if (lineMeshes.size() > 0)
+									if (line_meshe_ref)
 									{											
 										const auto lineMeshePayload{ build_LineMeshePayload(m_callbacks, m_localLogger, drawingControls, vshader, pshader) };
-										renderStatePayload = build_RenderStatePayloadWithLineMeshePayload(m_localLogger, lineMeshes.at(0)->getPurpose().getResourceUID(), lineMeshePayload, rsStates.at(0)->getPurpose());
+										renderStatePayload = build_RenderStatePayloadWithLineMeshePayload(m_localLogger, line_meshe_ref->getResourceUID(), lineMeshePayload, rsStates.at(0)->getPurpose());
 
 										renderStatePayloadSet = true;
 									}
@@ -1393,13 +1410,12 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								rendering::Queue::RenderStatePayload renderStatePayload;
 								bool renderStatePayloadSet{ false };
 
-								if (lineMeshes.size() > 0)
+								if (line_meshe_ref)
 								{
 									const auto lineMeshePayload{ build_LineMeshePayload(m_callbacks, m_localLogger, drawingControls, vshader, pshader) };
 
-									// consider only one mage::LineMeshe per entity -> lineMeshes.at(0)
 									// consider only one std::vector<RenderState> per entity -> rsStates.at(0)
-									renderStatePayload = build_RenderStatePayloadWithLineMeshePayload(m_localLogger, lineMeshes.at(0)->getPurpose().getResourceUID(), lineMeshePayload, rsStates.at(0)->getPurpose());
+									renderStatePayload = build_RenderStatePayloadWithLineMeshePayload(m_localLogger, line_meshe_ref->getResourceUID(), lineMeshePayload, rsStates.at(0)->getPurpose());
 
 									renderStatePayloadSet = true;
 								}
@@ -1445,13 +1461,12 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 							rendering::Queue::RenderStatePayload renderStatePayload;
 							bool renderStatePayloadSet{ false };
 
-							if (lineMeshes.size() > 0)
+							if (line_meshe_ref)
 							{
 								const auto lineMeshePayload{ build_LineMeshePayload(m_callbacks, m_localLogger, drawingControls, vshader, pshader) };
 
-								// consider only one mage::LineMeshe per entity -> lineMeshes.at(0)
 								// consider only one std::vector<RenderState> per entity -> rsStates.at(0)
-								renderStatePayload = build_RenderStatePayloadWithLineMeshePayload(m_localLogger, lineMeshes.at(0)->getPurpose().getResourceUID(), lineMeshePayload, rsStates.at(0)->getPurpose());
+								renderStatePayload = build_RenderStatePayloadWithLineMeshePayload(m_localLogger, line_meshe_ref->getResourceUID(), lineMeshePayload, rsStates.at(0)->getPurpose());
 
 								renderStatePayloadSet = true;
 							}
