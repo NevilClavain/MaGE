@@ -101,6 +101,7 @@ private:
     mage::rendering::Queue*                                     m_texturesChannelRenderingQueue{ nullptr };
 
     mage::core::Entity*                                         m_groundEntity{ nullptr };
+    mage::core::Entity*                                         m_cloudsEntity{ nullptr };
 
     std::unordered_map<std::string, mage::AnimationKeys>        m_raptor_animations;
 

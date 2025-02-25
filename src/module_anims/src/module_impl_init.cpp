@@ -417,11 +417,7 @@ void ModuleImpl::d3d11_system_events()
 						auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
 						entity->makeAspect(core::timeAspect::id);
 
-						auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
-						resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("rect", "ground.ac"), TriangleMeshe()));
-
 						world_aspect.addComponent<transform::WorldPosition>("position");
-
 						world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
 						(
 							{},
@@ -439,7 +435,43 @@ void ModuleImpl::d3d11_system_events()
 							}
 						));
 
+						auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
+						resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("rect", "ground.ac"), TriangleMeshe()));
+
 						m_groundEntity = entity;
+					}
+
+					////////////////////////////////
+
+					{
+						auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "clouds_Entity") };
+						const auto entity{ entityNode.data() };
+
+						auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
+						entity->makeAspect(core::timeAspect::id);
+
+						world_aspect.addComponent<transform::WorldPosition>("position");
+						world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
+						(
+							{},
+							[=](const core::ComponentContainer& p_world_aspect,
+								const core::ComponentContainer& p_time_aspect,
+								const transform::WorldPosition&,
+								const std::unordered_map<std::string, std::string>&)
+							{
+
+								maths::Matrix positionmat;
+								positionmat.translation(0.0, skydomeInnerRadius + groundLevel + 400, 0.0);
+
+								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+								wp.local_pos = wp.local_pos * positionmat;
+							}
+						));
+
+						auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
+						resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("rect", "flatclouds.ac"), TriangleMeshe()));
+
+						m_cloudsEntity = entity;
 					}
 
 					/////////////// add camera with gimbal lock jointure ////////////////
@@ -495,7 +527,6 @@ void ModuleImpl::d3d11_system_events()
 
 					///////////////	add ground
 
-
 					{
 						RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
 						RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
@@ -511,7 +542,7 @@ void ModuleImpl::d3d11_system_events()
 
 
 						
-						const auto ground_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "ground_TexturesChannel_Proxy_Entity",
+						const auto ground_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "ground_TexturesChannel_Proxy_Entity",
 																			"scene_recursive_texture_vs", "scene_recursive_texture_ps",
 																			ground_rs_list,
 																			1000,
@@ -524,17 +555,17 @@ void ModuleImpl::d3d11_system_events()
 						auto& ground_resource_aspect{ m_groundEntity->aspectAccess(core::resourcesAspect::id) };
 						std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &ground_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
 
-						auto& proxy_resource_aspect{ ground_entity->aspectAccess(core::resourcesAspect::id) };					
+						auto& proxy_resource_aspect{ ground_proxy_entity->aspectAccess(core::resourcesAspect::id) };
 						proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
 						
 						
 						///////////////////////////////////////////////////////////////////////
 						
-						// link trnasforms to related entity in scenegraph side 
+						// link transforms to related entity in scenegraph side 
 						auto& ground_world_aspect{ m_groundEntity->aspectAccess(core::worldAspect::id) };
 						transform::WorldPosition* position_ref{ &ground_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
 
-						auto& proxy_world_aspect{ ground_entity->makeAspect(core::worldAspect::id) };
+						auto& proxy_world_aspect{ ground_proxy_entity->makeAspect(core::worldAspect::id) };
 						proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
 						
 					}
@@ -554,43 +585,35 @@ void ModuleImpl::d3d11_system_events()
 						RenderState rs_alphablenddest(RenderState::Operation::ALPHABLENDDEST, "invsrcalpha");
 						RenderState rs_alphablendsrc(RenderState::Operation::ALPHABLENDSRC, "srcalpha");
 
-						const std::vector<RenderState> clouds_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, 
+						const std::vector<RenderState> clouds_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling,
 																			rs_alphablend, rs_alphablendop, rs_alphablendfunc, rs_alphablenddest, rs_alphablendsrc
 																		};
 
+						const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> clouds_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("flatclouds.jpg", Texture())) };
 
-						const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> ground_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("flatclouds.jpg", Texture())) };
+						const auto clouds_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "clouds_TexturesChannel_Proxy_Entity",
+																			"scene_flatclouds_vs", "scene_flatclouds_ps",
+																			clouds_rs_list,
+																			999,
+																			clouds_textures) };
 
+						//////////////////////////////////////////////////////////////////////
 
+						// link triangle meshe to related entity in scenegraph side 
+						auto& clouds_resource_aspect{ m_cloudsEntity->aspectAccess(core::resourcesAspect::id) };
+						std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &clouds_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
 
+						auto& proxy_resource_aspect{ clouds_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+						proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
 
-						const auto clouds_entity{ helpers::plugMeshe(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "clouds_TexturesChannel_Proxy_Entity",
-														"scene_flatclouds_vs", "scene_flatclouds_ps",
-														"flatclouds.ac", "rect",
-														clouds_rs_list,
-														999,
-														ground_textures
-														) };
+						//////////////////////////////////////////////////////////////////////
 
-						auto& clouds_world_aspect{ clouds_entity->aspectAccess(core::worldAspect::id) };
+						// link transforms to related entity in scenegraph side 
+						auto& clouds_world_aspect{ m_cloudsEntity->aspectAccess(core::worldAspect::id) };
+						transform::WorldPosition* position_ref{ &clouds_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
 
-						clouds_world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
-						(
-							{},
-							[=](const core::ComponentContainer& p_world_aspect,
-								const core::ComponentContainer& p_time_aspect,
-								const transform::WorldPosition&,
-								const std::unordered_map<std::string, std::string>&)
-							{
-
-								maths::Matrix positionmat;
-								positionmat.translation(0.0, skydomeInnerRadius + groundLevel + 400, 0.0);
-
-								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-								wp.local_pos = wp.local_pos * positionmat;
-							}
-						));
-
+						auto& proxy_world_aspect{ clouds_proxy_entity->makeAspect(core::worldAspect::id) };
+						proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
 
 					}
 
