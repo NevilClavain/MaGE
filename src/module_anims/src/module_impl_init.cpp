@@ -192,7 +192,10 @@ void ModuleImpl::animation_system_events()
 					break;
 
 				case AnimationSystemEvent::ANIMATION_END:
-					choose_animation();
+
+					// temporary disabled
+					//choose_animation();
+
 					break;
 			}
 		}
@@ -247,6 +250,8 @@ void ModuleImpl::resource_system_events()
 					_MAGE_DEBUG(eventsLogger, "RECV EVENT -> RESOURCE_MESHE_LOAD_SUCCESS : " + p_resourceName);
 					dataCloud->updateDataValue<std::string>("resources_event", "Meshe loaded :" + p_resourceName);
 
+					// temporary disabled
+					/*
 					if ("raptor.fbx" == p_resourceName)
 					{
 						const auto raptor_entity{ m_entitygraph.node("raptor_TexturesChannel_Proxy_Entity").data() };
@@ -263,6 +268,7 @@ void ModuleImpl::resource_system_events()
 
 						choose_animation();						
 					}
+					*/
 					break;
 			}
 		}
@@ -507,6 +513,46 @@ void ModuleImpl::d3d11_system_events()
 						m_treeEntity = entity;
 					}
 
+					////////////////////////////////
+
+					{
+						auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "raptor_Entity") };
+						const auto entity{ entityNode.data() };
+
+						auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
+						entity->makeAspect(core::timeAspect::id);
+
+						world_aspect.addComponent<transform::WorldPosition>("position");
+
+						world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
+						(
+							{},
+							[=](const core::ComponentContainer& p_world_aspect,
+								const core::ComponentContainer& p_time_aspect,
+								const transform::WorldPosition&,
+								const std::unordered_map<std::string, std::string>&)
+							{
+
+								maths::Matrix positionmat;
+								positionmat.translation(-40.0, skydomeInnerRadius + groundLevel, -30.0);
+
+								maths::Matrix scalemat;
+								scalemat.scale(0.03, 0.03, 0.03);
+
+
+								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+								wp.local_pos = /* wp.local_pos * */ scalemat * positionmat;
+							}
+						));
+
+						auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
+						resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("raptorMesh", "raptor.fbx"), TriangleMeshe()));
+
+						
+
+						m_raptorEntity = entity;
+					}
+
 					/////////////// add camera with gimbal lock jointure ////////////////
 
 					auto& gblJointEntityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "gblJoint_Entity") };
@@ -711,7 +757,55 @@ void ModuleImpl::d3d11_system_events()
 
 						const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> raptor_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("raptorDif2.png", Texture())) };
 
+						const auto raptor_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "raptor_TexturesChannel_Proxy_Entity",
+																			"scene_texture1stage_keycolor_vs", "scene_texture1stage_keycolor_ps",
+																			raptor_rs_list,
+																			1000,
+																			raptor_textures) };
 
+
+						//////////////////////////////////////////////////////////////////////
+
+						// link triangle meshe to related entity in scenegraph side 
+						auto& raptor_resource_aspect{ m_raptorEntity->aspectAccess(core::resourcesAspect::id) };
+						std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &raptor_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
+
+						auto& proxy_resource_aspect{ raptor_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+						proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
+
+						////////////////////////////////////////////////////////////////////////
+
+						auto& raptor_world_aspect{ m_raptorEntity->aspectAccess(core::worldAspect::id) };
+						transform::WorldPosition* position_ref{ &raptor_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+
+						auto& proxy_world_aspect{ raptor_proxy_entity->makeAspect(core::worldAspect::id) };
+						proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
+
+
+
+
+						auto& raptor_animations_aspect{ raptor_proxy_entity->makeAspect(core::animationsAspect::id) };
+						raptor_animations_aspect.addComponent<int>("eg.std.animationbonesArrayArgIndex", 0);
+
+
+						raptor_animations_aspect.addComponent<std::list<std::string>>("eg.std.animationsIdList");
+						raptor_animations_aspect.addComponent<std::list<std::pair<std::string, AnimationKeys>>>("eg.std.animationsList");
+
+						raptor_animations_aspect.addComponent<core::TimeMark>("eg.std.animationsTimeMark", TimeControl::getInstance()->buildTimeMark());
+
+						raptor_animations_aspect.addComponent<std::string>("eg.std.currentAnimationId");
+						raptor_animations_aspect.addComponent<AnimationKeys>("eg.std.currentAnimation");
+
+
+						raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationTicksDuration");
+						raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationSecondsDuration");
+
+						raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationTicksProgress");
+						raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationSecondsProgress");
+
+
+						/*
+						
 						const auto raptor_entity{ helpers::plugMeshe(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "raptor_TexturesChannel_Proxy_Entity",
 														"scene_texture1stage_skinning_vs", "scene_texture1stage_skinning_ps",
 														"raptor.fbx", "raptorMesh",
@@ -739,7 +833,7 @@ void ModuleImpl::d3d11_system_events()
 
 
 								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-								wp.local_pos = /* wp.local_pos * */ scalemat * positionmat;
+								wp.local_pos = scalemat * positionmat;
 							}
 						));
 
@@ -761,6 +855,10 @@ void ModuleImpl::d3d11_system_events()
 
 						raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationTicksProgress");
 						raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationSecondsProgress");
+
+						*/
+
+						
 					}
 
 
