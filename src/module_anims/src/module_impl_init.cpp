@@ -474,6 +474,39 @@ void ModuleImpl::d3d11_system_events()
 						m_cloudsEntity = entity;
 					}
 
+					////////////////////////////////
+
+					{
+						auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "tree_Entity") };
+						const auto entity{ entityNode.data() };
+
+						auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
+						entity->makeAspect(core::timeAspect::id);
+
+						world_aspect.addComponent<transform::WorldPosition>("position");
+						world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
+						(
+							{},
+							[=](const core::ComponentContainer& p_world_aspect,
+								const core::ComponentContainer& p_time_aspect,
+								const transform::WorldPosition&,
+								const std::unordered_map<std::string, std::string>&)
+							{
+
+								maths::Matrix positionmat;
+								positionmat.translation(0.0, skydomeInnerRadius + groundLevel, -30.0);
+
+								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+								wp.local_pos = wp.local_pos * positionmat;
+							}
+						));
+
+						auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
+						resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("Plane.001", "tree0.ac"), TriangleMeshe()));
+					
+						m_treeEntity = entity;
+					}
+
 					/////////////// add camera with gimbal lock jointure ////////////////
 
 					auto& gblJointEntityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "gblJoint_Entity") };
@@ -631,37 +664,35 @@ void ModuleImpl::d3d11_system_events()
 
 						const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
 
+						const auto tree_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "tree_TexturesChannel_Proxy_Entity",
+																			"scene_texture1stage_keycolor_vs", "scene_texture1stage_keycolor_ps",
+																			tree_rs_list,
+																			1000,
+																			tree_textures) };
 
-						const auto tree_entity{ helpers::plugMeshe(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "tree_TexturesChannel_Proxy_Entity",
-														"scene_texture1stage_keycolor_vs", "scene_texture1stage_keycolor_ps",
-														"tree0.ac", "Plane.001",
-														tree_rs_list,
-														1000,
-														tree_textures														
-														) };
+						//////////////////////////////////////////////////////////////////////
 
-						auto& tree_world_aspect{ tree_entity->aspectAccess(core::worldAspect::id) };
+						// link triangle meshe to related entity in scenegraph side 
+						auto& tree_resource_aspect{ m_treeEntity->aspectAccess(core::resourcesAspect::id) };
+						std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &tree_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
 
-						tree_world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
-						(
-							{},
-							[=](const core::ComponentContainer& p_world_aspect,
-								const core::ComponentContainer& p_time_aspect,
-								const transform::WorldPosition&,
-								const std::unordered_map<std::string, std::string>&)
-							{
+						auto& proxy_resource_aspect{ tree_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+						proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
 
-								maths::Matrix positionmat;
-								positionmat.translation(0.0, skydomeInnerRadius + groundLevel, -30.0);
+						//////////////////////////////////////////////////////////////////////
 
-								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-								wp.local_pos = wp.local_pos * positionmat;
-							}
-						));
+						// link transforms to related entity in scenegraph side 
+						auto& tree_world_aspect{ m_treeEntity->aspectAccess(core::worldAspect::id) };
+						transform::WorldPosition* position_ref{ &tree_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
 
-						auto& tree_rendering_aspect{ tree_entity->aspectAccess(core::renderingAspect::id) };
+						auto& proxy_world_aspect{ tree_proxy_entity->makeAspect(core::worldAspect::id) };
+						proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
 
-						rendering::DrawingControl& drawingControl { tree_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+						////////////////////////////////////////////////////////////////////////
+
+						auto& tree_rendering_aspect{ tree_proxy_entity->aspectAccess(core::renderingAspect::id) };
+
+						rendering::DrawingControl& drawingControl{ tree_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
 						drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
 
 					}

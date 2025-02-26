@@ -102,6 +102,7 @@ private:
 
     mage::core::Entity*                                         m_groundEntity{ nullptr };
     mage::core::Entity*                                         m_cloudsEntity{ nullptr };
+    mage::core::Entity*                                         m_treeEntity{ nullptr };
 
     std::unordered_map<std::string, mage::AnimationKeys>        m_raptor_animations;
 
