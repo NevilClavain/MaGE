@@ -54,9 +54,9 @@ void ModuleImpl::run(void)
 	/////////////////////////////////////////////////////
 
 	auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-
+	
 	{
-		const auto raptorEntity{ m_entitygraph.node("raptor_TexturesChannel_Proxy_Entity").data() };
+		const auto raptorEntity{ m_raptorEntity };
 		const auto& animations_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
 
 		const auto currentAnimationId{ animations_aspect.getComponent<std::string>("eg.std.currentAnimationId")->getPurpose() };
@@ -75,5 +75,5 @@ void ModuleImpl::run(void)
 		dataCloud->updateDataValue<double>("current_animation.seconds_duration", currentAnimationSecondsDuration);
 		dataCloud->updateDataValue<double>("current_animation.seconds_progress", currentAnimationSecondsProgress);
 	}
-
+	
 }
