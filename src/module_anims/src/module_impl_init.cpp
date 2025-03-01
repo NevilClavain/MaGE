@@ -506,6 +506,42 @@ void ModuleImpl::d3d11_system_events()
 					////////////////////////////////
 
 					{
+						auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "skydome_Entity") };
+						const auto entity{ entityNode.data() };
+
+						auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
+						entity->makeAspect(core::timeAspect::id);
+
+						world_aspect.addComponent<transform::WorldPosition>("position");
+						world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
+						(
+							{},
+							[=](const core::ComponentContainer& p_world_aspect,
+								const core::ComponentContainer& p_time_aspect,
+								const transform::WorldPosition&,
+								const std::unordered_map<std::string, std::string>&)
+							{
+
+								maths::Matrix positionmat;
+								positionmat.translation(0.0, 0.0, 0.0);
+
+								maths::Matrix scalingmat;
+								scalingmat.scale(skydomeOuterRadius, skydomeOuterRadius, skydomeOuterRadius);
+
+								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+								wp.local_pos = wp.local_pos * scalingmat * positionmat;
+							}
+						));
+
+						auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
+						resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("sphere", "skydome.ac"), TriangleMeshe()));
+
+						m_skydomeEntity = entity;
+					}
+
+					////////////////////////////////
+
+					{
 						auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "raptor_Entity") };
 						const auto entity{ entityNode.data() };
 
@@ -659,6 +695,7 @@ void ModuleImpl::d3d11_system_events()
 					/////////////////// add clouds
 
 					{
+						
 						RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
 						RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "false");
 						RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
@@ -699,7 +736,7 @@ void ModuleImpl::d3d11_system_events()
 
 						auto& proxy_world_aspect{ clouds_proxy_entity->makeAspect(core::worldAspect::id) };
 						proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
+						
 					}
 
 					///// add tree
@@ -814,44 +851,41 @@ void ModuleImpl::d3d11_system_events()
 						RenderState rs_alphablendfunc(RenderState::Operation::ALPHABLENDFUNC, "always");
 						RenderState rs_alphablenddest(RenderState::Operation::ALPHABLENDDEST, "invsrcalpha");
 						RenderState rs_alphablendsrc(RenderState::Operation::ALPHABLENDSRC, "srcalpha");
-						
+
 						const std::vector<RenderState> skydome_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling,
 																			rs_alphablend, rs_alphablendop, rs_alphablendfunc, rs_alphablenddest, rs_alphablendsrc
-																		};
-						
-
-						const auto skydome_entity{ helpers::plugMeshe(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "skydome_TexturesChannel_Proxy_Entity",
-														"skydome_vs", "skydome_ps",
-														"skydome.ac", "sphere",
-														skydome_rs_list, 900) };
+																			};
 
 
-						auto& skydome_world_aspect{ skydome_entity->aspectAccess(core::worldAspect::id) };
+						const auto skydome_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Entity", "skydome_TexturesChannel_Proxy_Entity",
+													"skydome_vs", "skydome_ps",
+													skydome_rs_list,
+													900
+													) };
 
-						skydome_world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
-						(
-							{},
-							[=](const core::ComponentContainer& p_world_aspect,
-								const core::ComponentContainer& p_time_aspect,
-								const transform::WorldPosition&,
-								const std::unordered_map<std::string, std::string>&)
-							{
+						//////////////////////////////////////////////////////////////////////
 
-								maths::Matrix positionmat;
-								positionmat.translation(0.0, 0.0, 0.0);
+						// link triangle meshe to related entity in scenegraph side 
+						auto& skydome_resource_aspect{ m_skydomeEntity->aspectAccess(core::resourcesAspect::id) };
+						std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &skydome_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
 
-								maths::Matrix scalingmat;
-								scalingmat.scale(skydomeOuterRadius, skydomeOuterRadius, skydomeOuterRadius);
+						auto& proxy_resource_aspect{ skydome_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+						proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
 
-								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-								wp.local_pos = wp.local_pos * scalingmat * positionmat;
-							}
-						));
+						////////////////////////////////////////////////////////////////////////
 
-						auto& skydom_rendering_aspect{ skydome_entity->aspectAccess(core::renderingAspect::id) };
+						auto& skydome_world_aspect{ m_skydomeEntity->aspectAccess(core::worldAspect::id) };
+						transform::WorldPosition* position_ref{ &skydome_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+
+						auto& proxy_world_aspect{ skydome_proxy_entity->makeAspect(core::worldAspect::id) };
+						proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
+
+						////////////////////////////////////////////////////////////////////////
+
+						auto& skydom_rendering_aspect{ skydome_proxy_entity->aspectAccess(core::renderingAspect::id) };
 
 						rendering::DrawingControl& drawingControl{ skydom_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-						
+
 						drawingControl.pshaders_map.push_back(std::make_pair("std.light0_dir", "light0_dir"));
 						drawingControl.pshaders_map.push_back(std::make_pair("skydome_ps.atmo_scattering_flag_0", "atmo_scattering_flag_0"));
 						drawingControl.pshaders_map.push_back(std::make_pair("skydome_ps.atmo_scattering_flag_1", "atmo_scattering_flag_1"));
@@ -859,7 +893,6 @@ void ModuleImpl::d3d11_system_events()
 						drawingControl.pshaders_map.push_back(std::make_pair("skydome_ps.atmo_scattering_flag_3", "atmo_scattering_flag_3"));
 						drawingControl.pshaders_map.push_back(std::make_pair("skydome_ps.atmo_scattering_flag_4", "atmo_scattering_flag_4"));
 						drawingControl.pshaders_map.push_back(std::make_pair("skydome_ps.atmo_scattering_flag_5", "atmo_scattering_flag_5"));
-
 					}
 
 					{
