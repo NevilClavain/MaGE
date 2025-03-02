@@ -361,23 +361,6 @@ void ModuleImpl::d3d11_system_events()
 					dataCloud->updateDataValue<maths::Real4Vector>("std.fog_density", maths::Real4Vector(0.009, 0, 0, 0));
 
 
-					constexpr double groundLevel{ 0 };
-
-					constexpr double skydomeSkyfromspace_ESun{ 8.7 };
-					constexpr double skydomeSkyfromatmo_ESun{ 70.0 };
-					constexpr double skydomeGroundfromspace_ESun{ 24.0 };
-					constexpr double skydomeGroundfromatmo_ESun{ 12.0 };
-
-					constexpr double skydomeAtmoThickness{ 1600.0 };
-					constexpr double skydomeOuterRadius{ 70000.0 };
-					constexpr double skydomeInnerRadius{ skydomeOuterRadius - skydomeAtmoThickness };
-
-					constexpr double skydomeWaveLength_x{ 0.650 };
-					constexpr double skydomeWaveLength_y{ 0.570 };
-					constexpr double skydomeWaveLength_z{ 0.475 };
-					constexpr double skydomeKm{ 0.0010 };
-					constexpr double skydomeKr{ 0.0033 };
-					constexpr double skydomeScaleDepth{ 0.25 };
 
 
 
@@ -406,231 +389,7 @@ void ModuleImpl::d3d11_system_events()
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// SCENEGRAPH
 
-					{
-						auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "ground_Entity") };
-						const auto entity{ entityNode.data() };
-
-						auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
-						entity->makeAspect(core::timeAspect::id);
-
-						world_aspect.addComponent<transform::WorldPosition>("position");
-						world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
-						(
-							{},
-							[=](const core::ComponentContainer& p_world_aspect,
-								const core::ComponentContainer& p_time_aspect,
-								const transform::WorldPosition&,
-								const std::unordered_map<std::string, std::string>&)
-							{
-
-								maths::Matrix positionmat;
-								positionmat.translation(0.0, skydomeInnerRadius + groundLevel, 0.0);
-
-								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-								wp.local_pos = wp.local_pos * positionmat;
-							}
-						));
-
-						auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
-						resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("rect", "ground.ac"), TriangleMeshe()));
-
-						m_groundEntity = entity;
-					}
-
-					////////////////////////////////
-
-					{
-						auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "clouds_Entity") };
-						const auto entity{ entityNode.data() };
-
-						auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
-						entity->makeAspect(core::timeAspect::id);
-
-						world_aspect.addComponent<transform::WorldPosition>("position");
-						world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
-						(
-							{},
-							[=](const core::ComponentContainer& p_world_aspect,
-								const core::ComponentContainer& p_time_aspect,
-								const transform::WorldPosition&,
-								const std::unordered_map<std::string, std::string>&)
-							{
-
-								maths::Matrix positionmat;
-								positionmat.translation(0.0, skydomeInnerRadius + groundLevel + 400, 0.0);
-
-								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-								wp.local_pos = wp.local_pos * positionmat;
-							}
-						));
-
-						auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
-						resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("rect", "flatclouds.ac"), TriangleMeshe()));
-
-						m_cloudsEntity = entity;
-					}
-
-					////////////////////////////////
-
-					{
-						auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "tree_Entity") };
-						const auto entity{ entityNode.data() };
-
-						auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
-						entity->makeAspect(core::timeAspect::id);
-
-						world_aspect.addComponent<transform::WorldPosition>("position");
-						world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
-						(
-							{},
-							[=](const core::ComponentContainer& p_world_aspect,
-								const core::ComponentContainer& p_time_aspect,
-								const transform::WorldPosition&,
-								const std::unordered_map<std::string, std::string>&)
-							{
-
-								maths::Matrix positionmat;
-								positionmat.translation(0.0, skydomeInnerRadius + groundLevel, -30.0);
-
-								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-								wp.local_pos = wp.local_pos * positionmat;
-							}
-						));
-
-						auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
-						resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("Plane.001", "tree0.ac"), TriangleMeshe()));
-					
-						m_treeEntity = entity;
-					}
-
-					////////////////////////////////
-
-					{
-						auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "skydome_Entity") };
-						const auto entity{ entityNode.data() };
-
-						auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
-						entity->makeAspect(core::timeAspect::id);
-
-						world_aspect.addComponent<transform::WorldPosition>("position");
-						world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
-						(
-							{},
-							[=](const core::ComponentContainer& p_world_aspect,
-								const core::ComponentContainer& p_time_aspect,
-								const transform::WorldPosition&,
-								const std::unordered_map<std::string, std::string>&)
-							{
-
-								maths::Matrix positionmat;
-								positionmat.translation(0.0, 0.0, 0.0);
-
-								maths::Matrix scalingmat;
-								scalingmat.scale(skydomeOuterRadius, skydomeOuterRadius, skydomeOuterRadius);
-
-								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-								wp.local_pos = wp.local_pos * scalingmat * positionmat;
-							}
-						));
-
-						auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
-						resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("sphere", "skydome.ac"), TriangleMeshe()));
-
-						m_skydomeEntity = entity;
-					}
-
-					////////////////////////////////
-
-					{
-						auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "raptor_Entity") };
-						const auto entity{ entityNode.data() };
-
-						auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
-						entity->makeAspect(core::timeAspect::id);
-
-						world_aspect.addComponent<transform::WorldPosition>("position");
-
-						world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
-						(
-							{},
-							[=](const core::ComponentContainer& p_world_aspect,
-								const core::ComponentContainer& p_time_aspect,
-								const transform::WorldPosition&,
-								const std::unordered_map<std::string, std::string>&)
-							{
-
-								maths::Matrix positionmat;
-								positionmat.translation(-40.0, skydomeInnerRadius + groundLevel, -30.0);
-
-								maths::Matrix scalemat;
-								scalemat.scale(0.03, 0.03, 0.03);
-
-
-								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-								wp.local_pos = /* wp.local_pos * */ scalemat * positionmat;
-							}
-						));
-
-						auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
-						resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("raptorMesh", "raptor.fbx"), TriangleMeshe()));
-
-						auto& raptor_animations_aspect{ entity->makeAspect(core::animationsAspect::id) };
-						raptor_animations_aspect.addComponent<int>("eg.std.animationbonesArrayArgIndex", 0);
-
-
-						raptor_animations_aspect.addComponent<std::list<std::string>>("eg.std.animationsIdList");
-						raptor_animations_aspect.addComponent<std::list<std::pair<std::string, AnimationKeys>>>("eg.std.animationsList");
-
-						raptor_animations_aspect.addComponent<core::TimeMark>("eg.std.animationsTimeMark", TimeControl::getInstance()->buildTimeMark());
-
-						raptor_animations_aspect.addComponent<std::string>("eg.std.currentAnimationId");
-						raptor_animations_aspect.addComponent<AnimationKeys>("eg.std.currentAnimation");
-
-
-						raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationTicksDuration");
-						raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationSecondsDuration");
-
-						raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationTicksProgress");
-						raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationSecondsProgress");
-
-						raptor_animations_aspect.addComponent<std::vector<std::pair<std::string, Shader>*>>("target_vshaders");
-						
-					
-						m_raptorEntity = entity;
-					}
-
-					/////////////// add camera with gimbal lock jointure ////////////////
-
-					auto& gblJointEntityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "gblJoint_Entity") };
-
-					const auto gblJointEntity{ gblJointEntityNode.data() };
-
-					gblJointEntity->makeAspect(core::timeAspect::id);
-					auto& gbl_world_aspect{ gblJointEntity->makeAspect(core::worldAspect::id) };
-
-					gbl_world_aspect.addComponent<transform::WorldPosition>("gbl_output");
-
-					gbl_world_aspect.addComponent<double>("gbl_theta", 0);
-					gbl_world_aspect.addComponent<double>("gbl_phi", 0);
-					gbl_world_aspect.addComponent<double>("gbl_speed", 0);
-					gbl_world_aspect.addComponent<maths::Real3Vector>("gbl_pos", maths::Real3Vector(-50.0, skydomeInnerRadius + groundLevel + 5, 1.0));
-
-					gbl_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
-						{
-							// input-output/components keys id mapping
-							{"gimbalLockJointAnim.theta", "gbl_theta"},
-							{"gimbalLockJointAnim.phi", "gbl_phi"},
-							{"gimbalLockJointAnim.position", "gbl_pos"},
-							{"gimbalLockJointAnim.speed", "gbl_speed"},
-							{"gimbalLockJointAnim.output", "gbl_output"}
-
-						}, helpers::animators::makeGimbalLockJointAnimator()));
-
-
-					// add camera
-					maths::Matrix projection;
-					projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
-					helpers::plugView(m_entitygraph, projection, "gblJoint_Entity", "camera_Entity");
+					create_scenegraph(p_id);
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// RENDERGRAPH
@@ -912,4 +671,243 @@ void ModuleImpl::d3d11_system_events()
 		}
 	};
 	d3d11System->registerSubscriber(d3d11_cb);
+}
+
+void ModuleImpl::create_scenegraph(const std::string& p_mainWindowsEntityId)
+{
+	auto& appwindowNode{ m_entitygraph.node(p_mainWindowsEntityId) };
+	const auto appwindow{ appwindowNode.data() };
+
+	const auto& mainwindows_rendering_aspect{ appwindow->aspectAccess(mage::core::renderingAspect::id) };
+
+	const float characteristics_v_width{ mainwindows_rendering_aspect.getComponent<float>("eg.std.viewportWidth")->getPurpose() };
+	const float characteristics_v_height{ mainwindows_rendering_aspect.getComponent<float>("eg.std.viewportHeight")->getPurpose() };
+
+
+	{
+		auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "ground_Entity") };
+		const auto entity{ entityNode.data() };
+
+		auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
+		entity->makeAspect(core::timeAspect::id);
+
+		world_aspect.addComponent<transform::WorldPosition>("position");
+		world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
+		(
+			{},
+			[=](const core::ComponentContainer& p_world_aspect,
+				const core::ComponentContainer& p_time_aspect,
+				const transform::WorldPosition&,
+				const std::unordered_map<std::string, std::string>&)
+			{
+
+				maths::Matrix positionmat;
+				positionmat.translation(0.0, skydomeInnerRadius + groundLevel, 0.0);
+
+				transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+				wp.local_pos = wp.local_pos * positionmat;
+			}
+		));
+
+		auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
+		resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("rect", "ground.ac"), TriangleMeshe()));
+
+		m_groundEntity = entity;
+	}
+
+	////////////////////////////////
+
+	{
+		auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "clouds_Entity") };
+		const auto entity{ entityNode.data() };
+
+		auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
+		entity->makeAspect(core::timeAspect::id);
+
+		world_aspect.addComponent<transform::WorldPosition>("position");
+		world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
+		(
+			{},
+			[=](const core::ComponentContainer& p_world_aspect,
+				const core::ComponentContainer& p_time_aspect,
+				const transform::WorldPosition&,
+				const std::unordered_map<std::string, std::string>&)
+			{
+
+				maths::Matrix positionmat;
+				positionmat.translation(0.0, skydomeInnerRadius + groundLevel + 400, 0.0);
+
+				transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+				wp.local_pos = wp.local_pos * positionmat;
+			}
+		));
+
+		auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
+		resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("rect", "flatclouds.ac"), TriangleMeshe()));
+
+		m_cloudsEntity = entity;
+	}
+
+	////////////////////////////////
+
+	{
+		auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "tree_Entity") };
+		const auto entity{ entityNode.data() };
+
+		auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
+		entity->makeAspect(core::timeAspect::id);
+
+		world_aspect.addComponent<transform::WorldPosition>("position");
+		world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
+		(
+			{},
+			[=](const core::ComponentContainer& p_world_aspect,
+				const core::ComponentContainer& p_time_aspect,
+				const transform::WorldPosition&,
+				const std::unordered_map<std::string, std::string>&)
+			{
+
+				maths::Matrix positionmat;
+				positionmat.translation(0.0, skydomeInnerRadius + groundLevel, -30.0);
+
+				transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+				wp.local_pos = wp.local_pos * positionmat;
+			}
+		));
+
+		auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
+		resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("Plane.001", "tree0.ac"), TriangleMeshe()));
+
+		m_treeEntity = entity;
+	}
+
+	////////////////////////////////
+
+	{
+		auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "skydome_Entity") };
+		const auto entity{ entityNode.data() };
+
+		auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
+		entity->makeAspect(core::timeAspect::id);
+
+		world_aspect.addComponent<transform::WorldPosition>("position");
+		world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
+		(
+			{},
+			[=](const core::ComponentContainer& p_world_aspect,
+				const core::ComponentContainer& p_time_aspect,
+				const transform::WorldPosition&,
+				const std::unordered_map<std::string, std::string>&)
+			{
+
+				maths::Matrix positionmat;
+				positionmat.translation(0.0, 0.0, 0.0);
+
+				maths::Matrix scalingmat;
+				scalingmat.scale(skydomeOuterRadius, skydomeOuterRadius, skydomeOuterRadius);
+
+				transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+				wp.local_pos = wp.local_pos * scalingmat * positionmat;
+			}
+		));
+
+		auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
+		resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("sphere", "skydome.ac"), TriangleMeshe()));
+
+		m_skydomeEntity = entity;
+	}
+
+	////////////////////////////////
+
+	{
+		auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "raptor_Entity") };
+		const auto entity{ entityNode.data() };
+
+		auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
+		entity->makeAspect(core::timeAspect::id);
+
+		world_aspect.addComponent<transform::WorldPosition>("position");
+
+		world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
+		(
+			{},
+			[=](const core::ComponentContainer& p_world_aspect,
+				const core::ComponentContainer& p_time_aspect,
+				const transform::WorldPosition&,
+				const std::unordered_map<std::string, std::string>&)
+			{
+
+				maths::Matrix positionmat;
+				positionmat.translation(-40.0, skydomeInnerRadius + groundLevel, -30.0);
+
+				maths::Matrix scalemat;
+				scalemat.scale(0.03, 0.03, 0.03);
+
+
+				transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+				wp.local_pos = /* wp.local_pos * */ scalemat * positionmat;
+			}
+		));
+
+		auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
+		resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("raptorMesh", "raptor.fbx"), TriangleMeshe()));
+
+		auto& raptor_animations_aspect{ entity->makeAspect(core::animationsAspect::id) };
+		raptor_animations_aspect.addComponent<int>("eg.std.animationbonesArrayArgIndex", 0);
+
+
+		raptor_animations_aspect.addComponent<std::list<std::string>>("eg.std.animationsIdList");
+		raptor_animations_aspect.addComponent<std::list<std::pair<std::string, AnimationKeys>>>("eg.std.animationsList");
+
+		raptor_animations_aspect.addComponent<core::TimeMark>("eg.std.animationsTimeMark", TimeControl::getInstance()->buildTimeMark());
+
+		raptor_animations_aspect.addComponent<std::string>("eg.std.currentAnimationId");
+		raptor_animations_aspect.addComponent<AnimationKeys>("eg.std.currentAnimation");
+
+
+		raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationTicksDuration");
+		raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationSecondsDuration");
+
+		raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationTicksProgress");
+		raptor_animations_aspect.addComponent<double>("eg.std.currentAnimationSecondsProgress");
+
+		raptor_animations_aspect.addComponent<std::vector<std::pair<std::string, Shader>*>>("target_vshaders");
+
+
+		m_raptorEntity = entity;
+	}
+
+	/////////////// add camera with gimbal lock jointure ////////////////
+
+	auto& gblJointEntityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "gblJoint_Entity") };
+
+	const auto gblJointEntity{ gblJointEntityNode.data() };
+
+	gblJointEntity->makeAspect(core::timeAspect::id);
+	auto& gbl_world_aspect{ gblJointEntity->makeAspect(core::worldAspect::id) };
+
+	gbl_world_aspect.addComponent<transform::WorldPosition>("gbl_output");
+
+	gbl_world_aspect.addComponent<double>("gbl_theta", 0);
+	gbl_world_aspect.addComponent<double>("gbl_phi", 0);
+	gbl_world_aspect.addComponent<double>("gbl_speed", 0);
+	gbl_world_aspect.addComponent<maths::Real3Vector>("gbl_pos", maths::Real3Vector(-50.0, skydomeInnerRadius + groundLevel + 5, 1.0));
+
+	gbl_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
+		{
+			// input-output/components keys id mapping
+			{"gimbalLockJointAnim.theta", "gbl_theta"},
+			{"gimbalLockJointAnim.phi", "gbl_phi"},
+			{"gimbalLockJointAnim.position", "gbl_pos"},
+			{"gimbalLockJointAnim.speed", "gbl_speed"},
+			{"gimbalLockJointAnim.output", "gbl_output"}
+
+		}, helpers::animators::makeGimbalLockJointAnimator()));
+
+
+	// add camera
+	maths::Matrix projection;
+	projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
+	helpers::plugView(m_entitygraph, projection, "gblJoint_Entity", "camera_Entity");
+
 }
