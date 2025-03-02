@@ -411,12 +411,7 @@ void ModuleImpl::d3d11_system_events()
 
 						m_texturesChannelCurrentCamera = "camera_Entity";
 
-						core::Entitygraph::Node& bufferRenderingQueueNode{ m_entitygraph.node("bufferRendering_Scene_TexturesChannel_Queue_Entity") };
-						const auto bufferRenderingQueueEntity{ bufferRenderingQueueNode.data() };
-						const auto& renderingAspect{ bufferRenderingQueueEntity->aspectAccess(core::renderingAspect::id) };
-
-						auto texturesChannelRenderingQueue = &renderingAspect.getComponent<rendering::Queue>("renderingQueue")->getPurpose();
-
+						auto texturesChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Queue_Entity")};
 						texturesChannelRenderingQueue->setCurrentView(m_texturesChannelCurrentCamera);
 
 					}
@@ -663,7 +658,7 @@ void ModuleImpl::create_scenegraph(const std::string& p_mainWindowsEntityId)
 	// add camera
 	maths::Matrix projection;
 	projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
-	helpers::plugView(m_entitygraph, projection, "gblJoint_Entity", "camera_Entity");
+	helpers::plugCamera(m_entitygraph, projection, "gblJoint_Entity", "camera_Entity");
 
 }
 

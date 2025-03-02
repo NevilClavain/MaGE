@@ -285,7 +285,7 @@ void ModuleImpl::d3d11_system_events()
 					// add camera to scene
 					maths::Matrix projection;
 					projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
-					helpers::plugView(m_entitygraph, projection, "gblJointEntity", "cameraEntity");
+					helpers::plugCamera(m_entitygraph, projection, "gblJointEntity", "cameraEntity");
 
 					///////Select camera
 

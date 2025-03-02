@@ -66,9 +66,11 @@ namespace mage
 									const rendering::Queue& p_renderingqueue, 
 									const std::string& p_parentid, const std::string& p_entityid);
 
-		void plugView(mage::core::Entitygraph& p_entitygraph,
+		void plugCamera(mage::core::Entitygraph& p_entitygraph,
 						const core::maths::Matrix& p_projection,
 						const std::string& p_parentid, const std::string& p_entityid);
+
+		rendering::Queue* getRenderingQueue(mage::core::Entitygraph& p_entitygraph, const std::string& p_entityId);
 	}
 }
 

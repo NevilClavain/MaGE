@@ -289,7 +289,7 @@ void ModuleImpl::d3d11_system_events()
 						// add camera to scene
 						maths::Matrix projection;
 						projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
-						helpers::plugView(m_entitygraph, projection, "gblJointEntity", "Camera01Entity");
+						helpers::plugCamera(m_entitygraph, projection, "gblJointEntity", "Camera01Entity");
 					}
 					
 					//////////////////////////////////////////////////////////////
@@ -338,7 +338,7 @@ void ModuleImpl::d3d11_system_events()
 						// add camera to scene
 						maths::Matrix projection;
 						projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
-						helpers::plugView(m_entitygraph, projection, "fullGblJointEntity", "Camera02Entity");
+						helpers::plugCamera(m_entitygraph, projection, "fullGblJointEntity", "Camera02Entity");
 
 						//////////////////////////////////////////////////////
 					}
@@ -403,7 +403,7 @@ void ModuleImpl::d3d11_system_events()
 						// add camera to scene
 						maths::Matrix projection;
 						projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
-						helpers::plugView(m_entitygraph, projection, "lookatJointEntity", "Camera03Entity");
+						helpers::plugCamera(m_entitygraph, projection, "lookatJointEntity", "Camera03Entity");
 					}
 					
 

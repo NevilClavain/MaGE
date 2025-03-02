@@ -337,7 +337,7 @@ namespace mage
 
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		void plugView(mage::core::Entitygraph& p_entitygraph,
+		void plugCamera(mage::core::Entitygraph& p_entitygraph,
 			const core::maths::Matrix& p_projection,
 			const std::string& p_parentid, const std::string& p_entityid)
 		{
@@ -351,6 +351,18 @@ namespace mage
 			auto& camera_world_aspect{ cameraEntity->makeAspect(core::worldAspect::id) };
 
 			camera_world_aspect.addComponent<transform::WorldPosition>("camera_position", transform::WorldPosition());
+		}
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		rendering::Queue* getRenderingQueue(mage::core::Entitygraph& p_entitygraph, const std::string& p_entityId)
+		{
+			core::Entitygraph::Node& node{ p_entitygraph.node(p_entityId) };
+			const auto entity{ node.data() };
+			const auto& renderingAspect{ entity->aspectAccess(core::renderingAspect::id) };
+
+			auto renderingQueue { &renderingAspect.getComponent<rendering::Queue>("renderingQueue")->getPurpose() };
+			return renderingQueue;
 		}
 	}
 }
