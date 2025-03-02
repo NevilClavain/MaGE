@@ -90,8 +90,6 @@ private:
 
     mage::rendering::Queue*                                     m_windowRenderingQueue{ nullptr };
 
-    mage::rendering::Queue*                                     m_texturesChannelRenderingQueue{ nullptr };
-
     mage::core::Entity*                                         m_groundEntity{ nullptr };
     mage::core::Entity*                                         m_cloudsEntity{ nullptr };
     mage::core::Entity*                                         m_treeEntity{ nullptr };
@@ -103,7 +101,7 @@ private:
     std::default_random_engine                                  m_random_engine;
     std::uniform_int_distribution<int>*                         m_distribution;
 
-
+    std::string                                                 m_texturesChannelCurrentCamera;
 
     static constexpr double                                     groundLevel{ 0 };
 
@@ -135,5 +133,8 @@ private:
 
 
     void                            choose_animation();
+    
     void                            create_scenegraph(const std::string& p_mainWindowsEntityId);
+    void                            create_textures_channel_rendergraph(const std::string& p_queueEntityId);
+
 };
