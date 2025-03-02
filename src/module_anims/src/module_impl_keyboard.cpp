@@ -47,26 +47,9 @@ void ModuleImpl::onKeyPress(long p_key)
 		{
 			const auto current_view_entity_id{ m_texturesChannelRenderingQueue->getCurrentView() };
 
-			if ("cameraEntity" == current_view_entity_id)
+			if ("camera_Entity" == current_view_entity_id)
 			{
-				auto& gblJointEntityNode{ m_entitygraph.node("gblJointEntity") };
-				const auto gblJointEntity{ gblJointEntityNode.data() };
-
-				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
-
-				double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
-
-				speed = 0.1;
-			}
-		}
-
-		if (m_fogChannelRenderingQueue)
-		{
-			const auto current_view_entity_id{ m_fogChannelRenderingQueue->getCurrentView() };
-
-			if ("fogCameraEntity" == current_view_entity_id)
-			{
-				auto& gblJointEntityNode{ m_entitygraph.node("fogGblJointEntity") };
+				auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
 				const auto gblJointEntity{ gblJointEntityNode.data() };
 
 				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
@@ -83,26 +66,9 @@ void ModuleImpl::onKeyPress(long p_key)
 		{
 			const auto current_view_entity_id{ m_texturesChannelRenderingQueue->getCurrentView() };
 
-			if ("cameraEntity" == current_view_entity_id)
+			if ("camera_Entity" == current_view_entity_id)
 			{
-				auto& gblJointEntityNode{ m_entitygraph.node("gblJointEntity") };
-				const auto gblJointEntity{ gblJointEntityNode.data() };
-
-				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
-
-				double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
-
-				speed = -0.1;
-			}
-		}
-
-		if (m_fogChannelRenderingQueue)
-		{
-			const auto current_view_entity_id{ m_fogChannelRenderingQueue->getCurrentView() };
-
-			if ("fogCameraEntity" == current_view_entity_id)
-			{
-				auto& gblJointEntityNode{ m_entitygraph.node("fogGblJointEntity") };
+				auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
 				const auto gblJointEntity{ gblJointEntityNode.data() };
 
 				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
@@ -167,7 +133,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 	{
 		// play animation
 
-		auto& raptorEntityNode{ m_entitygraph.node("raptorEntity") };
+		auto& raptorEntityNode{ m_entitygraph.node("raptor_TexturesChannel_Proxy_Entity") };
 		const auto raptorEntity{ raptorEntityNode.data() };
 		auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
 		auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose()};
@@ -179,7 +145,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 	{
 		// play animation
 
-		auto& raptorEntityNode{ m_entitygraph.node("raptorEntity") };
+		auto& raptorEntityNode{ m_entitygraph.node("raptor_TexturesChannel_Proxy_Entity") };
 		const auto raptorEntity{ raptorEntityNode.data() };
 		auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
 		auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose() };
@@ -191,7 +157,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 	{
 		// play animation
 
-		auto& raptorEntityNode{ m_entitygraph.node("raptorEntity") };
+		auto& raptorEntityNode{ m_entitygraph.node("raptor_TexturesChannel_Proxy_Entity") };
 		const auto raptorEntity{ raptorEntityNode.data() };
 		auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
 		auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose() };
@@ -203,7 +169,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 	{
 		// play animation
 
-		auto& raptorEntityNode{ m_entitygraph.node("raptorEntity") };
+		auto& raptorEntityNode{ m_entitygraph.node("raptor_TexturesChannel_Proxy_Entity") };
 		const auto raptorEntity{ raptorEntityNode.data() };
 		auto& anims_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
 		auto& animationsIdList{ anims_aspect.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose() };
@@ -231,7 +197,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
 		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
 
-		renderingQueueSystemInstance->requestRenderingqueueLogging("bufferRenderingEntity");
+		renderingQueueSystemInstance->requestRenderingqueueLogging("bufferRendering_Scene_TexturesChannel_Entity");
 	}
 
 	else if (VK_F9 == p_key)
@@ -245,26 +211,9 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		{
 			const auto current_view_entity_id{ m_texturesChannelRenderingQueue->getCurrentView() };
 
-			if ("cameraEntity" == current_view_entity_id)
+			if ("camera_Entity" == current_view_entity_id)
 			{
-				auto& gblJointEntityNode{ m_entitygraph.node("gblJointEntity") };
-				const auto gblJointEntity{ gblJointEntityNode.data() };
-
-				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
-
-				double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
-
-				speed = 0.0;
-			}
-		}
-
-		if (m_fogChannelRenderingQueue)
-		{
-			const auto current_view_entity_id{ m_fogChannelRenderingQueue->getCurrentView() };
-
-			if ("fogCameraEntity" == current_view_entity_id)
-			{
-				auto& gblJointEntityNode{ m_entitygraph.node("fogGblJointEntity") };
+				auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
 				const auto gblJointEntity{ gblJointEntityNode.data() };
 
 				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
@@ -282,26 +231,9 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		{
 			const auto current_view_entity_id{ m_texturesChannelRenderingQueue->getCurrentView() };
 
-			if ("cameraEntity" == current_view_entity_id)
+			if ("camera_Entity" == current_view_entity_id)
 			{
-				auto& gblJointEntityNode{ m_entitygraph.node("gblJointEntity") };
-				const auto gblJointEntity{ gblJointEntityNode.data() };
-
-				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
-
-				double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
-
-				speed = 0.0;
-			}
-		}
-
-		if (m_fogChannelRenderingQueue)
-		{
-			const auto current_view_entity_id{ m_fogChannelRenderingQueue->getCurrentView() };
-
-			if ("fogCameraEntity" == current_view_entity_id)
-			{
-				auto& gblJointEntityNode{ m_entitygraph.node("fogGblJointEntity") };
+				auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
 				const auto gblJointEntity{ gblJointEntityNode.data() };
 
 				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };

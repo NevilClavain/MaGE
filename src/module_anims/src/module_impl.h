@@ -92,15 +92,21 @@ private:
     bool                                                        m_show_mouse_cursor{ false };
     bool                                                        m_mouse_relative_mode{ true };
 
+    std::string                                                 m_appWindowsEntityName;
+
     mage::core::Entitygraph                                     m_entitygraph;
 
     mage::rendering::Queue*                                     m_windowRenderingQueue{ nullptr };
 
     mage::rendering::Queue*                                     m_texturesChannelRenderingQueue{ nullptr };
-    mage::rendering::Queue*                                     m_fogChannelRenderingQueue{ nullptr };
+
+    mage::core::Entity*                                         m_groundEntity{ nullptr };
+    mage::core::Entity*                                         m_cloudsEntity{ nullptr };
+    mage::core::Entity*                                         m_treeEntity{ nullptr };
+    mage::core::Entity*                                         m_raptorEntity{ nullptr };
+    mage::core::Entity*                                         m_skydomeEntity{ nullptr };
 
     std::unordered_map<std::string, mage::AnimationKeys>        m_raptor_animations;
-    int                                                         m_nb_raptormeshe_loaded{ 0 };
 
     std::default_random_engine                                  m_random_engine;
     std::uniform_int_distribution<int>*                         m_distribution;

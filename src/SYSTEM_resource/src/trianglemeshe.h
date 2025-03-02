@@ -116,7 +116,7 @@ namespace mage
 
 		
 
-		std::vector<mage::Vertex>							getVertices(void) const;
+		std::vector<mage::Vertex>								getVertices(void) const;
 		size_t													getVerticesListSize() const;
 		
 		std::vector<TrianglePrimitive<unsigned int>>			getTriangles(void) const;

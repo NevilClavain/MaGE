@@ -22,6 +22,7 @@
 */
 /* -*-LIC_END-*- */
 
+#include <vector>
 #include <string>
 #include <unordered_map>
 #include <map>
@@ -55,7 +56,7 @@ AnimationsSystem::AnimationsSystem(Entitygraph& p_entitygraph) : System(p_entity
 {		
 }
 
-void send_bones_to_shaders(TriangleMeshe& p_meshe, Shader& p_vertex_shader, int p_animationbones_array_arg_index)
+static void send_bones_to_shaders(TriangleMeshe& p_meshe, /*Shader& p_vertex_shader*/ std::vector<std::pair<std::string, Shader>*>& p_vshaders_refs, int p_animationbones_array_arg_index)
 {
 	auto& animationBones{ p_meshe.animationBonesAccess() };
 	const auto& animationBonesNamesMapping{ p_meshe.getAnimationBonesNamesMapping() };
@@ -103,21 +104,26 @@ void send_bones_to_shaders(TriangleMeshe& p_meshe, Shader& p_vertex_shader, int 
 
 	/////////////////////////////////////////////////////////
 
-	auto& dest_array{ p_vertex_shader.vectorArrayArgumentsAccess().at(p_animationbones_array_arg_index)};
-	int dest_vector_index{ 0 };
+	for (auto e : p_vshaders_refs)
+	{
+		Shader& vertex_shader{ e->second };
 
-	for (size_t i = 0; i < animationBones.size(); i++)
-	{		
-		for (size_t col = 0; col < 3; col++)
-		{	
-			core::maths::Real4Vector columns;
+		auto& dest_array{ vertex_shader.vectorArrayArgumentsAccess().at(p_animationbones_array_arg_index) };
+		int dest_vector_index{ 0 };
 
-			columns[0] = animationBones.at(i).final_transformation(0, col);
-			columns[1] = animationBones.at(i).final_transformation(1, col);
-			columns[2] = animationBones.at(i).final_transformation(2, col);
-			columns[3] = animationBones.at(i).final_transformation(3, col);
+		for (size_t i = 0; i < animationBones.size(); i++)
+		{
+			for (size_t col = 0; col < 3; col++)
+			{
+				core::maths::Real4Vector columns;
 
-			dest_array.array[dest_vector_index++] = columns;
+				columns[0] = animationBones.at(i).final_transformation(0, col);
+				columns[1] = animationBones.at(i).final_transformation(1, col);
+				columns[2] = animationBones.at(i).final_transformation(2, col);
+				columns[3] = animationBones.at(i).final_transformation(3, col);
+
+				dest_array.array[dest_vector_index++] = columns;
+			}
 		}
 	}
 }
@@ -132,8 +138,6 @@ void AnimationsSystem::compute_node_animationresult_matrix(const NodeAnimation& 
 	if (p_node.position_keys.size() > 0)
 	{
 		maths::Real4Vector v_interpolated;
-
-		//v_interpolated = p_node.position_keys[p_node.position_keys.size() - 1].value;
 
 		if (p_node.position_keys.size() < 2)
 		{
@@ -317,17 +321,31 @@ void AnimationsSystem::run()
 
 				// search triangle meshe
 				const auto meshes_list{ resource_components.getComponentsByType<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>() };
+								
+				// search the shaders refs
+				const auto vshaders_refs_list{ p_animation_components.getComponentsByType<std::vector<std::pair<std::string, Shader>*>>() };
 
-				// search the shaders
-				const auto shaders_list{ resource_components.getComponentsByType<std::pair<std::string, Shader>>() };
-
-				if (meshes_list.size() > 0 && shaders_list.size() > 0)
+				if (meshes_list.size() > 0 && /* shaders_list.size() > 0 */ vshaders_refs_list.size() > 0)
 				{
+					std::vector<std::pair<std::string, Shader>*>& vshaders_refs{ vshaders_refs_list.at(0)->getPurpose() };
+
 					auto& meshe_comp{ meshes_list.at(0)->getPurpose() };
 					TriangleMeshe& meshe{ meshe_comp.second };
-					auto& vertex_shader{ shaders_list.at(0)->getPurpose().second };
 
-					if (Shader::State::RENDERERLOADED == vertex_shader.getState() && TriangleMeshe::State::RENDERERLOADED == meshe.getState())
+					bool all_targetvertexshaders_ready{ true };
+
+					for (const auto& e : vshaders_refs)
+					{
+						const auto vertex_shader{ e->second };
+
+						if (Shader::State::RENDERERLOADED != vertex_shader.getState())
+						{
+							all_targetvertexshaders_ready = false;
+							break;
+						}
+					}
+
+					if (/*Shader::State::RENDERERLOADED == vertex_shader.getState()*/ all_targetvertexshaders_ready && TriangleMeshe::State::RENDERERLOADED == meshe.getState())
 					{
 						const auto animationbones_array_arg_index_comp{ p_animation_components.getComponent<int>("eg.std.animationbonesArrayArgIndex") };
 						if (animationbones_array_arg_index_comp)
@@ -513,9 +531,8 @@ void AnimationsSystem::run()
 									currentAnimationSecondsProgress = 0;
 									currentAnimationTicksProgress = 0;
 								}
-							}
-							
-							send_bones_to_shaders(meshe, vertex_shader, animationbones_array_arg_index);
+							}						
+							send_bones_to_shaders(meshe, vshaders_refs, animationbones_array_arg_index);
 							
 							////////////////////////////////////////////////
 						}

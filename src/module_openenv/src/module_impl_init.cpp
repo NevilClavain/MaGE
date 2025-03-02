@@ -339,7 +339,7 @@ void ModuleImpl::d3d11_system_events()
 
 
 
-						const auto ground_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRenderingEntity", "groundEntity",
+						const auto ground_entity{ helpers::plugMeshe(m_entitygraph, "bufferRenderingEntity", "groundEntity",
 														"ground_vs", "ground_ps",
 														"ground.ac", "rect",													
 														ground_rs_list,
@@ -403,7 +403,7 @@ void ModuleImpl::d3d11_system_events()
 
 
 
-						const auto clouds_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRenderingEntity", "cloudsEntity",
+						const auto clouds_entity{ helpers::plugMeshe(m_entitygraph, "bufferRenderingEntity", "cloudsEntity",
 														"flatclouds_vs", "flatclouds_ps",
 														"flatclouds.ac", "rect",
 														clouds_rs_list,
@@ -448,7 +448,7 @@ void ModuleImpl::d3d11_system_events()
 						const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
 
 
-						const auto tree_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRenderingEntity", "treeEntity",
+						const auto tree_entity{ helpers::plugMeshe(m_entitygraph, "bufferRenderingEntity", "treeEntity",
 														"texture_fog_keycolor_vs", "texture_fog_keycolor_ps",
 														"tree0.ac", "Plane.001",
 														tree_rs_list,
@@ -506,7 +506,7 @@ void ModuleImpl::d3d11_system_events()
 																		};
 						
 
-						const auto skydome_entity{ helpers::plugMesheWithPosition(m_entitygraph, "bufferRenderingEntity", "skydomeEntity",
+						const auto skydome_entity{ helpers::plugMeshe(m_entitygraph, "bufferRenderingEntity", "skydomeEntity",
 														"skydome_vs", "skydome_ps",
 														"skydome.ac", "sphere",
 														skydome_rs_list, 900) };

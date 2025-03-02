@@ -66,7 +66,7 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 {
 	_MAGE_DEBUG(m_localLogger, std::string("Handle scene ") + p_filename);
 
-	const std::string mesheAction{ "load_scene" };
+	const std::string mesheAction{ "load_meshe" };
 
 	const std::string targetAction{ p_mesheid + "@" + p_filename };
 

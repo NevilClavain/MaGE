@@ -54,9 +54,9 @@ void ModuleImpl::run(void)
 	/////////////////////////////////////////////////////
 
 	auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-
+	
 	{
-		const auto raptorEntity{ m_entitygraph.node("raptorEntity").data() };
+		const auto raptorEntity{ m_raptorEntity };
 		const auto& animations_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
 
 		const auto currentAnimationId{ animations_aspect.getComponent<std::string>("eg.std.currentAnimationId")->getPurpose() };
@@ -75,28 +75,5 @@ void ModuleImpl::run(void)
 		dataCloud->updateDataValue<double>("current_animation.seconds_duration", currentAnimationSecondsDuration);
 		dataCloud->updateDataValue<double>("current_animation.seconds_progress", currentAnimationSecondsProgress);
 	}
-
-	{
-		const auto raptorEntity{ m_entitygraph.node("fogRaptorEntity").data() };
-		const auto& animations_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
-
-		const auto currentAnimationId{ animations_aspect.getComponent<std::string>("eg.std.currentAnimationId")->getPurpose() };
-
-		const auto currentAnimationTicksDuration{ animations_aspect.getComponent<double>("eg.std.currentAnimationTicksDuration")->getPurpose() };
-		const auto currentAnimationSecondsDuration{ animations_aspect.getComponent<double>("eg.std.currentAnimationSecondsDuration")->getPurpose() };
-		const auto currentAnimationTicksProgress{ animations_aspect.getComponent<double>("eg.std.currentAnimationTicksProgress")->getPurpose() };
-		const auto currentAnimationSecondsProgress{ animations_aspect.getComponent<double>("eg.std.currentAnimationSecondsProgress")->getPurpose() };
-
-
-		dataCloud->updateDataValue<std::string>("current_animation2.id", currentAnimationId);
-
-		dataCloud->updateDataValue<double>("current_animation2.ticks_duration", currentAnimationTicksDuration);
-		dataCloud->updateDataValue<double>("current_animation2.ticks_progress", currentAnimationTicksProgress);
-
-		dataCloud->updateDataValue<double>("current_animation2.seconds_duration", currentAnimationSecondsDuration);
-		dataCloud->updateDataValue<double>("current_animation2.seconds_progress", currentAnimationSecondsProgress);
-	}
-
-
-
+	
 }
