@@ -158,7 +158,7 @@ void ModuleImpl::createEntities(const std::string p_appWindowsEntityName)
 
 	auto& appwindowNode{ m_entitygraph.node(p_appWindowsEntityName) };
 
-	auto& screenRenderingPassNode{ m_entitygraph.add(appwindowNode, "screenRendering_Pass_DirectForward_Entity") };
+	auto& screenRenderingPassNode{ m_entitygraph.add(appwindowNode, "screenRendering_Combine_DirectForward_Entity") };
 	const auto screenRenderingPassEntity{ screenRenderingPassNode.data() };
 
 	auto& screenRendering_rendering_aspect{ screenRenderingPassEntity->makeAspect(core::renderingAspect::id) };
@@ -330,12 +330,12 @@ void ModuleImpl::d3d11_system_events()
 					
 					mage::helpers::plugRenderingQuadView(m_entitygraph,
 						characteristics_v_width, characteristics_v_height,
-						"screenRendering_Pass_DirectForward_Entity",
+						"screenRendering_Combine_DirectForward_Entity",
 						"screen_AlignedQuad_Entity",
 						"screen_AlignedView_Entity",
 						m_windowRenderingQueue,
-						"pass_texture1stage_vs",
-						"pass_texture1stage_ps",
+						"combine_texture1stage_vs",
+						"combine_texture1stage_ps",
 
 						{
 							std::make_pair(Texture::STAGE_0, rendering_quad_textures_channnel),
