@@ -326,6 +326,7 @@ void ModuleImpl::d3d11_system_events()
 					const int w_height{ window_dims.y() };
 
 					const auto rendering_quad_textures_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
+					const auto rendering_quad_fog_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
 					
 					mage::helpers::plugRenderingQuadView(m_entitygraph,
 						characteristics_v_width, characteristics_v_height,
@@ -337,7 +338,8 @@ void ModuleImpl::d3d11_system_events()
 						"pass_texture1stage_ps",
 
 						{
-							std::make_pair(Texture::STAGE_0, rendering_quad_textures_channnel)
+							std::make_pair(Texture::STAGE_0, rendering_quad_textures_channnel),
+							std::make_pair(Texture::STAGE_1, rendering_quad_fog_channnel)
 						}
 					);
 
@@ -392,8 +394,10 @@ void ModuleImpl::d3d11_system_events()
 					create_scenegraph(p_id);
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
-					// Textures channel RENDERGRAPH
-
+					// RENDERGRAPH
+					
+					
+					// Textures channel 
 
 					// textures channels rendering queue
 					rendering::Queue texturesChannelsRenderingQueue("textures_channel_queue");
@@ -405,6 +409,20 @@ void ModuleImpl::d3d11_system_events()
 					mage::helpers::plugRenderingQueue(m_entitygraph, texturesChannelsRenderingQueue, "screen_AlignedQuad_Entity", "bufferRendering_Scene_TexturesChannel_Queue_Entity");
 
 					create_textures_channel_rendergraph("bufferRendering_Scene_TexturesChannel_Queue_Entity");
+					
+
+					// fog channel 
+
+					rendering::Queue fogChannelsRenderingQueue("fog_channel_queue");
+					fogChannelsRenderingQueue.setTargetClearColor({ 0, 0, 128, 255 });
+					fogChannelsRenderingQueue.enableTargetClearing(true);
+					fogChannelsRenderingQueue.enableTargetDepthClearing(true);
+					fogChannelsRenderingQueue.setTargetStage(Texture::STAGE_1);
+
+					mage::helpers::plugRenderingQueue(m_entitygraph, fogChannelsRenderingQueue, "screen_AlignedQuad_Entity", "bufferRendering_Scene_FogChannel_Queue_Entity");
+
+
+					create_fog_channel_rendergraph("bufferRendering_Scene_FogChannel_Queue_Entity");
 
 					{
 						///////Select camera
@@ -413,6 +431,11 @@ void ModuleImpl::d3d11_system_events()
 
 						auto texturesChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Queue_Entity")};
 						texturesChannelRenderingQueue->setCurrentView(m_texturesChannelCurrentCamera);
+
+
+						auto fogChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_FogChannel_Queue_Entity") };
+						fogChannelRenderingQueue->setCurrentView(m_texturesChannelCurrentCamera);
+
 
 					}
 				}
@@ -912,5 +935,151 @@ void ModuleImpl::create_textures_channel_rendergraph(const std::string& p_queueE
 		drawingControl.pshaders_map.push_back(std::make_pair("skydome_ps.atmo_scattering_flag_3", "atmo_scattering_flag_3"));
 		drawingControl.pshaders_map.push_back(std::make_pair("skydome_ps.atmo_scattering_flag_4", "atmo_scattering_flag_4"));
 		drawingControl.pshaders_map.push_back(std::make_pair("skydome_ps.atmo_scattering_flag_5", "atmo_scattering_flag_5"));
+	}
+}
+
+void ModuleImpl::create_fog_channel_rendergraph(const std::string& p_queueEntityId)
+{
+	///////////////	add ground
+
+	{
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
+		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
+		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
+		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
+
+		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
+
+		const std::vector<RenderState> ground_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
+
+
+		const std::vector<std::pair<size_t, std::pair<std::string, Texture>>> ground_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("grass08.jpg", Texture())) };
+
+
+
+		const auto ground_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "ground_FogChannel_Proxy_Entity",
+															"scene_recursive_texture_vs", "scene_recursive_texture_ps",
+															ground_rs_list,
+															1000,
+															ground_textures) };
+
+
+		//////////////////////////////////////////////////////////////////////
+
+		// link triangle meshe to related entity in scenegraph side 
+		auto& ground_resource_aspect{ m_groundEntity->aspectAccess(core::resourcesAspect::id) };
+		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &ground_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
+
+		auto& proxy_resource_aspect{ ground_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
+
+
+		///////////////////////////////////////////////////////////////////////
+
+		// link transforms to related entity in scenegraph side 
+		auto& ground_world_aspect{ m_groundEntity->aspectAccess(core::worldAspect::id) };
+		transform::WorldPosition* position_ref{ &ground_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+
+		auto& proxy_world_aspect{ ground_proxy_entity->makeAspect(core::worldAspect::id) };
+		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
+
+	}
+
+	///// add tree
+
+	{
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
+		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
+		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
+		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
+
+		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
+
+		const std::vector<RenderState> tree_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
+
+		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
+
+		const auto tree_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "tree_FogChannel_Proxy_Entity",
+															"scene_texture1stage_keycolor_vs", "scene_texture1stage_keycolor_ps",
+															tree_rs_list,
+															1000,
+															tree_textures) };
+
+		//////////////////////////////////////////////////////////////////////
+
+		// link triangle meshe to related entity in scenegraph side 
+		auto& tree_resource_aspect{ m_treeEntity->aspectAccess(core::resourcesAspect::id) };
+		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &tree_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
+
+		auto& proxy_resource_aspect{ tree_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
+
+		//////////////////////////////////////////////////////////////////////
+
+		// link transforms to related entity in scenegraph side 
+		auto& tree_world_aspect{ m_treeEntity->aspectAccess(core::worldAspect::id) };
+		transform::WorldPosition* position_ref{ &tree_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+
+		auto& proxy_world_aspect{ tree_proxy_entity->makeAspect(core::worldAspect::id) };
+		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
+
+		////////////////////////////////////////////////////////////////////////
+
+		auto& tree_rendering_aspect{ tree_proxy_entity->aspectAccess(core::renderingAspect::id) };
+
+		rendering::DrawingControl& drawingControl{ tree_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+		drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
+
+	}
+
+
+	///// Raptor
+
+	{
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
+		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
+		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
+		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
+
+		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
+
+		const std::vector<RenderState> raptor_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
+
+		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> raptor_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("raptorDif2.png", Texture())) };
+
+		const auto raptor_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "raptor_FogChannel_Proxy_Entity",
+															"scene_texture1stage_skinning_vs", "scene_texture1stage_skinning_ps",
+															raptor_rs_list,
+															1000,
+															raptor_textures) };
+
+
+		//////////////////////////////////////////////////////////////////////
+
+		// link triangle meshe to related entity in scenegraph side 
+		auto& raptor_resource_aspect{ m_raptorEntity->aspectAccess(core::resourcesAspect::id) };
+		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &raptor_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
+
+		auto& proxy_resource_aspect{ raptor_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
+
+		////////////////////////////////////////////////////////////////////////
+
+		auto& raptor_world_aspect{ m_raptorEntity->aspectAccess(core::worldAspect::id) };
+		transform::WorldPosition* position_ref{ &raptor_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+
+		auto& proxy_world_aspect{ raptor_proxy_entity->makeAspect(core::worldAspect::id) };
+		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
+
+
+		////////////////////////////////////////////////////////////////////////
+
+		auto& proxy_raptor_resource_aspect{ raptor_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+		std::pair<std::string, Shader>* vshader_ref{ &proxy_raptor_resource_aspect.getComponent<std::pair<std::string, Shader>>("vertexShader")->getPurpose() };
+		std::pair<std::string, Shader>* pshader_ref{ &proxy_raptor_resource_aspect.getComponent<std::pair<std::string, Shader>>("pixelShader")->getPurpose() };
+
+		auto& raptor_animations_aspect{ m_raptorEntity->aspectAccess(core::animationsAspect::id) };
+
+		raptor_animations_aspect.getComponent<std::vector<std::pair<std::string, Shader>*>>("target_vshaders")->getPurpose().push_back(vshader_ref);
 	}
 }
