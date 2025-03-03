@@ -326,7 +326,7 @@ void ModuleImpl::d3d11_system_events()
 					const int w_height{ window_dims.y() };
 
 					const auto rendering_quad_textures_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-					const auto rendering_quad_fog_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
+					const auto rendering_quad_fog_channnel{ Texture(Texture::Format::TEXTURE_FLOAT32, w_width, w_height) };
 					
 					mage::helpers::plugRenderingQuadView(m_entitygraph,
 						characteristics_v_width, characteristics_v_height,
@@ -952,17 +952,10 @@ void ModuleImpl::create_fog_channel_rendergraph(const std::string& p_queueEntity
 
 		const std::vector<RenderState> ground_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
 
-
-		const std::vector<std::pair<size_t, std::pair<std::string, Texture>>> ground_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("grass08.jpg", Texture())) };
-
-
-
 		const auto ground_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "ground_FogChannel_Proxy_Entity",
-															"scene_recursive_texture_vs", "scene_recursive_texture_ps",
+															"scene_zdepth_vs", "scene_zdepth_ps",
 															ground_rs_list,
-															1000,
-															ground_textures) };
-
+															1000) };
 
 		//////////////////////////////////////////////////////////////////////
 
@@ -997,13 +990,10 @@ void ModuleImpl::create_fog_channel_rendergraph(const std::string& p_queueEntity
 
 		const std::vector<RenderState> tree_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
 
-		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
-
 		const auto tree_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "tree_FogChannel_Proxy_Entity",
-															"scene_texture1stage_keycolor_vs", "scene_texture1stage_keycolor_ps",
+															"scene_zdepth_vs", "scene_zdepth_ps",
 															tree_rs_list,
-															1000,
-															tree_textures) };
+															1000) };
 
 		//////////////////////////////////////////////////////////////////////
 
@@ -1045,14 +1035,10 @@ void ModuleImpl::create_fog_channel_rendergraph(const std::string& p_queueEntity
 
 		const std::vector<RenderState> raptor_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
 
-		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> raptor_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("raptorDif2.png", Texture())) };
-
 		const auto raptor_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "raptor_FogChannel_Proxy_Entity",
-															"scene_texture1stage_skinning_vs", "scene_texture1stage_skinning_ps",
+															"scene_zdepth_skinning_vs", "scene_zdepth_skinning_ps",
 															raptor_rs_list,
-															1000,
-															raptor_textures) };
-
+															1000) };
 
 		//////////////////////////////////////////////////////////////////////
 
