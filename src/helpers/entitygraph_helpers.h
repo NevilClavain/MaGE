@@ -57,7 +57,7 @@ namespace mage
 										const std::string& p_parentid,
 										const std::string& p_quadEntityid,
 										const std::string& p_viewEntityid,
-										mage::rendering::Queue* p_windowQueue,
+										mage::rendering::Queue* p_queue,
 										const std::string& p_vshader,
 										const std::string& p_pshader,
 										const std::vector<std::pair<size_t, Texture>>& p_renderTargets);

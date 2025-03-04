@@ -189,7 +189,7 @@ namespace mage
 											const std::string& p_parentid,
 											const std::string& p_quadEntityid,
 											const std::string& p_viewEntityid,
-											mage::rendering::Queue* p_windowQueue,
+											mage::rendering::Queue* p_queue,
 											const std::string& p_vshader,
 											const std::string& p_pshader,
 											const std::vector<std::pair<size_t, Texture>>& p_renderTargets
@@ -215,7 +215,7 @@ namespace mage
 
 			camera_world_aspect.addComponent<transform::WorldPosition>("camera_position", transform::WorldPosition());
 
-			p_windowQueue->setCurrentView(p_viewEntityid);
+			p_queue->setCurrentView(p_viewEntityid);
 
 			///////////////////////////////////////////////////////////////
 
