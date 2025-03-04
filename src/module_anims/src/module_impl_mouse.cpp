@@ -37,7 +37,7 @@ using namespace mage::core;
 
 void ModuleImpl::onMouseMove(long p_xm, long p_ym, long p_dx, long p_dy)
 {
-	if ("camera_Entity" == m_texturesChannelCurrentCamera)
+	if ("camera_Entity" == m_currentCamera)
 	{
 		const auto tc{ TimeControl::getInstance() };
 		if (tc->isReady())

@@ -101,7 +101,7 @@ private:
     std::default_random_engine                                  m_random_engine;
     std::uniform_int_distribution<int>*                         m_distribution;
 
-    std::string                                                 m_texturesChannelCurrentCamera;
+    std::string                                                 m_currentCamera;
 
     static constexpr double                                     groundLevel{ 0 };
 
@@ -136,6 +136,6 @@ private:
     
     void                            create_scenegraph(const std::string& p_mainWindowsEntityId);
     void                            create_textures_channel_rendergraph(const std::string& p_queueEntityId);
-    void                            create_fog_channel_rendergraph(const std::string& p_queueEntityId);
+    void                            create_zdepth_channel_rendergraph(const std::string& p_queueEntityId);
 
 };

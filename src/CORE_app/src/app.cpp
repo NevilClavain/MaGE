@@ -238,7 +238,7 @@ void App::init(HINSTANCE p_hInstance, const std::string& p_logconfig_path, const
 
             if (entitygraph)
             {
-                const std::string rootEntityName{ "appWindow_Entity" };
+                const std::string rootEntityName{ "app_Entity" };
 
                 auto& root_window_node{ entitygraph->makeRoot(rootEntityName) };
 

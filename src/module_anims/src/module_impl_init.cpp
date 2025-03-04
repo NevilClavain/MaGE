@@ -158,7 +158,7 @@ void ModuleImpl::createEntities(const std::string p_appWindowsEntityName)
 
 	auto& appwindowNode{ m_entitygraph.node(p_appWindowsEntityName) };
 
-	auto& screenRenderingPassNode{ m_entitygraph.add(appwindowNode, "screenRendering_Filter_DirectForward_Entity") };
+	auto& screenRenderingPassNode{ m_entitygraph.add(appwindowNode, "screenRendering_Filter_DirectForward_Queue_Entity") };
 	const auto screenRenderingPassEntity{ screenRenderingPassNode.data() };
 
 	auto& screenRendering_rendering_aspect{ screenRenderingPassEntity->makeAspect(core::renderingAspect::id) };
@@ -330,9 +330,9 @@ void ModuleImpl::d3d11_system_events()
 					
 					mage::helpers::plugRenderingQuadView(m_entitygraph,
 						characteristics_v_width, characteristics_v_height,
-						"screenRendering_Filter_DirectForward_Entity",
-						"screen_AlignedQuad_Entity",
-						"screen_AlignedView_Entity",
+						"screenRendering_Filter_DirectForward_Queue_Entity",
+						"screenRendering_Filter_DirectForward_Quad_Entity",
+						"screenRendering_Filter_DirectForward_View_Entity",
 						m_windowRenderingQueue,
 						"filter_directforward_vs",
 						"filter_directforward_ps",
@@ -406,37 +406,34 @@ void ModuleImpl::d3d11_system_events()
 					texturesChannelsRenderingQueue.enableTargetDepthClearing(true);
 					texturesChannelsRenderingQueue.setTargetStage(Texture::STAGE_0);
 
-					mage::helpers::plugRenderingQueue(m_entitygraph, texturesChannelsRenderingQueue, "screen_AlignedQuad_Entity", "bufferRendering_Scene_TexturesChannel_Queue_Entity");
+					mage::helpers::plugRenderingQueue(m_entitygraph, texturesChannelsRenderingQueue, "screenRendering_Filter_DirectForward_Quad_Entity", "bufferRendering_Scene_TexturesChannel_Queue_Entity");
 
 					create_textures_channel_rendergraph("bufferRendering_Scene_TexturesChannel_Queue_Entity");
 					
 
 					// fog channel 
 
-					rendering::Queue fogChannelsRenderingQueue("fog_channel_queue");
-					fogChannelsRenderingQueue.setTargetClearColor({ 0, 0, 128, 255 });
-					fogChannelsRenderingQueue.enableTargetClearing(true);
-					fogChannelsRenderingQueue.enableTargetDepthClearing(true);
-					fogChannelsRenderingQueue.setTargetStage(Texture::STAGE_1);
+					rendering::Queue zdepthChannelsRenderingQueue("fog_channel_queue");
+					zdepthChannelsRenderingQueue.setTargetClearColor({ 0, 0, 128, 255 });
+					zdepthChannelsRenderingQueue.enableTargetClearing(true);
+					zdepthChannelsRenderingQueue.enableTargetDepthClearing(true);
+					zdepthChannelsRenderingQueue.setTargetStage(Texture::STAGE_1);
 
-					mage::helpers::plugRenderingQueue(m_entitygraph, fogChannelsRenderingQueue, "screen_AlignedQuad_Entity", "bufferRendering_Scene_FogChannel_Queue_Entity");
+					mage::helpers::plugRenderingQueue(m_entitygraph, zdepthChannelsRenderingQueue, "screenRendering_Filter_DirectForward_Quad_Entity", "bufferRendering_Scene_ZDepthChannel_Queue_Entity");
 
 
-					create_fog_channel_rendergraph("bufferRendering_Scene_FogChannel_Queue_Entity");
+					create_zdepth_channel_rendergraph("bufferRendering_Scene_ZDepthChannel_Queue_Entity");
 
 					{
 						///////Select camera
 
-						m_texturesChannelCurrentCamera = "camera_Entity";
+						m_currentCamera = "camera_Entity";
 
 						auto texturesChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Queue_Entity")};
-						texturesChannelRenderingQueue->setCurrentView(m_texturesChannelCurrentCamera);
+						texturesChannelRenderingQueue->setCurrentView(m_currentCamera);
 
-
-						auto fogChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_FogChannel_Queue_Entity") };
-						fogChannelRenderingQueue->setCurrentView(m_texturesChannelCurrentCamera);
-
-
+						auto fogChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
+						fogChannelRenderingQueue->setCurrentView(m_currentCamera);
 					}
 				}
 				break;
@@ -938,7 +935,7 @@ void ModuleImpl::create_textures_channel_rendergraph(const std::string& p_queueE
 	}
 }
 
-void ModuleImpl::create_fog_channel_rendergraph(const std::string& p_queueEntityId)
+void ModuleImpl::create_zdepth_channel_rendergraph(const std::string& p_queueEntityId)
 {
 	///////////////	add ground
 

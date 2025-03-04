@@ -43,7 +43,7 @@ void ModuleImpl::onKeyPress(long p_key)
 {
 	if ('Q' == p_key)
 	{
-		if ("camera_Entity" == m_texturesChannelCurrentCamera)
+		if ("camera_Entity" == m_currentCamera)
 		{
 			auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
 			const auto gblJointEntity{ gblJointEntityNode.data() };
@@ -58,7 +58,7 @@ void ModuleImpl::onKeyPress(long p_key)
 	}
 	else if ('W' == p_key)
 	{
-		if ("camera_Entity" == m_texturesChannelCurrentCamera)
+		if ("camera_Entity" == m_currentCamera)
 		{
 			auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
 			const auto gblJointEntity{ gblJointEntityNode.data() };
@@ -198,7 +198,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 	else if ('Q' == p_key)
 	{
-		if ("camera_Entity" == m_texturesChannelCurrentCamera)
+		if ("camera_Entity" == m_currentCamera)
 		{
 			auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
 			const auto gblJointEntity{ gblJointEntityNode.data() };
@@ -213,7 +213,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 	else if ('W' == p_key)
 	{
-		if ("camera_Entity" == m_texturesChannelCurrentCamera)
+		if ("camera_Entity" == m_currentCamera)
 		{
 			auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
 			const auto gblJointEntity{ gblJointEntityNode.data() };
