@@ -323,7 +323,6 @@ void ModuleImpl::d3d11_system_events()
 					const int w_height{ window_dims.y() };
 
 					const auto rendering_quad_textures_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-					//const auto rendering_quad_fog_channnel{ Texture(Texture::Format::TEXTURE_FLOAT32, w_width, w_height) };
 					
 					mage::helpers::plugRenderingQuadView(m_entitygraph,
 						characteristics_v_width, characteristics_v_height,
@@ -335,14 +334,11 @@ void ModuleImpl::d3d11_system_events()
 						"filter_directforward_ps",
 
 						{
-							std::make_pair(Texture::STAGE_0, rendering_quad_textures_channnel)/*,
-							std::make_pair(Texture::STAGE_1, rendering_quad_fog_channnel)*/
+							std::make_pair(Texture::STAGE_0, rendering_quad_textures_channnel)
 						}
 					);
 
-
 					//////////////////////////////////////////
-
 
 					/////////// commons shaders params
 
@@ -404,9 +400,6 @@ void ModuleImpl::d3d11_system_events()
 
 					
 
-
-
-
 					const auto fog_rendering_quad_textures_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
 					const auto fog_rendering_quad_fog_channnel{ Texture(Texture::Format::TEXTURE_FLOAT32, w_width, w_height) };
 				
@@ -425,9 +418,7 @@ void ModuleImpl::d3d11_system_events()
 						}
 					);
 
-
-					
-					
+									
 					// Textures channel 
 
 
