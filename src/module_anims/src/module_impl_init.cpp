@@ -409,8 +409,8 @@ void ModuleImpl::d3d11_system_events()
 						"screenRendering_Combiner_Fog_Quad_Entity",
 						"screenRendering_Combiner_Fog_View_Entity",
 						fog_rendering_queue_ref,
-						"filter_directforward_vs",
-						"filter_directforward_ps",
+						"combiner_fog_vs",
+						"combiner_fog_ps",
 
 						{
 							std::make_pair(Texture::STAGE_0, fog_rendering_quad_textures_channnel),
