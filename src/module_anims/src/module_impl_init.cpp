@@ -1020,10 +1020,13 @@ void ModuleImpl::create_zdepth_channel_rendergraph(const std::string& p_queueEnt
 
 		const std::vector<RenderState> tree_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
 
+		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
+
 		const auto tree_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "tree_FogChannel_Proxy_Entity",
-															"scene_zdepth_vs", "scene_zdepth_ps",
+															"scene_zdepth_keycolor_vs", "scene_zdepth_keycolor_ps",
 															tree_rs_list,
-															1000) };
+															1000,
+															tree_textures) };
 
 		//////////////////////////////////////////////////////////////////////
 
