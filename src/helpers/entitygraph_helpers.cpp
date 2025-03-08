@@ -286,7 +286,7 @@ namespace mage
 			/////////// Draw triangles
 
 			rendering::DrawingControl drawingControl;
-			quad_rendering_aspect.addComponent<rendering::DrawingControl>("screenRenderingQuad", drawingControl);
+			quad_rendering_aspect.addComponent<rendering::DrawingControl>("drawingControl", drawingControl);
 
 
 			/////////// time aspect

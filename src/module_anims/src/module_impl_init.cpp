@@ -418,6 +418,17 @@ void ModuleImpl::d3d11_system_events()
 						}
 					);
 
+					Entity* screenRendering_Combiner_Fog_Quad_Entity{ m_entitygraph.node("screenRendering_Combiner_Fog_Quad_Entity").data() };
+
+					auto& screenRendering_Combiner_Fog_Quad_Entity_rendering_aspect{ screenRendering_Combiner_Fog_Quad_Entity->aspectAccess(core::renderingAspect::id) };
+
+					rendering::DrawingControl& fogDrawingControl{ screenRendering_Combiner_Fog_Quad_Entity_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+					fogDrawingControl.pshaders_map.push_back(std::make_pair("std.fog_color", "fog_color"));
+					fogDrawingControl.pshaders_map.push_back(std::make_pair("std.fog_density", "fog_density"));
+
+
+
+
 									
 					// Textures channel 
 

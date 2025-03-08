@@ -52,13 +52,8 @@ float4 ps_main(PS_INTPUT input) : SV_Target
     
     float depth = txDepths.Sample(samDepth, input.TexCoord0);
     
-    float4 fog_color;
-    fog_color.r = 1.0;
-    fog_color.g = 0.5;
-    fog_color.b = 0.5;
-    fog_color.a = 1.0;
-    
-    float fog_density = 0.1;
+    float4 fog_color = vec[25];
+    float4 fog_density = vec[26].x;
     
     float4 final_color = saturate(lerp(fog_color, input_color, computeExp2Fog(depth, fog_density)));    
     return final_color;
