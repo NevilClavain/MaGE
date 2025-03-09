@@ -144,28 +144,7 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 
 	//////////////////////////
 
-	createEntities(p_appWindowsEntityName);
-
-	//////////////////////////
-
 	m_appWindowsEntityName = p_appWindowsEntityName;
-}
-
-
-void ModuleImpl::createEntities(const std::string p_appWindowsEntityName)
-{
-	/////////// add screen rendering pass entity
-
-	rendering::Queue screenRenderingQueue("screen_queue");
-
-	auto& rendering_queue{ mage::helpers::plugRenderingQueue(m_entitygraph, screenRenderingQueue, p_appWindowsEntityName, "screenRendering_Filter_DirectForward_Queue_Entity") };
-	
-	m_windowRenderingQueue = &rendering_queue;
-
-	auto sysEngine{ SystemEngine::getInstance() };
-	const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
-
-	dataPrintSystem->setRenderingQueue(m_windowRenderingQueue);
 }
 
 
@@ -314,6 +293,24 @@ void ModuleImpl::d3d11_system_events()
 
 					const int w_width{ window_dims.x() };
 					const int w_height{ window_dims.y() };
+
+
+
+					rendering::Queue screenRenderingQueue("screen_queue");
+
+					auto& rendering_queue{ mage::helpers::plugRenderingQueue(m_entitygraph, screenRenderingQueue, p_id, "screenRendering_Filter_DirectForward_Queue_Entity") };
+
+					m_windowRenderingQueue = &rendering_queue;
+
+					auto sysEngine{ SystemEngine::getInstance() };
+					const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
+
+					dataPrintSystem->setRenderingQueue(m_windowRenderingQueue);
+
+
+
+
+
 
 					const auto rendering_quad_textures_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
 					

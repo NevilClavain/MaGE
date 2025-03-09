@@ -122,8 +122,6 @@ private:
     static constexpr double                                     skydomeScaleDepth{ 0.25 };
 
 
-    void                            createEntities(const std::string p_appWindowsEntityName);
-
     void                            resource_system_events();
     void                            d3d11_system_events();
     void                            animation_system_events();
