@@ -298,9 +298,9 @@ void ModuleImpl::d3d11_system_events()
 
 					rendering::Queue screenRenderingQueue("screen_queue");
 
-					auto& rendering_queue{ mage::helpers::plugRenderingQueue(m_entitygraph, screenRenderingQueue, p_id, "screenRendering_Filter_DirectForward_Queue_Entity") };
+					auto& screen_rendering_queue{ mage::helpers::plugRenderingQueue(m_entitygraph, screenRenderingQueue, p_id, "screenRendering_Filter_DirectForward_Queue_Entity") };
 
-					m_windowRenderingQueue = &rendering_queue;
+					m_windowRenderingQueue = &screen_rendering_queue;
 
 					auto sysEngine{ SystemEngine::getInstance() };
 					const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
@@ -380,15 +380,7 @@ void ModuleImpl::d3d11_system_events()
 					// RENDERGRAPH
 
 					rendering::Queue fogRenderingQueue("fog_queue");
-					mage::helpers::plugRenderingQueue(m_entitygraph, fogRenderingQueue, "screenRendering_Filter_DirectForward_Quad_Entity", "bufferRendering_Combiner_Fog_Queue_Entity");
-
-
-					const auto bufferRendering_Combiner_Fog_Queue_Entity{ m_entitygraph.node("bufferRendering_Combiner_Fog_Queue_Entity").data() };
-					const auto& fog_Queue_entity_rendering_aspect{ bufferRendering_Combiner_Fog_Queue_Entity->aspectAccess(core::renderingAspect::id) };
-
-					rendering::Queue* fog_rendering_queue_ref{ &fog_Queue_entity_rendering_aspect.getComponent<rendering::Queue>("renderingQueue")->getPurpose() };
-
-					
+					auto& fog_rendering_queue{ mage::helpers::plugRenderingQueue(m_entitygraph, fogRenderingQueue, "screenRendering_Filter_DirectForward_Quad_Entity", "bufferRendering_Combiner_Fog_Queue_Entity") };
 
 					const auto fog_rendering_quad_textures_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
 					const auto fog_rendering_quad_fog_channnel{ Texture(Texture::Format::TEXTURE_FLOAT32, w_width, w_height) };
@@ -398,7 +390,7 @@ void ModuleImpl::d3d11_system_events()
 						"bufferRendering_Combiner_Fog_Queue_Entity",
 						"screenRendering_Combiner_Fog_Quad_Entity",
 						"screenRendering_Combiner_Fog_View_Entity",
-						fog_rendering_queue_ref,
+						&fog_rendering_queue,
 						"combiner_fog_vs",
 						"combiner_fog_ps",
 
