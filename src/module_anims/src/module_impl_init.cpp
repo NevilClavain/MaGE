@@ -156,16 +156,9 @@ void ModuleImpl::createEntities(const std::string p_appWindowsEntityName)
 {
 	/////////// add screen rendering pass entity
 
-	auto& appwindowNode{ m_entitygraph.node(p_appWindowsEntityName) };
+	rendering::Queue screenRenderingQueue("screen_queue");
 
-	auto& screenRenderingPassNode{ m_entitygraph.add(appwindowNode, "screenRendering_Filter_DirectForward_Queue_Entity") };
-	const auto screenRenderingPassEntity{ screenRenderingPassNode.data() };
-
-	auto& screenRendering_rendering_aspect{ screenRenderingPassEntity->makeAspect(core::renderingAspect::id) };
-
-	screenRendering_rendering_aspect.addComponent<rendering::Queue>("renderingQueue", "final_pass");
-
-	auto& rendering_queue{ screenRendering_rendering_aspect.getComponent<rendering::Queue>("renderingQueue")->getPurpose() };
+	auto& rendering_queue{ mage::helpers::plugRenderingQueue(m_entitygraph, screenRenderingQueue, p_appWindowsEntityName, "screenRendering_Filter_DirectForward_Queue_Entity") };
 	
 	m_windowRenderingQueue = &rendering_queue;
 

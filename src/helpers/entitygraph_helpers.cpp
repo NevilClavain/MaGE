@@ -324,7 +324,7 @@ namespace mage
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-		void plugRenderingQueue(mage::core::Entitygraph& p_entitygraph, const rendering::Queue& p_renderingqueue, const std::string& p_parentid, const std::string& p_entityid)
+		rendering::Queue& plugRenderingQueue(mage::core::Entitygraph& p_entitygraph, const rendering::Queue& p_renderingqueue, const std::string& p_parentid, const std::string& p_entityid)
 		{
 			core::Entitygraph::Node& parentNode{ p_entitygraph.node(p_parentid) };
 			auto& renderingQueueNode{ p_entitygraph.add(parentNode, p_entityid) };
@@ -333,6 +333,9 @@ namespace mage
 			auto& renderingAspect{ renderingQueueNodeEntity->makeAspect(core::renderingAspect::id) };
 
 			renderingAspect.addComponent<rendering::Queue>("renderingQueue", p_renderingqueue);
+			auto& stored_rendering_queue{ renderingAspect.getComponent<rendering::Queue>("renderingQueue")->getPurpose() };
+
+			return stored_rendering_queue;
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////

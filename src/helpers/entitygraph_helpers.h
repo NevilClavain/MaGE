@@ -62,7 +62,7 @@ namespace mage
 										const std::string& p_pshader,
 										const std::vector<std::pair<size_t, Texture>>& p_renderTargets);
 
-		void plugRenderingQueue( mage::core::Entitygraph& p_entitygraph, 
+		rendering::Queue& plugRenderingQueue( mage::core::Entitygraph& p_entitygraph,
 									const rendering::Queue& p_renderingqueue, 
 									const std::string& p_parentid, const std::string& p_entityid);
 
