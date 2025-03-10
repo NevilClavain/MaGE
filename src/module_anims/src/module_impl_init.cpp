@@ -294,11 +294,23 @@ void ModuleImpl::d3d11_system_events()
 					const int w_width{ window_dims.x() };
 					const int w_height{ window_dims.y() };
 
+					const auto rendering_quad_textures_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
 
+					auto& screen_rendering_queue{ mage::helpers::plugRenderingQuad(m_entitygraph,
+						"screen_queue",
+						characteristics_v_width, characteristics_v_height,
+						p_id,
+						"screenRendering_Filter_DirectForward_Queue_Entity",
+						"screenRendering_Filter_DirectForward_Quad_Entity",
+						"screenRendering_Filter_DirectForward_View_Entity",
+						"filter_directforward_vs",
+						"filter_directforward_ps",
 
-					rendering::Queue screenRenderingQueue("screen_queue");
+						{
+							std::make_pair(Texture::STAGE_0, rendering_quad_textures_channnel)
+						}
 
-					auto& screen_rendering_queue{ mage::helpers::plugRenderingQueue(m_entitygraph, screenRenderingQueue, p_id, "screenRendering_Filter_DirectForward_Queue_Entity") };
+					)};
 
 					m_windowRenderingQueue = &screen_rendering_queue;
 
@@ -308,25 +320,6 @@ void ModuleImpl::d3d11_system_events()
 					dataPrintSystem->setRenderingQueue(m_windowRenderingQueue);
 
 
-
-
-
-
-					const auto rendering_quad_textures_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-					
-					mage::helpers::plugRenderingQuadView(m_entitygraph,
-						characteristics_v_width, characteristics_v_height,
-						"screenRendering_Filter_DirectForward_Queue_Entity",
-						"screenRendering_Filter_DirectForward_Quad_Entity",
-						"screenRendering_Filter_DirectForward_View_Entity",
-						m_windowRenderingQueue,
-						"filter_directforward_vs",
-						"filter_directforward_ps",
-
-						{
-							std::make_pair(Texture::STAGE_0, rendering_quad_textures_channnel)
-						}
-					);
 
 					//////////////////////////////////////////
 
@@ -344,12 +337,6 @@ void ModuleImpl::d3d11_system_events()
 
 					dataCloud->registerData<maths::Real4Vector>("std.fog_density");
 					dataCloud->updateDataValue<maths::Real4Vector>("std.fog_density", maths::Real4Vector(0.009, 0, 0, 0));
-
-
-
-
-
-
 
 
 					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_0");
@@ -379,26 +366,23 @@ void ModuleImpl::d3d11_system_events()
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// RENDERGRAPH
 
-					rendering::Queue fogRenderingQueue("fog_queue");
-					auto& fog_rendering_queue{ mage::helpers::plugRenderingQueue(m_entitygraph, fogRenderingQueue, "screenRendering_Filter_DirectForward_Quad_Entity", "bufferRendering_Combiner_Fog_Queue_Entity") };
 
 					const auto fog_rendering_quad_textures_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
 					const auto fog_rendering_quad_fog_channnel{ Texture(Texture::Format::TEXTURE_FLOAT32, w_width, w_height) };
-				
-					mage::helpers::plugRenderingQuadView(m_entitygraph,
+
+					mage::helpers::plugRenderingQuad(m_entitygraph,
+						"fog_queue",
 						characteristics_v_width, characteristics_v_height,
+						"screenRendering_Filter_DirectForward_Quad_Entity",
 						"bufferRendering_Combiner_Fog_Queue_Entity",
 						"bufferRendering_Combiner_Fog_Quad_Entity",
 						"bufferRendering_Combiner_Fog_View_Entity",
-						&fog_rendering_queue,
 						"combiner_fog_vs",
-						"combiner_fog_ps",
-
+						"combiner_fog_ps",						
 						{
 							std::make_pair(Texture::STAGE_0, fog_rendering_quad_textures_channnel),
 							std::make_pair(Texture::STAGE_1, fog_rendering_quad_fog_channnel)
-						}
-					);
+						});
 
 					Entity* bufferRendering_Combiner_Fog_Quad_Entity{ m_entitygraph.node("bufferRendering_Combiner_Fog_Quad_Entity").data() };
 

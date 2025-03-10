@@ -184,16 +184,18 @@ namespace mage
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+		// LEGACY, TO REMOVE
+
 		void plugRenderingQuadView(mage::core::Entitygraph& p_entitygraph,
-			                                float p_characteristics_v_width, float p_characteristics_v_height,
-											const std::string& p_parentid,
-											const std::string& p_quadEntityid,
-											const std::string& p_viewEntityid,
-											mage::rendering::Queue* p_queue,
-											const std::string& p_vshader,
-											const std::string& p_pshader,
-											const std::vector<std::pair<size_t, Texture>>& p_renderTargets
-										)
+			float p_characteristics_v_width, float p_characteristics_v_height,
+			const std::string& p_parentid,
+			const std::string& p_quadEntityid,
+			const std::string& p_viewEntityid,
+			mage::rendering::Queue* p_windowQueue,
+			const std::string& p_vshader,
+			const std::string& p_pshader,
+			const std::vector<std::pair<size_t, Texture>>& p_renderTargets
+		)
 		{
 			/////////////// add viewpoint (camera) ////////////////////////
 
@@ -215,7 +217,169 @@ namespace mage
 
 			camera_world_aspect.addComponent<transform::WorldPosition>("camera_position", transform::WorldPosition());
 
-			p_queue->setCurrentView(p_viewEntityid);
+			p_windowQueue->setCurrentView(p_viewEntityid);
+
+			///////////////////////////////////////////////////////////////
+
+			// add target quad aligned with screen
+
+			auto& screenRenderingQuadNode{ p_entitygraph.add(parentNodeNode, p_quadEntityid) };
+			const auto screenRenderingQuadEntity{ screenRenderingQuadNode.data() };
+
+
+			/// RESOURCE ASPECT
+			auto& quad_resource_aspect{ screenRenderingQuadEntity->makeAspect(core::resourcesAspect::id) };
+
+			/////////// Add shaders
+
+			quad_resource_aspect.addComponent<std::pair<std::string, Shader>>("vertexShader", std::make_pair(p_vshader, Shader(vertexShader)));
+			quad_resource_aspect.addComponent<std::pair<std::string, Shader>>("pixelShader", std::make_pair(p_pshader, Shader(pixelShader)));
+
+			/////////// Add trianglemeshe
+			TriangleMeshe square;
+
+			square.push(Vertex(-p_characteristics_v_width / 2, -p_characteristics_v_height / 2, 0.0, 0, 1));
+			square.push(Vertex(p_characteristics_v_width / 2, -p_characteristics_v_height / 2, 0.0, 1, 1));
+			square.push(Vertex(p_characteristics_v_width / 2, p_characteristics_v_height / 2, 0.0, 1, 0));
+			square.push(Vertex(-p_characteristics_v_width / 2, p_characteristics_v_height / 2, 0.0, 0, 0));
+
+			const TrianglePrimitive<unsigned int> t1{ 0, 1, 2 };
+			square.push(t1);
+
+			const TrianglePrimitive<unsigned int> t2{ 0, 2, 3 };
+			square.push(t2);
+
+			square.computeNormales();
+			square.computeTB();
+
+			square.computeResourceUID();
+			square.setSourceID("helpers::plugRenderingQuadView");
+			square.setSource(TriangleMeshe::Source::CONTENT_DYNAMIC_INIT);
+
+			square.setState(TriangleMeshe::State::BLOBLOADED);
+
+			quad_resource_aspect.addComponent<TriangleMeshe>("quad", square);
+
+			/// RENDERING ASPECT
+			auto& quad_rendering_aspect{ screenRenderingQuadEntity->makeAspect(core::renderingAspect::id) };
+
+			quad_rendering_aspect.addComponent<core::renderingAspect::renderingTarget>("eg.std.renderingTarget", core::renderingAspect::renderingTarget::BUFFER_RENDERINGTARGET);
+
+			/////////// render target Texture
+
+			const std::string texture_name_base{ "renderingquad_texture_" };
+
+			for (size_t i = 0; i < p_renderTargets.size(); i++)
+			{
+				quad_resource_aspect.addComponent<std::pair<size_t, Texture>>(texture_name_base + std::to_string(p_renderTargets.at(i).first), p_renderTargets.at(i));
+			}
+
+			/////////// Add renderstate
+
+			rendering::RenderState rs_noculling(rendering::RenderState::Operation::SETCULLING, "cw");
+			rendering::RenderState rs_zbuffer(rendering::RenderState::Operation::ENABLEZBUFFER, "false");
+			rendering::RenderState rs_fill(rendering::RenderState::Operation::SETFILLMODE, "solid");
+
+			const std::vector<rendering::RenderState> rs_list = { rs_noculling, rs_zbuffer, rs_fill };
+
+			quad_rendering_aspect.addComponent<std::vector<rendering::RenderState>>("renderStates", rs_list);
+
+
+			/////////// Draw triangles
+
+			rendering::DrawingControl drawingControl;
+			quad_rendering_aspect.addComponent<rendering::DrawingControl>("screenRenderingQuad", drawingControl);
+
+
+			/////////// time aspect
+			// required for animator !
+
+			screenRenderingQuadEntity->makeAspect(core::timeAspect::id);
+
+			/////////// World position
+
+			auto& world_aspect{ screenRenderingQuadEntity->makeAspect(core::worldAspect::id) };
+
+			world_aspect.addComponent<transform::WorldPosition>("position");
+
+
+			world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
+			(
+				{},
+				[](const core::ComponentContainer& p_world_aspect,
+					const core::ComponentContainer& p_time_aspect,
+					const transform::WorldPosition&,
+					const std::unordered_map<std::string, std::string>&)
+				{
+
+					core::maths::Matrix positionmat;
+					positionmat.translation(0.0, 0.0, -1.00001);
+
+					transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+					wp.local_pos = wp.local_pos * positionmat;
+				}
+			));
+		}
+
+
+
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		rendering::Queue& plugRenderingQueue(mage::core::Entitygraph& p_entitygraph, const rendering::Queue& p_renderingqueue, const std::string& p_parentid, const std::string& p_entityid)
+		{
+			core::Entitygraph::Node& parentNode{ p_entitygraph.node(p_parentid) };
+			auto& renderingQueueNode{ p_entitygraph.add(parentNode, p_entityid) };
+			const auto renderingQueueNodeEntity{ renderingQueueNode.data() };
+
+			auto& renderingAspect{ renderingQueueNodeEntity->makeAspect(core::renderingAspect::id) };
+
+			renderingAspect.addComponent<rendering::Queue>("renderingQueue", p_renderingqueue);
+			auto& stored_rendering_queue{ renderingAspect.getComponent<rendering::Queue>("renderingQueue")->getPurpose() };
+
+			return stored_rendering_queue;
+		}
+
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		rendering::Queue& plugRenderingQuad(mage::core::Entitygraph& p_entitygraph,
+											const std::string& p_queue_debug_name,
+											float p_characteristics_v_width, float p_characteristics_v_height,
+											const std::string& p_parentid,
+											const std::string& p_queueEntityid,
+											const std::string& p_quadEntityid,
+											const std::string& p_viewEntityid,
+											const std::string& p_vshader,
+											const std::string& p_pshader,
+											const std::vector<std::pair<size_t, Texture>>& p_renderTargets)
+		{
+
+			rendering::Queue rendering_queue(p_queue_debug_name);
+
+			auto& rendering_queue_ref{ mage::helpers::plugRenderingQueue(p_entitygraph, rendering_queue, p_parentid, p_queueEntityid) };
+
+			/////////////// add viewpoint (camera) ////////////////////////
+
+			auto& parentNodeNode{ p_entitygraph.node(p_queueEntityid) };
+
+
+			auto& viewPointNode{ p_entitygraph.add(parentNodeNode, p_viewEntityid) };
+			const auto cameraEntity{ viewPointNode.data() };
+
+			auto& camera_aspect{ cameraEntity->makeAspect(core::cameraAspect::id) };
+
+			core::maths::Matrix projection;
+
+			projection.perspective(p_characteristics_v_width, p_characteristics_v_height, 1.0, 10.00000000000);
+
+			camera_aspect.addComponent<core::maths::Matrix>("projection", projection);
+
+			auto& camera_world_aspect{ cameraEntity->makeAspect(core::worldAspect::id) };
+
+			camera_world_aspect.addComponent<transform::WorldPosition>("camera_position", transform::WorldPosition());
+
+			//p_queue->setCurrentView(p_viewEntityid);
+			rendering_queue_ref.setCurrentView(p_viewEntityid);
 
 			///////////////////////////////////////////////////////////////
 
@@ -317,25 +481,10 @@ namespace mage
 					wp.local_pos = wp.local_pos * positionmat;
 				}
 			));
-		}
 
+			//////////////////////////////////////
 
-
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-		rendering::Queue& plugRenderingQueue(mage::core::Entitygraph& p_entitygraph, const rendering::Queue& p_renderingqueue, const std::string& p_parentid, const std::string& p_entityid)
-		{
-			core::Entitygraph::Node& parentNode{ p_entitygraph.node(p_parentid) };
-			auto& renderingQueueNode{ p_entitygraph.add(parentNode, p_entityid) };
-			const auto renderingQueueNodeEntity{ renderingQueueNode.data() };
-
-			auto& renderingAspect{ renderingQueueNodeEntity->makeAspect(core::renderingAspect::id) };
-
-			renderingAspect.addComponent<rendering::Queue>("renderingQueue", p_renderingqueue);
-			auto& stored_rendering_queue{ renderingAspect.getComponent<rendering::Queue>("renderingQueue")->getPurpose() };
-
-			return stored_rendering_queue;
+			return rendering_queue_ref;			
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////

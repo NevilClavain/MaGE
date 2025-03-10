@@ -52,19 +52,31 @@ namespace mage
 	{
 		void logEntitygraph(core::Entitygraph& p_eg);
 
-		void plugRenderingQuadView( mage::core::Entitygraph& p_entitygraph,
+		// LEGACY, TO REMOVE
+		void plugRenderingQuadView(mage::core::Entitygraph& p_entitygraph,
+									float p_characteristics_v_width, float p_characteristics_v_height,
+									const std::string& p_parentid,
+									const std::string& p_quadEntityid,
+									const std::string& p_viewEntityid,
+									mage::rendering::Queue* p_queue,
+									const std::string& p_vshader,
+									const std::string& p_pshader,
+									const std::vector<std::pair<size_t, Texture>>& p_renderTargets);
+
+		rendering::Queue& plugRenderingQueue(mage::core::Entitygraph& p_entitygraph,
+												const rendering::Queue& p_renderingqueue,
+												const std::string& p_parentid, const std::string& p_entityid);
+
+		rendering::Queue& plugRenderingQuad( mage::core::Entitygraph& p_entitygraph,
+										const std::string& p_queue_debug_name,
 										float p_characteristics_v_width, float p_characteristics_v_height, 
 										const std::string& p_parentid,
+										const std::string& p_queueEntityid,
 										const std::string& p_quadEntityid,
 										const std::string& p_viewEntityid,
-										mage::rendering::Queue* p_queue,
 										const std::string& p_vshader,
 										const std::string& p_pshader,
 										const std::vector<std::pair<size_t, Texture>>& p_renderTargets);
-
-		rendering::Queue& plugRenderingQueue( mage::core::Entitygraph& p_entitygraph,
-									const rendering::Queue& p_renderingqueue, 
-									const std::string& p_parentid, const std::string& p_entityid);
 
 		void plugCamera(mage::core::Entitygraph& p_entitygraph,
 						const core::maths::Matrix& p_projection,
