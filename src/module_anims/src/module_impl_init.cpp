@@ -388,8 +388,8 @@ void ModuleImpl::d3d11_system_events()
 					mage::helpers::plugRenderingQuadView(m_entitygraph,
 						characteristics_v_width, characteristics_v_height,
 						"bufferRendering_Combiner_Fog_Queue_Entity",
-						"screenRendering_Combiner_Fog_Quad_Entity",
-						"screenRendering_Combiner_Fog_View_Entity",
+						"bufferRendering_Combiner_Fog_Quad_Entity",
+						"bufferRendering_Combiner_Fog_View_Entity",
 						&fog_rendering_queue,
 						"combiner_fog_vs",
 						"combiner_fog_ps",
@@ -400,9 +400,9 @@ void ModuleImpl::d3d11_system_events()
 						}
 					);
 
-					Entity* screenRendering_Combiner_Fog_Quad_Entity{ m_entitygraph.node("screenRendering_Combiner_Fog_Quad_Entity").data() };
+					Entity* bufferRendering_Combiner_Fog_Quad_Entity{ m_entitygraph.node("bufferRendering_Combiner_Fog_Quad_Entity").data() };
 
-					auto& screenRendering_Combiner_Fog_Quad_Entity_rendering_aspect{ screenRendering_Combiner_Fog_Quad_Entity->aspectAccess(core::renderingAspect::id) };
+					auto& screenRendering_Combiner_Fog_Quad_Entity_rendering_aspect{ bufferRendering_Combiner_Fog_Quad_Entity->aspectAccess(core::renderingAspect::id) };
 
 					rendering::DrawingControl& fogDrawingControl{ screenRendering_Combiner_Fog_Quad_Entity_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
 					fogDrawingControl.pshaders_map.push_back(std::make_pair("std.fog_color", "fog_color"));
@@ -421,7 +421,7 @@ void ModuleImpl::d3d11_system_events()
 					texturesChannelsRenderingQueue.enableTargetDepthClearing(true);
 					texturesChannelsRenderingQueue.setTargetStage(Texture::STAGE_0);
 
-					mage::helpers::plugRenderingQueue(m_entitygraph, texturesChannelsRenderingQueue, "screenRendering_Combiner_Fog_Quad_Entity", "bufferRendering_Scene_TexturesChannel_Queue_Entity");
+					mage::helpers::plugRenderingQueue(m_entitygraph, texturesChannelsRenderingQueue, "bufferRendering_Combiner_Fog_Quad_Entity", "bufferRendering_Scene_TexturesChannel_Queue_Entity");
 
 					create_textures_channel_rendergraph("bufferRendering_Scene_TexturesChannel_Queue_Entity");
 					
@@ -434,7 +434,7 @@ void ModuleImpl::d3d11_system_events()
 					zdepthChannelsRenderingQueue.enableTargetDepthClearing(true);
 					zdepthChannelsRenderingQueue.setTargetStage(Texture::STAGE_1);
 
-					mage::helpers::plugRenderingQueue(m_entitygraph, zdepthChannelsRenderingQueue, "screenRendering_Combiner_Fog_Quad_Entity", "bufferRendering_Scene_ZDepthChannel_Queue_Entity");
+					mage::helpers::plugRenderingQueue(m_entitygraph, zdepthChannelsRenderingQueue, "bufferRendering_Combiner_Fog_Quad_Entity", "bufferRendering_Scene_ZDepthChannel_Queue_Entity");
 
 
 					create_zdepth_channel_rendergraph("bufferRendering_Scene_ZDepthChannel_Queue_Entity");
