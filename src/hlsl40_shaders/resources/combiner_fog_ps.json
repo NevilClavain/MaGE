@@ -1,0 +1,20 @@
+{
+  "inputs": [
+    {
+      "type": "Real4Vector",
+      "body": {
+        "argument_id": "fog_color",
+        "register": 25,
+        "description": "fog color value"
+      }
+    },
+    {
+      "type": "Real4Vector",
+      "body": {
+        "argument_id": "fog_density",
+        "register": 26,
+        "description": "fog density value on .x"
+      }
+    }
+  ]
+}

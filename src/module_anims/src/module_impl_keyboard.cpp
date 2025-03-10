@@ -43,40 +43,31 @@ void ModuleImpl::onKeyPress(long p_key)
 {
 	if ('Q' == p_key)
 	{
-		if (m_texturesChannelRenderingQueue)
+		if ("camera_Entity" == m_currentCamera)
 		{
-			const auto current_view_entity_id{ m_texturesChannelRenderingQueue->getCurrentView() };
+			auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
+			const auto gblJointEntity{ gblJointEntityNode.data() };
 
-			if ("camera_Entity" == current_view_entity_id)
-			{
-				auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
-				const auto gblJointEntity{ gblJointEntityNode.data() };
+			auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
 
-				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
+			double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
 
-				double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
-
-				speed = 0.1;
-			}
+			speed = 0.1;
 		}
+
 	}
 	else if ('W' == p_key)
 	{
-		if (m_texturesChannelRenderingQueue)
+		if ("camera_Entity" == m_currentCamera)
 		{
-			const auto current_view_entity_id{ m_texturesChannelRenderingQueue->getCurrentView() };
+			auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
+			const auto gblJointEntity{ gblJointEntityNode.data() };
 
-			if ("camera_Entity" == current_view_entity_id)
-			{
-				auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
-				const auto gblJointEntity{ gblJointEntityNode.data() };
+			auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
 
-				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
+			double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
 
-				double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
-
-				speed = -0.1;
-			}
+			speed = -0.1;
 		}
 	}
 }
@@ -197,7 +188,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
 		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
 
-		renderingQueueSystemInstance->requestRenderingqueueLogging("bufferRendering_Scene_TexturesChannel_Entity");
+		renderingQueueSystemInstance->requestRenderingqueueLogging("bufferRendering_Scene_TexturesChannel_Queue_Entity");
 	}
 
 	else if (VK_F9 == p_key)
@@ -207,41 +198,31 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 	else if ('Q' == p_key)
 	{
-		if (m_texturesChannelRenderingQueue)
+		if ("camera_Entity" == m_currentCamera)
 		{
-			const auto current_view_entity_id{ m_texturesChannelRenderingQueue->getCurrentView() };
+			auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
+			const auto gblJointEntity{ gblJointEntityNode.data() };
 
-			if ("camera_Entity" == current_view_entity_id)
-			{
-				auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
-				const auto gblJointEntity{ gblJointEntityNode.data() };
+			auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
 
-				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
+			double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
 
-				double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
-
-				speed = 0.0;
-			}
+			speed = 0.0;
 		}
 	}
 
 	else if ('W' == p_key)
 	{
-		if (m_texturesChannelRenderingQueue)
+		if ("camera_Entity" == m_currentCamera)
 		{
-			const auto current_view_entity_id{ m_texturesChannelRenderingQueue->getCurrentView() };
+			auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
+			const auto gblJointEntity{ gblJointEntityNode.data() };
 
-			if ("camera_Entity" == current_view_entity_id)
-			{
-				auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
-				const auto gblJointEntity{ gblJointEntityNode.data() };
+			auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
 
-				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
+			double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
 
-				double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
-
-				speed = 0.0;
-			}
+			speed = 0.0;
 		}
 	}
 }

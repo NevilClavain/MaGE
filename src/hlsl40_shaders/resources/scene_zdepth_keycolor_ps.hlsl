@@ -28,32 +28,29 @@ cbuffer constargs : register(b0)
     Matrix mat[512];
 };
 
-
-Texture2D txDiffuse0         : register(t0);
-SamplerState sam0            : register(s0);
-
-Texture2D txDiffuse1         : register(t1);
-SamplerState sam1            : register(s1);
+Texture2D txDiffuse : register(t0);
+SamplerState sam : register(s0);
 
 
 struct PS_INTPUT 
 {
     float4 Position : SV_POSITION;
-	float2 TexCoord0: TEXCOORD0;
+    float2 TexCoord0 : TEXCOORD0;
+    float4 TexCoord1 : TEXCOORD1;
 };
 
-
-float4 ps_main(PS_INTPUT input) : SV_Target
-{
-    float4 color_0;
-    float4 color_1;
+float ps_main(PS_INTPUT input) : SV_Target
+{ 
+    float4 key_color = vec[24];
     
-    color_0.xyz = txDiffuse0.Sample(sam0, input.TexCoord0);
-    color_0.w = 1.0f;
+    float4 color = txDiffuse.Sample(sam, input.TexCoord0);
     
-    color_1.xyz = txDiffuse1.Sample(sam1, input.TexCoord0);
-    color_1.w = 1.0f;
-        
-    return color_0;
-    //return color_1;
+    if (color.r == key_color.r && color.g == key_color.g && color.b == key_color.b)
+    {
+        clip(-1);
+    }
+    
+    
+    float4 vw_pos = input.TexCoord1;        
+    return vw_pos.z;
 }
