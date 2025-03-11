@@ -279,7 +279,6 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 				const Runner::TaskReport report{ RunnerEvent::TASK_ERROR, filename, shaderAction };
 				m_runner[currentIndex].get()->m_mailbox_out.push(report);
 			}
-
 		}
 	) };
 

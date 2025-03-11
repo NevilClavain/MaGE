@@ -27,6 +27,7 @@
 #include <string>
 #include <thread>
 #include <utility> 
+#include <mutex> 
 #include "mailbox.h"
 #include "asynctask.h"
 #include "eventsource.h"
@@ -70,12 +71,17 @@ namespace mage
 
 			void dispatchEvents();
 
+			bool isBusy();
+
 		private:
 
 			void mainloop();
 
 			mutable std::unique_ptr<std::thread>			m_thread;
 			bool											m_cont;
+
+			std::mutex										m_state_mutex;
+			bool											m_busy;
 
 			static constexpr unsigned int idle_duration_ms{ 50 };
 			friend struct RunnerKiller;

@@ -81,6 +81,8 @@ namespace mage
         void run();
         void killRunner();
 
+        size_t getNbBusyRunners() const;
+
     private:
         mage::core::logger::Sink                            m_localLogger;
         mage::core::logger::Sink                            m_localLoggerRunner;
@@ -102,6 +104,6 @@ namespace mage
         void handleShader(const std::string& p_filename, Shader& p_shaderInfos);
         void handleTexture(const std::string& p_filename, Texture& p_textureInfos );
         
-        void handleSceneFile(const std::string& p_filename, const std::string& p_mesheid, TriangleMeshe& p_mesheInfos, const core::ComponentList<std::map<std::string, SceneNode>>& p_nodes_hierarchy_list);
+        void handleSceneFile(const std::string& p_filename, const std::string& p_mesheid, TriangleMeshe& p_mesheInfos, const core::ComponentList<std::map<std::string, SceneNode>>& p_nodes_hierarchy_list);        
     };
 }

@@ -40,6 +40,8 @@
 #include "animatorfunc.h"
 #include "animators_helpers.h"
 
+#include "resourcesystem.h"
+
 using namespace mage;
 using namespace mage::core;
 using namespace mage::rendering;
@@ -75,5 +77,12 @@ void ModuleImpl::run(void)
 		dataCloud->updateDataValue<double>("current_animation.seconds_duration", currentAnimationSecondsDuration);
 		dataCloud->updateDataValue<double>("current_animation.seconds_progress", currentAnimationSecondsProgress);
 	}
-	
+
+	{
+		const auto resourceSystem{ sysEngine->getSystem<mage::ResourceSystem>(resourceSystemSlot) };
+
+
+		dataCloud->updateDataValue<size_t>("debug.nb_resources_threads", resourceSystem->getNbBusyRunners());
+
+	}	
 }

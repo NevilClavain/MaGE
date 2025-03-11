@@ -54,10 +54,18 @@ void Runner::mainloop()
 					auto task_target{ current->getTargetDescr() };
 					auto task_action{ current->getActionDescr() };
 
+					m_state_mutex.lock();
+					m_busy = true;
+					m_state_mutex.unlock();
+
 					current->execute(this);
 
 					const TaskReport report{ RunnerEvent::TASK_DONE, task_target, task_action };
 					mb_out->push(report);
+
+					m_state_mutex.lock();
+					m_busy = false;
+					m_state_mutex.unlock();
 				}
 
 			} while (current);
@@ -65,11 +73,21 @@ void Runner::mainloop()
 		else
 		{
 			// idle for a little time...
-
 			std::this_thread::sleep_for(std::chrono::milliseconds(idle_duration_ms));
 		}
 
 	} while (m_cont);	
+}
+
+bool Runner::isBusy()
+{
+	bool state_copy;
+
+	m_state_mutex.lock();
+	state_copy = m_busy;
+	m_state_mutex.unlock();
+
+	return state_copy;
 }
 
 void Runner::startup(void)

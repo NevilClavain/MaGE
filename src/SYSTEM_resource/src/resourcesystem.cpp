@@ -298,3 +298,18 @@ void ResourceSystem::killRunner()
 		m_runner[i].get()->join();
 	}
 }
+
+size_t ResourceSystem::getNbBusyRunners() const
+{
+	size_t count{ 0 };
+
+	for (int i = 0; i < nbRunners; i++)
+	{
+		if (m_runner[i].get()->isBusy())
+		{
+			count++;
+		}
+	}
+
+	return count;
+}
