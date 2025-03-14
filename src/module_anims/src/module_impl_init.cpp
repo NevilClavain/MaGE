@@ -410,7 +410,7 @@ void ModuleImpl::d3d11_system_events()
 
 						constexpr double gear_size{ 0.04 };
 
-						m_loading_gear = helpers::plug2DSpriteWithSyncVariables(m_entitygraph, "screenRendering_Filter_DirectForward_Queue_Entity", "loading_gear", gear_size, gear_size, "sprite_vs", "sprite_ps", "gear.bmp", rs_list, 1000, mage::transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT);
+						m_loading_gear = helpers::plug2DSpriteWithSyncVariables(m_entitygraph, "screenRendering_Filter_DirectForward_Quad_Entity", "loading_gear", gear_size, gear_size, "sprite_vs", "sprite_ps", "gear.bmp", rs_list, 1000, mage::transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT);
 
 						const auto& time_aspect{ m_loading_gear->aspectAccess(timeAspect::id) };
 
