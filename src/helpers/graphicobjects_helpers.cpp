@@ -303,6 +303,7 @@ namespace mage
 			const std::string& p_parentid,
 			const std::string& p_textEntityid, 
 			const mage::rendering::Queue::Text& p_queue_text,
+			transform::WorldPosition::TransformationComposition p_composition_operation,
 			float p_xpos = 0,
 			float p_ypos = 0)
 		{
@@ -317,7 +318,7 @@ namespace mage
 
 			auto& world_aspect{ textEntity->makeAspect(core::worldAspect::id) };
 			transform::WorldPosition wp;
-			wp.composition_operation = transform::WorldPosition::TransformationComposition::TRANSFORMATION_PARENT_PROJECTEDPOS;
+			wp.composition_operation = p_composition_operation;
 			world_aspect.addComponent<transform::WorldPosition>("position", wp);
 
 			world_aspect.addComponent<double>("x_pos", p_xpos);

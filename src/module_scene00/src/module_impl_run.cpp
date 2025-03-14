@@ -459,7 +459,7 @@ void ModuleImpl::run(void)
 		// TODO : 
 		//	- update distance text
 		
-		helpers::plugTextWithPosition(m_entitygraph, "quadEntity2", "collimator_text", { "xxx", "CourierNew.10.spritefont", { 0, 200, 0, 255 }});
+		helpers::plugTextWithPosition(m_entitygraph, "quadEntity2", "collimator_text", { "xxx", "CourierNew.10.spritefont", { 0, 200, 0, 255 }}, mage::transform::WorldPosition::TransformationComposition::TRANSFORMATION_PARENT_PROJECTEDPOS);
 
 
 		m_quadEntity2_state = true;

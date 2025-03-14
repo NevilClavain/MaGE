@@ -437,7 +437,7 @@ void ModuleImpl::d3d11_system_events()
 
 					// test text entity
 
-					helpers::plugTextWithPosition(m_entitygraph, "bufferRenderingEntity", "plop_text", { "plop !", "CourierNew.10.spritefont", { 255, 255, 255, 255 } });
+					helpers::plugTextWithPosition(m_entitygraph, "bufferRenderingEntity", "plop_text", { "plop !", "CourierNew.10.spritefont", { 255, 255, 255, 255 } }, mage::transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT);
 
 					helpers::getXPos(m_entitygraph, "plop_text") = 0.2;
 					helpers::getYPos(m_entitygraph, "plop_text") = 0.15;

@@ -81,6 +81,7 @@ namespace mage
 			const std::string& p_parentid,
 			const std::string& p_textEntityid,
 			const mage::rendering::Queue::Text& p_queue_text,
+			transform::WorldPosition::TransformationComposition p_composition_operation,
 			float p_xpos = 0,
 			float p_ypos = 0);
 
