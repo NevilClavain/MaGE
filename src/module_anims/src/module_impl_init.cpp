@@ -364,10 +364,43 @@ void ModuleImpl::d3d11_system_events()
 					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_5", maths::Real4Vector(0.0, 0.0, 0.0, 1));
 
 
+
+
+
+					//
+					{
+						rendering::RenderState rs_noculling(rendering::RenderState::Operation::SETCULLING, "cw");
+						rendering::RenderState rs_zbuffer(rendering::RenderState::Operation::ENABLEZBUFFER, "false");
+						rendering::RenderState rs_fill(rendering::RenderState::Operation::SETFILLMODE, "solid");
+						rendering::RenderState rs_texturepointsampling(rendering::RenderState::Operation::SETTEXTUREFILTERTYPE, "point");
+
+						const std::vector<rendering::RenderState> rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling };
+
+						constexpr double gear_size{ 0.04 };
+
+						m_loading_gear = helpers::plug2DSpriteWithSyncVariables(m_entitygraph, "screenRendering_Filter_DirectForward_Quad_Entity", "loading_gear", gear_size, gear_size,
+							"sprite_vs", "sprite_ps", "gear.bmp", rs_list, 1000,
+							mage::transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT);
+
+						const auto& time_aspect{ m_loading_gear->aspectAccess(timeAspect::id) };
+
+						core::SyncVariable& x_pos{ time_aspect.getComponent<SyncVariable>("x_pos")->getPurpose() };
+						core::SyncVariable& y_pos{ time_aspect.getComponent<SyncVariable>("y_pos")->getPurpose() };
+
+						const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+						const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("std.viewport") };
+
+						x_pos.value = (-viewport.x() * 0.5) + gear_size * 0.5;
+						y_pos.value = (-viewport.y() * 0.5) + gear_size * 0.5;
+					}
+
+
+
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// SCENEGRAPH
 
 					create_scenegraph(p_id);
+
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// RENDERGRAPH
@@ -397,34 +430,6 @@ void ModuleImpl::d3d11_system_events()
 					rendering::DrawingControl& fogDrawingControl{ screenRendering_Combiner_Fog_Quad_Entity_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
 					fogDrawingControl.pshaders_map.push_back(std::make_pair("std.fog_color", "fog_color"));
 					fogDrawingControl.pshaders_map.push_back(std::make_pair("std.fog_density", "fog_density"));
-
-
-					//
-					{
-						rendering::RenderState rs_noculling(rendering::RenderState::Operation::SETCULLING, "cw");
-						rendering::RenderState rs_zbuffer(rendering::RenderState::Operation::ENABLEZBUFFER, "false");
-						rendering::RenderState rs_fill(rendering::RenderState::Operation::SETFILLMODE, "solid");
-						rendering::RenderState rs_texturepointsampling(rendering::RenderState::Operation::SETTEXTUREFILTERTYPE, "point");
-
-						const std::vector<rendering::RenderState> rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling };
-
-						constexpr double gear_size{ 0.04 };
-
-						m_loading_gear = helpers::plug2DSpriteWithSyncVariables(m_entitygraph, "screenRendering_Filter_DirectForward_Quad_Entity", "loading_gear", gear_size, gear_size, 
-																					"sprite_vs", "sprite_ps", "gear.bmp", rs_list, 1000, 
-																					mage::transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT);
-
-						const auto& time_aspect{ m_loading_gear->aspectAccess(timeAspect::id) };
-
-						core::SyncVariable& x_pos{ time_aspect.getComponent<SyncVariable>("x_pos")->getPurpose() };
-						core::SyncVariable& y_pos{ time_aspect.getComponent<SyncVariable>("y_pos")->getPurpose() };
-
-						const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-						const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("std.viewport") };
-
-						x_pos.value = (- viewport.x() * 0.5) + gear_size * 0.5;
-						y_pos.value = (- viewport.y() * 0.5) + gear_size * 0.5;
-					}
 
 
 									

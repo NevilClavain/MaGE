@@ -99,6 +99,8 @@ namespace mage
 
 			std::string owner_entity_id; // to be completed by queue system
 
+			bool				draw{ true };
+
 		};
 
 		/// 'DrawingControl' EQUIVALENT IN BUILT RENDERING QUEUE
@@ -130,9 +132,10 @@ namespace mage
 			// shaders vector arrays to apply
 			const std::vector<mage::Shader::VectorArrayArgument>* vshaders_vector_array{ nullptr };
 			const std::vector<mage::Shader::VectorArrayArgument>* pshaders_vector_array{ nullptr };
-
 		
 			std::string owner_entity_id;
+
+			bool* draw{ nullptr };
 		};
 
 		struct Queue

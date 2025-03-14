@@ -78,21 +78,30 @@ void ModuleImpl::run(void)
 		dataCloud->updateDataValue<double>("current_animation.seconds_progress", currentAnimationSecondsProgress);
 	}
 
-	{
-		const auto resourceSystem{ sysEngine->getSystem<mage::ResourceSystem>(resourceSystemSlot) };
-
-
-		dataCloud->updateDataValue<size_t>("debug.nb_resources_threads", resourceSystem->getNbBusyRunners());
-
-	}
-
 	////////////////////////////////////////////////////////
 	// loading gear
 	{
-		const auto& time_aspect{ m_loading_gear->aspectAccess(timeAspect::id) };
-		core::SyncVariable& z_rot{ time_aspect.getComponent<SyncVariable>("z_rot")->getPurpose() };
 
-		z_rot.step = 2 * core::maths::pi * 0.25;
-		z_rot.direction = SyncVariable::Direction::INC;
+		const auto resourceSystem{ sysEngine->getSystem<mage::ResourceSystem>(resourceSystemSlot) };
+
+		dataCloud->updateDataValue<size_t>("debug.nb_resources_threads", resourceSystem->getNbBusyRunners());
+
+		const auto& rendering_aspect{ m_loading_gear->aspectAccess(renderingAspect::id) };
+		rendering::DrawingControl& dc{ rendering_aspect.getComponent<rendering::DrawingControl>("sprite2D_dc")->getPurpose() };
+
+		if (resourceSystem->getNbBusyRunners() > 0)
+		{
+			dc.draw = true;
+
+			const auto& time_aspect{ m_loading_gear->aspectAccess(timeAspect::id) };
+			core::SyncVariable& z_rot{ time_aspect.getComponent<SyncVariable>("z_rot")->getPurpose() };
+
+			z_rot.step = 2 * core::maths::pi * 0.25;
+			z_rot.direction = SyncVariable::Direction::INC;
+		}
+		else
+		{
+			dc.draw = false;
+		}
 	}	
 }

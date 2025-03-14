@@ -601,6 +601,8 @@ static rendering::Queue::TriangleMeshePayload build_TriangleMesheAndTexturesPayl
 			trianglesQueueDrawingControl.vshaders_vector_array = &p_vshader.getVectorArrayArguments();
 			trianglesQueueDrawingControl.pshaders_vector_array = &p_pshader.getVectorArrayArguments();
 
+			trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
+
 
 			////////////////////////////////////////////////////
 
@@ -650,6 +652,8 @@ static rendering::Queue::TriangleMeshePayload build_TriangleMesheAndTexturesPayl
 			trianglesQueueDrawingControl.vshaders_vector_array = &p_vshader.getVectorArrayArguments();
 			trianglesQueueDrawingControl.pshaders_vector_array = &p_pshader.getVectorArrayArguments();
 
+			trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
+
 			////////////////////////////////////////////////////
 
 			textureSetPayload.drawing_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
@@ -692,6 +696,8 @@ static rendering::Queue::LineMeshePayload build_LineMeshePayload(const std::vect
 		/////////////// HERE manage vector array for shaders
 		linesQueueDrawingControl.vshaders_vector_array = &p_vshader.getVectorArrayArguments();
 		linesQueueDrawingControl.pshaders_vector_array = &p_pshader.getVectorArrayArguments();
+
+		linesQueueDrawingControl.draw = &linesDrawingControl.draw;
 
 
 		////////////////////////////////////////////////////
@@ -1011,6 +1017,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 												linesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
 												////////////////////////////////////////////////////
 
+												linesQueueDrawingControl.draw = &linesDrawingControl.draw;
+
 												lineMeshePayload.drawing_list[linesDrawingControl.owner_entity_id] = linesQueueDrawingControl;
 
 												_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
@@ -1069,6 +1077,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 													trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
 													////////////////////////////////////////////////////
 
+													trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
+
 													triangleMeshePayload.drawing_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
 
 													_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
@@ -1120,6 +1130,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 														trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
 														////////////////////////////////////////////////////
 
+														trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
+
 														textureSetPayload.drawing_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
 
 														_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
@@ -1165,6 +1177,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 														trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
 														trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
 														////////////////////////////////////////////////////
+
+														trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
 
 														textureSetPayload.drawing_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
 
@@ -1229,6 +1243,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 													trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
 													////////////////////////////////////////////////////
 
+													trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
+
 													triangleMeshePayload.drawing_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
 
 													_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
@@ -1280,6 +1296,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 														trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
 														////////////////////////////////////////////////////
 
+														trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
+
 														textureSetPayload.drawing_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
 
 														_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
@@ -1325,6 +1343,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 														trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
 														trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
 														////////////////////////////////////////////////////
+
+														trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
 
 														textureSetPayload.drawing_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
 
