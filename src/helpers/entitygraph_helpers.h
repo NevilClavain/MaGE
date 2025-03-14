@@ -50,7 +50,7 @@ namespace mage
 
 	namespace helpers
 	{
-		void logEntitygraph(core::Entitygraph& p_eg);
+		void logEntitygraph(core::Entitygraph& p_eg, bool p_log_entity_id_only = false);
 
 		// LEGACY, TO REMOVE
 		void plugRenderingQuadView(mage::core::Entitygraph& p_entitygraph,

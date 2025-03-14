@@ -54,7 +54,7 @@ namespace mage
 {
 	namespace helpers
 	{
-		void logEntitygraph(core::Entitygraph& p_eg)
+		void logEntitygraph(core::Entitygraph& p_eg, bool p_log_entity_id_only)
 		{
 			_MAGE_DEBUG(localLogger, ">>>>>>>>>>>>>>> ENTITY GRAPH DUMP BEGIN <<<<<<<<<<<<<<<<<<<<<<<<");
 
@@ -124,49 +124,51 @@ namespace mage
 					}					
 					logstr += "ENTITY_ID = " + p_node.id;
 
-					// aspects of this entity
-					const std::map<int, std::string> aspects_translate
+					if (!p_log_entity_id_only)
 					{
-						{ core::teapotAspect::id,		"teapotAspect" },
-						{ core::renderingAspect::id,	"renderingAspect" },
-						{ core::timeAspect::id,			"timeAspect" },
-						{ core::resourcesAspect::id,	"resourcesAspect" },
-						{ core::cameraAspect::id,		"cameraAspect" },
-						{ core::worldAspect::id,		"worldAspect" },
-					};
-
-					for (const auto& e : aspects_translate)
-					{
-						if (curr_entity->hasAspect(e.first))
+						// aspects of this entity
+						const std::map<int, std::string> aspects_translate
 						{
-							// log aspect name
+							{ core::teapotAspect::id,		"teapotAspect" },
+							{ core::renderingAspect::id,	"renderingAspect" },
+							{ core::timeAspect::id,			"timeAspect" },
+							{ core::resourcesAspect::id,	"resourcesAspect" },
+							{ core::cameraAspect::id,		"cameraAspect" },
+							{ core::worldAspect::id,		"worldAspect" },
+						};
 
-							logstr += "\n";
-							for (int i = 0; i < depth + 1; i++)
+						for (const auto& e : aspects_translate)
+						{
+							if (curr_entity->hasAspect(e.first))
 							{
-								logstr += "\t";
-							}
+								// log aspect name
 
-							logstr += e.second;
-
-							/////////////////////
-							const auto& cc{ curr_entity->aspectAccess(e.first) };
-							const std::unordered_map<std::string, std::string>& comp_id_list{ cc.getComponentsIdWithTypeStrList() };
-
-							for (const auto& c : comp_id_list)
-							{
 								logstr += "\n";
-								for (int i = 0; i < depth + 2; i++)
+								for (int i = 0; i < depth + 1; i++)
 								{
 									logstr += "\t";
 								}
-								logstr += c.first;
-								logstr += " ";
-								logstr += c.second;												
+
+								logstr += e.second;
+
+								/////////////////////
+								const auto& cc{ curr_entity->aspectAccess(e.first) };
+								const std::unordered_map<std::string, std::string>& comp_id_list{ cc.getComponentsIdWithTypeStrList() };
+
+								for (const auto& c : comp_id_list)
+								{
+									logstr += "\n";
+									for (int i = 0; i < depth + 2; i++)
+									{
+										logstr += "\t";
+									}
+									logstr += c.first;
+									logstr += " ";
+									logstr += c.second;
+								}
 							}
 						}
 					}
-
 
 					_MAGE_DEBUG(localLogger, logstr);
 
