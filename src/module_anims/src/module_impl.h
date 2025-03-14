@@ -103,6 +103,8 @@ private:
 
     std::string                                                 m_currentCamera;
 
+    mage::core::Entity*                                         m_loading_gear;
+
     static constexpr double                                     groundLevel{ 0 };
 
     static constexpr double                                     skydomeSkyfromspace_ESun{ 8.7 };

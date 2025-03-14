@@ -429,7 +429,8 @@ void ModuleImpl::d3d11_system_events()
 
 					const std::vector<rendering::RenderState> rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling };
 
-					helpers::plug2DSpriteWithPosition(m_entitygraph, "bufferRenderingEntity", "logo_sprite", 0.06, 0.06, "sprite_vs", "sprite_ps", "mage_hat.bmp", rs_list, 1000000);
+					helpers::plug2DSpriteWithPosition(m_entitygraph, "bufferRenderingEntity", "logo_sprite", 0.06, 0.06, "sprite_vs", "sprite_ps", "mage_hat.bmp", rs_list, 1000000,
+														transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT);
 					
 					helpers::getXPos(m_entitygraph, "logo_sprite") = 0.2;
 					helpers::getYPos(m_entitygraph, "logo_sprite") = 0.1;

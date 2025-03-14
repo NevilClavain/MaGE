@@ -84,5 +84,15 @@ void ModuleImpl::run(void)
 
 		dataCloud->updateDataValue<size_t>("debug.nb_resources_threads", resourceSystem->getNbBusyRunners());
 
+	}
+
+	////////////////////////////////////////////////////////
+	// loading gear
+	{
+		const auto& time_aspect{ m_loading_gear->aspectAccess(timeAspect::id) };
+		core::SyncVariable& z_rot{ time_aspect.getComponent<SyncVariable>("z_rot")->getPurpose() };
+
+		z_rot.step = 2 * core::maths::pi * 0.25;
+		z_rot.direction = SyncVariable::Direction::INC;
 	}	
 }

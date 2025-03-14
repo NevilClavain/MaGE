@@ -29,6 +29,8 @@
 #include <vector>
 #include <utility>
 
+#include "worldposition.h"
+
 namespace mage
 {
 	// fwd decl
@@ -50,7 +52,8 @@ namespace mage
 							const std::string& p_pshader,
 							const std::string& p_texture,
 							const std::vector<rendering::RenderState>& p_renderstates_list,
-							int p_rendering_order
+							int p_rendering_order,
+							transform::WorldPosition::TransformationComposition p_composition_operation
 						);
 
 		core::SyncVariable& getXPosSync(mage::core::Entitygraph& p_entitygraph, const std::string& p_spriteEntityid);
@@ -65,11 +68,12 @@ namespace mage
 			const std::string& p_vshader,
 			const std::string& p_pshader,
 			const std::string& p_texture,
-			const std::vector<rendering::RenderState>& p_renderstates_list,
+			const std::vector<rendering::RenderState>& p_renderstates_list,			
 			int p_rendering_order,
+			transform::WorldPosition::TransformationComposition p_composition_operation,
 			float p_xpos = 0,
 			float p_ypos = 0,
-			float p_rot_radians = 0
+			float p_rot_radians = 0			
 		);
 
 

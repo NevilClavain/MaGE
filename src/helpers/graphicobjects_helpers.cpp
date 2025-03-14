@@ -55,7 +55,8 @@ namespace mage
 							const std::string& p_pshader,
 							const std::string& p_texture,
 							const std::vector<rendering::RenderState>& p_renderstates_list,
-							int p_rendering_order
+							int p_rendering_order,
+							transform::WorldPosition::TransformationComposition p_composition_operation
 						)
 		{			
 			auto& parentNode{ p_entitygraph.node(p_parentid) };
@@ -121,7 +122,7 @@ namespace mage
 
 			auto& world_aspect{ sprite2DEntity->makeAspect(core::worldAspect::id) };
 			transform::WorldPosition wp;
-			wp.composition_operation = transform::WorldPosition::TransformationComposition::TRANSFORMATION_PARENT_PROJECTEDPOS; // specific for 2D sprites
+			wp.composition_operation = p_composition_operation;
 			world_aspect.addComponent<transform::WorldPosition>("position", wp);
 
 
@@ -195,9 +196,11 @@ namespace mage
 			const std::string& p_texture,
 			const std::vector<rendering::RenderState>& p_renderstates_list,
 			int p_rendering_order,
+			transform::WorldPosition::TransformationComposition p_composition_operation,
 			float p_xpos = 0,
 			float p_ypos = 0,
-			float p_rot_radians = 0)
+			float p_rot_radians = 0			
+			)
 		{
 			auto& parentNode{ p_entitygraph.node(p_parentid) };
 
@@ -256,7 +259,7 @@ namespace mage
 			auto& world_aspect{ sprite2DEntity->makeAspect(core::worldAspect::id) };
 
 			transform::WorldPosition wp;
-			wp.composition_operation = transform::WorldPosition::TransformationComposition::TRANSFORMATION_PARENT_PROJECTEDPOS; // specific for 2D sprites
+			wp.composition_operation = p_composition_operation;
 			world_aspect.addComponent<transform::WorldPosition>("position", wp);
 
 			
