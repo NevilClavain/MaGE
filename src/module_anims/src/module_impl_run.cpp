@@ -81,10 +81,7 @@ void ModuleImpl::run(void)
 	////////////////////////////////////////////////////////
 	// loading gear
 	{
-
 		const auto resourceSystem{ sysEngine->getSystem<mage::ResourceSystem>(resourceSystemSlot) };
-
-		dataCloud->updateDataValue<size_t>("debug.nb_resources_threads", resourceSystem->getNbBusyRunners());
 
 		const auto& rendering_aspect{ m_loading_gear->aspectAccess(renderingAspect::id) };
 		rendering::DrawingControl& dc{ rendering_aspect.getComponent<rendering::DrawingControl>("sprite2D_dc")->getPurpose() };

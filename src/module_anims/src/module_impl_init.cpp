@@ -101,11 +101,6 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	dataCloud->updateDataValue<std::string>("resources_event", "...");
 
 
-	dataCloud->registerData<size_t>("debug.nb_resources_threads");
-	dataCloud->updateDataValue<size_t>("debug.nb_resources_threads", 0);
-
-
-
 	dataCloud->registerData<std::string>("current_animation.id");
 	dataCloud->registerData<double>("current_animation.ticks_progress");
 	dataCloud->registerData<double>("current_animation.seconds_progress");
@@ -394,6 +389,32 @@ void ModuleImpl::d3d11_system_events()
 						y_pos.value = (-viewport.y() * 0.5) + gear_size * 0.5;
 					}
 
+
+					{
+						rendering::RenderState rs_noculling(rendering::RenderState::Operation::SETCULLING, "cw");
+						rendering::RenderState rs_zbuffer(rendering::RenderState::Operation::ENABLEZBUFFER, "false");
+						rendering::RenderState rs_fill(rendering::RenderState::Operation::SETFILLMODE, "solid");
+						rendering::RenderState rs_texturepointsampling(rendering::RenderState::Operation::SETTEXTUREFILTERTYPE, "point");
+
+						const std::vector<rendering::RenderState> rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling };
+
+						constexpr double logo_size{ 0.06 };
+
+						auto logo = helpers::plug2DSpriteWithPosition(m_entitygraph, "screenRendering_Filter_DirectForward_Quad_Entity", "logo", logo_size, logo_size,
+							"sprite_vs", "sprite_ps", "mage.png", rs_list, 1000,
+							mage::transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT);
+
+						const auto& world_aspect{ logo->aspectAccess(worldAspect::id) };
+
+						double& x_pos{ world_aspect.getComponent<double>("x_pos")->getPurpose() };
+						double& y_pos{ world_aspect.getComponent<double>("y_pos")->getPurpose() };
+
+						const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+						const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("std.viewport") };
+
+						x_pos = (viewport.x() * 0.5) - logo_size * 0.5;
+						y_pos = (-viewport.y() * 0.5) + logo_size * 0.5;
+					}
 
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
