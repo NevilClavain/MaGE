@@ -50,7 +50,7 @@ public:
     std::string                     getModuleName() const;
     std::string                     getModuleDescr() const;
 
-    mage::core::Entitygraph*    entitygraph();
+    mage::core::Entitygraph*        entitygraph();
 
     void                            onKeyPress(long p_key);
     void                            onEndKeyPress(long p_key);
@@ -67,9 +67,6 @@ public:
     void                            init(const std::string p_appWindowsEntityName);
     void                            run(void);
     void                            close(void);
-
-
-    
 
 private:
 
