@@ -256,6 +256,11 @@ ALL_BUILD.vcxproj*
 /src/helpers/*.sln
 /src/helpers/*.vcxproj*
 
+/src/appbases/CMakeFiles/
+/src/appbases/*.sln
+/src/appbases/*.vcxproj*
+
+
 /src/commons/CMakeFiles/
 /src/commons/*.sln
 /src/commons/*.vcxproj*

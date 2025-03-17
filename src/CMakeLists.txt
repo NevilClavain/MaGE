@@ -93,6 +93,8 @@ add_subdirectory(hlsl40_shaders)
 add_subdirectory(commons)
 add_subdirectory(helpers)
 
+add_subdirectory(appbases)
+
 add_subdirectory(rt)
 
 add_subdirectory(console_tests/console_helloworld)
