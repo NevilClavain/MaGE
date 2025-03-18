@@ -354,6 +354,11 @@ void DataPrintSystem::collectData()
 
 void DataPrintSystem::print(const std::vector<std::string>& p_list, int p_x_base, int p_y_base, int p_nbCols, int p_nbRows, int p_colWidth, int p_rowHeight)
 {
+	if (!m_renderingQueue)
+	{
+		return;
+	}
+
 	int curr_row{ 0 };
 	int curr_col{ 0 };
 

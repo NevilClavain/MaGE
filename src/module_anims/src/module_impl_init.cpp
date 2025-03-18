@@ -75,6 +75,8 @@ using namespace mage::rendering;
 
 void ModuleImpl::init(const std::string p_appWindowsEntityName)
 {
+	SamplesBase::init(p_appWindowsEntityName);
+
 	/////////// logging conf
 
 	mage::core::FileContent<char> logConfFileContent("./module_anims_config/logconf.json");
@@ -107,22 +109,9 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	dataCloud->registerData<double>("current_animation.ticks_duration");
 	dataCloud->registerData<double>("current_animation.seconds_duration");
 
-	/////////// systems
+
 
 	auto sysEngine{ SystemEngine::getInstance() };
-
-	sysEngine->makeSystem<mage::TimeSystem>(timeSystemSlot, m_entitygraph);
-	sysEngine->makeSystem<mage::D3D11System>(d3d11SystemSlot, m_entitygraph);
-	sysEngine->makeSystem<mage::ResourceSystem>(resourceSystemSlot, m_entitygraph);
-	sysEngine->makeSystem<mage::WorldSystem>(worldSystemSlot, m_entitygraph);
-	sysEngine->makeSystem<mage::RenderingQueueSystem>(renderingQueueSystemSlot, m_entitygraph);
-	sysEngine->makeSystem<mage::DataPrintSystem>(dataPrintSystemSlot, m_entitygraph);
-	sysEngine->makeSystem<mage::AnimationsSystem>(animationsSystemSlot, m_entitygraph);
-
-	// D3D11 system provides compilation shader service : give access to this to resources sytem
-	const auto d3d11System{ sysEngine->getSystem<mage::D3D11System>(d3d11SystemSlot) };
-	services::ShadersCompilationService::getInstance()->registerSubscriber(d3d11System->getShaderCompilationInvocationCallback());
-	services::TextureContentCopyService::getInstance()->registerSubscriber(d3d11System->getTextureContentCopyInvocationCallback());
 
 	// dataprint system filters
 	const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
@@ -140,12 +129,14 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	///////////////////////////
 
 	d3d11_system_events();
-	resource_system_events();
-	animation_system_events();
+	//resource_system_events();
+	//animation_system_events();
 
 	//////////////////////////
 
 	m_appWindowsEntityName = p_appWindowsEntityName;
+
+	helpers::logEntitygraph(m_entitygraph, true);
 }
 
 
@@ -279,6 +270,8 @@ void ModuleImpl::d3d11_system_events()
 			{
 				case D3D11SystemEvent::D3D11_WINDOW_READY:
 				{
+					/*
+					
 					auto& appwindowNode{ m_entitygraph.node(p_id) };
 					const auto appwindow{ appwindowNode.data() };
 
@@ -312,20 +305,22 @@ void ModuleImpl::d3d11_system_events()
 						}
 
 					)};
+					*/
 
+					/*
 					m_windowRenderingQueue = &screen_rendering_queue;
 
 					auto sysEngine{ SystemEngine::getInstance() };
 					const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
 
 					dataPrintSystem->setRenderingQueue(m_windowRenderingQueue);
-
+					*/
 
 
 					//////////////////////////////////////////
 
 					/////////// commons shaders params
-
+					/*
 					dataCloud->registerData<maths::Real4Vector>("texture_keycolor_ps.key_color");
 					dataCloud->updateDataValue<maths::Real4Vector>("texture_keycolor_ps.key_color", maths::Real4Vector(0, 0, 0, 1));
 
@@ -357,10 +352,10 @@ void ModuleImpl::d3d11_system_events()
 
 					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_5");
 					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_5", maths::Real4Vector(0.0, 0.0, 0.0, 1));
+					*/
 
 
-
-
+					/*
 
 					//
 					{
@@ -389,7 +384,9 @@ void ModuleImpl::d3d11_system_events()
 						y_pos.value = (-viewport.y() * 0.5) + gear_size * 0.5;
 					}
 
+					*/
 
+					/*
 					{
 						rendering::RenderState rs_noculling(rendering::RenderState::Operation::SETCULLING, "cw");
 						rendering::RenderState rs_zbuffer(rendering::RenderState::Operation::ENABLEZBUFFER, "false");
@@ -415,18 +412,20 @@ void ModuleImpl::d3d11_system_events()
 						x_pos = (viewport.x() * 0.5) - logo_size * 0.5;
 						y_pos = (-viewport.y() * 0.5) + logo_size * 0.5;
 					}
+					*/
 
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// SCENEGRAPH
 
-					create_scenegraph(p_id);
+					//create_scenegraph(p_id);
 
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// RENDERGRAPH
 
-
+					/*
+					
 					const auto fog_rendering_quad_textures_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
 					const auto fog_rendering_quad_fog_channnel{ Texture(Texture::Format::TEXTURE_FLOAT32, w_width, w_height) };
 
@@ -492,6 +491,8 @@ void ModuleImpl::d3d11_system_events()
 						auto fogChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
 						fogChannelRenderingQueue->setCurrentView(m_currentCamera);
 					}
+
+					*/
 				}
 				break;
 			}

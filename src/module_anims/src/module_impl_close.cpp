@@ -34,6 +34,9 @@ using namespace mage::core;
 
 void ModuleImpl::close(void)
 {
+	SamplesBase::close();
+
+	/*
 	auto resourceSystem{ SystemEngine::getInstance()->getSystem(resourceSystemSlot) };
 	auto resourceSystemInstance{ dynamic_cast<mage::ResourceSystem*>(resourceSystem) };
 
@@ -43,4 +46,5 @@ void ModuleImpl::close(void)
 	auto d3d11SystemInstance{ dynamic_cast<mage::D3D11System*>(d3d11System) };
 
 	d3d11SystemInstance->killRunner();
+	*/
 }

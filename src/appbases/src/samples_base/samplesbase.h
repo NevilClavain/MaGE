@@ -36,45 +36,50 @@
 
 #include "animations.h"
 
-class SamplesBase : public mage::interfaces::ModuleRoot
+namespace mage
 {
-public:
-    SamplesBase();
-    ~SamplesBase() = default;
+    class SamplesBase : public mage::interfaces::ModuleRoot
+    {
+    public:
+        SamplesBase();
+        ~SamplesBase() = default;
 
-    SamplesBase(const SamplesBase&) = delete;
-    SamplesBase(SamplesBase&&) = delete;
-    SamplesBase& operator=(const SamplesBase& t) = delete;
+        SamplesBase(const SamplesBase&) = delete;
+        SamplesBase(SamplesBase&&) = delete;
+        SamplesBase& operator=(const SamplesBase& t) = delete;
 
 
-    mage::core::Entitygraph*        entitygraph();
+        mage::core::Entitygraph* entitygraph();
 
-    void                            init(const std::string p_appWindowsEntityName);
-    void                            run(void);
-    void                            close(void);
+        void                            init(const std::string p_appWindowsEntityName);
+        void                            run(void);
+        void                            close(void);
 
-private:
+    protected:
 
-    void                            d3d11_system_events();
+        void                            d3d11_system_events();
 
-    static constexpr int                                        timeSystemSlot{ 0 };
-    static constexpr int                                        d3d11SystemSlot{ 1 };
-    static constexpr int                                        resourceSystemSlot{ 2 };
-    static constexpr int                                        worldSystemSlot{ 3 };
-    static constexpr int                                        renderingQueueSystemSlot{ 4 };
-    static constexpr int                                        dataPrintSystemSlot{ 5 };
-    static constexpr int                                        animationsSystemSlot{ 6 };
+        static constexpr int                                        timeSystemSlot{ 0 };
+        static constexpr int                                        d3d11SystemSlot{ 1 };
+        static constexpr int                                        resourceSystemSlot{ 2 };
+        static constexpr int                                        worldSystemSlot{ 3 };
+        static constexpr int                                        renderingQueueSystemSlot{ 4 };
+        static constexpr int                                        dataPrintSystemSlot{ 5 };
+        static constexpr int                                        animationsSystemSlot{ 6 };
 
-    bool                                                        m_show_mouse_cursor{ false };
-    bool                                                        m_mouse_relative_mode{ true };
+        bool                                                        m_show_mouse_cursor{ false };
+        bool                                                        m_mouse_relative_mode{ true };
 
-    std::string                                                 m_appWindowsEntityName;
+        std::string                                                 m_appWindowsEntityName;
 
-    mage::core::Entitygraph                                     m_entitygraph;
+        mage::core::Entitygraph                                     m_entitygraph;
 
-    mage::rendering::Queue*                                     m_windowRenderingQueue{ nullptr };
+        mage::rendering::Queue*                                     m_windowRenderingQueue{ nullptr };
 
-    mage::core::Entity*                                         m_loading_gear;
-    mage::core::Entity*                                         m_logo;
+        mage::core::Entity*                                         m_loading_gear{ nullptr };
+        mage::core::Entity*                                         m_logo{ nullptr };
 
-};
+    };
+}
+
+

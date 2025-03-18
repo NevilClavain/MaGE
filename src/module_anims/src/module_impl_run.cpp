@@ -48,13 +48,15 @@ using namespace mage::rendering;
 
 void ModuleImpl::run(void)
 {
+	SamplesBase::run();
+
 	/////////////////////////////////////////////////////
 
 	auto sysEngine{ SystemEngine::getInstance() };
 	sysEngine->run();
 
 	/////////////////////////////////////////////////////
-
+	/*
 	auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 	
 	{
@@ -77,9 +79,10 @@ void ModuleImpl::run(void)
 		dataCloud->updateDataValue<double>("current_animation.seconds_duration", currentAnimationSecondsDuration);
 		dataCloud->updateDataValue<double>("current_animation.seconds_progress", currentAnimationSecondsProgress);
 	}
-
+	*/
 	////////////////////////////////////////////////////////
 	// loading gear
+	/*
 	{
 		const auto resourceSystem{ sysEngine->getSystem<mage::ResourceSystem>(resourceSystemSlot) };
 
@@ -101,4 +104,5 @@ void ModuleImpl::run(void)
 			dc.draw = false;
 		}
 	}	
+	*/
 }

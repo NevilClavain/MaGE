@@ -76,38 +76,6 @@ using namespace mage::rendering;
 
 void SamplesBase::init(const std::string p_appWindowsEntityName)
 {
-	/////////// logging conf
-
-	mage::core::FileContent<char> logConfFileContent("./module_anims_config/logconf.json");
-	logConfFileContent.load();
-
-	const auto dataSize{ logConfFileContent.getDataSize() };
-	const std::string data(logConfFileContent.getData(), dataSize);
-
-	mage::core::Json<> jsonParser;
-	jsonParser.registerSubscriber(logger::Configuration::getInstance()->getCallback());
-
-	const auto logParseStatus{ jsonParser.parse(data) };
-
-	if (logParseStatus < 0)
-	{
-		_EXCEPTION("Cannot parse logging configuration")
-	}
-
-	///////////////////////////
-
-	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-
-	dataCloud->registerData<std::string>("resources_event");
-	dataCloud->updateDataValue<std::string>("resources_event", "...");
-
-
-	dataCloud->registerData<std::string>("current_animation.id");
-	dataCloud->registerData<double>("current_animation.ticks_progress");
-	dataCloud->registerData<double>("current_animation.seconds_progress");
-	dataCloud->registerData<double>("current_animation.ticks_duration");
-	dataCloud->registerData<double>("current_animation.seconds_duration");
-
 	/////////// systems
 
 	auto sysEngine{ SystemEngine::getInstance() };
@@ -125,13 +93,10 @@ void SamplesBase::init(const std::string p_appWindowsEntityName)
 	services::ShadersCompilationService::getInstance()->registerSubscriber(d3d11System->getShaderCompilationInvocationCallback());
 	services::TextureContentCopyService::getInstance()->registerSubscriber(d3d11System->getTextureContentCopyInvocationCallback());
 
-	// dataprint system filters
-	const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
-	dataPrintSystem->addDatacloudFilter("resources_event");
-	dataPrintSystem->addDatacloudFilter("current_animation");
-	dataPrintSystem->addDatacloudFilter("debug");
 
 	///////////////////////////
+
+	d3d11_system_events();
 
 	m_appWindowsEntityName = p_appWindowsEntityName;
 }

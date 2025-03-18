@@ -25,10 +25,12 @@
 
 #pragma once
 
+//#include "module_root.h"
+
+#include "samplesbase.h"
+
 #include <unordered_map>
 #include <random>
-
-#include "module_root.h"
 
 #include "entity.h"
 #include "entitygraph.h"
@@ -36,10 +38,12 @@
 
 #include "animations.h"
 
-class ModuleImpl : public mage::interfaces::ModuleRoot
+//class ModuleImpl : public mage::interfaces::ModuleRoot
+class ModuleImpl : public mage::SamplesBase
 {
 public:
-    ModuleImpl();
+    //ModuleImpl();
+    ModuleImpl() = default;
     ~ModuleImpl() = default;
 
     ModuleImpl(const ModuleImpl&) = delete;
@@ -50,7 +54,7 @@ public:
     std::string                     getModuleName() const;
     std::string                     getModuleDescr() const;
 
-    mage::core::Entitygraph*        entitygraph();
+    //mage::core::Entitygraph*        entitygraph();
 
     void                            onKeyPress(long p_key);
     void                            onEndKeyPress(long p_key);
@@ -81,9 +85,9 @@ private:
     bool                                                        m_show_mouse_cursor{ false };
     bool                                                        m_mouse_relative_mode{ true };
 
-    std::string                                                 m_appWindowsEntityName;
+    //std::string                                                 m_appWindowsEntityName;
 
-    mage::core::Entitygraph                                     m_entitygraph;
+    //mage::core::Entitygraph                                     m_entitygraph;
 
     mage::rendering::Queue*                                     m_windowRenderingQueue{ nullptr };
 
@@ -100,7 +104,7 @@ private:
 
     std::string                                                 m_currentCamera;
 
-    mage::core::Entity*                                         m_loading_gear;
+    //mage::core::Entity*                                         m_loading_gear;
 
     static constexpr double                                     groundLevel{ 0 };
 

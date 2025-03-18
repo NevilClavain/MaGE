@@ -65,6 +65,7 @@ SamplesBase::SamplesBase()
 	services::LoggerSharing::getInstance()->createLogger("Events");
 }
 
+
 mage::core::Entitygraph* SamplesBase::entitygraph()
 {
 	return &m_entitygraph;
