@@ -79,30 +79,5 @@ void ModuleImpl::run(void)
 		dataCloud->updateDataValue<double>("current_animation.seconds_duration", currentAnimationSecondsDuration);
 		dataCloud->updateDataValue<double>("current_animation.seconds_progress", currentAnimationSecondsProgress);
 	}
-	*/
-	////////////////////////////////////////////////////////
-	// loading gear
-	/*
-	{
-		const auto resourceSystem{ sysEngine->getSystem<mage::ResourceSystem>(resourceSystemSlot) };
-
-		const auto& rendering_aspect{ m_loading_gear->aspectAccess(renderingAspect::id) };
-		rendering::DrawingControl& dc{ rendering_aspect.getComponent<rendering::DrawingControl>("sprite2D_dc")->getPurpose() };
-
-		if (resourceSystem->getNbBusyRunners() > 0)
-		{
-			dc.draw = true;
-
-			const auto& time_aspect{ m_loading_gear->aspectAccess(timeAspect::id) };
-			core::SyncVariable& z_rot{ time_aspect.getComponent<SyncVariable>("z_rot")->getPurpose() };
-
-			z_rot.step = 2 * core::maths::pi * 0.25;
-			z_rot.direction = SyncVariable::Direction::INC;
-		}
-		else
-		{
-			dc.draw = false;
-		}
-	}	
-	*/
+	*/	
 }
