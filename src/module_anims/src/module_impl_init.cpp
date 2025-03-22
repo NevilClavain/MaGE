@@ -129,8 +129,8 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	///////////////////////////
 
 	d3d11_system_events();
-	//resource_system_events();
-	//animation_system_events();
+	resource_system_events();
+	animation_system_events();
 
 	//////////////////////////
 
@@ -223,8 +223,7 @@ void ModuleImpl::resource_system_events()
 
 						choose_animation();
 						
-					}
-					
+					}					
 					break;
 			}
 		}
