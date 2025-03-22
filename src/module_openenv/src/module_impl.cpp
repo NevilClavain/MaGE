@@ -58,14 +58,6 @@ using namespace mage;
 using namespace mage::core;
 using namespace mage::rendering;
 
-
-ModuleImpl::ModuleImpl()
-{
-	/////////// create common specific logger for events
-	services::LoggerSharing::getInstance()->createLogger("Events");
-
-}
-
 std::string ModuleImpl::getModuleName() const
 {
 	return "Open env";
@@ -74,11 +66,6 @@ std::string ModuleImpl::getModuleName() const
 std::string ModuleImpl::getModuleDescr() const
 {
 	return "Open env module example";
-}
-
-mage::core::Entitygraph* ModuleImpl::entitygraph()
-{
-	return &m_entitygraph;
 }
 
 void ModuleImpl::onAppEvent(WPARAM p_wParam, LPARAM p_lParam)

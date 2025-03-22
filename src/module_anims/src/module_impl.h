@@ -24,9 +24,6 @@
 /* -*-LIC_END-*- */
 
 #pragma once
-
-//#include "module_root.h"
-
 #include "samplesbase.h"
 
 #include <unordered_map>
@@ -38,11 +35,9 @@
 
 #include "animations.h"
 
-//class ModuleImpl : public mage::interfaces::ModuleRoot
 class ModuleImpl : public mage::SamplesBase
 {
 public:
-    //ModuleImpl();
     ModuleImpl() = default;
     ~ModuleImpl() = default;
 
@@ -53,8 +48,6 @@ public:
 
     std::string                     getModuleName() const;
     std::string                     getModuleDescr() const;
-
-    //mage::core::Entitygraph*        entitygraph();
 
     void                            onKeyPress(long p_key);
     void                            onEndKeyPress(long p_key);
@@ -85,10 +78,6 @@ private:
     bool                                                        m_show_mouse_cursor{ false };
     bool                                                        m_mouse_relative_mode{ true };
 
-    //std::string                                                 m_appWindowsEntityName;
-
-    //mage::core::Entitygraph                                     m_entitygraph;
-
     mage::rendering::Queue*                                     m_windowRenderingQueue{ nullptr };
 
     mage::core::Entity*                                         m_groundEntity{ nullptr };
@@ -103,8 +92,6 @@ private:
     std::uniform_int_distribution<int>*                         m_distribution;
 
     std::string                                                 m_currentCamera;
-
-    //mage::core::Entity*                                         m_loading_gear;
 
     static constexpr double                                     groundLevel{ 0 };
 

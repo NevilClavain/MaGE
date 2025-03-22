@@ -25,16 +25,23 @@
 
 #pragma once
 
-#include "module_root.h"
+#include "samplesbase.h"
+
+#include <unordered_map>
+#include <random>
 
 #include "entity.h"
 #include "entitygraph.h"
 #include "renderingqueue.h"
 
-class ModuleImpl : public mage::interfaces::ModuleRoot
+#include "animations.h"
+
+
+class ModuleImpl : public mage::SamplesBase
 {
 public:
-    ModuleImpl();
+
+    ModuleImpl() = default;
     ~ModuleImpl() = default;
 
     ModuleImpl(const ModuleImpl&) = delete;
@@ -45,7 +52,7 @@ public:
     std::string                     getModuleName() const;
     std::string                     getModuleDescr() const;
 
-    mage::core::Entitygraph*    entitygraph();
+
 
     void                            onKeyPress(long p_key);
     void                            onEndKeyPress(long p_key);
@@ -63,30 +70,63 @@ public:
     void                            run(void);
     void                            close(void);
 
-    void                            createEntities(const std::string p_appWindowsEntityName);
+private:
+
+    static constexpr int                                        timeSystemSlot{ 0 };
+    static constexpr int                                        d3d11SystemSlot{ 1 };
+    static constexpr int                                        resourceSystemSlot{ 2 };
+    static constexpr int                                        worldSystemSlot{ 3 };
+    static constexpr int                                        renderingQueueSystemSlot{ 4 };
+    static constexpr int                                        dataPrintSystemSlot{ 5 };
+    static constexpr int                                        animationsSystemSlot{ 6 };
+
+    bool                                                        m_show_mouse_cursor{ false };
+    bool                                                        m_mouse_relative_mode{ true };
+
+    mage::rendering::Queue*                                     m_windowRenderingQueue{ nullptr };
+
+    mage::core::Entity*                                         m_groundEntity{ nullptr };
+    mage::core::Entity*                                         m_cloudsEntity{ nullptr };
+    mage::core::Entity*                                         m_treeEntity{ nullptr };
+    mage::core::Entity*                                         m_skydomeEntity{ nullptr };
+
+    std::unordered_map<std::string, mage::AnimationKeys>        m_raptor_animations;
+
+    std::default_random_engine                                  m_random_engine;
+    std::uniform_int_distribution<int>*                         m_distribution;
+
+    std::string                                                 m_currentCamera;
+
+    static constexpr double                                     groundLevel{ 0 };
+
+    static constexpr double                                     skydomeSkyfromspace_ESun{ 8.7 };
+    static constexpr double                                     skydomeSkyfromatmo_ESun{ 70.0 };
+    static constexpr double                                     skydomeGroundfromspace_ESun{ 24.0 };
+    static constexpr double                                     skydomeGroundfromatmo_ESun{ 12.0 };
+
+    static constexpr double                                     skydomeAtmoThickness{ 1600.0 };
+    static constexpr double                                     skydomeOuterRadius{ 70000.0 };
+    static constexpr double                                     skydomeInnerRadius{ skydomeOuterRadius - skydomeAtmoThickness };
+
+    static constexpr double                                     skydomeWaveLength_x{ 0.650 };
+    static constexpr double                                     skydomeWaveLength_y{ 0.570 };
+    static constexpr double                                     skydomeWaveLength_z{ 0.475 };
+    static constexpr double                                     skydomeKm{ 0.0010 };
+    static constexpr double                                     skydomeKr{ 0.0033 };
+    static constexpr double                                     skydomeScaleDepth{ 0.25 };
+
 
     void                            resource_system_events();
     void                            d3d11_system_events();
 
-
     //override
     void                            registerSubscriber(const Callback& p_callback);
 
-private:
 
-    static constexpr int                    timeSystemSlot{ 0 };
-    static constexpr int                    d3d11SystemSlot{ 1 };
-    static constexpr int                    resourceSystemSlot{ 2 };
-    static constexpr int                    worldSystemSlot{ 3 };
-    static constexpr int                    renderingQueueSystemSlot{ 4 };
-    static constexpr int                    dataPrintSystemSlot{ 5 };
+    void                            choose_animation();
+    
+    void                            create_scenegraph(const std::string& p_mainWindowsEntityId);
+    void                            create_textures_channel_rendergraph(const std::string& p_queueEntityId);
+    void                            create_zdepth_channel_rendergraph(const std::string& p_queueEntityId);
 
-    bool                                    m_show_mouse_cursor{ false };
-    bool                                    m_mouse_relative_mode{ true };
-
-    mage::core::Entitygraph             m_entitygraph;
-
-    mage::rendering::Queue*             m_windowRenderingQueue{ nullptr };
-
-    mage::rendering::Queue*             m_bufferRenderingQueue{ nullptr };
 };

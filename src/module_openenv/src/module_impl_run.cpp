@@ -27,6 +27,7 @@
 #include <string>
 
 #include "aspects.h"
+#include "datacloud.h"
 #include "sysengine.h"
 
 #include "linemeshe.h"
@@ -39,12 +40,16 @@
 #include "animatorfunc.h"
 #include "animators_helpers.h"
 
+#include "resourcesystem.h"
+
 using namespace mage;
 using namespace mage::core;
 using namespace mage::rendering;
 
 void ModuleImpl::run(void)
 {
+	SamplesBase::run();
+
 	/////////////////////////////////////////////////////
 
 	auto sysEngine{ SystemEngine::getInstance() };
