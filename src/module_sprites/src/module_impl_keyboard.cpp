@@ -68,6 +68,11 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		renderingQueueSystemInstance->requestRenderingqueueLogging("bufferRenderingEntity");		
 	}
 
+	else if (VK_F9 == p_key)
+	{
+		helpers::logEntitygraph(m_entitygraph, true);
+	}
+
 	else if (VK_SPACE)
 	{
 		rendering::RenderState rs_noculling(rendering::RenderState::Operation::SETCULLING, "cw");
