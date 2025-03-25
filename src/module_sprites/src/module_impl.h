@@ -27,17 +27,18 @@
 
 #include <random>
 
-#include "module_root.h"
+
+#include "samplesbase.h"
 
 #include "entity.h"
 #include "entitygraph.h"
 #include "renderingqueue.h"
 #include "texture.h"
 
-class ModuleImpl : public mage::interfaces::ModuleRoot
+class ModuleImpl : public mage::SamplesBase
 {
 public:
-    ModuleImpl();
+    ModuleImpl() = default;
     ~ModuleImpl() = default;
 
     ModuleImpl(const ModuleImpl&) = delete;
@@ -66,7 +67,7 @@ public:
     void                            run(void);
     void                            close(void);
 
-    void                            createEntities(const std::string& p_appWindowsEntityName);
+    //void                            createEntities(const std::string& p_appWindowsEntityName);
 
     void                            resource_system_events();
     void                            d3d11_system_events();
@@ -90,11 +91,8 @@ private:
     bool                                    m_show_mouse_cursor{ true };
     bool                                    m_mouse_relative_mode{ false };
 
-    mage::core::Entitygraph             m_entitygraph;
+    mage::rendering::Queue*                 m_windowRenderingQueue{ nullptr };
 
-    mage::rendering::Queue*             m_windowRenderingQueue{ nullptr };
-
-    mage::Texture*                      m_rendering_quad_texture{ nullptr };
 
     std::default_random_engine*             m_generator;
     
@@ -105,7 +103,7 @@ private:
     std::uniform_int_distribution<int>*     m_rotation_speed_sign_distribution;
 
 
-    std::vector<mage::core::Entity*>    m_sprites;
+    std::vector<mage::core::Entity*>        m_sprites;
 };
 
 

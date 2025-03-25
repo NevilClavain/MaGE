@@ -70,6 +70,8 @@ using namespace mage::rendering;
 
 void ModuleImpl::init(const std::string p_appWindowsEntityName)
 {
+	SamplesBase::init(p_appWindowsEntityName);
+
 	/////////// logging conf
 
 	mage::core::FileContent<char> logConfFileContent("./module_sprites_config/logconf.json");
@@ -99,18 +101,6 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 
 	auto sysEngine{ SystemEngine::getInstance() };
 
-	sysEngine->makeSystem<mage::TimeSystem>(0, m_entitygraph);
-	sysEngine->makeSystem<mage::D3D11System>(1, m_entitygraph);
-	sysEngine->makeSystem<mage::ResourceSystem>(2, m_entitygraph);
-	sysEngine->makeSystem<mage::WorldSystem>(3, m_entitygraph);
-	sysEngine->makeSystem<mage::RenderingQueueSystem>(4, m_entitygraph);
-	sysEngine->makeSystem<mage::DataPrintSystem>(5, m_entitygraph);
-
-	// D3D11 system provides compilation shader service : give access to this to resources sytem
-	const auto d3d11System{ sysEngine->getSystem<mage::D3D11System>(d3d11SystemSlot) };
-	services::ShadersCompilationService::getInstance()->registerSubscriber(d3d11System->getShaderCompilationInvocationCallback());
-	services::TextureContentCopyService::getInstance()->registerSubscriber(d3d11System->getTextureContentCopyInvocationCallback());
-
 
 	// dataprint system filters
 	const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
@@ -122,7 +112,7 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 
 	//////////////////////////
 
-	createEntities(p_appWindowsEntityName);
+	//createEntities(p_appWindowsEntityName);
 
 	//////////////////////////
 
@@ -136,7 +126,7 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	m_rotation_speed_sign_distribution = new std::uniform_int_distribution<int>(0, 1);
 }
 
-
+/*
 void ModuleImpl::createEntities(const std::string& p_appWindowsEntityName)
 {
 	/////////// add screen rendering pass entity
@@ -158,7 +148,7 @@ void ModuleImpl::createEntities(const std::string& p_appWindowsEntityName)
 
 	dataPrintSystem->setRenderingQueue(m_windowRenderingQueue);
 }
-
+*/
 
 
 
@@ -230,7 +220,7 @@ void ModuleImpl::d3d11_system_events()
 			{
 				case D3D11SystemEvent::D3D11_WINDOW_READY:
 				{
-					
+					/*
 					auto& appwindowNode{ m_entitygraph.node(p_id) };
 					const auto appwindow{ appwindowNode.data() };
 
@@ -325,6 +315,8 @@ void ModuleImpl::d3d11_system_events()
 
 					helpers::plug2DSpriteWithSyncVariables(m_entitygraph, "bufferRenderingEntity", "terrain", 1.5, 1.1, "sprite_vs", "sprite_ps", "terrain_tennis.jpg", rs_list, 999,
 															mage::transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT);
+
+					*/
 
 				}
 				break;

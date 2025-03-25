@@ -34,8 +34,6 @@
 #include "entitygraph.h"
 #include "renderingqueue.h"
 
-#include "animations.h"
-
 
 class ModuleImpl : public mage::SamplesBase
 {
