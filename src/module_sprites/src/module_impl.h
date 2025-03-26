@@ -104,6 +104,8 @@ private:
 
 
     std::vector<mage::core::Entity*>        m_sprites;
+
+    std::string                             m_currentCamera;
 };
 
 

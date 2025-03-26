@@ -220,7 +220,7 @@ void ModuleImpl::d3d11_system_events()
 			{
 				case D3D11SystemEvent::D3D11_WINDOW_READY:
 				{
-					/*
+					
 					auto& appwindowNode{ m_entitygraph.node(p_id) };
 					const auto appwindow{ appwindowNode.data() };
 
@@ -236,6 +236,84 @@ void ModuleImpl::d3d11_system_events()
 
 					const int w_width{ window_dims.x() };
 					const int w_height{ window_dims.y() };
+
+
+
+
+					const auto rendering_quad_textures_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
+
+
+					mage::helpers::plugRenderingQuad(m_entitygraph,
+						"fog_queue",
+						characteristics_v_width, characteristics_v_height,
+						"screenRendering_Filter_DirectForward_Quad_Entity",
+						"bufferRendering_Filter_DirectForward_Queue_Entity",
+						"bufferRendering_Filter_DirectForward_Quad_Entity",
+						"bufferRendering_Filter_DirectForward_View_Entity",
+						"filter_directforward_vs",
+						"filter_directforward_ps",
+						{
+							std::make_pair(Texture::STAGE_0, rendering_quad_textures_channnel)
+						});
+
+
+
+
+					// add camera to scene
+					maths::Matrix projection;
+					projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
+					helpers::plugCamera(m_entitygraph, projection, m_appWindowsEntityName, "cameraEntity");
+
+					// attach animator/positionner to camera
+					core::Entitygraph::Node& cameraNode{ m_entitygraph.node("cameraEntity") };
+					const auto cameraEntity{ cameraNode.data() };
+					auto& camera_world_aspect{ cameraEntity->aspectAccess(core::worldAspect::id) };
+
+					cameraEntity->makeAspect(core::timeAspect::id);
+					camera_world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
+					(
+						{},
+						[](const core::ComponentContainer& p_world_aspect,
+							const core::ComponentContainer& p_time_aspect,
+							const transform::WorldPosition&,
+							const std::unordered_map<std::string, std::string>&)
+						{
+
+							core::maths::Matrix positionmat;
+							positionmat.translation(0.0, 0.0, 5.000);
+
+							transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("camera_position")->getPurpose() };
+							wp.local_pos = wp.local_pos * positionmat;
+						}
+					));
+
+
+					///////Select camera
+
+					m_currentCamera = "cameraEntity";
+
+					auto texturesChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Filter_DirectForward_Queue_Entity") };
+					texturesChannelRenderingQueue->setCurrentView(m_currentCamera);
+
+					/////////////////////////////////
+
+					rendering::RenderState rs_noculling(rendering::RenderState::Operation::SETCULLING, "cw");
+					rendering::RenderState rs_zbuffer(rendering::RenderState::Operation::ENABLEZBUFFER, "false");
+					rendering::RenderState rs_fill(rendering::RenderState::Operation::SETFILLMODE, "solid");
+					rendering::RenderState rs_texturepointsampling(rendering::RenderState::Operation::SETTEXTUREFILTERTYPE, "point");
+
+					const std::vector<rendering::RenderState> rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling };
+
+
+					helpers::plug2DSpriteWithSyncVariables(m_entitygraph, "bufferRendering_Filter_DirectForward_Quad_Entity", "terrain", 1.5, 1.1, "sprite_vs", "sprite_ps", "terrain_tennis.jpg", rs_list, 999,
+						mage::transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT);
+
+
+
+
+
+
+					/*
 
 					m_rendering_quad_texture = new Texture(Texture::Format::TEXTURE_RGB, w_width, w_height, Texture::ContentAccessMode::CONTENT_ACCESS);
 
