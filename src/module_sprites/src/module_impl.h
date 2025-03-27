@@ -67,8 +67,6 @@ public:
     void                            run(void);
     void                            close(void);
 
-    //void                            createEntities(const std::string& p_appWindowsEntityName);
-
     void                            resource_system_events();
     void                            d3d11_system_events();
 

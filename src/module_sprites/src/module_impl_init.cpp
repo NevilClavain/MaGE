@@ -112,10 +112,6 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 
 	//////////////////////////
 
-	//createEntities(p_appWindowsEntityName);
-
-	//////////////////////////
-
 	const auto seed{ ::GetTickCount() };
 
 	m_generator = new std::default_random_engine(seed);
@@ -125,32 +121,6 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	m_speed_sign_distribution = new std::uniform_int_distribution<int>(0, 1);
 	m_rotation_speed_sign_distribution = new std::uniform_int_distribution<int>(0, 1);
 }
-
-/*
-void ModuleImpl::createEntities(const std::string& p_appWindowsEntityName)
-{
-	/////////// add screen rendering pass entity
-
-	auto& appwindowNode{ m_entitygraph.node(p_appWindowsEntityName) };
-
-	auto& screenRenderingNode{ m_entitygraph.add(appwindowNode, "screenRenderingEntity") };
-	const auto screenRenderingPassEntity{ screenRenderingNode.data() };
-
-	auto& screenRendering_rendering_aspect{ screenRenderingPassEntity->makeAspect(core::renderingAspect::id) };
-
-	screenRendering_rendering_aspect.addComponent<rendering::Queue>("screenRenderingQueue", "screen_pass_queue");
-
-	auto& rendering_queue{ screenRendering_rendering_aspect.getComponent<rendering::Queue>("screenRenderingQueue")->getPurpose() };
-	m_windowRenderingQueue = &rendering_queue;
-
-	auto sysEngine{ SystemEngine::getInstance() };
-	const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
-
-	dataPrintSystem->setRenderingQueue(m_windowRenderingQueue);
-}
-*/
-
-
 
 void ModuleImpl::resource_system_events()
 {
@@ -305,7 +275,7 @@ void ModuleImpl::d3d11_system_events()
 					const std::vector<rendering::RenderState> rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling };
 
 
-					helpers::plug2DSpriteWithSyncVariables(m_entitygraph, "bufferRendering_Filter_DirectForward_Quad_Entity", "terrain", 1.5, 1.1, "sprite_vs", "sprite_ps", "terrain_tennis.jpg", rs_list, 999,
+					helpers::plug2DSpriteWithSyncVariables(m_entitygraph, "bufferRendering_Filter_DirectForward_Queue_Entity", "terrain", 1.5, 1.1, "sprite_vs", "sprite_ps", "terrain_tennis.jpg", rs_list, 999,
 						mage::transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT);
 
 

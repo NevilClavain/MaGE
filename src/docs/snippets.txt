@@ -33,7 +33,7 @@
  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
  :: typical deffered shading entity graph
- 
+ 				
 ENTITY_ID = app_Entity ]
 	ENTITY_ID = clouds_Entity ]
 	ENTITY_ID = gblJoint_Entity ]
@@ -41,12 +41,12 @@ ENTITY_ID = app_Entity ]
 	ENTITY_ID = ground_Entity ]
 	ENTITY_ID = raptor_Entity ]
 	ENTITY_ID = skydome_Entity ]
-	ENTITY_ID = tree_Entity ]
+	ENTITY_ID = tree_Entity ]	
 	ENTITY_ID = screenRendering_Filter_DirectForward_Queue_Entity ]
+		ENTITY_ID = loading_gear ]
+		ENTITY_ID = logo ]
 		ENTITY_ID = screenRendering_Filter_DirectForward_View_Entity ]
 		ENTITY_ID = screenRendering_Filter_DirectForward_Quad_Entity ]
-			ENTITY_ID = loading_gear ]
-			ENTITY_ID = logo ]
 			ENTITY_ID = bufferRendering_Combiner_Fog_Queue_Entity ]
 				ENTITY_ID = bufferRendering_Combiner_Fog_Quad_Entity ]
 					ENTITY_ID = bufferRendering_Scene_TexturesChannel_Queue_Entity ]
@@ -55,12 +55,12 @@ ENTITY_ID = app_Entity ]
 						ENTITY_ID = raptor_TexturesChannel_Proxy_Entity ]
 						ENTITY_ID = skydome_TexturesChannel_Proxy_Entity ]
 						ENTITY_ID = tree_TexturesChannel_Proxy_Entity ]
-
 					ENTITY_ID = bufferRendering_Scene_ZDepthChannel_Queue_Entity ]
 						ENTITY_ID = ground_FogChannel_Proxy_Entity ]
 						ENTITY_ID = raptor_FogChannel_Proxy_Entity ]
 						ENTITY_ID = tree_FogChannel_Proxy_Entity ]
 				ENTITY_ID = bufferRendering_Combiner_Fog_View_Entity ]
+		
 		
  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
