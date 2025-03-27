@@ -354,8 +354,6 @@ void RenderingQueueSystem::manageRenderingQueue()
 	}
 	////////Queue build/updates/log//////////////////////////////////////
 	{
-		//rendering::Queue* current_queue{ nullptr };
-
 		for (auto it = m_entitygraph.preBegin(); it != m_entitygraph.preEnd(); ++it)
 		{
 			const auto current_entity{ it->data() };
