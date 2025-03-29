@@ -113,9 +113,6 @@ add_subdirectory(module_sprites)
 add_subdirectory(module_anims)
 
 # basic templates
-add_subdirectory(module_gblcamera)
-add_subdirectory(module_renderingquad)
-add_subdirectory(module_basic)
 add_subdirectory(module_openenv)
 
 
