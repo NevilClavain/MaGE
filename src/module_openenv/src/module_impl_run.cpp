@@ -49,11 +49,4 @@ using namespace mage::rendering;
 void ModuleImpl::run(void)
 {
 	SamplesBase::run();
-
-	/////////////////////////////////////////////////////
-
-	auto sysEngine{ SystemEngine::getInstance() };
-	sysEngine->run();
-
-	/////////////////////////////////////////////////////
 }

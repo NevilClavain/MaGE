@@ -109,12 +109,6 @@ void ModuleImpl::run(void)
 	SamplesBase::run();
 
 	/////////////////////////////////////////////////////
-
-	auto sysEngine{ SystemEngine::getInstance() };
-	sysEngine->run();
-
-	/////////////////////////////////////////////////////
-
 	for (auto sprite : m_sprites)
 	{
 		manage_sprite_trajectory(sprite);

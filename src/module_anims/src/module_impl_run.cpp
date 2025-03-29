@@ -51,11 +51,6 @@ void ModuleImpl::run(void)
 	SamplesBase::run();
 
 	/////////////////////////////////////////////////////
-
-	auto sysEngine{ SystemEngine::getInstance() };
-	sysEngine->run();
-
-	/////////////////////////////////////////////////////
 	
 	auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 	
