@@ -49,7 +49,7 @@ namespace mage
         SamplesBase& operator=(const SamplesBase& t) = delete;
 
 
-        mage::core::Entitygraph* entitygraph();
+        mage::core::Entitygraph*        entitygraph();
 
         void                            init(const std::string p_appWindowsEntityName);
         void                            run(void);
@@ -57,7 +57,7 @@ namespace mage
 
     protected:
 
-        void                            d3d11_system_events();
+        void                            d3d11_system_events_base();
 
         static constexpr int                                        timeSystemSlot{ 0 };
         static constexpr int                                        d3d11SystemSlot{ 1 };

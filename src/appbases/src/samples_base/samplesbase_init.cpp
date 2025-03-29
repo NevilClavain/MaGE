@@ -96,13 +96,13 @@ void SamplesBase::init(const std::string p_appWindowsEntityName)
 
 	///////////////////////////
 
-	d3d11_system_events();
+	d3d11_system_events_base();
 
 	m_appWindowsEntityName = p_appWindowsEntityName;
 }
 
 
-void SamplesBase::d3d11_system_events()
+void SamplesBase::d3d11_system_events_base()
 {
 	const auto sysEngine{ SystemEngine::getInstance() };
 	const auto d3d11System{ sysEngine->getSystem<mage::D3D11System>(d3d11SystemSlot) };
