@@ -79,19 +79,6 @@ public:
 
 private:
 
-    static constexpr int                    timeSystemSlot{ 0 };
-    static constexpr int                    d3d11SystemSlot{ 1 };
-    static constexpr int                    resourceSystemSlot{ 2 };
-    static constexpr int                    worldSystemSlot{ 3 };
-    static constexpr int                    renderingQueueSystemSlot{ 4 };
-    static constexpr int                    dataPrintSystemSlot{ 5 };
-
-    bool                                    m_show_mouse_cursor{ true };
-    bool                                    m_mouse_relative_mode{ false };
-
-    mage::rendering::Queue*                 m_windowRenderingQueue{ nullptr };
-
-
     std::default_random_engine*             m_generator;
     
     std::uniform_real_distribution<double>* m_speed_distribution;

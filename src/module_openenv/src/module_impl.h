@@ -70,28 +70,10 @@ public:
 
 private:
 
-    static constexpr int                                        timeSystemSlot{ 0 };
-    static constexpr int                                        d3d11SystemSlot{ 1 };
-    static constexpr int                                        resourceSystemSlot{ 2 };
-    static constexpr int                                        worldSystemSlot{ 3 };
-    static constexpr int                                        renderingQueueSystemSlot{ 4 };
-    static constexpr int                                        dataPrintSystemSlot{ 5 };
-    static constexpr int                                        animationsSystemSlot{ 6 };
-
-    bool                                                        m_show_mouse_cursor{ false };
-    bool                                                        m_mouse_relative_mode{ true };
-
-    mage::rendering::Queue*                                     m_windowRenderingQueue{ nullptr };
-
     mage::core::Entity*                                         m_groundEntity{ nullptr };
     mage::core::Entity*                                         m_cloudsEntity{ nullptr };
     mage::core::Entity*                                         m_treeEntity{ nullptr };
     mage::core::Entity*                                         m_skydomeEntity{ nullptr };
-
-    std::unordered_map<std::string, mage::AnimationKeys>        m_raptor_animations;
-
-    std::default_random_engine                                  m_random_engine;
-    std::uniform_int_distribution<int>*                         m_distribution;
 
     std::string                                                 m_currentCamera;
 
@@ -120,8 +102,6 @@ private:
     //override
     void                            registerSubscriber(const Callback& p_callback);
 
-
-    void                            choose_animation();
     
     void                            create_scenegraph(const std::string& p_mainWindowsEntityId);
     void                            create_textures_channel_rendergraph(const std::string& p_queueEntityId);
