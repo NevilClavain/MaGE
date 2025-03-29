@@ -103,10 +103,6 @@ private:
     void                            d3d11_system_events();
     void                            animation_system_events();
 
-    //override
-    void                            registerSubscriber(const Callback& p_callback);
-
-
     void                            choose_animation();
     
     void                            create_scenegraph(const std::string& p_mainWindowsEntityId);

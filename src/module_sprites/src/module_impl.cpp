@@ -69,31 +69,9 @@ std::string ModuleImpl::getModuleDescr() const
 	return "Sprites demo module";
 }
 
-mage::core::Entitygraph* ModuleImpl::entitygraph()
-{
-	return &m_entitygraph;
-}
 
 void ModuleImpl::onAppEvent(WPARAM p_wParam, LPARAM p_lParam)
 {
 }
 
-void ModuleImpl::registerSubscriber(const Callback& p_callback)
-{
-	mage::property::EventSource<mage::interfaces::ModuleEvents, int>::registerSubscriber(p_callback);
-
-	// send immediately m_show_mouse_cursor value
-	for (const auto& call : m_callbacks)
-	{
-		call(mage::interfaces::ModuleEvents::MOUSE_DISPLAY_CHANGED, (int)m_show_mouse_cursor);
-	}
-
-	// send immediately m_mouse_relative_mode value
-	for (const auto& call : m_callbacks)
-	{
-		call(mage::interfaces::ModuleEvents::MOUSE_MODE_CHANGED, (int)m_mouse_relative_mode);
-	}
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

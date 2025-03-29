@@ -57,6 +57,10 @@ namespace mage
 
     protected:
 
+        //override
+        void                            registerSubscriber(const Callback& p_callback);
+
+
         void                            d3d11_system_events_base();
 
         static constexpr int                                        timeSystemSlot{ 0 };

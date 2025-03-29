@@ -72,5 +72,22 @@ mage::core::Entitygraph* SamplesBase::entitygraph()
 }
 
 
+void SamplesBase::registerSubscriber(const Callback& p_callback)
+{
+	mage::property::EventSource<mage::interfaces::ModuleEvents, int>::registerSubscriber(p_callback);
+
+	// send immediately m_show_mouse_cursor value
+	for (const auto& call : m_callbacks)
+	{
+		call(mage::interfaces::ModuleEvents::MOUSE_DISPLAY_CHANGED, (int)m_show_mouse_cursor);
+	}
+
+	// send immediately m_mouse_relative_mode value
+	for (const auto& call : m_callbacks)
+	{
+		call(mage::interfaces::ModuleEvents::MOUSE_MODE_CHANGED, (int)m_mouse_relative_mode);
+	}
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

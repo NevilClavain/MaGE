@@ -49,8 +49,6 @@ public:
     std::string                     getModuleName() const;
     std::string                     getModuleDescr() const;
 
-    mage::core::Entitygraph*    entitygraph();
-
     void                            onKeyPress(long p_key);
     void                            onEndKeyPress(long p_key);
     void                            onKeyPulse(long p_key);
@@ -73,9 +71,6 @@ public:
 
     void                            manage_sprite_trajectory(mage::core::Entity* p_entity);
 
-
-    //override
-    void                            registerSubscriber(const Callback& p_callback);
 
 private:
 

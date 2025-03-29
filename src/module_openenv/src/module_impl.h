@@ -98,10 +98,6 @@ private:
 
     void                            resource_system_events();
     void                            d3d11_system_events();
-
-    //override
-    void                            registerSubscriber(const Callback& p_callback);
-
     
     void                            create_scenegraph(const std::string& p_mainWindowsEntityId);
     void                            create_textures_channel_rendergraph(const std::string& p_queueEntityId);
