@@ -118,9 +118,6 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	
 	//////////////////////////
 
-	m_appWindowsEntityName = p_appWindowsEntityName;
-
-	helpers::logEntitygraph(m_entitygraph, true);
 }
 
 void ModuleImpl::resource_system_events()

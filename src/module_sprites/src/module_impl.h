@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include <string>
 #include <random>
-
 
 #include "samplesbase.h"
 

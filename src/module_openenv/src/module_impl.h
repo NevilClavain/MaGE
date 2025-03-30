@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <string>
+
 #include "samplesbase.h"
 
 #include <unordered_map>

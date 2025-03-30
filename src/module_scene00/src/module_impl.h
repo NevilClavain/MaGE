@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <string>
 #include <random>
 
 #include "module_root.h"
