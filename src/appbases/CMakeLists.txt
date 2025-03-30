@@ -49,17 +49,21 @@ include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_animations/src)
 
 include_directories(${CMAKE_SOURCE_DIR}/helpers)
 
+include_directories(${CMAKE_SOURCE_DIR}/appbases/src/samples_base)
+include_directories(${CMAKE_SOURCE_DIR}/appbases/src/samples_openenv)
+
 include_directories(${st_tree_include_dir})
 include_directories(${jsonjsmn_include_dir})
 
 
 file(GLOB_RECURSE SAMPLES_BASE "${CMAKE_SOURCE_DIR}/appbases/src/samples_base/*.*")
+file(GLOB_RECURSE SAMPLES_OPENENV "${CMAKE_SOURCE_DIR}/appbases/src/samples_openenv/*.*")
 
 source_group("samples_base" FILES ${SAMPLES_BASE})
+source_group("samples_openenv" FILES ${SAMPLES_OPENENV})
 
 add_definitions( -D_FROMCMAKE )
 
-add_library(appbases ${SAMPLES_BASE})
-
+add_library(appbases ${SAMPLES_BASE} ${SAMPLES_OPENENV})
 
 

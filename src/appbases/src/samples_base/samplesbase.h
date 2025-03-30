@@ -27,6 +27,7 @@
 
 #include <unordered_map>
 #include <random>
+#include <string>
 
 #include "module_root.h"
 
