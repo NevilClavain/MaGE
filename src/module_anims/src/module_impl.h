@@ -36,7 +36,6 @@
 
 #include "animations.h"
 
-//class ModuleImpl : public mage::SamplesBase
 class ModuleImpl : public mage::SamplesOpenEnv
 {
 public:
@@ -69,13 +68,6 @@ public:
 
 private:
 
-    /*
-    mage::core::Entity*                                         m_groundEntity{ nullptr };
-    mage::core::Entity*                                         m_cloudsEntity{ nullptr };
-    mage::core::Entity*                                         m_treeEntity{ nullptr };   
-    mage::core::Entity*                                         m_skydomeEntity{ nullptr };
-    */
-
     mage::core::Entity*                                         m_raptorEntity{ nullptr };
 
     std::unordered_map<std::string, mage::AnimationKeys>        m_raptor_animations;
@@ -85,28 +77,6 @@ private:
 
     std::string                                                 m_currentCamera;
 
-    /*
-    static constexpr double                                     groundLevel{ 0 };
-
-    static constexpr double                                     skydomeSkyfromspace_ESun{ 8.7 };
-    static constexpr double                                     skydomeSkyfromatmo_ESun{ 70.0 };
-    static constexpr double                                     skydomeGroundfromspace_ESun{ 24.0 };
-    static constexpr double                                     skydomeGroundfromatmo_ESun{ 12.0 };
-
-    static constexpr double                                     skydomeAtmoThickness{ 1600.0 };
-    static constexpr double                                     skydomeOuterRadius{ 70000.0 };
-    static constexpr double                                     skydomeInnerRadius{ skydomeOuterRadius - skydomeAtmoThickness };
-
-    static constexpr double                                     skydomeWaveLength_x{ 0.650 };
-    static constexpr double                                     skydomeWaveLength_y{ 0.570 };
-    static constexpr double                                     skydomeWaveLength_z{ 0.475 };
-    static constexpr double                                     skydomeKm{ 0.0010 };
-    static constexpr double                                     skydomeKr{ 0.0033 };
-    static constexpr double                                     skydomeScaleDepth{ 0.25 };
-    */
-
-
-
     void                            resource_system_events();
     void                            d3d11_system_events();
     void                            animation_system_events();
@@ -114,11 +84,9 @@ private:
     void                            choose_animation();
     
     
-    void                            create_scenegraph(const std::string& p_mainWindowsEntityId);
+    void                            complete_scenegraph(const std::string& p_mainWindowsEntityId);
     
     
-    void                            create_textures_channel_rendergraph(const std::string& p_queueEntityId);
-    void                            create_zdepth_channel_rendergraph(const std::string& p_queueEntityId);
-    
-
+    void                            complete_textures_channel_rendergraph(const std::string& p_queueEntityId);
+    void                            complete_zdepth_channel_rendergraph(const std::string& p_queueEntityId);
 };

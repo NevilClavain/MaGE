@@ -284,116 +284,18 @@ void ModuleImpl::d3d11_system_events()
 					const int w_width{ window_dims.x() };
 					const int w_height{ window_dims.y() };
 
-
-					//////////////////////////////////////////
-
-					/////////// commons shaders params
-					/*
-					dataCloud->registerData<maths::Real4Vector>("texture_keycolor_ps.key_color");
-					dataCloud->updateDataValue<maths::Real4Vector>("texture_keycolor_ps.key_color", maths::Real4Vector(0, 0, 0, 1));
-
-
-					dataCloud->registerData<maths::Real4Vector>("std.light0_dir");
-					dataCloud->updateDataValue<maths::Real4Vector>("std.light0_dir", maths::Real4Vector(0, -0.58, 0.6, 1));
-
-					dataCloud->registerData<maths::Real4Vector>("std.fog_color");
-					dataCloud->updateDataValue<maths::Real4Vector>("std.fog_color", maths::Real4Vector(0.8, 0.9, 1, 1));
-
-					dataCloud->registerData<maths::Real4Vector>("std.fog_density");
-					dataCloud->updateDataValue<maths::Real4Vector>("std.fog_density", maths::Real4Vector(0.009, 0, 0, 0));
-
-
-					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_0");
-					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_0", maths::Real4Vector(skydomeOuterRadius, skydomeInnerRadius, skydomeOuterRadius * skydomeOuterRadius, skydomeInnerRadius * skydomeInnerRadius));
-
-					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_1");
-					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_1", maths::Real4Vector(skydomeScaleDepth, 1.0 / skydomeScaleDepth, 1.0 / (skydomeOuterRadius - skydomeInnerRadius), (1.0 / (skydomeOuterRadius - skydomeInnerRadius)) / skydomeScaleDepth));
-
-					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_2");
-					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_2", maths::Real4Vector(1.0 / std::pow(skydomeWaveLength_x, 4.0), 1.0 / std::pow(skydomeWaveLength_y, 4.0), 1.0 / std::pow(skydomeWaveLength_z, 4.0), 0));
-
-					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_3");
-					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_3", maths::Real4Vector(skydomeKr, skydomeKm, 4.0 * skydomeKr * 3.1415927, 4.0 * skydomeKm * 3.1415927));
-
-					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_4");
-					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_4", maths::Real4Vector(skydomeSkyfromspace_ESun, skydomeSkyfromatmo_ESun, skydomeGroundfromspace_ESun, skydomeGroundfromatmo_ESun));
-
-					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_5");
-					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_5", maths::Real4Vector(0.0, 0.0, 0.0, 1));
-					
-					*/
-
-	
-
-
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// SCENEGRAPH
 
-					create_scenegraph(p_id);
-
+					complete_scenegraph(p_id);
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// RENDERGRAPH
+				
+					complete_textures_channel_rendergraph("bufferRendering_Scene_TexturesChannel_Queue_Entity");
 
+					complete_zdepth_channel_rendergraph("bufferRendering_Scene_ZDepthChannel_Queue_Entity");
 					
-					/*
-					const auto fog_rendering_quad_textures_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-					const auto fog_rendering_quad_fog_channnel{ Texture(Texture::Format::TEXTURE_FLOAT32, w_width, w_height) };
-
-					mage::helpers::plugRenderingQuad(m_entitygraph,
-						"fog_queue",
-						characteristics_v_width, characteristics_v_height,
-						"screenRendering_Filter_DirectForward_Quad_Entity",
-						"bufferRendering_Combiner_Fog_Queue_Entity",
-						"bufferRendering_Combiner_Fog_Quad_Entity",
-						"bufferRendering_Combiner_Fog_View_Entity",
-						"combiner_fog_vs",
-						"combiner_fog_ps",						
-						{
-							std::make_pair(Texture::STAGE_0, fog_rendering_quad_textures_channnel),
-							std::make_pair(Texture::STAGE_1, fog_rendering_quad_fog_channnel)
-						});
-
-					Entity* bufferRendering_Combiner_Fog_Quad_Entity{ m_entitygraph.node("bufferRendering_Combiner_Fog_Quad_Entity").data() };
-
-					auto& screenRendering_Combiner_Fog_Quad_Entity_rendering_aspect{ bufferRendering_Combiner_Fog_Quad_Entity->aspectAccess(core::renderingAspect::id) };
-
-					rendering::DrawingControl& fogDrawingControl{ screenRendering_Combiner_Fog_Quad_Entity_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-					fogDrawingControl.pshaders_map.push_back(std::make_pair("std.fog_color", "fog_color"));
-					fogDrawingControl.pshaders_map.push_back(std::make_pair("std.fog_density", "fog_density"));
-
-
-									
-					// Textures channel 
-
-					/*
-					rendering::Queue texturesChannelsRenderingQueue("textures_channel_queue");
-					texturesChannelsRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					texturesChannelsRenderingQueue.enableTargetClearing(true);
-					texturesChannelsRenderingQueue.enableTargetDepthClearing(true);
-					texturesChannelsRenderingQueue.setTargetStage(Texture::STAGE_0);
-
-					mage::helpers::plugRenderingQueue(m_entitygraph, texturesChannelsRenderingQueue, "bufferRendering_Combiner_Fog_Quad_Entity", "bufferRendering_Scene_TexturesChannel_Queue_Entity");
-					*/
-
-					create_textures_channel_rendergraph("bufferRendering_Scene_TexturesChannel_Queue_Entity");
-					
-
-					// fog channel 
-					/*
-					rendering::Queue zdepthChannelsRenderingQueue("fog_channel_queue");
-					zdepthChannelsRenderingQueue.setTargetClearColor({ 0, 0, 128, 255 });
-					zdepthChannelsRenderingQueue.enableTargetClearing(true);
-					zdepthChannelsRenderingQueue.enableTargetDepthClearing(true);
-					zdepthChannelsRenderingQueue.setTargetStage(Texture::STAGE_1);
-
-					mage::helpers::plugRenderingQueue(m_entitygraph, zdepthChannelsRenderingQueue, "bufferRendering_Combiner_Fog_Quad_Entity", "bufferRendering_Scene_ZDepthChannel_Queue_Entity");
-					*/
-
-					create_zdepth_channel_rendergraph("bufferRendering_Scene_ZDepthChannel_Queue_Entity");
-					
-
-
 					{
 						///////Select camera
 
@@ -404,9 +306,7 @@ void ModuleImpl::d3d11_system_events()
 
 						auto fogChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
 						fogChannelRenderingQueue->setCurrentView(m_currentCamera);
-					}
-					
-					
+					}									
 				}
 				break;
 			}
@@ -416,7 +316,7 @@ void ModuleImpl::d3d11_system_events()
 }
 
 
-void ModuleImpl::create_scenegraph(const std::string& p_mainWindowsEntityId)
+void ModuleImpl::complete_scenegraph(const std::string& p_mainWindowsEntityId)
 {
 	
 	auto& appwindowNode{ m_entitygraph.node(p_mainWindowsEntityId) };
@@ -427,143 +327,6 @@ void ModuleImpl::create_scenegraph(const std::string& p_mainWindowsEntityId)
 	const float characteristics_v_width{ mainwindows_rendering_aspect.getComponent<float>("eg.std.viewportWidth")->getPurpose() };
 	const float characteristics_v_height{ mainwindows_rendering_aspect.getComponent<float>("eg.std.viewportHeight")->getPurpose() };
 	
-
-	/*
-	{
-		auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "ground_Entity") };
-		const auto entity{ entityNode.data() };
-
-		auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
-		entity->makeAspect(core::timeAspect::id);
-
-		world_aspect.addComponent<transform::WorldPosition>("position");
-		world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
-		(
-			{},
-			[=](const core::ComponentContainer& p_world_aspect,
-				const core::ComponentContainer& p_time_aspect,
-				const transform::WorldPosition&,
-				const std::unordered_map<std::string, std::string>&)
-			{
-
-				maths::Matrix positionmat;
-				positionmat.translation(0.0, skydomeInnerRadius + groundLevel, 0.0);
-
-				transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-				wp.local_pos = wp.local_pos * positionmat;
-			}
-		));
-
-		auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
-		resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("rect", "ground.ac"), TriangleMeshe()));
-
-		m_groundEntity = entity;
-	}
-
-	////////////////////////////////
-
-	{
-		auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "clouds_Entity") };
-		const auto entity{ entityNode.data() };
-
-		auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
-		entity->makeAspect(core::timeAspect::id);
-
-		world_aspect.addComponent<transform::WorldPosition>("position");
-		world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
-		(
-			{},
-			[=](const core::ComponentContainer& p_world_aspect,
-				const core::ComponentContainer& p_time_aspect,
-				const transform::WorldPosition&,
-				const std::unordered_map<std::string, std::string>&)
-			{
-
-				maths::Matrix positionmat;
-				positionmat.translation(0.0, skydomeInnerRadius + groundLevel + 400, 0.0);
-
-				transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-				wp.local_pos = wp.local_pos * positionmat;
-			}
-		));
-
-		auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
-		resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("rect", "flatclouds.ac"), TriangleMeshe()));
-
-		m_cloudsEntity = entity;
-	}
-
-	////////////////////////////////
-
-	{
-		auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "tree_Entity") };
-		const auto entity{ entityNode.data() };
-
-		auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
-		entity->makeAspect(core::timeAspect::id);
-
-		world_aspect.addComponent<transform::WorldPosition>("position");
-		world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
-		(
-			{},
-			[=](const core::ComponentContainer& p_world_aspect,
-				const core::ComponentContainer& p_time_aspect,
-				const transform::WorldPosition&,
-				const std::unordered_map<std::string, std::string>&)
-			{
-
-				maths::Matrix positionmat;
-				positionmat.translation(0.0, skydomeInnerRadius + groundLevel, -30.0);
-
-				transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-				wp.local_pos = wp.local_pos * positionmat;
-			}
-		));
-
-		auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
-		resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("Plane.001", "tree0.ac"), TriangleMeshe()));
-
-		m_treeEntity = entity;
-	}
-
-	////////////////////////////////
-
-	{
-		auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "skydome_Entity") };
-		const auto entity{ entityNode.data() };
-
-		auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
-		entity->makeAspect(core::timeAspect::id);
-
-		world_aspect.addComponent<transform::WorldPosition>("position");
-		world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
-		(
-			{},
-			[=](const core::ComponentContainer& p_world_aspect,
-				const core::ComponentContainer& p_time_aspect,
-				const transform::WorldPosition&,
-				const std::unordered_map<std::string, std::string>&)
-			{
-
-				maths::Matrix positionmat;
-				positionmat.translation(0.0, 0.0, 0.0);
-
-				maths::Matrix scalingmat;
-				scalingmat.scale(skydomeOuterRadius, skydomeOuterRadius, skydomeOuterRadius);
-
-				transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-				wp.local_pos = wp.local_pos * scalingmat * positionmat;
-			}
-		));
-
-		auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
-		resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("sphere", "skydome.ac"), TriangleMeshe()));
-
-		m_skydomeEntity = entity;
-	}
-
-	////////////////////////////////
-	*/
 	{
 		auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "raptor_Entity") };
 		const auto entity{ entityNode.data() };
@@ -660,7 +423,7 @@ void ModuleImpl::create_scenegraph(const std::string& p_mainWindowsEntityId)
 
 
 
-void ModuleImpl::create_textures_channel_rendergraph(const std::string& p_queueEntityId)
+void ModuleImpl::complete_textures_channel_rendergraph(const std::string& p_queueEntityId)
 {
 
 	///// Raptor
@@ -714,7 +477,7 @@ void ModuleImpl::create_textures_channel_rendergraph(const std::string& p_queueE
 	}
 }
 
-void ModuleImpl::create_zdepth_channel_rendergraph(const std::string& p_queueEntityId)
+void ModuleImpl::complete_zdepth_channel_rendergraph(const std::string& p_queueEntityId)
 {
 	///// Raptor
 
