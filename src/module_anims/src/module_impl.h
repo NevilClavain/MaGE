@@ -116,9 +116,9 @@ private:
     
     void                            create_scenegraph(const std::string& p_mainWindowsEntityId);
     
-    /*
+    
     void                            create_textures_channel_rendergraph(const std::string& p_queueEntityId);
     void                            create_zdepth_channel_rendergraph(const std::string& p_queueEntityId);
-    */
+    
 
 };
