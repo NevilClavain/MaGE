@@ -48,10 +48,10 @@ using namespace mage::rendering;
 
 void ModuleImpl::run(void)
 {
-	SamplesBase::run();
+	SamplesOpenEnv::run();
 
 	/////////////////////////////////////////////////////
-	
+	/*
 	auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 	
 	{
@@ -74,5 +74,5 @@ void ModuleImpl::run(void)
 		dataCloud->updateDataValue<double>("current_animation.seconds_duration", currentAnimationSecondsDuration);
 		dataCloud->updateDataValue<double>("current_animation.seconds_progress", currentAnimationSecondsProgress);
 	}
-	
+	*/
 }

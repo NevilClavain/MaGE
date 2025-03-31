@@ -24,7 +24,8 @@
 /* -*-LIC_END-*- */
 
 #pragma once
-#include "samplesbase.h"
+//#include "samplesbase.h"
+#include "samplesopenenv.h"
 
 #include <unordered_map>
 #include <random>
@@ -35,7 +36,8 @@
 
 #include "animations.h"
 
-class ModuleImpl : public mage::SamplesBase
+//class ModuleImpl : public mage::SamplesBase
+class ModuleImpl : public mage::SamplesOpenEnv
 {
 public:
     ModuleImpl() = default;
@@ -67,11 +69,14 @@ public:
 
 private:
 
+    /*
     mage::core::Entity*                                         m_groundEntity{ nullptr };
     mage::core::Entity*                                         m_cloudsEntity{ nullptr };
-    mage::core::Entity*                                         m_treeEntity{ nullptr };
-    mage::core::Entity*                                         m_raptorEntity{ nullptr };
+    mage::core::Entity*                                         m_treeEntity{ nullptr };   
     mage::core::Entity*                                         m_skydomeEntity{ nullptr };
+    */
+
+    mage::core::Entity*                                         m_raptorEntity{ nullptr };
 
     std::unordered_map<std::string, mage::AnimationKeys>        m_raptor_animations;
 
@@ -80,6 +85,7 @@ private:
 
     std::string                                                 m_currentCamera;
 
+    /*
     static constexpr double                                     groundLevel{ 0 };
 
     static constexpr double                                     skydomeSkyfromspace_ESun{ 8.7 };
@@ -97,6 +103,8 @@ private:
     static constexpr double                                     skydomeKm{ 0.0010 };
     static constexpr double                                     skydomeKr{ 0.0033 };
     static constexpr double                                     skydomeScaleDepth{ 0.25 };
+    */
+
 
 
     void                            resource_system_events();
@@ -105,8 +113,12 @@ private:
 
     void                            choose_animation();
     
+    
     void                            create_scenegraph(const std::string& p_mainWindowsEntityId);
+    
+    /*
     void                            create_textures_channel_rendergraph(const std::string& p_queueEntityId);
     void                            create_zdepth_channel_rendergraph(const std::string& p_queueEntityId);
+    */
 
 };

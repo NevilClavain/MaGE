@@ -44,7 +44,7 @@ namespace mage
 
         void                            init(const std::string p_appWindowsEntityName);
 
-    private:
+    protected:
 
         mage::core::Entity*             m_groundEntity{ nullptr };
         mage::core::Entity*             m_cloudsEntity{ nullptr };

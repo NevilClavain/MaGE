@@ -75,7 +75,7 @@ using namespace mage::rendering;
 
 void ModuleImpl::init(const std::string p_appWindowsEntityName)
 {
-	SamplesBase::init(p_appWindowsEntityName);
+	SamplesOpenEnv::init(p_appWindowsEntityName);
 
 	/////////// logging conf
 
@@ -288,7 +288,7 @@ void ModuleImpl::d3d11_system_events()
 					//////////////////////////////////////////
 
 					/////////// commons shaders params
-					
+					/*
 					dataCloud->registerData<maths::Real4Vector>("texture_keycolor_ps.key_color");
 					dataCloud->updateDataValue<maths::Real4Vector>("texture_keycolor_ps.key_color", maths::Real4Vector(0, 0, 0, 1));
 
@@ -321,7 +321,7 @@ void ModuleImpl::d3d11_system_events()
 					dataCloud->registerData<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_5");
 					dataCloud->updateDataValue<maths::Real4Vector>("skydome_ps.atmo_scattering_flag_5", maths::Real4Vector(0.0, 0.0, 0.0, 1));
 					
-
+					*/
 
 	
 
@@ -336,7 +336,7 @@ void ModuleImpl::d3d11_system_events()
 					// RENDERGRAPH
 
 					
-					
+					/*
 					const auto fog_rendering_quad_textures_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
 					const auto fog_rendering_quad_fog_channnel{ Texture(Texture::Format::TEXTURE_FLOAT32, w_width, w_height) };
 
@@ -390,7 +390,7 @@ void ModuleImpl::d3d11_system_events()
 
 
 					create_zdepth_channel_rendergraph("bufferRendering_Scene_ZDepthChannel_Queue_Entity");
-
+					*/
 					{
 						///////Select camera
 
@@ -402,7 +402,7 @@ void ModuleImpl::d3d11_system_events()
 						auto fogChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
 						fogChannelRenderingQueue->setCurrentView(m_currentCamera);
 					}
-
+					
 					
 				}
 				break;
@@ -412,8 +412,10 @@ void ModuleImpl::d3d11_system_events()
 	d3d11System->registerSubscriber(d3d11_cb);
 }
 
+
 void ModuleImpl::create_scenegraph(const std::string& p_mainWindowsEntityId)
 {
+	
 	auto& appwindowNode{ m_entitygraph.node(p_mainWindowsEntityId) };
 	const auto appwindow{ appwindowNode.data() };
 
@@ -421,8 +423,9 @@ void ModuleImpl::create_scenegraph(const std::string& p_mainWindowsEntityId)
 
 	const float characteristics_v_width{ mainwindows_rendering_aspect.getComponent<float>("eg.std.viewportWidth")->getPurpose() };
 	const float characteristics_v_height{ mainwindows_rendering_aspect.getComponent<float>("eg.std.viewportHeight")->getPurpose() };
+	
 
-
+	/*
 	{
 		auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "ground_Entity") };
 		const auto entity{ entityNode.data() };
@@ -584,7 +587,7 @@ void ModuleImpl::create_scenegraph(const std::string& p_mainWindowsEntityId)
 
 
 				transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-				wp.local_pos = /* wp.local_pos * */ scalemat * positionmat;
+				wp.local_pos = scalemat * positionmat;
 			}
 		));
 
@@ -615,6 +618,7 @@ void ModuleImpl::create_scenegraph(const std::string& p_mainWindowsEntityId)
 
 		m_raptorEntity = entity;
 	}
+	*/
 
 	/////////////// add camera with gimbal lock jointure ////////////////
 
@@ -650,6 +654,8 @@ void ModuleImpl::create_scenegraph(const std::string& p_mainWindowsEntityId)
 	helpers::plugCamera(m_entitygraph, projection, "gblJoint_Entity", "camera_Entity");
 
 }
+
+/*
 
 void ModuleImpl::create_textures_channel_rendergraph(const std::string& p_queueEntityId)
 {
@@ -1038,3 +1044,4 @@ void ModuleImpl::create_zdepth_channel_rendergraph(const std::string& p_queueEnt
 		raptor_animations_aspect.getComponent<std::vector<std::pair<std::string, Shader>*>>("target_vshaders")->getPurpose().push_back(vshader_ref);
 	}
 }
+*/

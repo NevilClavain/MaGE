@@ -34,5 +34,5 @@ using namespace mage::core;
 
 void ModuleImpl::close(void)
 {
-	SamplesBase::close();
+	SamplesOpenEnv::close();
 }
