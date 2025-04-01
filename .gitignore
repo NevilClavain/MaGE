@@ -140,12 +140,6 @@ ALL_BUILD.vcxproj*
 /src/module_sprites/*.sln
 /src/module_sprites/*.vcxproj*
 
-
-/src/module_openenv/CMakeFiles/
-/src/module_openenv/*.sln
-/src/module_openenv/*.vcxproj*
-
-
 /src/module_anims/CMakeFiles/
 /src/module_anims/*.sln
 /src/module_anims/*.vcxproj*

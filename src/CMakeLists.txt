@@ -112,8 +112,6 @@ add_subdirectory(module_scene00)
 add_subdirectory(module_sprites)
 add_subdirectory(module_anims)
 
-# basic templates
-add_subdirectory(module_openenv)
 
 
 
