@@ -70,6 +70,8 @@ using namespace mage::rendering;
 
 void ModuleImpl::init(const std::string p_appWindowsEntityName)
 {
+	SamplesBase::init(p_appWindowsEntityName);
+
 	/////////// logging conf
 
 	mage::core::FileContent<char> logConfFileContent("./module_sprites_config/logconf.json");
@@ -99,18 +101,6 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 
 	auto sysEngine{ SystemEngine::getInstance() };
 
-	sysEngine->makeSystem<mage::TimeSystem>(0, m_entitygraph);
-	sysEngine->makeSystem<mage::D3D11System>(1, m_entitygraph);
-	sysEngine->makeSystem<mage::ResourceSystem>(2, m_entitygraph);
-	sysEngine->makeSystem<mage::WorldSystem>(3, m_entitygraph);
-	sysEngine->makeSystem<mage::RenderingQueueSystem>(4, m_entitygraph);
-	sysEngine->makeSystem<mage::DataPrintSystem>(5, m_entitygraph);
-
-	// D3D11 system provides compilation shader service : give access to this to resources sytem
-	const auto d3d11System{ sysEngine->getSystem<mage::D3D11System>(d3d11SystemSlot) };
-	services::ShadersCompilationService::getInstance()->registerSubscriber(d3d11System->getShaderCompilationInvocationCallback());
-	services::TextureContentCopyService::getInstance()->registerSubscriber(d3d11System->getTextureContentCopyInvocationCallback());
-
 
 	// dataprint system filters
 	const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
@@ -119,10 +109,6 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 
 	d3d11_system_events();
 	resource_system_events();
-
-	//////////////////////////
-
-	createEntities(p_appWindowsEntityName);
 
 	//////////////////////////
 
@@ -135,32 +121,6 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	m_speed_sign_distribution = new std::uniform_int_distribution<int>(0, 1);
 	m_rotation_speed_sign_distribution = new std::uniform_int_distribution<int>(0, 1);
 }
-
-
-void ModuleImpl::createEntities(const std::string& p_appWindowsEntityName)
-{
-	/////////// add screen rendering pass entity
-
-	auto& appwindowNode{ m_entitygraph.node(p_appWindowsEntityName) };
-
-	auto& screenRenderingNode{ m_entitygraph.add(appwindowNode, "screenRenderingEntity") };
-	const auto screenRenderingPassEntity{ screenRenderingNode.data() };
-
-	auto& screenRendering_rendering_aspect{ screenRenderingPassEntity->makeAspect(core::renderingAspect::id) };
-
-	screenRendering_rendering_aspect.addComponent<rendering::Queue>("screenRenderingQueue", "screen_pass_queue");
-
-	auto& rendering_queue{ screenRendering_rendering_aspect.getComponent<rendering::Queue>("screenRenderingQueue")->getPurpose() };
-	m_windowRenderingQueue = &rendering_queue;
-
-	auto sysEngine{ SystemEngine::getInstance() };
-	const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
-
-	dataPrintSystem->setRenderingQueue(m_windowRenderingQueue);
-}
-
-
-
 
 void ModuleImpl::resource_system_events()
 {
@@ -247,35 +207,32 @@ void ModuleImpl::d3d11_system_events()
 					const int w_width{ window_dims.x() };
 					const int w_height{ window_dims.y() };
 
-					m_rendering_quad_texture = new Texture(Texture::Format::TEXTURE_RGB, w_width, w_height, Texture::ContentAccessMode::CONTENT_ACCESS);
 
-					mage::helpers::plugRenderingQuadView( m_entitygraph,
-																	characteristics_v_width, characteristics_v_height,																	
-																	"screenRenderingEntity",
-																	"screenRenderingQuadEntity",
-																	"ScreenRenderingViewEntity",
-																	m_windowRenderingQueue,
-																	"texture_vs",
-																	"texture_ps",
-																	{	
-																		std::make_pair(Texture::STAGE_0, *m_rendering_quad_texture)
-																	}																																		
-																);
-						
-					// buffer rendering queue
-					rendering::Queue bufferRenderingQueue("buffer_pass_queue");
-					bufferRenderingQueue.setTargetClearColor({ 50, 0, 20, 255 });
-					bufferRenderingQueue.enableTargetClearing(true);
-					bufferRenderingQueue.enableTargetDepthClearing(true);
-					bufferRenderingQueue.setTargetStage(Texture::STAGE_0);
 
-					mage::helpers::plugRenderingQueue(m_entitygraph, bufferRenderingQueue, "screenRenderingQuadEntity", "bufferRenderingEntity");
 
-							
+					const auto rendering_quad_textures_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
+
+
+					mage::helpers::plugRenderingQuad(m_entitygraph,
+						"fog_queue",
+						characteristics_v_width, characteristics_v_height,
+						"screenRendering_Filter_DirectForward_Quad_Entity",
+						"bufferRendering_Filter_DirectForward_Queue_Entity",
+						"bufferRendering_Filter_DirectForward_Quad_Entity",
+						"bufferRendering_Filter_DirectForward_View_Entity",
+						"filter_directforward_vs",
+						"filter_directforward_ps",
+						{
+							std::make_pair(Texture::STAGE_0, rendering_quad_textures_channnel)
+						});
+
+
+
+
 					// add camera to scene
 					maths::Matrix projection;
 					projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
-					helpers::plugCamera(m_entitygraph, projection, "bufferRenderingEntity", "cameraEntity");
+					helpers::plugCamera(m_entitygraph, projection, m_appWindowsEntityName, "cameraEntity");
 
 					// attach animator/positionner to camera
 					core::Entitygraph::Node& cameraNode{ m_entitygraph.node("cameraEntity") };
@@ -300,16 +257,15 @@ void ModuleImpl::d3d11_system_events()
 						}
 					));
 
+
 					///////Select camera
 
-					core::Entitygraph::Node& bufferRenderingQueueNode{ m_entitygraph.node("bufferRenderingEntity") };
-					const auto bufferRenderingQueueEntity { bufferRenderingQueueNode.data() };
-					const auto& renderingAspect{ bufferRenderingQueueEntity->aspectAccess(core::renderingAspect::id) };
+					m_currentCamera = "cameraEntity";
 
-					renderingAspect.getComponent<rendering::Queue>("renderingQueue")->getPurpose().setCurrentView("cameraEntity");
+					auto texturesChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Filter_DirectForward_Queue_Entity") };
+					texturesChannelRenderingQueue->setCurrentView(m_currentCamera);
 
-
-					/////////////
+					/////////////////////////////////
 
 					rendering::RenderState rs_noculling(rendering::RenderState::Operation::SETCULLING, "cw");
 					rendering::RenderState rs_zbuffer(rendering::RenderState::Operation::ENABLEZBUFFER, "false");
@@ -318,13 +274,15 @@ void ModuleImpl::d3d11_system_events()
 
 					const std::vector<rendering::RenderState> rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling };
 
-					auto ball{ helpers::plug2DSpriteWithSyncVariables(m_entitygraph, "bufferRenderingEntity", "sprite#0", 0.05, 0.05, "sprite_vs", "sprite_ps", "tennis_ball.bmp", rs_list, 1000, 
+
+					auto ball{ helpers::plug2DSpriteWithSyncVariables(m_entitygraph, "bufferRendering_Filter_DirectForward_Queue_Entity", "sprite#0", 0.05, 0.05, "sprite_vs", "sprite_ps", "tennis_ball.bmp", rs_list, 1000,
 																		mage::transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT) };
 					m_sprites.push_back(ball);
 
 
-					helpers::plug2DSpriteWithSyncVariables(m_entitygraph, "bufferRenderingEntity", "terrain", 1.5, 1.1, "sprite_vs", "sprite_ps", "terrain_tennis.jpg", rs_list, 999,
-															mage::transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT);
+					helpers::plug2DSpriteWithSyncVariables(m_entitygraph, "bufferRendering_Filter_DirectForward_Queue_Entity", "terrain", 1.5, 1.1, "sprite_vs", "sprite_ps", "terrain_tennis.jpg", rs_list, 999,
+						mage::transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT);
+
 
 				}
 				break;

@@ -106,13 +106,9 @@ void ModuleImpl::manage_sprite_trajectory(core::Entity* p_entity)
 
 void ModuleImpl::run(void)
 {
-	/////////////////////////////////////////////////////
-
-	auto sysEngine{ SystemEngine::getInstance() };
-	sysEngine->run();
+	SamplesBase::run();
 
 	/////////////////////////////////////////////////////
-
 	for (auto sprite : m_sprites)
 	{
 		manage_sprite_trajectory(sprite);

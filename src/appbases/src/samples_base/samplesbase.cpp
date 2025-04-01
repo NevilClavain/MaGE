@@ -22,7 +22,7 @@
 */
 /* -*-LIC_END-*- */
 
-#include "module_impl.h"
+#include "samplesbase.h"
 
 #include "aspects.h"
 #include "sysengine.h"
@@ -48,7 +48,7 @@
 
 #include "entity.h"
 
-
+#include "datacloud.h"
 
 #include "animatorfunc.h"
 #include "animators_helpers.h"
@@ -59,33 +59,20 @@ using namespace mage::core;
 using namespace mage::rendering;
 
 
-ModuleImpl::ModuleImpl()
+SamplesBase::SamplesBase()
 {
 	/////////// create common specific logger for events
 	services::LoggerSharing::getInstance()->createLogger("Events");
-
 }
 
-std::string ModuleImpl::getModuleName() const
-{
-	return "Basic template";
-}
 
-std::string ModuleImpl::getModuleDescr() const
-{
-	return "Basic template module";
-}
-
-mage::core::Entitygraph* ModuleImpl::entitygraph()
+mage::core::Entitygraph* SamplesBase::entitygraph()
 {
 	return &m_entitygraph;
 }
 
-void ModuleImpl::onAppEvent(WPARAM p_wParam, LPARAM p_lParam)
-{
-}
 
-void ModuleImpl::registerSubscriber(const Callback& p_callback)
+void SamplesBase::registerSubscriber(const Callback& p_callback)
 {
 	mage::property::EventSource<mage::interfaces::ModuleEvents, int>::registerSubscriber(p_callback);
 

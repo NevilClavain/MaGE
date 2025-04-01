@@ -93,6 +93,8 @@ add_subdirectory(hlsl40_shaders)
 add_subdirectory(commons)
 add_subdirectory(helpers)
 
+add_subdirectory(appbases)
+
 add_subdirectory(rt)
 
 add_subdirectory(console_tests/console_helloworld)
@@ -110,11 +112,6 @@ add_subdirectory(module_scene00)
 add_subdirectory(module_sprites)
 add_subdirectory(module_anims)
 
-# basic templates
-add_subdirectory(module_gblcamera)
-add_subdirectory(module_renderingquad)
-add_subdirectory(module_basic)
-add_subdirectory(module_openenv)
 
 
 

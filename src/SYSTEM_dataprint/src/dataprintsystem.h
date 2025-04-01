@@ -73,7 +73,7 @@ namespace mage
         static constexpr int                    rqRowHeight{ 21 };
 
 
-        mage::rendering::Queue*             m_renderingQueue{ nullptr };
+        mage::rendering::Queue*                 m_renderingQueue{ nullptr };
 
         std::vector<std::string>                m_dc_strings; // dataclouds display inputs
 

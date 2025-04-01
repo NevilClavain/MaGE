@@ -49,6 +49,7 @@ include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_world/src)
 include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_dataprint/src)
 
 include_directories(${CMAKE_SOURCE_DIR}/helpers)
+include_directories(${CMAKE_SOURCE_DIR}/appbases/src/samples_base)
 
 include_directories(${st_tree_include_dir})
 include_directories(${jsonjsmn_include_dir})
@@ -84,6 +85,7 @@ target_link_libraries(module_sprites
 										CORE_services 
 										CORE_maths 
 										helpers
+										appbases
 										RENDERING_control 
 										TRANSFORM_control 
 										SYSTEM_d3d11 
@@ -92,6 +94,7 @@ target_link_libraries(module_sprites
 										SYSTEM_renderingqueue 
 										SYSTEM_world 
 										SYSTEM_dataprint 
+										SYSTEM_animations
 										jsmn 
 										d3d11 
 										d3dcompiler 										

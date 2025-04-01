@@ -23,7 +23,7 @@
 */
 /* -*-LIC_END-*- */
 
-#include "module_impl.h"
+#include "samplesbase.h"
 
 #include "sysengine.h"
 #include "resourcesystem.h"
@@ -32,7 +32,7 @@
 using namespace mage;
 using namespace mage::core;
 
-void ModuleImpl::close(void)
+void SamplesBase::close(void)
 {
 	auto resourceSystem{ SystemEngine::getInstance()->getSystem(resourceSystemSlot) };
 	auto resourceSystemInstance{ dynamic_cast<mage::ResourceSystem*>(resourceSystem) };

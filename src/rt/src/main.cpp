@@ -54,13 +54,13 @@ int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
             _EXCEPTION("Usage : rt <module_name>");
         }
 
-        
+
     }
     catch (const std::exception& e)
     {
         const auto what{ e.what() };
         ::MessageBoxA(nullptr, what, "mage Exception", MB_OK | MB_ICONERROR);
     }
-    
+  
     return 0;
 }
