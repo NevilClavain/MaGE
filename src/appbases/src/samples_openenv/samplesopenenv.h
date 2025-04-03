@@ -74,7 +74,10 @@ namespace mage
         void                            d3d11_system_events_openenv();
 
         void                            create_openenv_scenegraph(const std::string& p_mainWindowsEntityId);
+
         void                            create_openenv_textures_channel_rendergraph(const std::string& p_queueEntityId);
+        void                            create_openenv_ambientlight_channel_rendergraph(const std::string& p_queueEntityId);
+
         void                            create_openenv_zdepth_channel_rendergraph(const std::string& p_queueEntityId);
 
     };
