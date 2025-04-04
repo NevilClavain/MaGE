@@ -294,7 +294,11 @@ void ModuleImpl::d3d11_system_events()
 				
 					complete_textures_channel_rendergraph("bufferRendering_Scene_TexturesChannel_Queue_Entity");
 
+					complete_openenv_ambientlight_channel_rendergraph("bufferRendering_Scene_AmbientLightChannel_Queue_Entity");
+
 					complete_zdepth_channel_rendergraph("bufferRendering_Scene_ZDepthChannel_Queue_Entity");
+
+
 					
 					{
 						///////Select camera
@@ -303,6 +307,9 @@ void ModuleImpl::d3d11_system_events()
 
 						auto texturesChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Queue_Entity")};
 						texturesChannelRenderingQueue->setCurrentView(m_currentCamera);
+
+						auto ambientLightChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_AmbientLightChannel_Queue_Entity") };
+						ambientLightChannelRenderingQueue->setCurrentView(m_currentCamera);
 
 						auto fogChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
 						fogChannelRenderingQueue->setCurrentView(m_currentCamera);
@@ -495,6 +502,64 @@ void ModuleImpl::complete_zdepth_channel_rendergraph(const std::string& p_queueE
 															"scene_zdepth_skinning_vs", "scene_zdepth_skinning_ps",
 															raptor_rs_list,
 															1000) };
+
+		//////////////////////////////////////////////////////////////////////
+
+		// link triangle meshe to related entity in scenegraph side 
+		auto& raptor_resource_aspect{ m_raptorEntity->aspectAccess(core::resourcesAspect::id) };
+		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &raptor_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
+
+		auto& proxy_resource_aspect{ raptor_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
+
+		////////////////////////////////////////////////////////////////////////
+
+		auto& raptor_world_aspect{ m_raptorEntity->aspectAccess(core::worldAspect::id) };
+		transform::WorldPosition* position_ref{ &raptor_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+
+		auto& proxy_world_aspect{ raptor_proxy_entity->makeAspect(core::worldAspect::id) };
+		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
+
+
+		////////////////////////////////////////////////////////////////////////
+
+		auto& proxy_raptor_resource_aspect{ raptor_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+		std::pair<std::string, Shader>* vshader_ref{ &proxy_raptor_resource_aspect.getComponent<std::pair<std::string, Shader>>("vertexShader")->getPurpose() };
+		std::pair<std::string, Shader>* pshader_ref{ &proxy_raptor_resource_aspect.getComponent<std::pair<std::string, Shader>>("pixelShader")->getPurpose() };
+
+		auto& raptor_animations_aspect{ m_raptorEntity->aspectAccess(core::animationsAspect::id) };
+
+		raptor_animations_aspect.getComponent<std::vector<std::pair<std::string, Shader>*>>("target_vshaders")->getPurpose().push_back(vshader_ref);
+	}
+}
+
+void ModuleImpl::complete_openenv_ambientlight_channel_rendergraph(const std::string& p_queueEntityId)
+{
+	///// Raptor
+
+	{
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
+		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
+		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
+		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
+
+		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
+
+		const std::vector<RenderState> raptor_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
+
+		const auto raptor_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "raptor_AmbientLightChannel_Proxy_Entity",
+															"scene_flatcolor_skinning_vs", "scene_flatcolor_skinning_ps",
+															raptor_rs_list,
+															1000) };
+
+
+		/// connect shader arg
+
+		auto& rendering_aspect{ raptor_proxy_entity->aspectAccess(core::renderingAspect::id) };
+
+		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+		drawingControl.pshaders_map.push_back(std::make_pair("std.ambientlight.color", "color"));
+
 
 		//////////////////////////////////////////////////////////////////////
 
