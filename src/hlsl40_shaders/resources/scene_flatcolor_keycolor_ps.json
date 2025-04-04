@@ -1,0 +1,20 @@
+{
+  "inputs": [
+    {
+      "type": "Real4Vector",
+      "body": {
+        "argument_id": "color",
+        "register": 24,
+        "description": "color value"
+      }
+    },
+    {
+      "type": "Real4Vector",
+      "body": {
+        "argument_id": "key_color",
+        "register": 25,
+        "description": "key color value for pixels to clip"
+      }
+    }
+  ]
+}
