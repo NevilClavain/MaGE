@@ -153,6 +153,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					dataCloud->updateDataValue<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_5", maths::Real4Vector(0.0, 0.0, 0.0, 1));
 
 
+					
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// SCENEGRAPH
@@ -235,7 +236,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					// channel : textures
 					
 					rendering::Queue texturesChannelsRenderingQueue("textures_channel_queue");
-					texturesChannelsRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+					texturesChannelsRenderingQueue.setTargetClearColor({ 0, 255, 0, 255 });
 					texturesChannelsRenderingQueue.enableTargetClearing(true);
 					texturesChannelsRenderingQueue.enableTargetDepthClearing(true);
 					texturesChannelsRenderingQueue.setTargetStage(Texture::STAGE_0);
@@ -250,7 +251,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					// channel : ambient light
 
 					rendering::Queue ambientLightChannelsRenderingQueue("ambientlight_channel_queue");
-					ambientLightChannelsRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+					ambientLightChannelsRenderingQueue.setTargetClearColor({ 0, 255, 0, 255 });
 					ambientLightChannelsRenderingQueue.enableTargetClearing(true);
 					ambientLightChannelsRenderingQueue.enableTargetDepthClearing(true);
 					ambientLightChannelsRenderingQueue.setTargetStage(Texture::STAGE_1);
