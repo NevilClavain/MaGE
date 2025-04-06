@@ -163,15 +163,32 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// RENDERGRAPH
 
-
-
-					const auto combiner_fog_input_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };					
-					const auto combiner_fog_zdepths_channnel{ Texture(Texture::Format::TEXTURE_FLOAT32, w_width, w_height) };
+					
+					const auto combiner_layer_inputA_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
 
 					mage::helpers::plugRenderingQuad(m_entitygraph,
 						"fog_queue",
 						characteristics_v_width, characteristics_v_height,
 						"screenRendering_Filter_DirectForward_Quad_Entity",
+						"bufferRendering_Combiner_Layer_Queue_Entity",
+						"bufferRendering_Combiner_Layer_Quad_Entity",
+						"bufferRendering_Combiner_Layer_View_Entity",
+						"filter_directforward_vs",
+						"filter_directforward_ps",
+						{
+							std::make_pair(Texture::STAGE_0, combiner_layer_inputA_channnel),
+						});
+
+					
+
+
+					const auto combiner_fog_input_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
+					const auto combiner_fog_zdepths_channnel{ Texture(Texture::Format::TEXTURE_FLOAT32, w_width, w_height) };
+
+					mage::helpers::plugRenderingQuad(m_entitygraph,
+						"fog_queue",
+						characteristics_v_width, characteristics_v_height,
+						"bufferRendering_Combiner_Layer_Quad_Entity",
 						"bufferRendering_Combiner_Fog_Queue_Entity",
 						"bufferRendering_Combiner_Fog_Quad_Entity",
 						"bufferRendering_Combiner_Fog_View_Entity",
@@ -189,12 +206,6 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					rendering::DrawingControl& fogDrawingControl{ screenRendering_Combiner_Fog_Quad_Entity_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
 					fogDrawingControl.pshaders_map.push_back(std::make_pair("std.fog_color", "fog_color"));
 					fogDrawingControl.pshaders_map.push_back(std::make_pair("std.fog_density", "fog_density"));
-
-
-
-
-
-
 
 
 					// channel : zdepth
