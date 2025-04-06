@@ -199,7 +199,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					// channel : zdepth
 
 					rendering::Queue zdepthChannelsRenderingQueue("zdepth_channel_queue");
-					zdepthChannelsRenderingQueue.setTargetClearColor({ 0, 0, 128, 255 });
+					zdepthChannelsRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
 					zdepthChannelsRenderingQueue.enableTargetClearing(true);
 					zdepthChannelsRenderingQueue.enableTargetDepthClearing(true);
 					zdepthChannelsRenderingQueue.setTargetStage(Texture::STAGE_1);
@@ -485,7 +485,7 @@ void SamplesOpenEnv::create_openenv_textures_channel_rendergraph(const std::stri
 
 
 	/////////////////// add clouds
-
+	/*
 	{
 
 		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
@@ -530,6 +530,7 @@ void SamplesOpenEnv::create_openenv_textures_channel_rendergraph(const std::stri
 		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
 
 	}
+	*/
 
 	///// add tree
 
@@ -579,7 +580,7 @@ void SamplesOpenEnv::create_openenv_textures_channel_rendergraph(const std::stri
 	}
 
 	///// skydome
-
+	/*
 	{
 
 		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
@@ -635,6 +636,7 @@ void SamplesOpenEnv::create_openenv_textures_channel_rendergraph(const std::stri
 		drawingControl.pshaders_map.push_back(std::make_pair("scene_skydome_ps.atmo_scattering_flag_4", "atmo_scattering_flag_4"));
 		drawingControl.pshaders_map.push_back(std::make_pair("scene_skydome_ps.atmo_scattering_flag_5", "atmo_scattering_flag_5"));
 	}
+	*/
 }
 
 void SamplesOpenEnv::create_openenv_zdepth_channel_rendergraph(const std::string& p_queueEntityId)
