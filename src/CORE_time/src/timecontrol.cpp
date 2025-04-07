@@ -75,11 +75,11 @@ TimeControl::TimeControl()
 {
     const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 
-    dataCloud->registerData<long>("std.framesPerSecond", 0);
+    dataCloud->registerData<long>("std.frames_per_seccond", 0);
     dataCloud->registerData<std::string>("std.date", "");
 
-    dataCloud->registerData<std::string>("std.timeFactor", "");
-    dataCloud->registerData<__time64_t>("std.currentTime");
+    dataCloud->registerData<std::string>("std.time_factor", "");
+    dataCloud->registerData<__time64_t>("std.current_time");
 
     m_timer.registerSubscriber([this](TimerEvents p_event) 
     {
@@ -125,9 +125,9 @@ void TimeControl::update(void)
     }
 
     dataCloud->updateDataValue<std::string>("std.date", datetime);
-    dataCloud->updateDataValue<__time64_t>("std.currentTime", m_current_time);
-    dataCloud->updateDataValue<long>("std.framesPerSecond", m_tm.getFPS());
-    dataCloud->updateDataValue<std::string>("std.timeFactor", m_mode_str);
+    dataCloud->updateDataValue<__time64_t>("std.current_time", m_current_time);
+    dataCloud->updateDataValue<long>("std.frames_per_seccond", m_tm.getFPS());
+    dataCloud->updateDataValue<std::string>("std.time_factor", m_mode_str);
 }
 
 bool TimeControl::isReady(void) const
