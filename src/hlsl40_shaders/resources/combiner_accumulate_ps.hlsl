@@ -46,6 +46,9 @@ struct PS_INTPUT
 
 float4 ps_main(PS_INTPUT input) : SV_Target
 {
-    float4 final_color = txInputA.Sample(samInputA, input.TexCoord0) * txInputB.Sample(samInputB, input.TexCoord0);    
+    float4 colorA = txInputA.Sample(samInputA, input.TexCoord0);
+    float4 colorB = txInputB.Sample(samInputB, input.TexCoord0);        
+    float4 final_color = saturate(colorA + colorB);
+    
     return final_color;
 }

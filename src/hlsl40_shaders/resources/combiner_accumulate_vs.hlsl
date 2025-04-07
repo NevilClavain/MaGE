@@ -28,24 +28,29 @@ cbuffer constargs : register(b0)
     Matrix mat[512];
 };
 
+#include "mat_input_constants.hlsl"
 
-Texture2D txInputA           : register(t0);
-SamplerState samInputA       : register(s0);
-
-Texture2D txInputB           : register(t1);
-SamplerState samInputB       : register(s1);
-
-
-struct PS_INTPUT 
+struct VS_INPUT
 {
-    float4 Position : SV_POSITION;
-	float2 TexCoord0: TEXCOORD0;
+    float3 Position : POSITION;
+    float4 TexCoord0 : TEXCOORD0;
 };
 
-#include "commons.hlsl"
-
-float4 ps_main(PS_INTPUT input) : SV_Target
+struct VS_OUTPUT
 {
-    float4 final_color = txInputA.Sample(samInputA, input.TexCoord0) * txInputB.Sample(samInputB, input.TexCoord0);    
-    return final_color;
+    float4 Position : SV_POSITION;
+    float2 TexCoord0 : TEXCOORD0;
+};
+
+VS_OUTPUT vs_main(VS_INPUT Input)
+{
+    VS_OUTPUT Output;
+    float4 pos;
+    pos.xyz = Input.Position;
+    pos.w = 1.0;
+
+    Output.Position = mul(pos, mat[matWorldViewProjection]);
+    Output.TexCoord0 = Input.TexCoord0.xy;
+      
+    return (Output);
 }

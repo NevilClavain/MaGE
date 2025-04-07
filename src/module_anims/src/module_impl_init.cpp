@@ -304,10 +304,10 @@ void ModuleImpl::d3d11_system_events()
 						///////Select camera
 
 						m_currentCamera = "camera_Entity";
-
+						
 						auto texturesChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Queue_Entity")};
 						texturesChannelRenderingQueue->setCurrentView(m_currentCamera);
-
+						
 						auto ambientLightChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_AmbientLightChannel_Queue_Entity") };
 						ambientLightChannelRenderingQueue->setCurrentView(m_currentCamera);
 
