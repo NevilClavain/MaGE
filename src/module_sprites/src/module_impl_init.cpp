@@ -224,7 +224,8 @@ void ModuleImpl::d3d11_system_events()
 						"filter_directforward_ps",
 						{
 							std::make_pair(Texture::STAGE_0, rendering_quad_textures_channnel)
-						});
+						},
+						Texture::STAGE_0);
 
 
 

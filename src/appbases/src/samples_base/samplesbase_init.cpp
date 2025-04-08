@@ -145,7 +145,8 @@ void SamplesBase::d3d11_system_events_base()
 
 						{
 							std::make_pair(Texture::STAGE_0, rendering_quad_textures_channnel)
-						}
+						},
+						Texture::STAGE_0
 
 					)};
 

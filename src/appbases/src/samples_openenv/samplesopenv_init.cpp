@@ -178,7 +178,8 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						{
 							std::make_pair(Texture::STAGE_0, combiner_fog_input_channnel),
 							std::make_pair(Texture::STAGE_1, combiner_fog_zdepths_channnel),
-						});
+						},
+						Texture::STAGE_0);
 
 					Entity* bufferRendering_Combiner_Fog_Quad_Entity{ m_entitygraph.node("bufferRendering_Combiner_Fog_Quad_Entity").data() };
 
@@ -221,46 +222,10 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						{
 							std::make_pair(Texture::STAGE_0, combiner_modulate_inputA_channnel),
 							std::make_pair(Texture::STAGE_1, combiner_modulate_inputB_channnel),
-						});
+						},
+						Texture::STAGE_0);
 
 
-
-					/*
-					
-					// channel : textures
-					
-					rendering::Queue texturesChannelsRenderingQueue("textures_channel_queue");
-					texturesChannelsRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					texturesChannelsRenderingQueue.enableTargetClearing(true);
-					texturesChannelsRenderingQueue.enableTargetDepthClearing(true);
-					texturesChannelsRenderingQueue.setTargetStage(Texture::STAGE_0);
-
-					mage::helpers::plugRenderingQueue(m_entitygraph, texturesChannelsRenderingQueue, "bufferRendering_Combiner_Modulate_Quad_Entity", "bufferRendering_Scene_TexturesChannel_Queue_Entity");
-
-					create_openenv_textures_channel_rendergraph("bufferRendering_Scene_TexturesChannel_Queue_Entity");
-					
-
-
-					
-				
-					// channel : ambient light
-
-					rendering::Queue ambientLightChannelsRenderingQueue("ambientlight_channel_queue");
-					ambientLightChannelsRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					ambientLightChannelsRenderingQueue.enableTargetClearing(true);
-					ambientLightChannelsRenderingQueue.enableTargetDepthClearing(true);
-					ambientLightChannelsRenderingQueue.setTargetStage(Texture::STAGE_1);
-
-					mage::helpers::plugRenderingQueue(m_entitygraph, ambientLightChannelsRenderingQueue, "bufferRendering_Combiner_Modulate_Quad_Entity", "bufferRendering_Scene_AmbientLightChannel_Queue_Entity");
-
-					create_openenv_ambientlight_channel_rendergraph("bufferRendering_Scene_AmbientLightChannel_Queue_Entity");
-					
-					*/
-
-
-
-					
-					
 					/////////////////////////////////////////////////////////////////
 
 
@@ -298,7 +263,8 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						{
 							std::make_pair(Texture::STAGE_0, combiner_accumulate_inputA_channnel),
 							std::make_pair(Texture::STAGE_1, combiner_accumulate_inputB_channnel),
-						});
+						},
+						Texture::STAGE_0);
 
 
 
