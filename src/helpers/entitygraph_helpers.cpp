@@ -106,9 +106,11 @@ namespace mage
 
 			// dump to log the built node tree
 
-			const std::function<void(const ENode&, int)> logMe
+			std::string hierarchy;
+
+			const std::function<void(const ENode&, int, std::string&)> logMe
 			{
-				[&](const ENode& p_node, int depth)
+				[&](const ENode& p_node, int depth, std::string& p_outstr)
 				{
 					const auto& eg_node { p_eg.node(p_node.id) };
 
@@ -170,16 +172,20 @@ namespace mage
 						}
 					}
 
-					_MAGE_DEBUG(localLogger, logstr);
+					//_MAGE_DEBUG(localLogger, logstr);
+
+					p_outstr += logstr;
 
 					for (auto& e : p_node.children)
 					{
-						logMe(e.second, depth+1);
+						logMe(e.second, depth+1, p_outstr);
 					}
 				}
 			};
 
-			logMe(root, 0);	
+			logMe(root, 0, hierarchy);	
+
+			_MAGE_DEBUG(localLogger, hierarchy);
 
 			_MAGE_DEBUG(localLogger, ">>>>>>>>>>>>>>> ENTITY GRAPH DUMP END <<<<<<<<<<<<<<<<<<<<<<<<");
 		}
@@ -250,9 +256,6 @@ namespace mage
 
 			const TrianglePrimitive<unsigned int> t2{ 0, 2, 3 };
 			square.push(t2);
-
-			square.computeNormales();
-			square.computeTB();
 
 			square.computeResourceUID();
 			square.setSourceID("helpers::plugRenderingQuadView");
@@ -414,9 +417,6 @@ namespace mage
 
 			const TrianglePrimitive<unsigned int> t2{ 0, 2, 3 };
 			square.push(t2);
-
-			square.computeNormales();
-			square.computeTB();
 
 			square.computeResourceUID();
 			square.setSourceID("helpers::plugRenderingQuadView");
