@@ -360,6 +360,41 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_mainWindowsE
 		m_groundEntity = entity;
 	}
 
+
+	////////////////////////////////
+
+	{
+		auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "sphere_Entity") };
+		const auto entity{ entityNode.data() };
+
+		auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
+		entity->makeAspect(core::timeAspect::id);
+
+		world_aspect.addComponent<transform::WorldPosition>("position");
+		world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
+		(
+			{},
+			[=](const core::ComponentContainer& p_world_aspect,
+				const core::ComponentContainer& p_time_aspect,
+				const transform::WorldPosition&,
+				const std::unordered_map<std::string, std::string>&)
+			{
+
+				maths::Matrix positionmat;
+				positionmat.translation(-45.0, skydomeInnerRadius + groundLevel + 8.0, -20.0);
+
+				transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+				wp.local_pos = wp.local_pos * positionmat;
+			}
+		));
+
+		auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
+		resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("sphere", "sphere.ac"), TriangleMeshe()));
+
+		m_sphereEntity = entity;
+	}
+
+
 	////////////////////////////////
 
 	{
@@ -507,6 +542,52 @@ void SamplesOpenEnv::create_openenv_textures_channel_rendergraph(const std::stri
 		transform::WorldPosition* position_ref{ &ground_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
 
 		auto& proxy_world_aspect{ ground_proxy_entity->makeAspect(core::worldAspect::id) };
+		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
+
+	}
+
+
+	///////////////	add sphere
+
+	{
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
+		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
+		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
+		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
+
+		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
+
+		const std::vector<RenderState> sphere_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
+
+
+		const std::vector<std::pair<size_t, std::pair<std::string, Texture>>> sphere_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("marbre.jpg", Texture())) };
+
+
+
+		const auto sphere_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "sphere_TexturesChannel_Proxy_Entity",
+															"scene_texture1stage_keycolor_vs", "scene_texture1stage_keycolor_ps",
+															sphere_rs_list,
+															1000,
+															sphere_textures) };
+
+
+		//////////////////////////////////////////////////////////////////////
+
+		// link triangle meshe to related entity in scenegraph side 
+		auto& resource_aspect{ m_sphereEntity->aspectAccess(core::resourcesAspect::id) };
+		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
+
+		auto& proxy_resource_aspect{ sphere_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
+
+
+		///////////////////////////////////////////////////////////////////////
+
+		// link transforms to related entity in scenegraph side 
+		auto& world_aspect{ m_sphereEntity->aspectAccess(core::worldAspect::id) };
+		transform::WorldPosition* position_ref{ &world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+
+		auto& proxy_world_aspect{ sphere_proxy_entity->makeAspect(core::worldAspect::id) };
 		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
 
 	}
@@ -707,6 +788,45 @@ void SamplesOpenEnv::create_openenv_zdepth_channel_rendergraph(const std::string
 
 	}
 
+	///////////////	add sphere
+
+	{
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
+		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
+		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
+		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
+
+		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
+
+		const std::vector<RenderState> sphere_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
+
+		const auto sphere_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "sphere_FogChannel_Proxy_Entity",
+															"scene_zdepth_vs", "scene_zdepth_ps",
+															sphere_rs_list,
+															1000) };
+
+		//////////////////////////////////////////////////////////////////////
+
+		// link triangle meshe to related entity in scenegraph side 
+		auto& resource_aspect{ m_sphereEntity->aspectAccess(core::resourcesAspect::id) };
+		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
+
+		auto& proxy_resource_aspect{ sphere_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
+
+
+		///////////////////////////////////////////////////////////////////////
+
+		// link transforms to related entity in scenegraph side 
+		auto& world_aspect{ m_sphereEntity->aspectAccess(core::worldAspect::id) };
+		transform::WorldPosition* position_ref{ &world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+
+		auto& proxy_world_aspect{ sphere_proxy_entity->makeAspect(core::worldAspect::id) };
+		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
+
+	}
+
+
 	///// add tree
 
 	{
@@ -800,6 +920,53 @@ void SamplesOpenEnv::create_openenv_ambientlight_channel_rendergraph(const std::
 		transform::WorldPosition* position_ref{ &ground_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
 
 		auto& proxy_world_aspect{ ground_proxy_entity->makeAspect(core::worldAspect::id) };
+		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
+
+	}
+
+	///////////////	add sphere
+
+	{
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
+		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
+		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
+		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
+
+		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
+
+		const std::vector<RenderState> sphere_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
+
+		const auto sphere_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "sphere_AmbientLightChannel_Proxy_Entity",
+															"scene_flatcolor_vs", "scene_flatcolor_ps",
+															sphere_rs_list,
+															1000) };
+
+
+		/// connect shader arg
+
+		auto& rendering_aspect{ sphere_proxy_entity->aspectAccess(core::renderingAspect::id) };
+
+		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+		drawingControl.pshaders_map.push_back(std::make_pair("std.ambientlight.color", "color"));
+
+
+		//////////////////////////////////////////////////////////////////////
+
+		// link triangle meshe to related entity in scenegraph side 
+		auto& resource_aspect{ m_sphereEntity->aspectAccess(core::resourcesAspect::id) };
+		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
+
+		auto& proxy_resource_aspect{ sphere_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
+
+
+		///////////////////////////////////////////////////////////////////////
+
+		// link transforms to related entity in scenegraph side 
+		auto& world_aspect{ m_sphereEntity->aspectAccess(core::worldAspect::id) };
+		transform::WorldPosition* position_ref{ &world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+
+		auto& proxy_world_aspect{ sphere_proxy_entity->makeAspect(core::worldAspect::id) };
 		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
 
 	}
