@@ -60,24 +60,6 @@ namespace mage
 			RENDERERLOADED,
 		};
 
-		enum class NormalesGenerationMode
-		{
-			NORMALES_DISCARDED,
-			NORMALES_AUTO,
-			NORMALES_AUTO_SMOOTH,
-			NORMALES_FROMFILE,
-			NORMALES_FROMFILE_SMOOTH,
-			NORMALES_COMPUTED
-		};
-
-		enum class TangentBinormalesGenerationMode
-		{
-			TB_DISCARDED,
-			TB_AUTO,
-			TB_FROMFILE,
-			TB_COMPUTED
-		};
-
 		TriangleMeshe() = default;		
 		TriangleMeshe(const TriangleMeshe& p_other);
 
@@ -92,8 +74,6 @@ namespace mage
 			m_triangles_for_vertex = p_other.m_triangles_for_vertex;
 
 			m_normales_transformation = p_other.m_normales_transformation;
-			m_n_gen_mode = p_other.m_n_gen_mode;
-			m_tb_gen_mode = p_other.m_tb_gen_mode;
 
 			m_animation_bones = p_other.m_animation_bones;
 			m_animation_bones_names_mapping = p_other.m_animation_bones_names_mapping;
@@ -122,14 +102,11 @@ namespace mage
 		std::vector<TrianglePrimitive<unsigned int>>			getTriangles(void) const;
 		size_t													getTrianglesListSize() const;
 
-		void													setNGenerationMode(NormalesGenerationMode p_mode);
-		void													setTBGenerationMode(TangentBinormalesGenerationMode p_mode);
-
-		NormalesGenerationMode									getNGenerationMode(void) const;
-		TangentBinormalesGenerationMode							getTBGenerationMode(void) const;
-
 		core::maths::Matrix										getNormalesTransf(void) const;
 		void													setNormalesTransf(const core::maths::Matrix& p_transf);
+
+		void													setSmoothNormalesGeneration(bool p_smoothNormalesGenerations);
+		bool													hasSmoothNormalesGeneration() const;
 
 
 		void													clearVertices(void);
@@ -171,8 +148,6 @@ namespace mage
 
 		const std::unordered_map<std::string, AnimationKeys>&	getAnimationsKeys() const;
 
-		//AnimationKeys&											transitionAnimationAccess();
-
 		std::string												getPreviousAnimation() const;
 		void													setPreviousAnimation(const std::string& p_previous_animation);
 
@@ -187,11 +162,11 @@ namespace mage
 		std::vector<Vertex>														m_vertices;
 		std::vector<TrianglePrimitive<unsigned int>>							m_triangles;
 
+		bool																	m_smooth_normales_generations{ true };
+
+
 		// list of triangles for each vertex
 		std::unordered_map<long, std::vector<TrianglePrimitive<unsigned int>>>	m_triangles_for_vertex;
-
-		NormalesGenerationMode													m_n_gen_mode{ NormalesGenerationMode::NORMALES_COMPUTED };
-		TangentBinormalesGenerationMode											m_tb_gen_mode{ TangentBinormalesGenerationMode::TB_DISCARDED };
 
 		core::maths::Matrix														m_normales_transformation;
 

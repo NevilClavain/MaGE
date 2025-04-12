@@ -101,11 +101,19 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 
 				const auto importer{ new Assimp::Importer() };
 
-				const auto flags{ aiProcess_Triangulate |
+				auto flags{ aiProcess_Triangulate |
 									aiProcess_JoinIdenticalVertices |
 									aiProcess_FlipUVs |
 									aiProcess_SortByPType };
 
+				if (p_mesheInfos.hasSmoothNormalesGeneration())
+				{
+					flags |= aiProcess_GenSmoothNormals;
+				}
+				else
+				{
+					flags |= aiProcess_GenNormals;
+				}
 
 				const aiScene* scene{ importer->ReadFileFromMemory(meshe_text.getData(), meshe_text.getDataSize(), flags)};
 				if (scene)
@@ -376,6 +384,11 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 								v_out.tu[0] = texCoord[0];
 								v_out.tv[0] = texCoord[1];
 							}
+
+							// model has its own normales, so use it
+							v_out.nx = meshe->mNormals[j][0];
+							v_out.ny = meshe->mNormals[j][1];
+							v_out.nz = meshe->mNormals[j][2];
 
 							p_mesheInfos.push(v_out);
 						}

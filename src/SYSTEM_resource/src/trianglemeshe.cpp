@@ -41,8 +41,6 @@ TriangleMeshe::TriangleMeshe(const TriangleMeshe& p_other)
 	m_triangles_for_vertex = p_other.m_triangles_for_vertex;
 
 	m_normales_transformation = p_other.m_normales_transformation;
-	m_n_gen_mode = p_other.m_n_gen_mode;
-	m_tb_gen_mode = p_other.m_tb_gen_mode;
 
 	m_animation_bones = p_other.m_animation_bones;
 	m_animation_bones_names_mapping = p_other.m_animation_bones_names_mapping;
@@ -79,27 +77,6 @@ std::vector<TrianglePrimitive<unsigned int>> TriangleMeshe::getTriangles(void) c
 size_t TriangleMeshe::getTrianglesListSize() const
 {
 	return m_triangles.size();
-}
-
-
-void TriangleMeshe::setNGenerationMode(NormalesGenerationMode p_mode)
-{
-	m_n_gen_mode = p_mode;
-}
-
-void TriangleMeshe::setTBGenerationMode(TangentBinormalesGenerationMode p_mode)
-{
-	m_tb_gen_mode = p_mode;
-}
-
-TriangleMeshe::NormalesGenerationMode TriangleMeshe::getNGenerationMode(void) const
-{
-	return m_n_gen_mode;
-}
-
-TriangleMeshe::TangentBinormalesGenerationMode TriangleMeshe::getTBGenerationMode(void) const
-{
-	return m_tb_gen_mode;
 }
 
 core::maths::Matrix	TriangleMeshe::getNormalesTransf(void) const
@@ -321,8 +298,7 @@ void TriangleMeshe::computeResourceUID()
 	delete[] vbuff;
 	delete[] tbuff;
 
-	const std::string hash_n_gen{ md5.digestMemory((BYTE*)&m_n_gen_mode, (int)(sizeof(m_n_gen_mode))) };
-	const std::string hash_tb_gen{ md5.digestMemory((BYTE*)&m_tb_gen_mode, (int)(sizeof(m_tb_gen_mode))) };
+	const std::string hash_smooth_norm_gen{ md5.digestMemory((BYTE*)&m_smooth_normales_generations, (int)(sizeof(m_smooth_normales_generations))) };
 
 	std::string hash_bones;
 	for (int i = 0; i < m_animation_bones.size(); i++)
@@ -333,7 +309,7 @@ void TriangleMeshe::computeResourceUID()
 		hash_bones += hash_bone;
 	}
 
-	std::string hash{ hash_v + hash_t + hash_n_gen + hash_tb_gen + hash_bones };
+	std::string hash{ hash_v + hash_t + hash_smooth_norm_gen + hash_bones};
 
 	m_resource_uid = hash;
 }
@@ -394,13 +370,6 @@ const std::unordered_map<std::string, AnimationKeys>& TriangleMeshe::getAnimatio
 	return m_animations_keys;
 }
 
-/*
-AnimationKeys& TriangleMeshe::transitionAnimationAccess()
-{
-	return m_transition_animation;
-}
-*/
-
 std::string	TriangleMeshe::getPreviousAnimation() const
 {
 	return m_previous_animation;
@@ -409,4 +378,14 @@ std::string	TriangleMeshe::getPreviousAnimation() const
 void TriangleMeshe::setPreviousAnimation(const std::string& p_previous_animation)
 {
 	m_previous_animation = p_previous_animation;
+}
+
+void TriangleMeshe::setSmoothNormalesGeneration(bool p_smoothNormalesGenerations)
+{
+	m_smooth_normales_generations = p_smoothNormalesGenerations;
+}
+
+bool TriangleMeshe::hasSmoothNormalesGeneration() const
+{
+	return m_smooth_normales_generations;
 }
