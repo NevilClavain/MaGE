@@ -78,7 +78,7 @@ namespace mage
 
         void                            create_openenv_textures_channel_rendergraph(const std::string& p_queueEntityId);
         void                            create_openenv_ambientlight_channel_rendergraph(const std::string& p_queueEntityId);
-        void                            create_openenv_directionallight_channel_rendergraph(const std::string& p_queueEntityId);
+        void                            create_openenv_lit_channel_rendergraph(const std::string& p_queueEntityId);
 
         void                            create_openenv_zdepth_channel_rendergraph(const std::string& p_queueEntityId);
 
