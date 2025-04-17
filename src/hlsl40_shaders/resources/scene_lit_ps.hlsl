@@ -45,17 +45,13 @@ float4 ps_main(PS_INTPUT input) : SV_Target
     
     float4 light_dir_global;
     light_dir_global = vec[v_light_dir];
-
     
-    float4 color = {0, 0, 0, 1};    
-    const float4 object_normale = input.Normale;
+    float4 color = {0, 0, 0, 1};
     
-    const float3 world_normale = transformedNormaleForLights(object_normale, mat_World);
-    
-    float3 nNorm = normalize(world_normale);
-    float diff = dot(normalize(-light_dir_global.xyz), nNorm);
-    
-    color.rgb += max(0.0, diff);
+    const float4 object_normale = input.Normale;        
+    const float3 world_object_normale = transformedNormaleForLights(object_normale, mat_World); 
+           
+    color.rgb += computePixelColorFromDirectionalLight(light_dir_global.xyz, world_object_normale);
         
     color.a = 1.0;
     return color;

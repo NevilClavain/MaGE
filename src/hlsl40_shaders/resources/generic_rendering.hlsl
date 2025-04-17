@@ -32,3 +32,15 @@ float4 transformedNormaleForLights(float4 p_normale, float4x4 p_worldmat)
     worldRot[2][3] = 0.0;
     return mul(p_normale, worldRot);
 }
+
+float3 computePixelColorFromDirectionalLight(float3 p_light_dir, float3 p_world_object_normale)
+{
+    float3 normalized_world_normale = normalize(p_world_object_normale);        
+    float diff = dot(normalize(-p_light_dir), normalized_world_normale);
+    
+    float3 litpixel_color;    
+    
+    litpixel_color.xyz = max(0.0, diff);
+
+    return litpixel_color;
+}
