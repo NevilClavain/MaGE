@@ -295,7 +295,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////
-
+					/*
 					{
 						///////Select camera
 
@@ -313,6 +313,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						auto fogChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
 						fogChannelRenderingQueue->setCurrentView(m_currentCamera);				
 					}
+					*/
 				}
 				break;
 			}
@@ -766,7 +767,7 @@ void SamplesOpenEnv::create_openenv_zdepth_channel_rendergraph(const std::string
 
 		const std::vector<RenderState> ground_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
 
-		const auto ground_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "ground_FogChannel_Proxy_Entity",
+		const auto ground_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "ground_ZDepthChannel_Proxy_Entity",
 															"scene_zdepth_vs", "scene_zdepth_ps",
 															ground_rs_list,
 															1000) };
@@ -804,7 +805,7 @@ void SamplesOpenEnv::create_openenv_zdepth_channel_rendergraph(const std::string
 
 		const std::vector<RenderState> sphere_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
 
-		const auto sphere_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "sphere_FogChannel_Proxy_Entity",
+		const auto sphere_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "sphere_ZDepthChannel_Proxy_Entity",
 															"scene_zdepth_vs", "scene_zdepth_ps",
 															sphere_rs_list,
 															1000) };
@@ -845,7 +846,7 @@ void SamplesOpenEnv::create_openenv_zdepth_channel_rendergraph(const std::string
 
 		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
 
-		const auto tree_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "tree_FogChannel_Proxy_Entity",
+		const auto tree_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "tree_ZDepthChannel_Proxy_Entity",
 															"scene_zdepth_keycolor_vs", "scene_zdepth_keycolor_ps",
 															tree_rs_list,
 															1000,

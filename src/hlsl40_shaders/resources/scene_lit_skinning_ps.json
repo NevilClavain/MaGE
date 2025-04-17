@@ -1,0 +1,12 @@
+{
+  "inputs": [
+    {
+      "type": "Real4Vector",
+      "body": {
+        "argument_id": "light_dir",
+        "register": 24,
+        "description": "light direction"
+      }
+    }
+  ]
+}

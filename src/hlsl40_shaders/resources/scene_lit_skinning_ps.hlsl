@@ -28,37 +28,31 @@ cbuffer constargs : register(b0)
     Matrix mat[512];
 };
 
+#define v_light_dir                24
+
+struct PS_INTPUT 
+{
+    float4 Position     : SV_POSITION;
+    float4 Normale      : TEXCOORD1;
+};
+
 #include "mat_input_constants.hlsl"
+#include "generic_rendering.hlsl"
 
-struct VS_INPUT 
+float4 ps_main(PS_INTPUT input) : SV_Target
 {
-   float3 Position : POSITION;
-   float3 Normal   : NORMALE;
-};
-
-struct VS_OUTPUT 
-{
-   float4 Position : SV_POSITION;
-   float4 Normale  : TEXCOORD1;
-};
-
-VS_OUTPUT vs_main( VS_INPUT Input )
-{
-    VS_OUTPUT Output;
-    float4 pos;
+    float4x4 mat_World = mat[matWorld];
     
-    pos.xyz = Input.Position;    
-    pos.w = 1.0;
-
-    Output.Position = mul(pos, mat[matWorldViewProjection]);
+    float4 light_dir_global;
+    light_dir_global = vec[v_light_dir];
     
-    //////////////////////////////////////
-   
-    float3 initial_n;
-    initial_n.xyz = Input.Normal;
+    float4 color = { 0, 0, 0, 1 };
     
-    Output.Normale.xyz = normalize(initial_n);
-    Output.Normale.w = 1.0;
-         
-    return( Output );   
+    const float4 object_normale = input.Normale;
+    const float3 world_object_normale = transformedNormaleForLights(object_normale, mat_World);
+           
+    color.rgb += computePixelColorFromDirectionalLight(light_dir_global.xyz, world_object_normale);
+        
+    color.a = 1.0;
+    return color;
 }

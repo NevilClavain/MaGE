@@ -89,6 +89,7 @@ private:
     
     void                            complete_textures_channel_rendergraph(const std::string& p_queueEntityId);
     void                            complete_openenv_ambientlight_channel_rendergraph(const std::string& p_queueEntityId);
+    void                            complete_openenv_lit_channel_rendergraph(const std::string& p_queueEntityId);
 
     void                            complete_zdepth_channel_rendergraph(const std::string& p_queueEntityId);
 };
