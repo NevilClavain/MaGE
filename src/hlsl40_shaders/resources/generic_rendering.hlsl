@@ -22,41 +22,13 @@
 */
 /* -*-LIC_END-*- */
 
-cbuffer constargs : register(b0)
+//pour lumieres diffuses : NORMAL transformee (sans les translations)
+//dans repereworld
+float4 transformedNormaleForLights(float4 p_normale, float4x4 p_worldmat)
 {
-    float4 vec[512];
-    Matrix mat[512];
-};
-
-#include "mat_input_constants.hlsl"
-
-struct VS_INPUT 
-{
-   float3 Position : POSITION;
-   float3 Normal   : NORMALE;
-};
-
-struct VS_OUTPUT 
-{
-   float4 Position : SV_POSITION;
-   float4 Normale  : TEXCOORD1;
-};
-
-VS_OUTPUT vs_main( VS_INPUT Input )
-{
-    VS_OUTPUT Output;
-    float4 pos;
-    
-    pos.xyz = Input.Position;    
-    pos.w = 1.0;
-
-    Output.Position = mul(pos, mat[matWorldViewProjection]);
-   
-    float3 initial_n;
-    initial_n.xyz = Input.Normal;
-    
-    Output.Normale.xyz = normalize(initial_n);
-    Output.Normale.w = 1.0;
-         
-    return( Output );   
+    float4x4 worldRot = p_worldmat;
+    worldRot[0][3] = 0.0;
+    worldRot[1][3] = 0.0;
+    worldRot[2][3] = 0.0;
+    return mul(p_normale, worldRot);
 }

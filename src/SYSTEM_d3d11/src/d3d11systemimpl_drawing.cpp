@@ -62,6 +62,8 @@ void D3D11SystemImpl::drawLineMeshe(const mage::core::maths::Matrix& p_world, co
     world.transpose();
 
     auto view{ p_view };
+    auto cam{ p_view };
+
     view.transpose();
 
     setVertexshaderConstantsMat(8, world);
@@ -72,7 +74,7 @@ void D3D11SystemImpl::drawLineMeshe(const mage::core::maths::Matrix& p_world, co
 
     //////////////////////////////////////////////////////////////////////
 
-    auto cam{ view };
+    //auto cam{ view };
     cam.inverse();
     cam.transpose();
 
@@ -114,46 +116,55 @@ void D3D11SystemImpl::drawTriangleMeshe(const mage::core::maths::Matrix& p_world
     result.transpose();
 
     setVertexshaderConstantsMat(0, result);
-    setPixelshaderConstantsMat(100, result);
+    setPixelshaderConstantsMat(0, result);
 
     //////////////////////////////////////////////////////////////////////
 
     Matrix worldview{ p_world * p_view };
-    worldview.transpose();
 
+    //pixel shaders : need not transposed version. Whyyy ?    
+    setPixelshaderConstantsMat(4, worldview);
+
+    worldview.transpose();
     setVertexshaderConstantsMat(4, worldview);
-    setPixelshaderConstantsMat(104, worldview);
+
 
     //////////////////////////////////////////////////////////////////////
 
-    auto world{ p_world };
-    world.transpose();
-
+    auto world{ p_world };   
     auto view{ p_view };
-    auto cam{ p_view };
 
+    //pixel shaders : need not transposed version. Whyyy ?
+    setPixelshaderConstantsMat(8, world);
+    setPixelshaderConstantsMat(12, view);
+   
+    world.transpose();
     view.transpose();
 
     setVertexshaderConstantsMat(8, world);
     setVertexshaderConstantsMat(12, view);
 
-    setPixelshaderConstantsMat(108, world);
-    setPixelshaderConstantsMat(112, view);
 
     //////////////////////////////////////////////////////////////////////
 
-    //auto cam{ view };
+    auto cam{ p_view };
+
     cam.inverse();
+
+    //pixel shaders : need not transposed version. Whyyy ?
+    setPixelshaderConstantsMat(16, cam);
+
     cam.transpose();
-
     setVertexshaderConstantsMat(16, cam);
-    setPixelshaderConstantsMat(116, cam);
-
+    
     auto proj{ p_proj };
+
+    //pixel shaders : need not transposed version. Whyyy ?
+    setPixelshaderConstantsMat(20, proj);
 
     proj.transpose();
     setVertexshaderConstantsMat(20, proj);
-    setPixelshaderConstantsMat(120, proj);
+    
 
     // update des shaders legacy constants buffers...
 

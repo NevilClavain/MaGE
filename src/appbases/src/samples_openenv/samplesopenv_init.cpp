@@ -121,7 +121,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 
 					dataCloud->registerData<maths::Real4Vector>("std.ambientlight.color");
-					dataCloud->updateDataValue<maths::Real4Vector>("std.ambientlight.color", maths::Real4Vector(0.1, 0.1, 0.1, 1));
+					dataCloud->updateDataValue<maths::Real4Vector>("std.ambientlight.color", maths::Real4Vector(0.09, 0.09, 0.09, 1));
 
 
 					dataCloud->registerData<maths::Real4Vector>("std.light0.dir");
@@ -1164,7 +1164,7 @@ void SamplesOpenEnv::create_openenv_lit_channel_rendergraph(const std::string& p
 		auto& rendering_aspect{ ground_proxy_entity->aspectAccess(core::renderingAspect::id) };
 
 		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.vshaders_map.push_back(std::make_pair("std.light0.dir", "light0_dir"));
+		drawingControl.pshaders_map.push_back(std::make_pair("std.light0.dir", "light_dir"));
 
 		//////////////////////////////////////////////////////////////////////
 
@@ -1210,7 +1210,7 @@ void SamplesOpenEnv::create_openenv_lit_channel_rendergraph(const std::string& p
 		auto& rendering_aspect{ sphere_proxy_entity->aspectAccess(core::renderingAspect::id) };
 
 		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.vshaders_map.push_back(std::make_pair("std.light0.dir", "light0_dir"));
+		drawingControl.pshaders_map.push_back(std::make_pair("std.light0.dir", "light_dir"));
 
 		//////////////////////////////////////////////////////////////////////
 

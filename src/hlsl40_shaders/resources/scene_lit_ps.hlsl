@@ -28,18 +28,35 @@ cbuffer constargs : register(b0)
     Matrix mat[512];
 };
 
+#define v_light_dir                24
 
 struct PS_INTPUT 
 {
     float4 Position : SV_POSITION;
+    float4 Normale  : TEXCOORD1;
 };
 
+#include "mat_input_constants.hlsl"
+#include "generic_rendering.hlsl"
+
 float4 ps_main(PS_INTPUT input) : SV_Target
-{       
-    float4 color;
+{
+    float4x4 mat_World = mat[matWorld];
     
-    color.r = 1.0;
-    color.g = 0.0;
-    color.b = 0.0;
+    float4 light_dir_global;
+    light_dir_global = vec[v_light_dir];
+
+    
+    float4 color = {0, 0, 0, 1};    
+    const float4 object_normale = input.Normale;
+    
+    const float3 world_normale = transformedNormaleForLights(object_normale, mat_World);
+    
+    float3 nNorm = normalize(world_normale);
+    float diff = dot(normalize(-light_dir_global.xyz), nNorm);
+    
+    color.rgb += max(0.0, diff);
+        
+    color.a = 1.0;
     return color;
 }

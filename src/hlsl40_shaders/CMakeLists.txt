@@ -41,6 +41,7 @@ file(
 		${CMAKE_SOURCE_DIR}/hlsl40_shaders/resources/mat_input_constants.hlsl
 		${CMAKE_SOURCE_DIR}/hlsl40_shaders/resources/atmospheric_scattering.hlsl
 		${CMAKE_SOURCE_DIR}/hlsl40_shaders/resources/commons.hlsl
+		${CMAKE_SOURCE_DIR}/hlsl40_shaders/resources/generic_rendering.hlsl
 )
 
 file(
