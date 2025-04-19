@@ -258,8 +258,8 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						"bufferRendering_Combiner_Accumulate_Quad_Entity",
 						"bufferRendering_Combiner_Accumulate_View_Entity",
 						
-						"combiner_accumulate_vs",
-						"combiner_accumulate_ps",
+						"combiner_accumulate2chan_vs",
+						"combiner_accumulate2chan_ps",
 						{
 							std::make_pair(Texture::STAGE_0, combiner_accumulate_inputA_channnel),
 							std::make_pair(Texture::STAGE_1, combiner_accumulate_inputB_channnel),
@@ -1025,6 +1025,8 @@ void SamplesOpenEnv::create_openenv_ambientlight_channel_rendergraph(const std::
 		////////////////////////////////////////////////////////////////////////
 	}
 
+
+	/*
 	/////////////////// add clouds
 
 	{
@@ -1137,6 +1139,8 @@ void SamplesOpenEnv::create_openenv_ambientlight_channel_rendergraph(const std::
 
 
 	}
+
+	*/
 
 }
 
