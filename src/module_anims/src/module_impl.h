@@ -77,6 +77,10 @@ private:
 
     std::string                                                 m_currentCamera;
 
+    double                                                      m_light_theta_deg { 80.0 }; // azimutal
+    double                                                      m_light_phi_deg   { -3.0 }; // elevation
+    double                                                      m_light_ray       { 1000.0 };
+
     void                            resource_system_events();
     void                            d3d11_system_events();
     void                            animation_system_events();

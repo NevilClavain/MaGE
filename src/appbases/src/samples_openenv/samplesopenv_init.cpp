@@ -134,7 +134,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 
 					dataCloud->registerData<maths::Real4Vector>("std.light0.dir");
-					dataCloud->updateDataValue<maths::Real4Vector>("std.light0.dir", maths::Real4Vector(0, -0.58, 0.6, 1));
+					dataCloud->updateDataValue<maths::Real4Vector>("std.light0.dir", maths::Real4Vector(0.6, -0.18, 0.1, 1));
 
 					dataCloud->registerData<maths::Real4Vector>("std.fog.color");
 					dataCloud->updateDataValue<maths::Real4Vector>("std.fog.color", maths::Real4Vector(0.8, 0.9, 1, 1));

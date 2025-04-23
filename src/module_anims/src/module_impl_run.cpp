@@ -42,6 +42,8 @@
 
 #include "resourcesystem.h"
 
+#include "maths_helpers.h"
+
 using namespace mage;
 using namespace mage::core;
 using namespace mage::rendering;
@@ -50,10 +52,12 @@ void ModuleImpl::run(void)
 {
 	SamplesOpenEnv::run();
 
-	/////////////////////////////////////////////////////
+	
 	
 	auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 	
+	/////////////////////////////////////////////////////
+
 	{
 		const auto raptorEntity{ m_raptorEntity };
 		const auto& animations_aspect{ raptorEntity->aspectAccess(core::animationsAspect::id) };
@@ -75,4 +79,16 @@ void ModuleImpl::run(void)
 		dataCloud->updateDataValue<double>("current_animation.seconds_progress", currentAnimationSecondsProgress);
 	}
 	
+	//////////////////////////////////////////////////////
+
+	{
+		// compute directional light cartesian coords
+
+		mage::core::maths::Real4Vector light_spherical { m_light_ray, mage::core::maths::degToRad(m_light_theta_deg), mage::core::maths::degToRad(m_light_phi_deg), 1.0 };
+		mage::core::maths::Real4Vector light_cartesian;
+
+		mage::core::maths::sphericaltoCartesian(light_spherical, light_cartesian);
+
+		dataCloud->updateDataValue<maths::Real4Vector>("std.light0.dir", light_cartesian);
+	}
 }

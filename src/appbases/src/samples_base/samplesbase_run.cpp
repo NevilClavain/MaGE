@@ -26,6 +26,8 @@
 #include "samplesbase.h"
 #include <string>
 
+#include "maths_helpers.h"
+
 #include "aspects.h"
 #include "datacloud.h"
 #include "sysengine.h"

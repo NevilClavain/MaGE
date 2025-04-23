@@ -26,6 +26,8 @@
 #include "module_impl.h"
 #include <string>
 
+#include "maths_helpers.h"
+
 #include "aspects.h"
 
 #include "d3d11system.h"
