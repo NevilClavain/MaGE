@@ -54,7 +54,7 @@ namespace mage
 
         std::string                     m_currentCamera;
 
-        static constexpr double         groundLevel{ 0 };
+        static constexpr double         groundLevel{ -100 };
 
         static constexpr double         skydomeSkyfromspace_ESun{ 8.7 };
         static constexpr double         skydomeSkyfromatmo_ESun{ 70.0 };
