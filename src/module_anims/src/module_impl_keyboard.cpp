@@ -70,6 +70,10 @@ void ModuleImpl::onKeyPress(long p_key)
 			speed = -0.1;
 		}
 	}
+	else if (VK_CONTROL == p_key)
+	{
+		m_left_ctrl = true;
+	}
 }
 
 void ModuleImpl::onEndKeyPress(long p_key)
@@ -224,6 +228,11 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 			speed = 0.0;
 		}
+	}
+
+	else if (VK_CONTROL == p_key)
+	{
+		m_left_ctrl = false;
 	}
 }
 

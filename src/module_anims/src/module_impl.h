@@ -24,7 +24,8 @@
 /* -*-LIC_END-*- */
 
 #pragma once
-//#include "samplesbase.h"
+
+#include "maths_helpers.h"
 #include "samplesopenenv.h"
 
 #include <unordered_map>
@@ -77,9 +78,12 @@ private:
 
     std::string                                                 m_currentCamera;
 
-    double                                                      m_light_theta_deg { 80.0 }; // azimutal
-    double                                                      m_light_phi_deg   { -3.0 }; // elevation
-    double                                                      m_light_ray       { 1000.0 };
+    double                                                      m_light_theta { mage::core::maths::pi / 2 }; // azimutal
+    double                                                      m_light_phi   { 0.0 }; // elevation
+    double                                                      m_light_ray   { 1000.0 };
+
+
+    bool                                                        m_left_ctrl{ false };
 
     void                            resource_system_events();
     void                            d3d11_system_events();

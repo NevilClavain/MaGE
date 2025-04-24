@@ -84,7 +84,7 @@ void ModuleImpl::run(void)
 	{
 		// compute directional light cartesian coords
 
-		mage::core::maths::Real4Vector light_spherical { m_light_ray, mage::core::maths::degToRad(m_light_theta_deg), mage::core::maths::degToRad(m_light_phi_deg), 1.0 };
+		mage::core::maths::Real4Vector light_spherical { m_light_ray, m_light_theta, m_light_phi, 1.0 };
 		mage::core::maths::Real4Vector light_cartesian;
 
 		mage::core::maths::sphericaltoCartesian(light_spherical, light_cartesian);
