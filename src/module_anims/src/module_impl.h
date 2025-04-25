@@ -85,6 +85,9 @@ private:
 
     bool                                                        m_left_ctrl{ false };
 
+    mage::core::maths::Matrix                                   m_perpective_projection;
+    mage::core::maths::Matrix                                   m_orthogonal_projection;
+
     void                            resource_system_events();
     void                            d3d11_system_events();
     void                            animation_system_events();

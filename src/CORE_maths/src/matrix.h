@@ -78,6 +78,7 @@ namespace mage
                 void translation(const Real4Vector& p_pos);
                 void transpose(void);
                 void perspective(double p_w, double p_h, double p_zn, double p_zf);
+                void orthogonal(double p_w, double p_h, double p_zn, double p_zf);
 
                 void scale(double p_sx, double p_sy, double p_sz);
                 void scale(const Real3Vector& p_pos);

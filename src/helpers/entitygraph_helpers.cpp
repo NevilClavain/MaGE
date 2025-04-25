@@ -344,7 +344,6 @@ namespace mage
 
 			return stored_rendering_queue;
 		}
-
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		rendering::Queue& plugRenderingQuad(mage::core::Entitygraph& p_entitygraph,
@@ -497,8 +496,8 @@ namespace mage
 			const core::maths::Matrix& p_projection,
 			const std::string& p_parentid, const std::string& p_entityid)
 		{
-			core::Entitygraph::Node& bufferRenderingQueueNode{ p_entitygraph.node(p_parentid) };
-			auto& viewPointNode{ p_entitygraph.add(bufferRenderingQueueNode, p_entityid) };
+			core::Entitygraph::Node& parentNode{ p_entitygraph.node(p_parentid) };
+			auto& viewPointNode{ p_entitygraph.add(parentNode, p_entityid) };
 			const auto cameraEntity{ viewPointNode.data() };
 
 			auto& camera_aspect{ cameraEntity->makeAspect(core::cameraAspect::id) };
@@ -507,6 +506,17 @@ namespace mage
 			auto& camera_world_aspect{ cameraEntity->makeAspect(core::worldAspect::id) };
 
 			camera_world_aspect.addComponent<transform::WorldPosition>("camera_position", transform::WorldPosition());
+		}
+
+		void updateCameraProjection(mage::core::Entitygraph& p_entitygraph, const std::string& p_entityid, const core::maths::Matrix& p_projection)
+		{
+			core::Entitygraph::Node& viewPointNode{ p_entitygraph.node(p_entityid) };
+			const auto cameraEntity{ viewPointNode.data() };
+			auto& camera_aspect{ cameraEntity->aspectAccess(core::cameraAspect::id) };
+			auto& stored_projection{ camera_aspect.getComponent<core::maths::Matrix>("projection")->getPurpose() };
+
+			// update
+			stored_projection = p_projection;
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -430,10 +430,10 @@ void ModuleImpl::complete_scenegraph(const std::string& p_mainWindowsEntityId)
 
 
 	// add camera
-	maths::Matrix projection;
-	projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
-	helpers::plugCamera(m_entitygraph, projection, "gblJoint_Entity", "camera_Entity");
+	m_perpective_projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
+	m_orthogonal_projection.orthogonal(characteristics_v_width * 100, characteristics_v_height * 100, 1.0, 100000.00000000000);
 
+	helpers::plugCamera(m_entitygraph, m_perpective_projection, "gblJoint_Entity", "camera_Entity");
 }
 
 

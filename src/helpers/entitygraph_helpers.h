@@ -83,6 +83,8 @@ namespace mage
 						const core::maths::Matrix& p_projection,
 						const std::string& p_parentid, const std::string& p_entityid);
 
+		void updateCameraProjection(mage::core::Entitygraph& p_entitygraph, const std::string& p_entityid, const core::maths::Matrix& p_projection);
+
 		rendering::Queue* getRenderingQueue(mage::core::Entitygraph& p_entitygraph, const std::string& p_entityId);
 	}
 }
