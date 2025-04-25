@@ -85,6 +85,7 @@ private:
 
     bool                                                        m_left_ctrl{ false };
 
+    bool                                                        m_is_perspective{ true };
     mage::core::maths::Matrix                                   m_perpective_projection;
     mage::core::maths::Matrix                                   m_orthogonal_projection;
 
