@@ -477,7 +477,16 @@ void RenderingQueueSystem::handleRenderingQueuesState(Entity* p_entity, renderin
 								const auto& parent_resource_aspect{ parent_entity->aspectAccess(core::resourcesAspect::id) };
 								const ComponentList<std::pair<size_t, mage::Texture>> textures_list{ parent_resource_aspect.getComponentsByType<std::pair<size_t,mage::Texture>>() };
 
-								p_renderingQueue.setBufferRenderingPurpose(textures_list);
+								const auto queue_target_stage{ p_renderingQueue.getTargetStage() };
+
+								if (queue_target_stage < textures_list.size())
+								{
+									p_renderingQueue.setBufferRenderingPurpose(textures_list.at(queue_target_stage)->getPurpose().second);
+								}
+								else
+								{
+									_EXCEPTION("Missing rendertarget texture on requested stage for BUFFER_RENDERING queue : " + p_renderingQueue.getName());
+								}
 
 								_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName() + " set to READY, BUFFER_RENDERING")
 							}

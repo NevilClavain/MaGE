@@ -59,27 +59,19 @@ void Queue::setScreenRenderingPurpose()
 	m_purpose = Purpose::SCREEN_RENDERING;
 }
 
-void Queue::setBufferRenderingPurpose(core::ComponentList<std::pair<size_t, mage::Texture>> p_textures_list)
+void Queue::setBufferRenderingPurpose(mage::Texture& p_target_texture)
 {
-	if (m_targetStage < p_textures_list.size())
-	{
-		auto& render_target{ p_textures_list.at(m_targetStage)->getPurpose().second };
-
-
-		render_target.m_source = Texture::Source::CONTENT_FROM_RENDERINGQUEUE;
-		render_target.m_source_id = m_name;
-
-		render_target.compute_resource_uid();
-
-		m_targetTextureUID = render_target.getResourceUID();
-		render_target.setState(Texture::State::BLOBLOADED);
-	}
-	else
-	{
-		_EXCEPTION("Missing rendertarget texture on requested stage for BUFFER_RENDERING queue : " + getName());
-	}
-
 	m_purpose = Purpose::BUFFER_RENDERING;
+
+	auto& render_target{ p_target_texture };
+
+	render_target.m_source = Texture::Source::CONTENT_FROM_RENDERINGQUEUE;
+	render_target.m_source_id = m_name;
+
+	render_target.compute_resource_uid();
+
+	m_targetTextureUID = render_target.getResourceUID();
+	render_target.setState(Texture::State::BLOBLOADED);	
 }
 
 void Queue::enableTargetClearing(bool p_enable)
@@ -135,6 +127,11 @@ std::string	Queue::getTargetTextureUID() const
 void Queue::setTargetStage(size_t p_stage)
 {
 	m_targetStage = p_stage;
+}
+
+size_t Queue::getTargetStage() const
+{
+	return m_targetStage;
 }
 
 void Queue::enableTargetDepthClearing(bool p_enable)

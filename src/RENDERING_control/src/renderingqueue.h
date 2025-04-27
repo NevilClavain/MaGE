@@ -254,7 +254,9 @@ namespace mage
 
 			
 			std::string					getTargetTextureUID() const;
+
 			void						setTargetStage(size_t p_stage);
+			size_t						getTargetStage() const;
 			
 
 			
@@ -286,13 +288,10 @@ namespace mage
 			void							setState(State p_newstate);
 
 			void							setScreenRenderingPurpose();
-			void							setBufferRenderingPurpose(core::ComponentList<std::pair<size_t, mage::Texture>> p_textures_list);
-
-			
-
+			void							setBufferRenderingPurpose(mage::Texture& p_target_texture);
+		
 			friend class mage::RenderingQueueSystem;
 			friend class mage::D3D11System;
-
 		};
 	}
 }
