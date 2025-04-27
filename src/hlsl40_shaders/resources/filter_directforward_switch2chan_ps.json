@@ -1,0 +1,12 @@
+{
+  "inputs": [
+    {
+      "type": "Real4Vector",
+      "body": {
+        "argument_id": "input_channel",
+        "register": 24,
+        "description": "input channel selection"
+      }
+    }
+  ]
+}

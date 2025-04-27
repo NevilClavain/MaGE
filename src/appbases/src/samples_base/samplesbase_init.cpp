@@ -126,6 +126,13 @@ void SamplesBase::d3d11_system_events_base()
 
 					const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 
+					dataCloud->registerData<maths::Real4Vector>("screen_channel_number");
+					dataCloud->updateDataValue<maths::Real4Vector>("screen_channel_number", maths::Real4Vector(0.0, 0.0, 0.0, 0.0));
+
+
+
+
+
 					const auto window_dims{ dataCloud->readDataValue<mage::core::maths::IntCoords2D>("std.window_resol") };
 
 					const int w_width{ window_dims.x() };
@@ -140,8 +147,8 @@ void SamplesBase::d3d11_system_events_base()
 						"screenRendering_Filter_DirectForward_Queue_Entity",
 						"screenRendering_Filter_DirectForward_Quad_Entity",
 						"screenRendering_Filter_DirectForward_View_Entity",
-						"filter_directforward_vs",
-						"filter_directforward_ps",
+						"filter_directforward_switch2chan_vs",
+						"filter_directforward_switch2chan_ps",
 
 						{
 							std::make_pair(Texture::STAGE_0, rendering_quad_textures_channnel)
@@ -149,6 +156,21 @@ void SamplesBase::d3d11_system_events_base()
 						Texture::STAGE_0
 
 					)};
+
+					Entity* screenRendering_Filter_DirectForward_Quad_Entity{ m_entitygraph.node("screenRendering_Filter_DirectForward_Quad_Entity").data() };
+
+					auto& screenRendering_Filter_DirectForward_Quad_Entity_rendering_aspect{ screenRendering_Filter_DirectForward_Quad_Entity->aspectAccess(core::renderingAspect::id) };
+
+					rendering::DrawingControl& fogDrawingControl{ screenRendering_Filter_DirectForward_Quad_Entity_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+					fogDrawingControl.pshaders_map.push_back(std::make_pair("screen_channel_number", "input_channel"));
+
+
+
+
+
+
+
+
 
 					m_windowRenderingQueue = &screen_rendering_queue;
 
