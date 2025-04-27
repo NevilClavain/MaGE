@@ -262,6 +262,7 @@ namespace mage
 			
 		
 		private:
+	
 			std::string						m_name;
 			Purpose							m_purpose{ Purpose::UNDEFINED };
 			State							m_state{ State::WAIT_INIT };
@@ -282,13 +283,16 @@ namespace mage
 			size_t							m_targetStage{ 0 };
 
 			std::string						m_targetTextureUID; // for BUFFER_RENDERING
+	
+			bool							m_disable_automatic_target_binding{ false }; // diable connection to parent target usually done by the rendering queue system. For debug purpose only, so normaly set to FALSE
 
-			
 
 			void							setState(State p_newstate);
 
 			void							setScreenRenderingPurpose();
 			void							setBufferRenderingPurpose(mage::Texture& p_target_texture);
+
+			void							disableTargetBinding() { m_disable_automatic_target_binding = true; };
 		
 			friend class mage::RenderingQueueSystem;
 			friend class mage::D3D11System;
