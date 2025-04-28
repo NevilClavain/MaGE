@@ -258,9 +258,8 @@ namespace mage
 			void						setTargetStage(size_t p_stage);
 			size_t						getTargetStage() const;
 			
-
-			
-		
+			void						disableTargetBinding() { m_disable_automatic_target_binding = true; };
+					
 		private:
 	
 			std::string						m_name;
@@ -291,9 +290,7 @@ namespace mage
 
 			void							setScreenRenderingPurpose();
 			void							setBufferRenderingPurpose(mage::Texture& p_target_texture);
-
-			void							disableTargetBinding() { m_disable_automatic_target_binding = true; };
-		
+					
 			friend class mage::RenderingQueueSystem;
 			friend class mage::D3D11System;
 		};

@@ -286,8 +286,7 @@ void D3D11System::handleRenderingQueuesState(Entity* p_entity, rendering::Queue&
 			renderQueue(p_renderingQueue);
 			break;
 
-		case rendering::Queue::State::ERROR_ORPHAN:
-
+		default:
 			// nothin' to do
 			break;
 	}
@@ -507,6 +506,11 @@ void D3D11System::collectWorldTransformations() const
 
 void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 {
+	if (rendering::Queue::Purpose::UNDEFINED == p_renderingQueue.getPurpose())
+	{
+		return;
+	}
+
 	maths::Matrix current_cam;
 	maths::Matrix current_proj;
 
@@ -910,10 +914,6 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 		}
 	}
 
-
-
-	
-	
 	// render texts
 	for (auto& text : p_renderingQueue.m_texts)
 	{
