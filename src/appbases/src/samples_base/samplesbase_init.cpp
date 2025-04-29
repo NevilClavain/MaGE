@@ -138,7 +138,8 @@ void SamplesBase::d3d11_system_events_base()
 					const int w_width{ window_dims.x() };
 					const int w_height{ window_dims.y() };
 
-					const auto rendering_quad_textures_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
+					const auto rendering_quad_textures_channnelA{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
+					const auto rendering_quad_textures_channnelB{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
 
 					auto& screen_rendering_queue{ mage::helpers::plugRenderingQuad(m_entitygraph,
 						"screen_queue",
@@ -151,7 +152,8 @@ void SamplesBase::d3d11_system_events_base()
 						"filter_directforward_switch2chan_ps",
 
 						{
-							std::make_pair(Texture::STAGE_0, rendering_quad_textures_channnel)
+							std::make_pair(Texture::STAGE_0, rendering_quad_textures_channnelA),
+							std::make_pair(Texture::STAGE_1, rendering_quad_textures_channnelB)
 						},
 						Texture::STAGE_0
 
@@ -163,6 +165,21 @@ void SamplesBase::d3d11_system_events_base()
 
 					rendering::DrawingControl& fogDrawingControl{ screenRendering_Filter_DirectForward_Quad_Entity_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
 					fogDrawingControl.pshaders_map.push_back(std::make_pair("screen_channel_number", "input_channel"));
+
+
+
+
+
+					// channel B : for debug purposes
+
+					rendering::Queue debugChannelsRenderingQueue("debug_channel_queue");
+					debugChannelsRenderingQueue.setTargetClearColor({ 0, 63, 128, 255 });
+					debugChannelsRenderingQueue.enableTargetClearing(true);
+					debugChannelsRenderingQueue.enableTargetDepthClearing(true);
+					debugChannelsRenderingQueue.setTargetStage(Texture::STAGE_1);
+
+					mage::helpers::plugRenderingQueue(m_entitygraph, debugChannelsRenderingQueue, "screenRendering_Filter_DirectForward_Quad_Entity", "bufferRendering_Scene_Debug_Queue_Entity");
+
 
 
 

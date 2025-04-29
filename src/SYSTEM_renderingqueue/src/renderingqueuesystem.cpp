@@ -454,48 +454,43 @@ void RenderingQueueSystem::handleRenderingQueuesState(Entity* p_entity, renderin
 						{
 							if (rendering::Queue::State::WAIT_INIT == p_renderingQueue.getState())
 							{
-								if (!p_renderingQueue.m_disable_automatic_target_binding)
+								if (core::renderingAspect::renderingTarget::SCREEN_RENDERINGTARGET == parent_rendering_target_comp->getPurpose())
 								{
-									if (core::renderingAspect::renderingTarget::SCREEN_RENDERINGTARGET == parent_rendering_target_comp->getPurpose())
-									{
-										// SCREEN_RENDERINGTARGET
-										// 
-										// parent is a screen-target pass 
-										// set queue purpose accordingly
+									// SCREEN_RENDERINGTARGET
+									// 
+									// parent is a screen-target pass 
+									// set queue purpose accordingly
 
-										p_renderingQueue.setScreenRenderingPurpose();
-										_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName() + " set to READY, SCREEN_RENDERING")
+									p_renderingQueue.setScreenRenderingPurpose();
+									_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName() + " set to READY, SCREEN_RENDERING")
+								}
+								else
+								{
+									// BUFFER_RENDERINGTARGET
+									// 
+									// parent is a texture-target pass
+									// set queue purpose accordingly
+
+									// parent is a texture-target pass
+									// search for a target texture in it
+
+									// search in resource aspect
+
+									const auto& parent_resource_aspect{ parent_entity->aspectAccess(core::resourcesAspect::id) };
+									const ComponentList<std::pair<size_t, mage::Texture>> textures_list{ parent_resource_aspect.getComponentsByType<std::pair<size_t,mage::Texture>>() };
+
+									const auto queue_target_stage{ p_renderingQueue.m_targetStage };
+
+									if (queue_target_stage < textures_list.size())
+									{
+										p_renderingQueue.setBufferRenderingPurpose(textures_list.at(queue_target_stage)->getPurpose().second);
 									}
 									else
 									{
-										// BUFFER_RENDERINGTARGET
-										// 
-										// parent is a texture-target pass
-										// set queue purpose accordingly
-
-										// parent is a texture-target pass
-										// search for a target texture in it
-
-										// search in resource aspect
-
-										const auto& parent_resource_aspect{ parent_entity->aspectAccess(core::resourcesAspect::id) };
-										const ComponentList<std::pair<size_t, mage::Texture>> textures_list{ parent_resource_aspect.getComponentsByType<std::pair<size_t,mage::Texture>>() };
-
-										const auto queue_target_stage{ p_renderingQueue.m_targetStage };
-
-										if (queue_target_stage < textures_list.size())
-										{
-											p_renderingQueue.setBufferRenderingPurpose(textures_list.at(queue_target_stage)->getPurpose().second);
-										}
-										else
-										{
-											_EXCEPTION("Missing rendertarget texture on requested stage for BUFFER_RENDERING queue : " + p_renderingQueue.getName());
-										}
-
-										_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName() + " set to READY, BUFFER_RENDERING")
+										_EXCEPTION("Missing rendertarget texture on requested stage for BUFFER_RENDERING queue : " + p_renderingQueue.getName());
 									}
 
-									//p_renderingQueue.setState(rendering::Queue::State::READY);
+									_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName() + " set to READY, BUFFER_RENDERING")
 								}
 
 								p_renderingQueue.setState(rendering::Queue::State::READY);

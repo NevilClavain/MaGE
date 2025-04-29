@@ -301,6 +301,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					mage::helpers::plugRenderingQueue(m_entitygraph, litChannelsRenderingQueue, "bufferRendering_Combiner_Accumulate_Quad_Entity", "bufferRendering_Scene_LitChannel_Queue_Entity");
 
 					create_openenv_lit_channel_rendergraph("bufferRendering_Scene_LitChannel_Queue_Entity");
+					//create_openenv_lit_channel_rendergraph("bufferRendering_Scene_Debug_Queue_Entity");
 
 
 					// channel : emissive

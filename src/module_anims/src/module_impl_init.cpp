@@ -295,7 +295,9 @@ void ModuleImpl::d3d11_system_events()
 					complete_textures_channel_rendergraph("bufferRendering_Scene_TexturesChannel_Queue_Entity");
 
 					complete_openenv_ambientlight_channel_rendergraph("bufferRendering_Scene_AmbientLightChannel_Queue_Entity");
+
 					complete_openenv_lit_channel_rendergraph("bufferRendering_Scene_LitChannel_Queue_Entity");
+					//complete_openenv_lit_channel_rendergraph("bufferRendering_Scene_Debug_Queue_Entity");
 
 					complete_emissive_lit_channel_rendergraph("bufferRendering_Scene_EmissiveChannel_Queue_Entity");
 
@@ -306,6 +308,10 @@ void ModuleImpl::d3d11_system_events()
 						///////Select camera
 
 						m_currentCamera = "camera_Entity";
+
+						auto debugChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_Debug_Queue_Entity") };
+						debugChannelRenderingQueue->setCurrentView(m_currentCamera);
+
 
 						auto texturesChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Queue_Entity") };
 						texturesChannelRenderingQueue->setCurrentView(m_currentCamera);
