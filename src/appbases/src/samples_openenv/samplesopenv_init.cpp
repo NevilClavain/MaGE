@@ -332,9 +332,9 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						"mod_lit_shadows_queue",
 						characteristics_v_width, characteristics_v_height,
 						"bufferRendering_Combiner_Accumulate_Quad_Entity",
-						"bufferRendering_Combiner_ModLitShadows_Queue_Entity",
-						"bufferRendering_Combiner_ModLitShadows_Quad_Entity",
-						"bufferRendering_Combiner_ModLitShadows_View_Entity",
+						"bufferRendering_Combiner_ModulateLitAndShadows_Queue_Entity",
+						"bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity",
+						"bufferRendering_Combiner_ModulateLitAndShadows_View_Entity",
 
 						"combiner_modulate_vs",
 						"combiner_modulate_ps",
@@ -358,7 +358,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					litChannelsRenderingQueue.enableTargetDepthClearing(true);
 					litChannelsRenderingQueue.setTargetStage(Texture::STAGE_0);
 
-					mage::helpers::plugRenderingQueue(m_entitygraph, litChannelsRenderingQueue, "bufferRendering_Combiner_ModLitShadows_Quad_Entity", "bufferRendering_Scene_LitChannel_Queue_Entity");
+					mage::helpers::plugRenderingQueue(m_entitygraph, litChannelsRenderingQueue, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_LitChannel_Queue_Entity");
 
 					create_openenv_lit_channel_rendergraph("bufferRendering_Scene_LitChannel_Queue_Entity");
 					//create_openenv_lit_channel_rendergraph("bufferRendering_Scene_Debug_Queue_Entity");
@@ -374,7 +374,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					shadowsChannelsRenderingQueue.enableTargetDepthClearing(true);
 					shadowsChannelsRenderingQueue.setTargetStage(Texture::STAGE_1);
 
-					mage::helpers::plugRenderingQueue(m_entitygraph, shadowsChannelsRenderingQueue, "bufferRendering_Combiner_ModLitShadows_Quad_Entity", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
+					mage::helpers::plugRenderingQueue(m_entitygraph, shadowsChannelsRenderingQueue, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
 
 					create_openenv_shadows_channel_rendergraph("bufferRendering_Scene_ShadowsChannel_Queue_Entity");
 
