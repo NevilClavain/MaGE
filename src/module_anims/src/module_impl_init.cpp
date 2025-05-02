@@ -322,6 +322,10 @@ void ModuleImpl::d3d11_system_events()
 						auto emissiveChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
 						emissiveChannelRenderingQueue->setCurrentView(m_currentCamera);
 
+						auto shadowsChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
+						shadowsChannelRenderingQueue->setCurrentView(m_currentCamera);
+
+
 						auto litChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_LitChannel_Queue_Entity") };
 						litChannelRenderingQueue->setCurrentView(m_currentCamera);
 
@@ -687,7 +691,7 @@ void ModuleImpl::complete_emissive_lit_channel_rendergraph(const std::string& p_
 		auto& rendering_aspect{ raptor_proxy_entity->aspectAccess(core::renderingAspect::id) };
 
 		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("std.black_emissive_color", "color"));
+		drawingControl.pshaders_map.push_back(std::make_pair("black_color", "color"));
 
 
 		//////////////////////////////////////////////////////////////////////
