@@ -299,21 +299,6 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 					create_openenv_ambientlight_channel_rendergraph("bufferRendering_Scene_AmbientLightChannel_Queue_Entity");
 
-					/*
-					// channel : lit
-					
-					rendering::Queue litChannelsRenderingQueue("lit_channel_queue");
-					litChannelsRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					litChannelsRenderingQueue.enableTargetClearing(true);
-					litChannelsRenderingQueue.enableTargetDepthClearing(true);
-					litChannelsRenderingQueue.setTargetStage(Texture::STAGE_1);
-
-					mage::helpers::plugRenderingQueue(m_entitygraph, litChannelsRenderingQueue, "bufferRendering_Combiner_Accumulate_Quad_Entity", "bufferRendering_Scene_LitChannel_Queue_Entity");
-
-					create_openenv_lit_channel_rendergraph("bufferRendering_Scene_LitChannel_Queue_Entity");
-					//create_openenv_lit_channel_rendergraph("bufferRendering_Scene_Debug_Queue_Entity");
-					*/
-
 
 					// channel : emissive
 
@@ -394,26 +379,6 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					create_openenv_shadows_channel_rendergraph("bufferRendering_Scene_ShadowsChannel_Queue_Entity");
 
 
-					///////////////////////////////////////////////////////////////////////////////////////////////////
-					/*
-					{
-						///////Select camera
-
-						m_currentCamera = "camera_Entity";
-
-						auto texturesChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Queue_Entity")};
-						texturesChannelRenderingQueue->setCurrentView(m_currentCamera);
-
-						auto ambientLightChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_AmbientLightChannel_Queue_Entity") };
-						ambientLightChannelRenderingQueue->setCurrentView(m_currentCamera);
-
-						auto litChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_LitChannel_Queue_Entity") };
-						litChannelRenderingQueue->setCurrentView(m_currentCamera);
-
-						auto fogChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
-						fogChannelRenderingQueue->setCurrentView(m_currentCamera);				
-					}
-					*/
 				}
 				break;
 			}
@@ -1545,7 +1510,7 @@ void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::strin
 		const std::vector<RenderState> ground_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
 
 		const auto ground_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "ground_ShadowsChannel_Proxy_Entity",
-															"scene_flatcolor_vs", "scene_flatcolor_ps",
+															"scene_shadows_vs", "scene_shadows_ps",
 															ground_rs_list,
 															1000) };
 
@@ -1592,7 +1557,7 @@ void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::strin
 		const std::vector<RenderState> sphere_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
 
 		const auto sphere_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "sphere_ShadowsChannel_Proxy_Entity",
-															"scene_flatcolor_vs", "scene_flatcolor_ps",
+															"scene_shadows_vs", "scene_shadows_ps",
 															sphere_rs_list,
 															1000) };
 
