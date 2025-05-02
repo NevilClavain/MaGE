@@ -256,7 +256,7 @@ namespace mage
 			std::string					getTargetTextureUID() const;
 
 			void						setTargetStage(size_t p_stage);
-			size_t						getTargetStage() const;
+
 								
 		private:
 	
