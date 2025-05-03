@@ -30,6 +30,8 @@
 #include <vector>
 #include <utility>
 
+#include "worldposition.h"
+
 namespace mage
 {
 	// fwd decl
@@ -86,6 +88,88 @@ namespace mage
 		void updateCameraProjection(mage::core::Entitygraph& p_entitygraph, const std::string& p_entityid, const core::maths::Matrix& p_projection);
 
 		rendering::Queue* getRenderingQueue(mage::core::Entitygraph& p_entitygraph, const std::string& p_entityId);
+
+
+		core::Entity* plug2DSpriteWithSyncVariables(mage::core::Entitygraph& p_entitygraph,
+			const std::string& p_parentid,
+			const std::string& p_spriteEntityid,
+			const double p_spriteWidth,
+			const double p_spriteHeight,
+			const std::string& p_vshader,
+			const std::string& p_pshader,
+			const std::string& p_texture,
+			const std::vector<rendering::RenderState>& p_renderstates_list,
+			int p_rendering_order,
+			transform::WorldPosition::TransformationComposition p_composition_operation
+		);
+
+		core::SyncVariable& getXPosSync(mage::core::Entitygraph& p_entitygraph, const std::string& p_spriteEntityid);
+		core::SyncVariable& getYPosSync(mage::core::Entitygraph& p_entitygraph, const std::string& p_spriteEntityid);
+		core::SyncVariable& getZRotSync(mage::core::Entitygraph& p_entitygraph, const std::string& p_spriteEntityid);
+
+		core::Entity* plug2DSpriteWithPosition(mage::core::Entitygraph& p_entitygraph,
+			const std::string& p_parentid,
+			const std::string& p_spriteEntityid,
+			const double p_spriteWidth,
+			const double p_spriteHeight,
+			const std::string& p_vshader,
+			const std::string& p_pshader,
+			const std::string& p_texture,
+			const std::vector<rendering::RenderState>& p_renderstates_list,
+			int p_rendering_order,
+			transform::WorldPosition::TransformationComposition p_composition_operation,
+			float p_xpos = 0,
+			float p_ypos = 0,
+			float p_rot_radians = 0
+		);
+
+
+		core::Entity* plugTextWithPosition(mage::core::Entitygraph& p_entitygraph,
+			const std::string& p_parentid,
+			const std::string& p_textEntityid,
+			const mage::rendering::Queue::Text& p_queue_text,
+			transform::WorldPosition::TransformationComposition p_composition_operation,
+			float p_xpos = 0,
+			float p_ypos = 0);
+
+
+		double& getXPos(mage::core::Entitygraph& p_entitygraph, const std::string& p_spriteEntityid);
+		double& getYPos(mage::core::Entitygraph& p_entitygraph, const std::string& p_spriteEntityid);
+		double& getZRot(mage::core::Entitygraph& p_entitygraph, const std::string& p_spriteEntityid);
+
+		core::Entity* plugMeshe(mage::core::Entitygraph& p_entitygraph,
+			const std::string& p_parentid,
+			const std::string& p_mesheEntityid,
+			const std::string& p_vshader,
+			const std::string& p_pshader,
+			const std::string& p_meshefile,
+			const std::string& p_mesheIdInfile,
+			const std::vector<rendering::RenderState>& p_renderstates_list,
+			int p_rendering_order,
+			const std::vector< std::pair<size_t, std::pair<std::string, Texture>>>& p_textures = {});
+
+		core::Entity* plugRenderingProxyEntity(mage::core::Entitygraph& p_entitygraph,
+			const std::string& p_parentid,
+			const std::string& p_entityid,
+			const std::string& p_vshader,
+			const std::string& p_pshader,
+			const std::vector<rendering::RenderState>& p_renderstates_list,
+			int p_rendering_order,
+			const std::vector< std::pair<size_t, std::pair<std::string, Texture>>>& p_textures = {});
+
+
+		core::Entity* plugRenderingProxyEntityWithRenderedTargets(mage::core::Entitygraph& p_entitygraph,
+			const std::string& p_parentid,
+			const std::string& p_entityid,
+			const std::string& p_vshader,
+			const std::string& p_pshader,
+			const std::vector<rendering::RenderState>& p_renderstates_list,
+			int p_rendering_order,
+			const std::vector<std::pair<size_t, Texture>>& p_textures);
+
+
+
+
 	}
 }
 

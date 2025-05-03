@@ -39,7 +39,7 @@
 #include "worldposition.h"
 #include "animatorfunc.h"
 #include "animators_helpers.h"
-#include "graphicobjects_helpers.h"
+#include "entitygraph_helpers.h"
 
 using namespace mage;
 using namespace mage::core;

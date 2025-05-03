@@ -67,7 +67,6 @@
 #include "textures_service.h"
 
 #include "entitygraph_helpers.h"
-#include "graphicobjects_helpers.h"
 
 using namespace mage;
 using namespace mage::core;
