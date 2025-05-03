@@ -306,7 +306,6 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					emissiveChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
 					emissiveChannelRenderingQueue.enableTargetClearing(true);
 					emissiveChannelRenderingQueue.enableTargetDepthClearing(true);
-					//emissiveChannelRenderingQueue.setTargetStage(Texture::STAGE_2);
 					emissiveChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
 
 					mage::helpers::plugRenderingQueue(m_entitygraph, emissiveChannelRenderingQueue, "bufferRendering_Combiner_Accumulate_Quad_Entity", "bufferRendering_Scene_EmissiveChannel_Queue_Entity");
