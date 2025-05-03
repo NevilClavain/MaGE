@@ -203,13 +203,13 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 					// channel : zdepth
 
-					rendering::Queue zdepthChannelsRenderingQueue("zdepth_channel_queue");
-					zdepthChannelsRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					zdepthChannelsRenderingQueue.enableTargetClearing(true);
-					zdepthChannelsRenderingQueue.enableTargetDepthClearing(true);
-					zdepthChannelsRenderingQueue.setTargetStage(Texture::STAGE_1);
+					rendering::Queue zdepthChannelRenderingQueue("zdepth_channel_queue");
+					zdepthChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+					zdepthChannelRenderingQueue.enableTargetClearing(true);
+					zdepthChannelRenderingQueue.enableTargetDepthClearing(true);
+					zdepthChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
 
-					mage::helpers::plugRenderingQueue(m_entitygraph, zdepthChannelsRenderingQueue, "bufferRendering_Combiner_Fog_Quad_Entity", "bufferRendering_Scene_ZDepthChannel_Queue_Entity");
+					mage::helpers::plugRenderingQueue(m_entitygraph, zdepthChannelRenderingQueue, "bufferRendering_Combiner_Fog_Quad_Entity", "bufferRendering_Scene_ZDepthChannel_Queue_Entity");
 
 
 					create_openenv_zdepth_channel_rendergraph("bufferRendering_Scene_ZDepthChannel_Queue_Entity");
@@ -242,13 +242,13 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 					// channel : textures
 					
-					rendering::Queue texturesChannelsRenderingQueue("textures_channel_queue");
-					texturesChannelsRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					texturesChannelsRenderingQueue.enableTargetClearing(true);
-					texturesChannelsRenderingQueue.enableTargetDepthClearing(true);
-					texturesChannelsRenderingQueue.setTargetStage(Texture::STAGE_1);
+					rendering::Queue texturesChannelRenderingQueue("textures_channel_queue");
+					texturesChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+					texturesChannelRenderingQueue.enableTargetClearing(true);
+					texturesChannelRenderingQueue.enableTargetDepthClearing(true);
+					texturesChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
 
-					mage::helpers::plugRenderingQueue(m_entitygraph, texturesChannelsRenderingQueue, "bufferRendering_Combiner_Modulate_Quad_Entity", "bufferRendering_Scene_TexturesChannel_Queue_Entity");
+					mage::helpers::plugRenderingQueue(m_entitygraph, texturesChannelRenderingQueue, "bufferRendering_Combiner_Modulate_Quad_Entity", "bufferRendering_Scene_TexturesChannel_Queue_Entity");
 
 					create_openenv_textures_channel_rendergraph("bufferRendering_Scene_TexturesChannel_Queue_Entity");
 					
@@ -289,27 +289,27 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 					// channel : ambient light
 
-					rendering::Queue ambientLightChannelsRenderingQueue("ambientlight_channel_queue");
-					ambientLightChannelsRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					ambientLightChannelsRenderingQueue.enableTargetClearing(true);
-					ambientLightChannelsRenderingQueue.enableTargetDepthClearing(true);
-					ambientLightChannelsRenderingQueue.setTargetStage(Texture::STAGE_0);
+					rendering::Queue ambientLightChannelRenderingQueue("ambientlight_channel_queue");
+					ambientLightChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+					ambientLightChannelRenderingQueue.enableTargetClearing(true);
+					ambientLightChannelRenderingQueue.enableTargetDepthClearing(true);
+					ambientLightChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
 
-					mage::helpers::plugRenderingQueue(m_entitygraph, ambientLightChannelsRenderingQueue, "bufferRendering_Combiner_Accumulate_Quad_Entity", "bufferRendering_Scene_AmbientLightChannel_Queue_Entity");
+					mage::helpers::plugRenderingQueue(m_entitygraph, ambientLightChannelRenderingQueue, "bufferRendering_Combiner_Accumulate_Quad_Entity", "bufferRendering_Scene_AmbientLightChannel_Queue_Entity");
 
 					create_openenv_ambientlight_channel_rendergraph("bufferRendering_Scene_AmbientLightChannel_Queue_Entity");
 
 
 					// channel : emissive
 
-					rendering::Queue emissiveChannelsRenderingQueue("emissive_channel_queue");
-					emissiveChannelsRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					emissiveChannelsRenderingQueue.enableTargetClearing(true);
-					emissiveChannelsRenderingQueue.enableTargetDepthClearing(true);
-					//emissiveChannelsRenderingQueue.setTargetStage(Texture::STAGE_2);
-					emissiveChannelsRenderingQueue.setTargetStage(Texture::STAGE_1);
+					rendering::Queue emissiveChannelRenderingQueue("emissive_channel_queue");
+					emissiveChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+					emissiveChannelRenderingQueue.enableTargetClearing(true);
+					emissiveChannelRenderingQueue.enableTargetDepthClearing(true);
+					//emissiveChannelRenderingQueue.setTargetStage(Texture::STAGE_2);
+					emissiveChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
 
-					mage::helpers::plugRenderingQueue(m_entitygraph, emissiveChannelsRenderingQueue, "bufferRendering_Combiner_Accumulate_Quad_Entity", "bufferRendering_Scene_EmissiveChannel_Queue_Entity");
+					mage::helpers::plugRenderingQueue(m_entitygraph, emissiveChannelRenderingQueue, "bufferRendering_Combiner_Accumulate_Quad_Entity", "bufferRendering_Scene_EmissiveChannel_Queue_Entity");
 
 					create_openenv_emissive_channel_rendergraph("bufferRendering_Scene_EmissiveChannel_Queue_Entity");
 
@@ -352,13 +352,13 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 					// channel : directional lit
 
-					rendering::Queue litChannelsRenderingQueue("lit_channel_queue");
-					litChannelsRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					litChannelsRenderingQueue.enableTargetClearing(true);
-					litChannelsRenderingQueue.enableTargetDepthClearing(true);
-					litChannelsRenderingQueue.setTargetStage(Texture::STAGE_0);
+					rendering::Queue litChannelRenderingQueue("lit_channel_queue");
+					litChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+					litChannelRenderingQueue.enableTargetClearing(true);
+					litChannelRenderingQueue.enableTargetDepthClearing(true);
+					litChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
 
-					mage::helpers::plugRenderingQueue(m_entitygraph, litChannelsRenderingQueue, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_LitChannel_Queue_Entity");
+					mage::helpers::plugRenderingQueue(m_entitygraph, litChannelRenderingQueue, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_LitChannel_Queue_Entity");
 
 					create_openenv_lit_channel_rendergraph("bufferRendering_Scene_LitChannel_Queue_Entity");
 					//create_openenv_lit_channel_rendergraph("bufferRendering_Scene_Debug_Queue_Entity");
@@ -368,15 +368,32 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 					// channel : shadow map
 
-					rendering::Queue shadowsChannelsRenderingQueue("shadows_channel_queue");
-					shadowsChannelsRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					shadowsChannelsRenderingQueue.enableTargetClearing(true);
-					shadowsChannelsRenderingQueue.enableTargetDepthClearing(true);
-					shadowsChannelsRenderingQueue.setTargetStage(Texture::STAGE_1);
+					rendering::Queue shadowsChannelRenderingQueue("shadows_channel_queue");
+					shadowsChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+					shadowsChannelRenderingQueue.enableTargetClearing(true);
+					shadowsChannelRenderingQueue.enableTargetDepthClearing(true);
+					shadowsChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
 
-					mage::helpers::plugRenderingQueue(m_entitygraph, shadowsChannelsRenderingQueue, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
+					mage::helpers::plugRenderingQueue(m_entitygraph, shadowsChannelRenderingQueue, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
 
 					create_openenv_shadows_channel_rendergraph("bufferRendering_Scene_ShadowsChannel_Queue_Entity");
+
+
+					///////////////////////////////////////////////////////////////////////////////////////////////////////////
+					// SHADOWMAP TARGET TEXTURE
+
+
+					helpers::plugTargetTexture(m_entitygraph, p_id, "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_RGB, /*w_width, w_height*/ 1024, 1024)));
+
+
+
+					rendering::Queue shadowMapChannelRenderingQueue("shadowmap_channel_queue");
+					shadowMapChannelRenderingQueue.setTargetClearColor({ 250, 250, 90, 255 });
+					shadowMapChannelRenderingQueue.enableTargetClearing(true);
+					shadowMapChannelRenderingQueue.enableTargetDepthClearing(true);
+					shadowMapChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
+
+					mage::helpers::plugRenderingQueue(m_entitygraph, shadowMapChannelRenderingQueue, "shadowMap_Texture_Entity", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
 
 
 				}

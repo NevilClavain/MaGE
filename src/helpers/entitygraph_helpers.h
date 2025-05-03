@@ -148,15 +148,12 @@ namespace mage
 			const std::vector< std::pair<size_t, std::pair<std::string, Texture>>>& p_textures = {});
 
 
-		core::Entity* plugRenderingProxyEntityWithRenderedTargets(mage::core::Entitygraph& p_entitygraph,
+
+
+		core::Entity* plugTargetTexture(mage::core::Entitygraph& p_entitygraph,
 			const std::string& p_parentid,
 			const std::string& p_entityid,
-			const std::string& p_vshader,
-			const std::string& p_pshader,
-			const std::vector<rendering::RenderState>& p_renderstates_list,
-			int p_rendering_order,
-			const std::vector<std::pair<size_t, Texture>>& p_textures);
-
+			const std::pair<size_t, Texture>& p_renderTargetTexture);
 
 
 

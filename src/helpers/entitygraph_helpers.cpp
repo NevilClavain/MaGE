@@ -208,10 +208,10 @@ namespace mage
 		{
 			/////////////// add viewpoint (camera) ////////////////////////
 
-			auto& parentNodeNode{ p_entitygraph.node(p_parentid) };
+			auto& parentNode{ p_entitygraph.node(p_parentid) };
 
 
-			auto& viewPointNode{ p_entitygraph.add(parentNodeNode, p_viewEntityid) };
+			auto& viewPointNode{ p_entitygraph.add(parentNode, p_viewEntityid) };
 			const auto cameraEntity{ viewPointNode.data() };
 
 			auto& camera_aspect{ cameraEntity->makeAspect(core::cameraAspect::id) };
@@ -232,7 +232,7 @@ namespace mage
 
 			// add target quad aligned with screen
 
-			auto& screenRenderingQuadNode{ p_entitygraph.add(parentNodeNode, p_quadEntityid) };
+			auto& screenRenderingQuadNode{ p_entitygraph.add(parentNode, p_quadEntityid) };
 			const auto screenRenderingQuadEntity{ screenRenderingQuadNode.data() };
 
 
@@ -367,10 +367,10 @@ namespace mage
 
 			/////////////// add viewpoint (camera) ////////////////////////
 
-			auto& parentNodeNode{ p_entitygraph.node(p_queueEntityid) };
+			auto& parentNode{ p_entitygraph.node(p_queueEntityid) };
 
 
-			auto& viewPointNode{ p_entitygraph.add(parentNodeNode, p_viewEntityid) };
+			auto& viewPointNode{ p_entitygraph.add(parentNode, p_viewEntityid) };
 			const auto cameraEntity{ viewPointNode.data() };
 
 			auto& camera_aspect{ cameraEntity->makeAspect(core::cameraAspect::id) };
@@ -392,7 +392,7 @@ namespace mage
 
 			// add target quad aligned with screen
 
-			auto& screenRenderingQuadNode{ p_entitygraph.add(parentNodeNode, p_quadEntityid) };
+			auto& screenRenderingQuadNode{ p_entitygraph.add(parentNode, p_quadEntityid) };
 			const auto screenRenderingQuadEntity{ screenRenderingQuadNode.data() };
 
 
@@ -871,7 +871,6 @@ namespace mage
 		}
 
 
-
 		core::Entity* plugRenderingProxyEntity(mage::core::Entitygraph& p_entitygraph,
 			const std::string& p_parentid,
 			const std::string& p_entityid,
@@ -882,8 +881,8 @@ namespace mage
 			const std::vector< std::pair<size_t, std::pair<std::string, Texture>>>& p_textures)
 		{
 			auto& parentNode{ p_entitygraph.node(p_parentid) };
-			auto& mesheNode{ p_entitygraph.add(parentNode, p_entityid) };
-			const auto entity{ mesheNode.data() };
+			auto& proxyNode{ p_entitygraph.add(parentNode, p_entityid) };
+			const auto entity{ proxyNode.data() };
 
 			auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
 			auto& rendering_aspect{ entity->makeAspect(core::renderingAspect::id) };
@@ -915,45 +914,26 @@ namespace mage
 		}
 
 
-
-		core::Entity* plugRenderingProxyEntityWithRenderedTargets(mage::core::Entitygraph& p_entitygraph,
+		core::Entity* plugTargetTexture(mage::core::Entitygraph& p_entitygraph,
 			const std::string& p_parentid,
 			const std::string& p_entityid,
-			const std::string& p_vshader,
-			const std::string& p_pshader,
-			const std::vector<rendering::RenderState>& p_renderstates_list,
-			int p_rendering_order,
-			const std::vector<std::pair<size_t, Texture>>& p_textures)
+			const std::pair<size_t, Texture>& p_renderTargetTexture)
 		{
+
 			auto& parentNode{ p_entitygraph.node(p_parentid) };
-			auto& mesheNode{ p_entitygraph.add(parentNode, p_entityid) };
-			const auto entity{ mesheNode.data() };
+			auto& targetTextureNode{ p_entitygraph.add(parentNode, p_entityid) };
+			const auto entity{ targetTextureNode.data() };
 
+			/// RESOURCE ASPECT
 			auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
+
+			/// RENDERING ASPECT
 			auto& rendering_aspect{ entity->makeAspect(core::renderingAspect::id) };
+			rendering_aspect.addComponent<core::renderingAspect::renderingTarget>("eg.std.renderingTarget", core::renderingAspect::renderingTarget::BUFFER_RENDERINGTARGET);
 
-			resource_aspect.addComponent<std::pair<std::string, Shader>>("vertexShader", std::make_pair(p_vshader, Shader(vertexShader)));
-			resource_aspect.addComponent<std::pair<std::string, Shader>>("pixelShader", std::make_pair(p_pshader, Shader(pixelShader)));
 
-			/////////// Add textures
-
-			int index{ 0 };
-			for (const auto& texture_descr : p_textures)
-			{
-				const std::string comp_id{ "texture" + std::to_string(index++) };
-
-				resource_aspect.addComponent<std::pair<size_t, Texture>>(comp_id, texture_descr);
-			}
-
-			/////////// Add renderstate
-			rendering_aspect.addComponent<std::vector<mage::rendering::RenderState>>("renderStates", p_renderstates_list);
-
-			/////////// Draw triangles
-			rendering::DrawingControl drawingControl;
-			rendering_aspect.addComponent<mage::rendering::DrawingControl>("drawingControl", drawingControl);
-
-			/////////// Rendering Order
-			rendering_aspect.addComponent<int>("renderingOrder", p_rendering_order);
+			/////////// render target Texture		
+			resource_aspect.addComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture", p_renderTargetTexture);
 
 			return entity;
 		}

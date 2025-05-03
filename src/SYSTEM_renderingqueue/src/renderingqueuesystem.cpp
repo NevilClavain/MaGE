@@ -511,7 +511,7 @@ void RenderingQueueSystem::handleRenderingQueuesState(Entity* p_entity, renderin
 						// parent has no rendering aspect 
 						p_renderingQueue.setState(rendering::Queue::State::ERROR_ORPHAN);
 
-						_EXCEPTION("Rendering queue set to ERROR_ORPHAN : parent rendering aspect has no rendering aspect : " + p_renderingQueue.getName() + ", parent is " + parent_entity->getId());
+						_EXCEPTION("Rendering queue set to ERROR_ORPHAN : parent has no rendering aspect : " + p_renderingQueue.getName() + ", parent is " + parent_entity->getId());
 
 						// log it (WARN)
 						//_MAGE_WARN(m_localLogger, "Rendering queue set to ERROR_ORPHAN : parent has no rendering aspect")
