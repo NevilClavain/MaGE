@@ -871,55 +871,6 @@ namespace mage
 		}
 
 
-		core::Entity* plugMeshe(mage::core::Entitygraph& p_entitygraph,
-			const std::string& p_parentid,
-			const std::string& p_mesheEntityid,
-			const std::string& p_vshader,
-			const std::string& p_pshader,
-			const std::string& p_meshefile,
-			const std::string& p_mesheIdInfile,
-			const std::vector<rendering::RenderState>& p_renderstates_list,
-			int p_rendering_order,
-			const std::vector<std::pair<size_t, std::pair<std::string, Texture>>>& p_textures)
-		{
-
-			auto& parentNode{ p_entitygraph.node(p_parentid) };
-			auto& mesheNode{ p_entitygraph.add(parentNode, p_mesheEntityid) };
-			const auto mesheEntity{ mesheNode.data() };
-
-			auto& resource_aspect{ mesheEntity->makeAspect(core::resourcesAspect::id) };
-			auto& rendering_aspect{ mesheEntity->makeAspect(core::renderingAspect::id) };
-			auto& world_aspect{ mesheEntity->makeAspect(core::worldAspect::id) };
-			mesheEntity->makeAspect(core::timeAspect::id);
-
-			resource_aspect.addComponent<std::pair<std::string, Shader>>("vertexShader", std::make_pair(p_vshader, Shader(vertexShader)));
-			resource_aspect.addComponent<std::pair<std::string, Shader>>("pixelShader", std::make_pair(p_pshader, Shader(pixelShader)));
-
-			resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair(p_mesheIdInfile, p_meshefile), TriangleMeshe()));
-
-			/////////// Add textures
-
-			int index{ 0 };
-			for (const auto& texture_descr : p_textures)
-			{
-				const std::string comp_id{ "texture" + std::to_string(index++) };
-
-				resource_aspect.addComponent<std::pair<size_t, std::pair<std::string, Texture>>>(comp_id, texture_descr);
-			}
-
-			/////////// Add renderstate
-			rendering_aspect.addComponent<std::vector<mage::rendering::RenderState>>("renderStates", p_renderstates_list);
-
-			/////////// Draw triangles
-			rendering::DrawingControl drawingControl;
-			rendering_aspect.addComponent<mage::rendering::DrawingControl>("drawingControl", drawingControl);
-
-			/////////// Rendering Order
-			rendering_aspect.addComponent<int>("renderingOrder", p_rendering_order);
-
-			world_aspect.addComponent<transform::WorldPosition>("position");
-			return mesheEntity;
-		}
 
 		core::Entity* plugRenderingProxyEntity(mage::core::Entitygraph& p_entitygraph,
 			const std::string& p_parentid,

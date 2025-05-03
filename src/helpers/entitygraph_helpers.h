@@ -137,16 +137,6 @@ namespace mage
 		double& getYPos(mage::core::Entitygraph& p_entitygraph, const std::string& p_spriteEntityid);
 		double& getZRot(mage::core::Entitygraph& p_entitygraph, const std::string& p_spriteEntityid);
 
-		core::Entity* plugMeshe(mage::core::Entitygraph& p_entitygraph,
-			const std::string& p_parentid,
-			const std::string& p_mesheEntityid,
-			const std::string& p_vshader,
-			const std::string& p_pshader,
-			const std::string& p_meshefile,
-			const std::string& p_mesheIdInfile,
-			const std::vector<rendering::RenderState>& p_renderstates_list,
-			int p_rendering_order,
-			const std::vector< std::pair<size_t, std::pair<std::string, Texture>>>& p_textures = {});
 
 		core::Entity* plugRenderingProxyEntity(mage::core::Entitygraph& p_entitygraph,
 			const std::string& p_parentid,
