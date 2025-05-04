@@ -1156,7 +1156,7 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 												}
 												else
 												{
-													// add this new textureset + drawing control under new texturset
+													// add this new textureset + drawing control under new textureset
 
 													rendering::Queue::TextureSetPayload textureSetPayload;
 
