@@ -171,6 +171,27 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 					create_openenv_scenegraph(p_id);
 
+
+
+					///////////////////////////////////////////////////////////////////////////////////////////////////////////
+					// SHADOWMAP TARGET TEXTURE
+
+
+					helpers::plugTargetTexture(m_entitygraph, p_id, "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_RGB, /*w_width, w_height*/ 1024, 1024)));
+
+
+
+					rendering::Queue shadowMapChannelRenderingQueue("shadowmap_channel_queue");
+					shadowMapChannelRenderingQueue.setTargetClearColor({ 250, 0, 0, 255 });
+					shadowMapChannelRenderingQueue.enableTargetClearing(true);
+					shadowMapChannelRenderingQueue.enableTargetDepthClearing(true);
+					shadowMapChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
+
+					mage::helpers::plugRenderingQueue(m_entitygraph, shadowMapChannelRenderingQueue, "shadowMap_Texture_Entity", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
+
+
+
+
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// RENDERGRAPH
 
@@ -378,21 +399,6 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					create_openenv_shadows_channel_rendergraph("bufferRendering_Scene_ShadowsChannel_Queue_Entity");
 
 
-					///////////////////////////////////////////////////////////////////////////////////////////////////////////
-					// SHADOWMAP TARGET TEXTURE
-
-
-					helpers::plugTargetTexture(m_entitygraph, p_id, "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_RGB, /*w_width, w_height*/ 1024, 1024)));
-
-
-
-					rendering::Queue shadowMapChannelRenderingQueue("shadowmap_channel_queue");
-					shadowMapChannelRenderingQueue.setTargetClearColor({ 250, 250, 90, 255 });
-					shadowMapChannelRenderingQueue.enableTargetClearing(true);
-					shadowMapChannelRenderingQueue.enableTargetDepthClearing(true);
-					shadowMapChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
-
-					mage::helpers::plugRenderingQueue(m_entitygraph, shadowMapChannelRenderingQueue, "shadowMap_Texture_Entity", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
 
 
 				}
@@ -1079,9 +1085,9 @@ void SamplesOpenEnv::create_openenv_ambientlight_channel_rendergraph(const std::
 
 		/// connect shaders args
 
-		auto& tree_rendering_aspect{ tree_proxy_entity->aspectAccess(core::renderingAspect::id) };
+		auto& rendering_aspect{ tree_proxy_entity->aspectAccess(core::renderingAspect::id) };
 
-		rendering::DrawingControl& drawingControl{ tree_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
 		drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
 		drawingControl.pshaders_map.push_back(std::make_pair("std.ambientlight.color", "color"));
 
@@ -1329,9 +1335,9 @@ void SamplesOpenEnv::create_openenv_emissive_channel_rendergraph(const std::stri
 
 		/// connect shaders args
 
-		auto& clouds_rendering_aspect{ clouds_proxy_entity->aspectAccess(core::renderingAspect::id) };
+		auto& rendering_aspect{ clouds_proxy_entity->aspectAccess(core::renderingAspect::id) };
 
-		rendering::DrawingControl& drawingControl{ clouds_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
 		drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
 		drawingControl.pshaders_map.push_back(std::make_pair("skydome_emissive_color", "color"));
 
@@ -1382,9 +1388,9 @@ void SamplesOpenEnv::create_openenv_emissive_channel_rendergraph(const std::stri
 
 		/// connect shaders args
 
-		auto& skydome_rendering_aspect{ skydome_proxy_entity->aspectAccess(core::renderingAspect::id) };
+		auto& rendering_aspect{ skydome_proxy_entity->aspectAccess(core::renderingAspect::id) };
 
-		rendering::DrawingControl& drawingControl{ skydome_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
 		drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
 		drawingControl.pshaders_map.push_back(std::make_pair("skydome_emissive_color", "color"));
 
@@ -1483,9 +1489,9 @@ void SamplesOpenEnv::create_openenv_emissive_channel_rendergraph(const std::stri
 
 		/// connect shaders args
 
-		auto& tree_rendering_aspect{ tree_proxy_entity->aspectAccess(core::renderingAspect::id) };
+		auto& rendering_aspect{ tree_proxy_entity->aspectAccess(core::renderingAspect::id) };
 
-		rendering::DrawingControl& drawingControl{ tree_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
 		drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
 		drawingControl.pshaders_map.push_back(std::make_pair("black_color", "color"));
 
@@ -1513,6 +1519,17 @@ void SamplesOpenEnv::create_openenv_emissive_channel_rendergraph(const std::stri
 
 void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::string& p_queueEntityId)
 {
+	// get ptr on rendered shadow map
+	
+	auto& shadowMapNode{ m_entitygraph.node("shadowMap_Texture_Entity") };
+	const auto shadowmap_texture_entity{ shadowMapNode.data() };
+
+	auto& sm_resource_aspect{ shadowmap_texture_entity->aspectAccess(core::resourcesAspect::id) };
+
+	std::pair<size_t, Texture>* sm_texture_ptr{ &sm_resource_aspect.getComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture")->getPurpose() };
+
+
+
 	///////////////	add ground
 
 	{
@@ -1530,14 +1547,10 @@ void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::strin
 															ground_rs_list,
 															1000) };
 
-
-		/// connect shader arg
-
-		auto& rendering_aspect{ ground_proxy_entity->aspectAccess(core::renderingAspect::id) };
-
-		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("white_color", "color"));
-
+		
+		auto& resource_aspect{ ground_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+		resource_aspect.addComponent<std::pair<size_t, Texture>*>("texture_ref", sm_texture_ptr);
+		
 
 		//////////////////////////////////////////////////////////////////////
 
@@ -1578,20 +1591,17 @@ void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::strin
 															1000) };
 
 
-		/// connect shader arg
 
-		auto& rendering_aspect{ sphere_proxy_entity->aspectAccess(core::renderingAspect::id) };
-
-		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("white_color", "color"));
+		auto& resource_aspect{ sphere_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+		resource_aspect.addComponent<std::pair<size_t, Texture>*>("texture_ref", sm_texture_ptr);
 
 
 
 		//////////////////////////////////////////////////////////////////////
 
 		// link triangle meshe to related entity in scenegraph side 
-		auto& resource_aspect{ m_sphereEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
+		auto& sphere_resource_aspect{ m_sphereEntity->aspectAccess(core::resourcesAspect::id) };
+		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &sphere_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
 
 		auto& proxy_resource_aspect{ sphere_proxy_entity->aspectAccess(core::resourcesAspect::id) };
 		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
@@ -1607,5 +1617,5 @@ void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::strin
 		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
 
 	}
-
+	
 }

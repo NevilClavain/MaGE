@@ -28,14 +28,27 @@ cbuffer constargs : register(b0)
     Matrix mat[512];
 };
 
+Texture2D shadowMap : register(t0);
+SamplerState shadowMapSampler : register(s0);
 
 struct PS_INTPUT 
 {
-    float4 Position : SV_POSITION;
+    float4 Position : SV_POSITION;    
+    float2 TexCoord0 : TEXCOORD0;
 };
 
 float4 ps_main(PS_INTPUT input) : SV_Target
 {       
-    float4 color = vec[24];
+    float4 color;
+    
+    /*
+    color.r = 0.0;
+    color.g = 0.0;
+    color.b = 1.0;
+    color.a = 1.0;
+    */
+    
+    color = shadowMap.Sample(shadowMapSampler, input.TexCoord0);
+    
     return color;
 }

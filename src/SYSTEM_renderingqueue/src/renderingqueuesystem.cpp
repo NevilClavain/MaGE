@@ -864,6 +864,7 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 			// search for textures set
 			
 			const auto renderingTexturesSet{ p_resourceAspect.getComponentsByType<std::pair<size_t,Texture>>() };
+			const auto renderingTexturesSetPtr{ p_resourceAspect.getComponentsByType<std::pair<size_t,Texture>*>() };
 			const auto texturesFromFileSet{ p_resourceAspect.getComponentsByType<std::pair<size_t,std::pair<std::string,Texture>>>() };
 			
 			ComponentList<std::pair<size_t, Texture>> texturesSet;
@@ -872,6 +873,21 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 			if (renderingTexturesSet.size() > 0)
 			{
 				texturesSet = renderingTexturesSet;
+			}
+			else if(renderingTexturesSetPtr.size())
+			{
+				// HERE
+				for (auto& tc : renderingTexturesSetPtr)
+				{
+					const std::pair<size_t, Texture>* t{ tc->getPurpose() };
+
+					const size_t stage_copy{ t->first };
+					Texture texture_copy{ t->second };
+
+					cc.addComponent<std::pair<size_t, Texture>>("texturesFromPtr", std::make_pair(stage_copy, texture_copy));
+				}
+
+				texturesSet = cc.getComponentsByType<std::pair<size_t, Texture>>();
 			}
 			else if (texturesFromFileSet.size() > 0)
 			{
