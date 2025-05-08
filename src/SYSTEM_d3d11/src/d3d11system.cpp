@@ -511,20 +511,20 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 		return;
 	}
 
-	maths::Matrix current_cam;
-	maths::Matrix current_proj;
+	maths::Matrix current_mainview_cam;
+	maths::Matrix current_mainview_proj;
 
-	current_cam.identity();
+	current_mainview_cam.identity();
 
 	// set a dummy default perspective
-	current_proj.perspective(1.0, 0.5, 1.0, 100000.0);
+	current_mainview_proj.perspective(1.0, 0.5, 1.0, 100000.0);
 
 	//////////////////////////////// get view and proj matrix for this queue
 
-	const std::string current_view_entity_id{ p_renderingQueue.getCurrentView()};
-	if (current_view_entity_id != "")
+	const std::string current_main_view_entity_id{ p_renderingQueue.getMainView()};
+	if (current_main_view_entity_id != "")
 	{
-		auto& viewode{ m_entitygraph.node(current_view_entity_id) };
+		auto& viewode{ m_entitygraph.node(current_main_view_entity_id) };
 		const auto view_entity{ viewode.data() };
 
 		// extract cam aspect
@@ -537,7 +537,7 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 		}
 		else
 		{
-			current_proj = cam_projs_list.at(0)->getPurpose();
+			current_mainview_proj = cam_projs_list.at(0)->getPurpose();
 		}
 
 		// extract world aspect
@@ -552,12 +552,12 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 		else
 		{
 			auto& entity_worldposition{ worldpositions_list.at(0)->getPurpose() };
-			current_cam = entity_worldposition.global_pos;
+			current_mainview_cam = entity_worldposition.global_pos;
 		}
 	}
 
-	maths::Matrix current_view = current_cam;
-	current_view.inverse();
+	maths::Matrix current_mainview_view = current_mainview_cam;
+	current_mainview_view.inverse();
 
 	////////////////////////////////////////////////////////////////////////
 
@@ -708,7 +708,7 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 										{
 											// world view proj matrix customization (if required)
 											const auto wvpfilterfunc{ *tdc.second.wvpFilter };
-											const auto mod_wvp{ wvpfilterfunc(*tdc.second.world, current_view, current_proj) };
+											const auto mod_wvp{ wvpfilterfunc(*tdc.second.world, current_mainview_view, current_mainview_proj) };
 											const auto mod_world{ std::get<0>(mod_wvp) };
 											const auto mod_view{ std::get<1>(mod_wvp) };
 											const auto mod_proj{ std::get<2>(mod_wvp) };
@@ -822,7 +822,7 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 										{
 											// world view proj matrix customization (if required)
 											const auto wvpfilterfunc{ *tdc.second.wvpFilter };
-											const auto mod_wvp{ wvpfilterfunc(*tdc.second.world, current_view, current_proj) };
+											const auto mod_wvp{ wvpfilterfunc(*tdc.second.world, current_mainview_view, current_mainview_proj) };
 											const auto mod_world{ std::get<0>(mod_wvp) };
 											const auto mod_view{ std::get<1>(mod_wvp) };
 											const auto mod_proj{ std::get<2>(mod_wvp) };
@@ -892,7 +892,7 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 
 									// world view proj matrix customization (if required)
 									const auto wvpfilterfunc{ *ldc.second.wvpFilter };
-									const auto mod_wvp{ wvpfilterfunc(*ldc.second.world, current_view, current_proj) };
+									const auto mod_wvp{ wvpfilterfunc(*ldc.second.world, current_mainview_view, current_mainview_proj) };
 									const auto mod_world{ std::get<0>(mod_wvp) };
 									const auto mod_view{ std::get<1>(mod_wvp) };
 									const auto mod_proj{ std::get<2>(mod_wvp) };

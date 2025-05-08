@@ -341,7 +341,7 @@ void DataPrintSystem::collectData()
 					infos += " - WAIT INIT";
 				}
 
-				infos += " - current view = " + renderingQueue.getCurrentView();
+				infos += " - current view = " + renderingQueue.getMainView();
 
 
 				m_rq_strings.push_back(infos);

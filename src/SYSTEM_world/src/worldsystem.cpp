@@ -272,7 +272,7 @@ void WorldSystem::run()
 				{
 					auto& renderingQueue{ rendering_queues_list.at(0)->getPurpose() };
 
-					const std::string current_view_entity_id{ renderingQueue.getCurrentView() };
+					const std::string current_view_entity_id{ renderingQueue.getMainView() };
 
 					if (current_view_entity_id != "")
 					{

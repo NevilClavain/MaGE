@@ -226,7 +226,7 @@ namespace mage
 
 			camera_world_aspect.addComponent<transform::WorldPosition>("camera_position", transform::WorldPosition());
 
-			p_windowQueue->setCurrentView(p_viewEntityid);
+			p_windowQueue->setMainView(p_viewEntityid);
 
 			///////////////////////////////////////////////////////////////
 
@@ -385,8 +385,7 @@ namespace mage
 
 			camera_world_aspect.addComponent<transform::WorldPosition>("camera_position", transform::WorldPosition());
 
-			//p_queue->setCurrentView(p_viewEntityid);
-			rendering_queue_ref.setCurrentView(p_viewEntityid);
+			rendering_queue_ref.setMainView(p_viewEntityid);
 
 			///////////////////////////////////////////////////////////////
 

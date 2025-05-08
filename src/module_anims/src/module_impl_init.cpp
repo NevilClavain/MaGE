@@ -309,27 +309,27 @@ void ModuleImpl::d3d11_system_events()
 						m_currentCamera = "camera_Entity";
 
 						auto debugChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_Debug_Queue_Entity") };
-						debugChannelRenderingQueue->setCurrentView(m_currentCamera);
+						debugChannelRenderingQueue->setMainView(m_currentCamera);
 
 
 						auto texturesChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Queue_Entity") };
-						texturesChannelRenderingQueue->setCurrentView(m_currentCamera);
+						texturesChannelRenderingQueue->setMainView(m_currentCamera);
 
 						auto ambientLightChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_AmbientLightChannel_Queue_Entity") };
-						ambientLightChannelRenderingQueue->setCurrentView(m_currentCamera);
+						ambientLightChannelRenderingQueue->setMainView(m_currentCamera);
 
 						auto emissiveChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
-						emissiveChannelRenderingQueue->setCurrentView(m_currentCamera);
+						emissiveChannelRenderingQueue->setMainView(m_currentCamera);
 
 						auto shadowsChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
-						shadowsChannelRenderingQueue->setCurrentView(m_currentCamera);
+						shadowsChannelRenderingQueue->setMainView(m_currentCamera);
 
 
 						auto litChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_LitChannel_Queue_Entity") };
-						litChannelRenderingQueue->setCurrentView(m_currentCamera);
+						litChannelRenderingQueue->setMainView(m_currentCamera);
 
 						auto fogChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
-						fogChannelRenderingQueue->setCurrentView(m_currentCamera);
+						fogChannelRenderingQueue->setMainView(m_currentCamera);
 					}
 				}
 				break;

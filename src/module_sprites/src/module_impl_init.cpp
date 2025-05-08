@@ -264,7 +264,7 @@ void ModuleImpl::d3d11_system_events()
 					m_currentCamera = "cameraEntity";
 
 					auto texturesChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Filter_DirectForward_Queue_Entity") };
-					texturesChannelRenderingQueue->setCurrentView(m_currentCamera);
+					texturesChannelRenderingQueue->setMainView(m_currentCamera);
 
 					/////////////////////////////////
 

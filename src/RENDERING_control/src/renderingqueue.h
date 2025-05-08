@@ -249,8 +249,11 @@ namespace mage
 			QueueNodes					getQueueNodes() const;
 			void						setQueueNodes(const QueueNodes& p_nodes);
 
-			void						setCurrentView(const std::string& p_entityId);
-			std::string					getCurrentView() const;
+			void						setMainView(const std::string& p_entityId);
+			std::string					getMainView() const;
+
+			void						setSecondaryView(const std::string& p_entityId);
+			std::string					getSecondaryView() const;
 
 			
 			std::string					getTargetTextureUID() const;
@@ -274,7 +277,8 @@ namespace mage
 
 			QueueNodes						m_queueNodes;
 
-			std::string						m_currentView; // entity name
+			std::string						m_mainView; // entity name
+			std::string						m_secondaryView; // entity name
 
 
 			size_t							m_targetStage{ 0 };

@@ -38,7 +38,7 @@ void ModuleImpl::onMouseMove(long p_xm, long p_ym, long p_dx, long p_dy)
 {
 	if (m_bufferRenderingQueue)
 	{
-		const auto current_view_entity_id{ m_bufferRenderingQueue->getCurrentView() };
+		const auto current_view_entity_id{ m_bufferRenderingQueue->getMainView() };
 
 		if ("Camera01Entity" == current_view_entity_id || "Camera03Entity" == current_view_entity_id)
 		{
