@@ -511,6 +511,8 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 		return;
 	}
 
+	///////////////////////////////// queue main view ////////////////////////////////
+
 	maths::Matrix current_mainview_cam;
 	maths::Matrix current_mainview_proj;
 
@@ -533,7 +535,7 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 
 		if (0 == cam_projs_list.size())
 		{
-			_EXCEPTION("entity view aspect : missing projection definition " + view_entity->getId());
+			_EXCEPTION("entity main view aspect : missing projection definition " + view_entity->getId());
 		}
 		else
 		{
@@ -558,6 +560,55 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 
 	maths::Matrix current_mainview_view = current_mainview_cam;
 	current_mainview_view.inverse();
+
+	///////////////////////////////// queue secondary view (useful for some effects that requires combination with a different point of view, like shadows map for example
+
+	maths::Matrix current_secondaryview_cam;
+	maths::Matrix current_secondaryview_proj;
+
+	current_secondaryview_cam.identity();
+
+	// set a dummy default perspective
+	current_secondaryview_proj.perspective(1.0, 0.5, 1.0, 100000.0);
+
+
+	const std::string current_secondary_view_entity_id{ p_renderingQueue.getSecondaryView()};
+	if (current_secondary_view_entity_id != "")
+	{
+		auto& viewode{ m_entitygraph.node(current_secondary_view_entity_id) };
+		const auto view_entity{ viewode.data() };
+
+		// extract cam aspect
+		const auto& cam_aspect{ view_entity->aspectAccess(cameraAspect::id) };
+		const auto& cam_projs_list{ cam_aspect.getComponentsByType<maths::Matrix>() };
+
+		if (0 == cam_projs_list.size())
+		{
+			_EXCEPTION("entity secondary view aspect : missing projection definition " + view_entity->getId());
+		}
+		else
+		{
+			current_secondaryview_proj = cam_projs_list.at(0)->getPurpose();
+		}
+
+		// extract world aspect
+
+		const auto& world_aspect{ view_entity->aspectAccess(worldAspect::id) };
+		const auto& worldpositions_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
+
+		if (0 == worldpositions_list.size())
+		{
+			_EXCEPTION("entity world aspect : missing world position " + view_entity->getId());
+		}
+		else
+		{
+			auto& entity_worldposition{ worldpositions_list.at(0)->getPurpose() };
+			current_secondaryview_cam = entity_worldposition.global_pos;
+		}
+	}
+
+	maths::Matrix current_secondaryiew_view = current_secondaryview_cam;
+	current_secondaryview_cam.inverse();
 
 	////////////////////////////////////////////////////////////////////////
 
