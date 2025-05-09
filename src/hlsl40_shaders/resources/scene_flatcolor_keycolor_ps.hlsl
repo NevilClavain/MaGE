@@ -40,9 +40,9 @@ struct PS_INTPUT
 
 float4 ps_main(PS_INTPUT input) : SV_Target
 {    
-    float4 color = vec[24];
+    float4 color = vec[36];
     
-    float4 key_color = vec[25];    
+    float4 key_color = vec[37];    
     float4 texture_color = txDiffuse.Sample(sam, input.TexCoord0);
     
     if (texture_color.r == key_color.r && texture_color.g == key_color.g && texture_color.b == key_color.b)

@@ -28,7 +28,7 @@ cbuffer constargs : register(b0)
     Matrix mat[512];
 };
 
-#define v_light_dir                24
+#define v_light_dir                36
 
 struct PS_INTPUT 
 {

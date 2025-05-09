@@ -25,7 +25,12 @@
 #define matWorldViewProjection      0
 #define matWorldView                4
 #define matWorld                    8
+
 #define matView                     12
 #define matCam                      16
 #define matProj                     20
+
+#define matSecondaryView            24
+#define matSecondaryCam             28
+#define matSecondaryProj            32
 

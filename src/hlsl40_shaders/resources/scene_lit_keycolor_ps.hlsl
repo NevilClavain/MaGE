@@ -28,7 +28,8 @@ cbuffer constargs : register(b0)
     Matrix mat[512];
 };
 
-#define v_light_dir                24
+#define v_light_dir                36
+#define v_key_color                37
 
 Texture2D txDiffuse     : register(t0);
 SamplerState sam        : register(s0);
@@ -46,7 +47,7 @@ struct PS_INTPUT
 
 float4 ps_main(PS_INTPUT input) : SV_Target
 {
-    float4 key_color = vec[25];
+    float4 key_color = vec[v_key_color];
     
     float4 texture_color = txDiffuse.Sample(sam, input.TexCoord0);    
     if (texture_color.r == key_color.r && texture_color.g == key_color.g && texture_color.b == key_color.b)

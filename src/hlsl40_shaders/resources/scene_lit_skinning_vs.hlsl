@@ -79,15 +79,15 @@ VS_OUTPUT vs_main(VS_INPUT Input)
     
     // reconstituer les 4 matrices
     
-    float4x4 mat0 = getTransformationMatrixForBone(boneId0[0], 24, vec);
-    float4x4 mat1 = getTransformationMatrixForBone(boneId0[1], 24, vec);
-    float4x4 mat2 = getTransformationMatrixForBone(boneId0[2], 24, vec);
-    float4x4 mat3 = getTransformationMatrixForBone(boneId0[3], 24, vec);
+    float4x4 mat0 = getTransformationMatrixForBone(boneId0[0], 36, vec);
+    float4x4 mat1 = getTransformationMatrixForBone(boneId0[1], 36, vec);
+    float4x4 mat2 = getTransformationMatrixForBone(boneId0[2], 36, vec);
+    float4x4 mat3 = getTransformationMatrixForBone(boneId0[3], 36, vec);
 
-    float4x4 mat4 = getTransformationMatrixForBone(boneId1[0], 24, vec);
-    float4x4 mat5 = getTransformationMatrixForBone(boneId1[1], 24, vec);
-    float4x4 mat6 = getTransformationMatrixForBone(boneId1[2], 24, vec);
-    float4x4 mat7 = getTransformationMatrixForBone(boneId1[3], 24, vec);
+    float4x4 mat4 = getTransformationMatrixForBone(boneId1[0], 36, vec);
+    float4x4 mat5 = getTransformationMatrixForBone(boneId1[1], 36, vec);
+    float4x4 mat6 = getTransformationMatrixForBone(boneId1[2], 36, vec);
+    float4x4 mat7 = getTransformationMatrixForBone(boneId1[3], 36, vec);
     
     float4x4 final_transform_from_bones =
 			mat0 * weights0[0] +

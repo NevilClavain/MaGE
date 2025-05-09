@@ -4,7 +4,7 @@
       "type": "Real4Vector",
       "body": {
         "argument_id": "color",
-        "register": 24,
+        "register": 36,
         "description": "color value"
       }
     }

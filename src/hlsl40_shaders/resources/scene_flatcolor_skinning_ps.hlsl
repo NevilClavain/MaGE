@@ -37,6 +37,6 @@ struct PS_INTPUT
 
 float4 ps_main(PS_INTPUT input) : SV_Target
 {
-    float4 color = vec[24];
+    float4 color = vec[36];
     return color;
 }
