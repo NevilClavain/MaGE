@@ -78,19 +78,6 @@ namespace mage
 			std::function<void()> setup{ [] {} };
 			std::function<void()> teardown{ [] {} };
 
-			std::function<std::tuple<core::maths::Matrix, core::maths::Matrix, core::maths::Matrix>
-				(const core::maths::Matrix&,
-					const core::maths::Matrix&,
-					const core::maths::Matrix&)> wvpFilter
-			{
-				[](const core::maths::Matrix& p_world,
-					const core::maths::Matrix& p_view,
-					const core::maths::Matrix& p_proj)
-				{
-					return std::make_tuple(p_world, p_view, p_proj);
-				}
-			};
-
 			//shaders params mapping description
 			// dataCloud variable id / shader argument section id in shader json
 			std::vector<std::pair<std::string, std::string>> vshaders_map;
@@ -117,12 +104,6 @@ namespace mage
 
 			std::function<void()>* setup{ nullptr };
 			std::function<void()>* teardown{ nullptr };
-
-			std::function<std::tuple<core::maths::Matrix, core::maths::Matrix, core::maths::Matrix>
-				(const core::maths::Matrix&,
-				 const core::maths::Matrix&,
-				 const core::maths::Matrix&)>* wvpFilter{ nullptr };
-
 			
 			// shaders generic params to apply
 			// dataCloud variable id/shader argument

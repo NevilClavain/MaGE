@@ -99,7 +99,8 @@ void D3D11SystemImpl::drawLineMeshe(const mage::core::maths::Matrix& p_world, co
     m_lpd3ddevcontext->DrawIndexed(m_next_nblines * 2, 0, 0);
 }
 
-void D3D11SystemImpl::drawTriangleMeshe(const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj)
+void D3D11SystemImpl::drawTriangleMeshe(const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
+                                            const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj)
 {
     // setting transformation    
     Matrix inv;

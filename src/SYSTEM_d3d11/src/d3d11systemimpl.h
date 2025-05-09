@@ -202,7 +202,8 @@ public:
     void forceCurrentTopology();
 
     void drawLineMeshe(const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj);
-    void drawTriangleMeshe(const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj);
+    void drawTriangleMeshe(const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
+                            const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj);
 
     void setVertexshaderConstantsVec(int p_startreg, const mage::core::maths::Real4Vector& p_vec);
     void setPixelshaderConstantsVec(int p_startreg, const mage::core::maths::Real4Vector& p_vec);
