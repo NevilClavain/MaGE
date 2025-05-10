@@ -40,15 +40,12 @@ struct PS_INTPUT
 float4 ps_main(PS_INTPUT input) : SV_Target
 {       
     float4 color;
-    
-    /*
-    color.r = 0.0;
-    color.g = 0.0;
+        
+    color.r = 1.0;
+    color.g = 1.0;
     color.b = 1.0;
     color.a = 1.0;
-    */
-    
-    color = shadowMap.Sample(shadowMapSampler, input.TexCoord0);
-    
+        
+    //color = shadowMap.Sample(shadowMapSampler, input.TexCoord0);    
     return color;
 }

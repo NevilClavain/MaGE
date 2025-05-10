@@ -386,7 +386,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 
 
-					// channel : shadow map
+					// channel : shadow
 
 					rendering::Queue shadowsChannelRenderingQueue("shadows_channel_queue");
 					shadowsChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
