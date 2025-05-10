@@ -328,8 +328,13 @@ void ModuleImpl::d3d11_system_events()
 						auto litChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_LitChannel_Queue_Entity") };
 						litChannelRenderingQueue->setMainView(m_currentCamera);
 
-						auto fogChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
-						fogChannelRenderingQueue->setMainView(m_currentCamera);
+						auto zDepthChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
+						zDepthChannelRenderingQueue->setMainView(m_currentCamera);
+
+
+						auto shadowMapChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
+						shadowMapChannelRenderingQueue->setMainView(m_currentCamera);
+
 					}
 				}
 				break;
