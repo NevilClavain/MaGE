@@ -262,7 +262,7 @@ ENTITY_ID = app_Entity ]
 	fogDrawingControl.pshaders_map.push_back(std::make_pair("screen_channel_number", "input_channel"));
 
 
- 2/ plug the debug rendering queue on filter_directforward_switch2chan channel B
+ 3/ plug the debug rendering queue on filter_directforward_switch2chan channel B
  
  
 	// channel B : for debug purposes
@@ -276,12 +276,12 @@ ENTITY_ID = app_Entity ]
 	mage::helpers::plugRenderingQueue(m_entitygraph, debugChannelsRenderingQueue, "screenRendering_Filter_DirectForward_Quad_Entity", "bufferRendering_Scene_Debug_Queue_Entity");
 	
 	
- 3/ move the pass we want to visualize under bufferRendering_Scene_Debug_Queue_Entity :
+ 4/ move the pass we want to visualize under bufferRendering_Scene_Debug_Queue_Entity :
  
 	//create_openenv_lit_channel_rendergraph("bufferRendering_Scene_LitChannel_Queue_Entity");
 	create_openenv_lit_channel_rendergraph("bufferRendering_Scene_Debug_Queue_Entity");
  
- 4/ switch filter_directforward_switch2chan to display the debug channel (channel B) by 
+ 5/ switch filter_directforward_switch2chan to display the debug channel (channel B) by 
 	setting a value > 0 in filter_directforward_switch2chan input_channel.x
 	
 	dataCloud->updateDataValue<maths::Real4Vector>("screen_channel_number", maths::Real4Vector(1.0, 0.0, 0.0, 0.0));
