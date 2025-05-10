@@ -28,8 +28,8 @@ cbuffer constargs : register(b0)
     Matrix mat[512];
 };
 
-#define v_light_dir                36
-#define v_key_color                37
+#define v_light_dir                56
+#define v_key_color                57
 
 Texture2D txDiffuse     : register(t0);
 SamplerState sam        : register(s0);

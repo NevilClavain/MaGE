@@ -31,7 +31,7 @@ cbuffer constargs : register(b0)
 //.x = 0 -> inputA
 //.x = 1 -> inputB
 
-#define v_channel_selection                36
+#define v_channel_selection                56
 
 Texture2D txInputA      : register(t0);
 SamplerState samInputA  : register(s0);

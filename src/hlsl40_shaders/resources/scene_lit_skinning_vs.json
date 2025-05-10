@@ -4,7 +4,7 @@
       "type": "Real4VectorArray",
       "body": {
         "length": 220,
-        "register": 36,
+        "register": 56,
         "description": "animation bones"
       }
     }

@@ -4,7 +4,7 @@
       "type": "Real4Vector",
       "body": {
         "argument_id": "light_dir",
-        "register": 36,
+        "register": 56,
         "description": "light direction"
       }
     },
@@ -12,7 +12,7 @@
       "type": "Real4Vector",
       "body": {
         "argument_id": "key_color",
-        "register": 37,
+        "register": 57,
         "description": "key color value for pixels to clip"
       }
     }

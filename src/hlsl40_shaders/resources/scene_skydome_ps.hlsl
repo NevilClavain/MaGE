@@ -28,15 +28,15 @@ cbuffer constargs : register(b0)
     Matrix mat[512];
 };
 
-#define v_light0_dir                36
+#define v_light0_dir                56
 
-#define v_atmo_scattering_flag_0    37
-#define v_atmo_scattering_flag_1    38
-#define v_atmo_scattering_flag_2    39
-#define v_atmo_scattering_flag_3    40
-#define v_atmo_scattering_flag_4    41
-#define v_atmo_scattering_flag_5    42
-#define v_atmo_scattering_flag_6    43
+#define v_atmo_scattering_flag_0    57
+#define v_atmo_scattering_flag_1    58
+#define v_atmo_scattering_flag_2    59
+#define v_atmo_scattering_flag_3    60
+#define v_atmo_scattering_flag_4    61
+#define v_atmo_scattering_flag_5    62
+#define v_atmo_scattering_flag_6    63
 
 struct PS_INTPUT 
 {

@@ -4,7 +4,7 @@
       "type": "Real4Vector",
       "body": {
         "argument_id": "fog_color",
-        "register": 36,
+        "register": 56,
         "description": "fog color value"
       }
     },
@@ -12,7 +12,7 @@
       "type": "Real4Vector",
       "body": {
         "argument_id": "fog_density",
-        "register": 37,
+        "register": 57,
         "description": "fog density value on .x"
       }
     }

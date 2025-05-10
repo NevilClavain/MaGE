@@ -4,7 +4,7 @@
       "type": "Real4Vector",
       "body": {
         "argument_id": "input_channel",
-        "register": 36,
+        "register": 56,
         "description": "input channel selection"
       }
     }

@@ -4,7 +4,7 @@
       "type": "Real4Vector",
       "body": {
         "argument_id": "key_color",
-        "register": 36,
+        "register": 56,
         "description": "key color value for pixels to clip"
       }
     }
