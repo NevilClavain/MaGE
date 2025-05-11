@@ -204,11 +204,18 @@ void ModuleImpl::onKeyPress(long p_key)
 		}
 		else if (VK_UP == p_key)
 		{
+			auto& y_slide_pos{ slider_time_aspect.getComponent< SyncVariable>("y_slide_pos")->getPurpose() };
+
+			y_slide_pos.direction = SyncVariable::Direction::DEC;
+			y_slide_pos.state = SyncVariable::State::ON;
 
 		}
 		else if (VK_DOWN == p_key)
 		{
+			auto& y_slide_pos{ slider_time_aspect.getComponent< SyncVariable>("y_slide_pos")->getPurpose() };
 
+			y_slide_pos.direction = SyncVariable::Direction::INC;
+			y_slide_pos.state = SyncVariable::State::ON;
 		}
 	}
 }
@@ -470,10 +477,14 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		}
 		else if (VK_UP == p_key)
 		{
+			auto& y_slide_pos{ slider_time_aspect.getComponent< SyncVariable>("y_slide_pos")->getPurpose() };
+			y_slide_pos.state = SyncVariable::State::OFF;
 
 		}
 		else if (VK_DOWN == p_key)
 		{
+			auto& y_slide_pos{ slider_time_aspect.getComponent< SyncVariable>("y_slide_pos")->getPurpose() };
+			y_slide_pos.state = SyncVariable::State::OFF;
 
 		}
 	}

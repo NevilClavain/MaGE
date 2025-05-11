@@ -355,10 +355,10 @@ void ModuleImpl::d3d11_system_events()
 
 						slider_world_aspect.addComponent<transform::WorldPosition>("slider_output");
 
-						SyncVariable x_slide_pos(SyncVariable::Type::POSITION, 5.0, SyncVariable::Direction::INC, 3.0);
+						SyncVariable x_slide_pos(SyncVariable::Type::POSITION, 5.0, SyncVariable::Direction::INC, 0.0);
 						x_slide_pos.state = SyncVariable::State::OFF;
 
-						SyncVariable y_slide_pos(SyncVariable::Type::POSITION, 0.0, SyncVariable::Direction::INC, 4.0);
+						SyncVariable y_slide_pos(SyncVariable::Type::POSITION, 5.0, SyncVariable::Direction::INC, 4.0);
 						y_slide_pos.state = SyncVariable::State::OFF;
 
 						SyncVariable z_slide_pos(SyncVariable::Type::POSITION, 5.0, SyncVariable::Direction::INC, 0.0);
@@ -385,16 +385,18 @@ void ModuleImpl::d3d11_system_events()
 						auto& lookat_time_aspect{ lookatJointEntity->makeAspect(core::timeAspect::id) };
 						auto& lookat_world_aspect{ lookatJointEntity->makeAspect(core::worldAspect::id) };
 
+
 						lookat_world_aspect.addComponent<transform::WorldPosition>("lookat_output");
 
 
 						lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_dest", core::maths::Real3Vector(0.0, 0.0, -20.0));
+						lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_localpos", core::maths::Real3Vector(0.0, 0.0, 0.0));
 
 						lookat_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
 							{
 								{"lookatJointAnim.output", "lookat_output"},
 								{"lookatJointAnim.dest", "lookat_dest"},
-
+								{"lookatJointAnim.localpos", "lookat_localpos"},
 							},
 							helpers::animators::makeLookatJointAnimator())
 						);

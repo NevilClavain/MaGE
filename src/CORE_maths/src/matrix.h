@@ -100,6 +100,21 @@ namespace mage
 
                 static void matrixMult(Matrix* p_mA, Matrix* p_mB, Matrix* p_mRes);
 
+                static Matrix buildTranslation(double p_x, double p_y, double p_z)
+                {
+                    Matrix t;
+                    t.translation(p_x, p_y, p_z);
+                    return t;
+                }
+
+                static Matrix buildTranslation(const Real3Vector& p_pos)
+                {
+                    Matrix t;
+                    t.translation(p_pos);
+                    return t;
+                }
+
+
             private:
 
                 ConfigurationInfo   m_configinfos;
