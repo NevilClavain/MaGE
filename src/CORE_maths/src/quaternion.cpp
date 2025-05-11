@@ -143,20 +143,29 @@ Quaternion Quaternion::lookRotation(const Real3Vector& p_forward, const Real3Vec
 	auto forward = p_forward;
 	forward.normalize();
 
-	const auto right{ Real3Vector::crossProduct(p_up, forward) };
+	auto up = p_up;
+	up.normalize();
 
-	const auto up{ Real3Vector::crossProduct(forward, right) };
+	auto right{ Real3Vector::crossProduct(up, forward) };
+
+	auto up_adjusted{ Real3Vector::crossProduct(forward, right) };
+
+
+	right.normalize();
+	up_adjusted.normalize();
+
 
 	const double m00{ right[0] };
 	const double m01{ right[1] };
 	const double m02{ right[2] };
-	const double m10{ up[0]};
-	const double m11{ up[1] };
-	const double m12{ up[2] };
+	const double m10{ up_adjusted[0]};
+	const double m11{ up_adjusted[1] };
+	const double m12{ up_adjusted[2] };
 	const double m20{ forward[0] };
 	const double m21{ forward[1] };
 	const double m22{ forward[2] };
 
+	
 	const double num8{ (m00 + m11) + m22 };
 	if (num8 > 0.0)
 	{
@@ -195,6 +204,8 @@ Quaternion Quaternion::lookRotation(const Real3Vector& p_forward, const Real3Vec
 	result[1] = (m21 + m12) * num2;
 	result[2] = 0.5 * num5;
 	result[3] = (m01 - m10) * num2;
+	
+
 	return result;
 	
 }
