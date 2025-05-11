@@ -190,7 +190,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 	else if (VK_F8 == p_key)
 	{
 		// switch camera projection type
-
+		/*
 		if (m_is_perspective)
 		{
 			mage::helpers::updateCameraProjection(m_entitygraph, "camera_Entity", m_orthogonal_projection);
@@ -201,6 +201,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 			mage::helpers::updateCameraProjection(m_entitygraph, "camera_Entity", m_perpective_projection);
 			m_is_perspective = true;
 		}
+		*/
 	}
 
 	else if (VK_F9 == p_key)

@@ -413,41 +413,6 @@ void ModuleImpl::complete_scenegraph(const std::string& p_mainWindowsEntityId)
 
 		m_raptorEntity = entity;
 	}
-	
-
-	/////////////// add camera with gimbal lock jointure ////////////////
-
-	auto& gblJointEntityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "gblJoint_Entity") };
-
-	const auto gblJointEntity{ gblJointEntityNode.data() };
-
-	gblJointEntity->makeAspect(core::timeAspect::id);
-	auto& gbl_world_aspect{ gblJointEntity->makeAspect(core::worldAspect::id) };
-
-	gbl_world_aspect.addComponent<transform::WorldPosition>("gbl_output");
-
-	gbl_world_aspect.addComponent<double>("gbl_theta", 0);
-	gbl_world_aspect.addComponent<double>("gbl_phi", 0);
-	gbl_world_aspect.addComponent<double>("gbl_speed", 0);
-	gbl_world_aspect.addComponent<maths::Real3Vector>("gbl_pos", maths::Real3Vector(-50.0, skydomeInnerRadius + groundLevel + 5, 1.0));
-
-	gbl_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
-		{
-			// input-output/components keys id mapping
-			{"gimbalLockJointAnim.theta", "gbl_theta"},
-			{"gimbalLockJointAnim.phi", "gbl_phi"},
-			{"gimbalLockJointAnim.position", "gbl_pos"},
-			{"gimbalLockJointAnim.speed", "gbl_speed"},
-			{"gimbalLockJointAnim.output", "gbl_output"}
-
-		}, helpers::animators::makeGimbalLockJointAnimator()));
-
-
-	// add camera
-	m_perpective_projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
-	m_orthogonal_projection.orthogonal(characteristics_v_width * 100, characteristics_v_height * 100, 1.0, 100000.00000000000);
-
-	helpers::plugCamera(m_entitygraph, m_perpective_projection, "gblJoint_Entity", "camera_Entity");
 }
 
 
