@@ -591,6 +591,55 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_mainWindowsE
 		m_skydomeEntity = entity;
 	}
 
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////// add cameras
+
+	m_perpective_projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
+	m_orthogonal_projection.orthogonal(characteristics_v_width * 100, characteristics_v_height * 100, 1.0, 100000.00000000000);
+
+
+
+
+
+
+	/////////////// ad shadow map camera 
+	
+	auto& lookatJointEntityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "shadowmap_lookatJoint_Entity") };
+
+	const auto lookatJointEntity{ lookatJointEntityNode.data() };
+
+	auto& lookat_time_aspect{ lookatJointEntity->makeAspect(core::timeAspect::id) };
+	auto& lookat_world_aspect{ lookatJointEntity->makeAspect(core::worldAspect::id) };
+
+	lookat_world_aspect.addComponent<transform::WorldPosition>("lookat_output");
+
+	lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_dest", core::maths::Real3Vector(0.0, skydomeInnerRadius + groundLevel, 0.0));
+	lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_localpos", core::maths::Real3Vector(-50.0, skydomeInnerRadius + groundLevel + 250, 1.0));
+
+	lookat_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
+		{
+			{"lookatJointAnim.output", "lookat_output"},
+			{"lookatJointAnim.dest", "lookat_dest"},
+			{"lookatJointAnim.localpos", "lookat_localpos"},
+
+		},
+		helpers::animators::makeLookatJointAnimator())
+	);
+
+
+
+	// add camera
+
+	helpers::plugCamera(m_entitygraph, m_perpective_projection, "shadowmap_lookatJoint_Entity", "shadowmap_camera_Entity");
+	
+
+
+
+
+
+
+
 	/////////////// add camera with gimbal lock jointure ////////////////
 
 	auto& gblJointEntityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "gblJoint_Entity") };
@@ -620,8 +669,6 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_mainWindowsE
 
 
 	// add camera
-	m_perpective_projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
-	m_orthogonal_projection.orthogonal(characteristics_v_width * 100, characteristics_v_height * 100, 1.0, 100000.00000000000);
 
 	helpers::plugCamera(m_entitygraph, m_perpective_projection, "gblJoint_Entity", "camera_Entity");
 
