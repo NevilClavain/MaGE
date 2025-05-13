@@ -23,52 +23,43 @@
 */
 /* -*-LIC_END-*- */
 
-#include "samplesbase.h"
+#include "samplesopenenv.h"
 #include <string>
 
 #include "maths_helpers.h"
 
 #include "aspects.h"
-#include "sysengine.h"
+#include "datacloud.h"
 
-
-#include "syncvariable.h"
-
-
-#include "resourcesystem.h"
 
 using namespace mage;
 using namespace mage::core;
 using namespace mage::rendering;
 
-void SamplesBase::run(void)
+void SamplesOpenEnv::run(void)
 {
+	SamplesBase::run();
+
 	/////////////////////////////////////////////////////
 
-	auto sysEngine{ SystemEngine::getInstance() };
-	sysEngine->run();
+	// update shadowmap camera pos/direction
 
-	////////////////////////////////////////////////////////
-	// loading gear
-	{
-		const auto resourceSystem{ sysEngine->getSystem<mage::ResourceSystem>(resourceSystemSlot) };
+	const auto shadowmap_lookatJoint_Entity{ m_entitygraph.node("shadowmap_lookatJoint_Entity").data() };
 
-		const auto& rendering_aspect{ m_loading_gear->aspectAccess(renderingAspect::id) };
-		rendering::DrawingControl& dc{ rendering_aspect.getComponent<rendering::DrawingControl>("sprite2D_dc")->getPurpose() };
+	auto& lookat_world_aspect{ shadowmap_lookatJoint_Entity->aspectAccess(core::worldAspect::id) };
 
-		if (resourceSystem->getNbBusyRunners() > 0)
-		{
-			dc.draw = true;
+	mage::core::maths::Real4Vector light_cartesian;
 
-			const auto& time_aspect{ m_loading_gear->aspectAccess(timeAspect::id) };
-			core::SyncVariable& z_rot{ time_aspect.getComponent<SyncVariable>("z_rot")->getPurpose() };
+	auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	light_cartesian = dataCloud->readDataValue<maths::Real4Vector>("std.light0.dir");
 
-			z_rot.step = 2 * core::maths::pi * 0.25;
-			z_rot.direction = SyncVariable::Direction::INC;
-		}
-		else
-		{
-			dc.draw = false;
-		}
-	}	
+	light_cartesian.normalize();
+	light_cartesian.scale(200.0);
+
+	
+
+	core::maths::Real3Vector& lookat_localpos{ lookat_world_aspect.getComponent<core::maths::Real3Vector>("lookat_localpos")->getPurpose() };
+	lookat_localpos[0] = -light_cartesian[0];
+	lookat_localpos[1] = (-light_cartesian[1] + skydomeInnerRadius + groundLevel);
+	lookat_localpos[2] = -light_cartesian[2];
 }

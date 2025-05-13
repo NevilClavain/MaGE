@@ -43,6 +43,7 @@ namespace mage
         SamplesOpenEnv& operator=(const SamplesOpenEnv& t) = delete;
 
         void                            init(const std::string p_appWindowsEntityName);
+        void                            run(void);
 
     protected:
 

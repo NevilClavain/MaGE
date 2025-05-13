@@ -30,17 +30,7 @@
 #include "datacloud.h"
 #include "sysengine.h"
 
-#include "linemeshe.h"
-#include "trianglemeshe.h"
-#include "renderstate.h"
 
-#include "syncvariable.h"
-
-#include "worldposition.h"
-#include "animatorfunc.h"
-#include "animators_helpers.h"
-
-#include "resourcesystem.h"
 
 #include "maths_helpers.h"
 
@@ -90,25 +80,6 @@ void ModuleImpl::run(void)
 		mage::core::maths::sphericaltoCartesian(light_spherical, light_cartesian);
 
 		dataCloud->updateDataValue<maths::Real4Vector>("std.light0.dir", light_cartesian);
-
-		// update shadowmap camera pos/direction
-
-		const auto shadowmap_lookatJoint_Entity{ m_entitygraph.node("shadowmap_lookatJoint_Entity").data() };
-
-		auto& lookat_world_aspect{ shadowmap_lookatJoint_Entity->aspectAccess(core::worldAspect::id) };
-
-
-		light_cartesian.normalize();
-		light_cartesian.scale(200.0);
-
-		
-
-		core::maths::Real3Vector& lookat_localpos{ lookat_world_aspect.getComponent<core::maths::Real3Vector>("lookat_localpos")->getPurpose() };
-		lookat_localpos[0] = -light_cartesian[0];
-		lookat_localpos[1] = (-light_cartesian[1] + skydomeInnerRadius + groundLevel);
-		lookat_localpos[2] = -light_cartesian[2];
-
-
 
 	}
 }
