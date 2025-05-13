@@ -306,8 +306,8 @@ void ModuleImpl::d3d11_system_events()
 					{
 						///////Select camera
 
-						//m_currentCamera = "camera_Entity";
-						m_currentCamera = "shadowmap_camera_Entity";
+						m_currentCamera = "camera_Entity";
+						//m_currentCamera = "shadowmap_camera_Entity";
 
 						auto debugChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_Debug_Queue_Entity") };
 						debugChannelRenderingQueue->setMainView(m_currentCamera);
@@ -334,7 +334,7 @@ void ModuleImpl::d3d11_system_events()
 
 
 						auto shadowMapChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
-						shadowMapChannelRenderingQueue->setMainView(m_currentCamera);
+						shadowMapChannelRenderingQueue->setMainView("shadowmap_camera_Entity");
 
 					}
 				}
