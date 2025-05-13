@@ -596,14 +596,14 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_mainWindowsE
 	///////////////// add cameras
 
 	m_perpective_projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
-	m_orthogonal_projection.orthogonal(characteristics_v_width * 100, characteristics_v_height * 100, 1.0, 100000.00000000000);
+	m_orthogonal_projection.orthogonal(characteristics_v_width * 200, characteristics_v_height * 200, 1.0, 100000.00000000000);
 
 
 
 
 
 
-	/////////////// ad shadow map camera 
+	/////////////// add shadow map camera 
 	
 	auto& lookatJointEntityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "shadowmap_lookatJoint_Entity") };
 
@@ -615,7 +615,9 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_mainWindowsE
 	lookat_world_aspect.addComponent<transform::WorldPosition>("lookat_output");
 
 	lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_dest", core::maths::Real3Vector(0.0, skydomeInnerRadius + groundLevel, 0.0));
-	lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_localpos", core::maths::Real3Vector(-50.0, skydomeInnerRadius + groundLevel + 250, 1.0));
+
+	//lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_localpos", core::maths::Real3Vector(-50.0, skydomeInnerRadius + groundLevel + 250, 1.0));
+	lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_localpos");
 
 	lookat_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
 		{
@@ -631,7 +633,8 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_mainWindowsE
 
 	// add camera
 
-	helpers::plugCamera(m_entitygraph, m_perpective_projection, "shadowmap_lookatJoint_Entity", "shadowmap_camera_Entity");
+	//helpers::plugCamera(m_entitygraph, m_perpective_projection, "shadowmap_lookatJoint_Entity", "shadowmap_camera_Entity");
+	helpers::plugCamera(m_entitygraph, m_orthogonal_projection, "shadowmap_lookatJoint_Entity", "shadowmap_camera_Entity");
 	
 
 
