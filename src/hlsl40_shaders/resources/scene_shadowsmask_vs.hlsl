@@ -38,7 +38,6 @@ struct VS_INPUT
 struct VS_OUTPUT 
 {
    float4 Position : SV_POSITION;
-   float4 TexCoord0 : TEXCOORD0;
 };
 
 VS_OUTPUT vs_main( VS_INPUT Input )
@@ -50,9 +49,6 @@ VS_OUTPUT vs_main( VS_INPUT Input )
     pos.w = 1.0;
 
     Output.Position = mul(pos, mat[matWorldViewProjection]);
-
-    float4 wvp = mul(pos, mat[matWorldView]);
-    Output.TexCoord0 = wvp;
     
     return( Output );   
 }
