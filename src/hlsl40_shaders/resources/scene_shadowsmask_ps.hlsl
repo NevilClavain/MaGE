@@ -28,30 +28,26 @@ cbuffer constargs : register(b0)
     Matrix mat[512];
 };
 
-#include "mat_input_constants.hlsl"
 
-struct VS_INPUT
+struct PS_INTPUT 
 {
-    float3 Position : POSITION;
+    float4 Position : SV_POSITION;
     float4 TexCoord0 : TEXCOORD0;
 };
 
-struct VS_OUTPUT
+float ps_main(PS_INTPUT input) : SV_Target
 {
-    float4 Position : SV_POSITION;
-    float2 TexCoord0 : TEXCOORD0;
-};
-
-VS_OUTPUT vs_main(VS_INPUT Input)
-{
-    VS_OUTPUT Output;
-    float4 pos;
+    /*
+    float4 vw_pos = input.TexCoord0;        
+    return vw_pos.z;
+    */
     
-    pos.xyz = Input.Position;
-    pos.w = 1.0;
-
-    Output.Position = mul(pos, mat[matWorldViewProjection]);
-    Output.TexCoord0 = Input.TexCoord0.xy;
+    float4 color;
     
-    return (Output);
+    color.r = 1.0;
+    color.g = 1.0;
+    color.b = 1.0;
+    color.a = 1.0;
+    
+    return color;
 }

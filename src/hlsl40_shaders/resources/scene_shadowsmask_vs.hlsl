@@ -28,24 +28,31 @@ cbuffer constargs : register(b0)
     Matrix mat[512];
 };
 
-Texture2D shadowMap : register(t0);
-SamplerState shadowMapSampler : register(s0);
+#include "mat_input_constants.hlsl"
 
-struct PS_INTPUT 
+struct VS_INPUT 
 {
-    float4 Position : SV_POSITION;    
-    float2 TexCoord0 : TEXCOORD0;
+   float3 Position : POSITION;
 };
 
-float4 ps_main(PS_INTPUT input) : SV_Target
-{       
-    float4 color;
-        
-    color.r = 1.0;
-    color.g = 1.0;
-    color.b = 1.0;
-    color.a = 1.0;
-        
-    //color = shadowMap.Sample(shadowMapSampler, input.TexCoord0);    
-    return color;
+struct VS_OUTPUT 
+{
+   float4 Position : SV_POSITION;
+   float4 TexCoord0 : TEXCOORD0;
+};
+
+VS_OUTPUT vs_main( VS_INPUT Input )
+{
+    VS_OUTPUT Output;
+    float4 pos;
+    
+    pos.xyz = Input.Position;    
+    pos.w = 1.0;
+
+    Output.Position = mul(pos, mat[matWorldViewProjection]);
+
+    float4 wvp = mul(pos, mat[matWorldView]);
+    Output.TexCoord0 = wvp;
+    
+    return( Output );   
 }

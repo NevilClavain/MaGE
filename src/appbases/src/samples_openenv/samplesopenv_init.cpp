@@ -401,8 +401,8 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 					mage::helpers::plugRenderingQueue(m_entitygraph, shadowsChannelRenderingQueue, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
 
-					create_openenv_shadows_channel_rendergraph("bufferRendering_Scene_ShadowsChannel_Queue_Entity");
-					//create_openenv_shadows_channel_rendergraph("bufferRendering_Scene_Debug_Queue_Entity");
+					//create_openenv_shadows_channel_rendergraph("bufferRendering_Scene_ShadowsChannel_Queue_Entity");
+					create_openenv_shadows_channel_rendergraph("bufferRendering_Scene_Debug_Queue_Entity");
 
 				}
 				break;
@@ -1631,7 +1631,7 @@ void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::strin
 		const std::vector<RenderState> ground_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
 
 		const auto ground_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "ground_ShadowsChannel_Proxy_Entity",
-															"scene_shadows_vs", "scene_shadows_ps",
+															"scene_shadowsmask_vs", "scene_shadowsmask_ps",
 															ground_rs_list,
 															1000) };
 
@@ -1674,7 +1674,7 @@ void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::strin
 		const std::vector<RenderState> sphere_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
 
 		const auto sphere_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "sphere_ShadowsChannel_Proxy_Entity",
-															"scene_shadows_vs", "scene_shadows_ps",
+															"scene_shadowsmask_vs", "scene_shadowsmask_ps",
 															sphere_rs_list,
 															1000) };
 
