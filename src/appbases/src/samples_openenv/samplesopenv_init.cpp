@@ -177,7 +177,8 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					// SHADOWMAP TARGET TEXTURE
 
 
-					helpers::plugTargetTexture(m_entitygraph, p_id, "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_RGB, /*w_width, w_height*/ 1024, 1024)));
+					//helpers::plugTargetTexture(m_entitygraph, p_id, "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_RGB, 1024, 1024)));
+					helpers::plugTargetTexture(m_entitygraph, p_id, "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 1024, 1024)));
 
 
 
@@ -1715,22 +1716,16 @@ void SamplesOpenEnv::create_openenv_shadowmap_channel_rendergraph(const std::str
 		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
 		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
 		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
+		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
 
 		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
 
 		const std::vector<RenderState> ground_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
 
-
-		const std::vector<std::pair<size_t, std::pair<std::string, Texture>>> ground_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("grass08.jpg", Texture())) };
-
-
-
 		const auto ground_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "ground_ShadowMapChannel_Proxy_Entity",
-															"scene_recursive_texture_vs", "scene_recursive_texture_ps",
+															"scene_zdepth_vs", "scene_zdepth_ps",
 															ground_rs_list,
-															1000,
-															ground_textures) };
+															1000) };
 
 
 		//////////////////////////////////////////////////////////////////////
@@ -1761,22 +1756,16 @@ void SamplesOpenEnv::create_openenv_shadowmap_channel_rendergraph(const std::str
 		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
 		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
 		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
+		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
 
 		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
 
 		const std::vector<RenderState> sphere_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
 
-
-		const std::vector<std::pair<size_t, std::pair<std::string, Texture>>> sphere_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("marbre.jpg", Texture())) };
-
-
-
 		const auto sphere_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "sphere_ShadowMapChannel_Proxy_Entity",
-															"scene_texture1stage_keycolor_vs", "scene_texture1stage_keycolor_ps",
+															"scene_zdepth_vs", "scene_zdepth_ps",
 															sphere_rs_list,
-															1000,
-															sphere_textures) };
+															1000) };
 
 
 		//////////////////////////////////////////////////////////////////////
@@ -1814,7 +1803,7 @@ void SamplesOpenEnv::create_openenv_shadowmap_channel_rendergraph(const std::str
 		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
 
 		const auto tree_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "tree_ShadowMapChannel_Proxy_Entity",
-															"scene_texture1stage_keycolor_vs", "scene_texture1stage_keycolor_ps",
+															"scene_zdepth_vs", "scene_zdepth_ps",
 															tree_rs_list,
 															1000,
 															tree_textures) };
