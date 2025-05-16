@@ -28,24 +28,32 @@ cbuffer constargs : register(b0)
     Matrix mat[512];
 };
 
+Texture2D shadowMap : register(t0);
+SamplerState shadowMapSampler : register(s0);
 
 struct PS_INTPUT 
 {
     float4 Position : SV_POSITION;
+    
+    float2 TexCoord0 : TEXCOORD0;    //position from secondary view (shadow map scene)
 };
 
 float4 ps_main(PS_INTPUT input) : SV_Target
-{
-    /*
-    float4 vw_pos = input.TexCoord0;        
-    return vw_pos.z;
-    */
-    
+{    
     float4 color;
+   
+    // compute shadow map text coord
+    float2 shadowmap_texcoords;
+    shadowmap_texcoords.x = saturate((input.TexCoord0.x + 1.0) / 2.0);
+    shadowmap_texcoords.y = saturate(1.0 - (input.TexCoord0.y + 1.0) / 2.0);
     
-    color.r = 0.0;
-    color.g = 1.0;
-    color.b = 0.0;
+    // get shadow map depth
+    float depth = shadowMap.Sample(shadowMapSampler, shadowmap_texcoords);
+           
+    // TEMP
+    color.r = shadowmap_texcoords.x;
+    color.g = depth / 1000000;
+    color.b = shadowmap_texcoords.y;
     color.a = 1.0;
     
     return color;

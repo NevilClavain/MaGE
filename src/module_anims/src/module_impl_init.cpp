@@ -311,6 +311,7 @@ void ModuleImpl::d3d11_system_events()
 
 						auto debugChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_Debug_Queue_Entity") };
 						debugChannelRenderingQueue->setMainView(m_currentCamera);
+						debugChannelRenderingQueue->setSecondaryView("shadowmap_camera_Entity");
 
 
 						auto texturesChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Queue_Entity") };
@@ -324,6 +325,10 @@ void ModuleImpl::d3d11_system_events()
 
 						auto shadowsChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
 						shadowsChannelRenderingQueue->setMainView(m_currentCamera);
+
+						shadowsChannelRenderingQueue->setSecondaryView("shadowmap_camera_Entity");
+						
+
 
 
 						auto litChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_LitChannel_Queue_Entity") };

@@ -32,23 +32,30 @@ cbuffer constargs : register(b0)
 
 struct VS_INPUT 
 {
-   float3 Position : POSITION;
+    float3 Position : POSITION;
 };
 
 struct VS_OUTPUT 
 {
-   float4 Position : SV_POSITION;
+    float4 Position : SV_POSITION;
+    float2 TexCoord0 : TEXCOORD0;
 };
 
 VS_OUTPUT vs_main( VS_INPUT Input )
 {
     VS_OUTPUT Output;
     float4 pos;
-    
     pos.xyz = Input.Position;    
     pos.w = 1.0;
-
-    Output.Position = mul(pos, mat[matWorldViewProjection]);
+    
+    // compute vertex position from main view (shadows mask scene) 
+    float4 projected_pos_mainview = mul(pos, mat[matWorldViewProjection]);
+    
+    // compute vertex position from secondary view (shadow map scene)    
+    float4 projected_pos_secondaryview = mul(pos, mat[matWorldViewProjectionSecondary]);
+    
+    Output.Position = projected_pos_mainview;        
+    Output.TexCoord0 = projected_pos_secondaryview.xy;
     
     return( Output );   
 }
