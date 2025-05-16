@@ -35,7 +35,9 @@ struct PS_INTPUT
 {
     float4 Position : SV_POSITION;
     
-    float2 TexCoord0 : TEXCOORD0;    //position from secondary view (shadow map scene)
+    float2 TexCoord0 : TEXCOORD0;    //projected position from secondary view (shadow map scene)
+    
+    float4 TexCoord1 : TEXCOORD1;   //position from secondary view (shadow map scene)
 };
 
 float4 ps_main(PS_INTPUT input) : SV_Target
@@ -48,12 +50,22 @@ float4 ps_main(PS_INTPUT input) : SV_Target
     shadowmap_texcoords.y = saturate(1.0 - (input.TexCoord0.y + 1.0) / 2.0);
     
     // get shadow map depth
-    float depth = shadowMap.Sample(shadowMapSampler, shadowmap_texcoords);
-           
-    // TEMP
-    color.r = shadowmap_texcoords.x;
-    color.g = depth / 1000000;
-    color.b = shadowmap_texcoords.y;
+    float shadowmap_depth = shadowMap.Sample(shadowMapSampler, shadowmap_texcoords);
+        
+    float current_depth = input.TexCoord1.z;
+    
+    if (current_depth < shadowmap_depth)
+    {
+        color.r = 0.0;
+        color.g = 0.0;
+        color.b = 0.0;        
+    }
+    else
+    {
+        color.r = 1.0;
+        color.g = 1.0;
+        color.b = 1.0;        
+    }
     color.a = 1.0;
     
     return color;

@@ -127,8 +127,8 @@ void SamplesBase::d3d11_system_events_base()
 					const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 
 					dataCloud->registerData<maths::Real4Vector>("screen_channel_number");
-					//dataCloud->updateDataValue<maths::Real4Vector>("screen_channel_number", maths::Real4Vector(0.0, 0.0, 0.0, 0.0));
-					dataCloud->updateDataValue<maths::Real4Vector>("screen_channel_number", maths::Real4Vector(1.0, 0.0, 0.0, 0.0));
+					dataCloud->updateDataValue<maths::Real4Vector>("screen_channel_number", maths::Real4Vector(0.0, 0.0, 0.0, 0.0));
+					//dataCloud->updateDataValue<maths::Real4Vector>("screen_channel_number", maths::Real4Vector(1.0, 0.0, 0.0, 0.0));
 
 
 

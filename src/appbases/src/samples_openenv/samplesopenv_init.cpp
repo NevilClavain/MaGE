@@ -178,7 +178,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 
 					//helpers::plugTargetTexture(m_entitygraph, p_id, "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_RGB, 1024, 1024)));
-					helpers::plugTargetTexture(m_entitygraph, p_id, "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 1024, 1024)));
+					helpers::plugTargetTexture(m_entitygraph, p_id, "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 2048, 2048)));
 
 
 
@@ -401,8 +401,8 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 					mage::helpers::plugRenderingQueue(m_entitygraph, shadowsChannelRenderingQueue, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
 
-					//create_openenv_shadows_channel_rendergraph("bufferRendering_Scene_ShadowsChannel_Queue_Entity");
-					create_openenv_shadows_channel_rendergraph("bufferRendering_Scene_Debug_Queue_Entity");
+					create_openenv_shadows_channel_rendergraph("bufferRendering_Scene_ShadowsChannel_Queue_Entity");
+					//create_openenv_shadows_channel_rendergraph("bufferRendering_Scene_Debug_Queue_Entity");
 
 				}
 				break;
@@ -1704,6 +1704,54 @@ void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::strin
 		auto& proxy_world_aspect{ sphere_proxy_entity->makeAspect(core::worldAspect::id) };
 		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
 
+	}
+
+
+	///// add tree
+
+	{
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
+		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
+		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
+		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
+
+		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
+
+		const std::vector<RenderState> tree_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
+
+		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
+
+		const auto tree_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "tree_ShadowsChannel_Proxy_Entity",
+															"scene_shadowsmask_vs", "scene_shadowsmask_ps",
+															tree_rs_list,
+															1000,
+															tree_textures) };
+
+		//////////////////////////////////////////////////////////////////////
+
+		// link triangle meshe to related entity in scenegraph side 
+		auto& tree_resource_aspect{ m_treeEntity->aspectAccess(core::resourcesAspect::id) };
+		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &tree_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
+
+		auto& proxy_resource_aspect{ tree_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
+
+		//////////////////////////////////////////////////////////////////////
+
+		// link transforms to related entity in scenegraph side 
+		auto& tree_world_aspect{ m_treeEntity->aspectAccess(core::worldAspect::id) };
+		transform::WorldPosition* position_ref{ &tree_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+
+		auto& proxy_world_aspect{ tree_proxy_entity->makeAspect(core::worldAspect::id) };
+		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
+
+		////////////////////////////////////////////////////////////////////////
+		/*
+		auto& tree_rendering_aspect{ tree_proxy_entity->aspectAccess(core::renderingAspect::id) };
+
+		rendering::DrawingControl& drawingControl{ tree_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+		drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
+		*/
 	}
 	
 }
