@@ -50,11 +50,12 @@ float4 ps_main(PS_INTPUT input) : SV_Target
     shadowmap_texcoords.y = saturate(1.0 - (input.TexCoord0.y + 1.0) / 2.0);
     
     // get shadow map depth
-    float shadowmap_depth = shadowMap.Sample(shadowMapSampler, shadowmap_texcoords);
-        
+    float shadowmap_depth = shadowMap.Sample(shadowMapSampler, shadowmap_texcoords);        
     float current_depth = input.TexCoord1.z;
     
-    if (current_depth < shadowmap_depth)
+    float bias = 0.001;
+    
+    if (current_depth < shadowmap_depth - bias)
     {
         color.r = 0.0;
         color.g = 0.0;
