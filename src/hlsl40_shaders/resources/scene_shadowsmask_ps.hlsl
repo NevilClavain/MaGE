@@ -71,16 +71,9 @@ float4 ps_main(PS_INTPUT input) : SV_Target
             mask_val = 0.0;
         }
         
-        color.rgb = mask_val;
+        
     }
-    else
-    {
-        color.r = 1.0;
-        color.g = 0.0;
-        color.b = 0.0;
-    }
-    
-    color.a = 1.0;
+    color.rgba = mask_val;
     
     return color;
 }
