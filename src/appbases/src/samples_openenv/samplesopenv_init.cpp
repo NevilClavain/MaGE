@@ -597,7 +597,7 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_mainWindowsE
 	///////////////// add cameras
 
 	m_perpective_projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
-	m_orthogonal_projection.orthogonal(characteristics_v_width * 200, characteristics_v_height * 200, 1.0, 100000.00000000000);
+	m_orthogonal_projection.orthogonal(characteristics_v_width * 400, characteristics_v_height * 400, 1.0, 100000.00000000000);
 
 
 

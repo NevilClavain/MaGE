@@ -43,30 +43,43 @@ struct PS_INTPUT
 float4 ps_main(PS_INTPUT input) : SV_Target
 {    
     float4 color;
+    
+    float mask_val = 1.0;
    
     // compute shadow map text coord
     float2 shadowmap_texcoords;
+    
+    /*
     shadowmap_texcoords.x = saturate((input.TexCoord0.x + 1.0) / 2.0);
     shadowmap_texcoords.y = saturate(1.0 - (input.TexCoord0.y + 1.0) / 2.0);
+    */
     
-    // get shadow map depth
-    float shadowmap_depth = shadowMap.Sample(shadowMapSampler, shadowmap_texcoords);        
-    float current_depth = input.TexCoord1.z;
+    shadowmap_texcoords.x = (input.TexCoord0.x + 1.0) / 2.0;
+    shadowmap_texcoords.y = 1.0 - (input.TexCoord0.y + 1.0) / 2.0;
     
-    float bias = 0.001;
     
-    if (current_depth < shadowmap_depth - bias)
+    if (shadowmap_texcoords.x >= 0.0 && shadowmap_texcoords.x <= 1.0 && shadowmap_texcoords.y >= 0.0 && shadowmap_texcoords.y <= 1.0)
     {
-        color.r = 0.0;
-        color.g = 0.0;
-        color.b = 0.0;        
+        // get shadow map depth
+        float shadowmap_depth = shadowMap.Sample(shadowMapSampler, shadowmap_texcoords);
+        float current_depth = input.TexCoord1.z;
+    
+        float bias = 0.05;
+    
+        if (current_depth < shadowmap_depth - bias)
+        {
+            mask_val = 0.0;
+        }
+        
+        color.rgb = mask_val;
     }
     else
     {
         color.r = 1.0;
-        color.g = 1.0;
-        color.b = 1.0;        
+        color.g = 0.0;
+        color.b = 0.0;
     }
+    
     color.a = 1.0;
     
     return color;

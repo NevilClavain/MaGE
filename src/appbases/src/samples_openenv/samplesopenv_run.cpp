@@ -54,7 +54,7 @@ void SamplesOpenEnv::run(void)
 	light_cartesian = dataCloud->readDataValue<maths::Real4Vector>("std.light0.dir");
 
 	light_cartesian.normalize();
-	light_cartesian.scale(200.0);
+	light_cartesian.scale(400.0);
 
 	
 
