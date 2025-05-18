@@ -165,44 +165,15 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 
 
-					dataCloud->registerData<maths::Real4Vector>("shadow_bias_little");
-					dataCloud->updateDataValue<maths::Real4Vector>("shadow_bias_little", maths::Real4Vector(0.05, 0, 0, 0));
+					dataCloud->registerData<maths::Real4Vector>("shadow_bias");
+					dataCloud->updateDataValue<maths::Real4Vector>("shadow_bias", maths::Real4Vector(0.005, 0, 0, 0));
 
-					dataCloud->registerData<maths::Real4Vector>("shadow_bias_huge");
-					dataCloud->updateDataValue<maths::Real4Vector>("shadow_bias_huge", maths::Real4Vector(0.05, 0, 0, 0));
 
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// SCENEGRAPH
 
 					create_openenv_scenegraph(p_id);
-
-
-
-					///////////////////////////////////////////////////////////////////////////////////////////////////////////
-					// SHADOWMAP TARGET TEXTURE
-
-
-					//helpers::plugTargetTexture(m_entitygraph, p_id, "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_RGB, 1024, 1024)));
-					helpers::plugTargetTexture(m_entitygraph, p_id, "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 2048, 2048)));
-
-
-
-					rendering::Queue shadowMapChannelRenderingQueue("shadowmap_channel_queue");
-					shadowMapChannelRenderingQueue.setTargetClearColor({ 255, 255, 255, 255 });
-					shadowMapChannelRenderingQueue.enableTargetClearing(true);
-					shadowMapChannelRenderingQueue.enableTargetDepthClearing(true);
-					shadowMapChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
-
-					mage::helpers::plugRenderingQueue(m_entitygraph, shadowMapChannelRenderingQueue, "shadowMap_Texture_Entity", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
-
-
-					create_openenv_shadowmap_channel_rendergraph("bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
-					
-					//create_openenv_shadowmap_channel_rendergraph("bufferRendering_Scene_Debug_Queue_Entity");
-
-
-
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// RENDERGRAPH
@@ -408,8 +379,25 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 					mage::helpers::plugRenderingQueue(m_entitygraph, shadowsChannelRenderingQueue, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
 
+
+					///////////////////////////////////////////////////////////////////////////////////////////////////////////
+					// SHADOWMAP TARGET TEXTURE
+					// Plug shadowmap just bellow, to be sure shadowmap is rendered before shadosw mask PASS above (remind : leaf to root order)
+					helpers::plugTargetTexture(m_entitygraph, "bufferRendering_Scene_ShadowsChannel_Queue_Entity", "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 2048, 2048)));
+
+					rendering::Queue shadowMapChannelRenderingQueue("shadowmap_channel_queue");
+					shadowMapChannelRenderingQueue.setTargetClearColor({ 255, 255, 255, 255 });
+					shadowMapChannelRenderingQueue.enableTargetClearing(true);
+					shadowMapChannelRenderingQueue.enableTargetDepthClearing(true);
+					shadowMapChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
+
+					mage::helpers::plugRenderingQueue(m_entitygraph, shadowMapChannelRenderingQueue, "shadowMap_Texture_Entity", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
+					
+					//////////////////////////////////////////////////
+
 					create_openenv_shadows_channel_rendergraph("bufferRendering_Scene_ShadowsChannel_Queue_Entity");
-					//create_openenv_shadows_channel_rendergraph("bufferRendering_Scene_Debug_Queue_Entity");
+					create_openenv_shadowmap_channel_rendergraph("bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
+
 
 				}
 				break;
@@ -1671,7 +1659,7 @@ void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::strin
 		auto& ground_rendering_aspect{ ground_proxy_entity->aspectAccess(core::renderingAspect::id) };
 
 		rendering::DrawingControl& drawingControl{ ground_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("shadow_bias_huge", "shadow_bias"));
+		drawingControl.pshaders_map.push_back(std::make_pair("shadow_bias", "shadow_bias"));
 
 
 	}
@@ -1724,7 +1712,7 @@ void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::strin
 		auto& sphere_rendering_aspect{ sphere_proxy_entity->aspectAccess(core::renderingAspect::id) };
 
 		rendering::DrawingControl& drawingControl{ sphere_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("shadow_bias_little", "shadow_bias"));
+		drawingControl.pshaders_map.push_back(std::make_pair("shadow_bias", "shadow_bias"));
 
 
 	}
@@ -1774,7 +1762,7 @@ void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::strin
 
 		rendering::DrawingControl& drawingControl{ tree_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
 
-		drawingControl.pshaders_map.push_back(std::make_pair("shadow_bias_little", "shadow_bias"));
+		drawingControl.pshaders_map.push_back(std::make_pair("shadow_bias", "shadow_bias"));
 	}	
 }
 
