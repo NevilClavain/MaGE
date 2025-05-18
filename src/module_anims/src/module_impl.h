@@ -79,7 +79,7 @@ private:
     std::string                                                 m_currentCamera;
 
     double                                                      m_light_theta { 0 }; // azimutal
-    double                                                      m_light_phi   { - mage::core::maths::pi / 20 }; // elevation
+    double                                                      m_light_phi   { - mage::core::maths::pi / 3 }; // elevation
     double                                                      m_light_ray   { 1000.0 };
 
 

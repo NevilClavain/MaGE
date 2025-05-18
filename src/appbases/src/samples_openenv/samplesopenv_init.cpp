@@ -164,7 +164,13 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					dataCloud->updateDataValue<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_5", maths::Real4Vector(0.0, 0.0, 0.0, 1));
 
 
-					
+
+					dataCloud->registerData<maths::Real4Vector>("shadow_bias_little");
+					dataCloud->updateDataValue<maths::Real4Vector>("shadow_bias_little", maths::Real4Vector(0.05, 0, 0, 0));
+
+					dataCloud->registerData<maths::Real4Vector>("shadow_bias_huge");
+					dataCloud->updateDataValue<maths::Real4Vector>("shadow_bias_huge", maths::Real4Vector(0.05, 0, 0, 0));
+
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// SCENEGRAPH
@@ -183,7 +189,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 
 					rendering::Queue shadowMapChannelRenderingQueue("shadowmap_channel_queue");
-					shadowMapChannelRenderingQueue.setTargetClearColor({ 250, 0, 0, 255 });
+					shadowMapChannelRenderingQueue.setTargetClearColor({ 255, 255, 255, 255 });
 					shadowMapChannelRenderingQueue.enableTargetClearing(true);
 					shadowMapChannelRenderingQueue.enableTargetDepthClearing(true);
 					shadowMapChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
@@ -192,6 +198,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 
 					create_openenv_shadowmap_channel_rendergraph("bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
+					
 					//create_openenv_shadowmap_channel_rendergraph("bufferRendering_Scene_Debug_Queue_Entity");
 
 
@@ -1659,6 +1666,14 @@ void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::strin
 		auto& proxy_world_aspect{ ground_proxy_entity->makeAspect(core::worldAspect::id) };
 		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
 
+		///////////////////////////////////////////////////////////////////////
+
+		auto& ground_rendering_aspect{ ground_proxy_entity->aspectAccess(core::renderingAspect::id) };
+
+		rendering::DrawingControl& drawingControl{ ground_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+		drawingControl.pshaders_map.push_back(std::make_pair("shadow_bias_huge", "shadow_bias"));
+
+
 	}
 
 	///////////////	add sphere
@@ -1704,6 +1719,14 @@ void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::strin
 		auto& proxy_world_aspect{ sphere_proxy_entity->makeAspect(core::worldAspect::id) };
 		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
 
+		////////////////////////////////////////////////////////////////////////
+
+		auto& sphere_rendering_aspect{ sphere_proxy_entity->aspectAccess(core::renderingAspect::id) };
+
+		rendering::DrawingControl& drawingControl{ sphere_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+		drawingControl.pshaders_map.push_back(std::make_pair("shadow_bias_little", "shadow_bias"));
+
+
 	}
 
 
@@ -1746,14 +1769,13 @@ void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::strin
 		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
 
 		////////////////////////////////////////////////////////////////////////
-		/*
+
 		auto& tree_rendering_aspect{ tree_proxy_entity->aspectAccess(core::renderingAspect::id) };
 
 		rendering::DrawingControl& drawingControl{ tree_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
-		*/
-	}
-	
+
+		drawingControl.pshaders_map.push_back(std::make_pair("shadow_bias_little", "shadow_bias"));
+	}	
 }
 
 void SamplesOpenEnv::create_openenv_shadowmap_channel_rendergraph(const std::string& p_queueEntityId)
@@ -1795,6 +1817,10 @@ void SamplesOpenEnv::create_openenv_shadowmap_channel_rendergraph(const std::str
 		auto& proxy_world_aspect{ ground_proxy_entity->makeAspect(core::worldAspect::id) };
 		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
 
+		////////////////////////////////////////////////////////////////////////
+
+
+
 	}
 
 
@@ -1834,6 +1860,7 @@ void SamplesOpenEnv::create_openenv_shadowmap_channel_rendergraph(const std::str
 
 		auto& proxy_world_aspect{ sphere_proxy_entity->makeAspect(core::worldAspect::id) };
 		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
+
 	}
 
 	///// add tree
@@ -1880,6 +1907,10 @@ void SamplesOpenEnv::create_openenv_shadowmap_channel_rendergraph(const std::str
 
 		rendering::DrawingControl& drawingControl{ tree_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
 		drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
+
+		////////////////////////////////////////////////////////////////////////
+
+		
 
 	}
 
