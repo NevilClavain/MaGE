@@ -31,20 +31,29 @@ cbuffer constargs : register(b0)
 Texture2D shadowMap : register(t0);
 SamplerState shadowMapSampler : register(s0);
 
+Texture2D txDiffuse : register(t1);
+SamplerState txDiffuseSampler : register(s1);
+
 struct PS_INTPUT 
 {
     float4 Position : SV_POSITION;
-    
-    float2 TexCoord1 : TEXCOORD1;    //projected position from secondary view (shadow map scene)    
+    float2 TexCoord0 : TEXCOORD0;
+    float2 TexCoord1 : TEXCOORD1;    //projected position from secondary view (shadow map scene)
     float4 TexCoord2 : TEXCOORD2;   //position from secondary view (shadow map scene)
 };
 
 float4 ps_main(PS_INTPUT input) : SV_Target
-{    
-    float4 color;
+{        
+    float4 key_color = vec[57];
+    float4 texture_color = txDiffuse.Sample(txDiffuseSampler, input.TexCoord0);
     
-    float mask_val = 1.0;
+    if (texture_color.r == key_color.r && texture_color.g == key_color.g && texture_color.b == key_color.b)
+    {
+        clip(-1);
+    }
     
+    float4 color;    
+    float mask_val = 1.0;    
     float bias = vec[56].x;
    
     // compute shadow map text coord

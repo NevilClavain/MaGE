@@ -131,10 +131,10 @@ HRESULT D3D11SystemImpl::compileShaderFromMem(void* p_data, int p_size, LPCTSTR 
     // the shaders to be optimized and to run exactly the way they will run in 
     // the release configuration of this program.
 
-#ifdef _DEBUG
-    dwShaderFlags |= D3DCOMPILE_DEBUG;
-    dwShaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;  // decommmenter ce flag si besoin de debugger les shaders avec Graphics diagnostics tool
-#endif
+
+    //dwShaderFlags |= D3DCOMPILE_DEBUG;
+    //dwShaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;  // decommmenter ce flag si besoin de debugger les shaders avec Graphics diagnostics tool
+
 
     ID3DBlob* pErrorBlob;
     const auto hr{ D3DCompile((LPCTSTR)p_data, p_size, szFileName, nullptr, p_include, szEntryPoint, szShaderModel, dwShaderFlags, 0, ppBlobOut, &pErrorBlob) };

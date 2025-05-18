@@ -1,0 +1,20 @@
+{
+  "inputs": [
+    {
+      "type": "Real4Vector",
+      "body": {
+        "argument_id": "shadow_bias",
+        "register": 56,
+        "description": "bias for shadows computation"
+      }
+    },
+    {
+      "type": "Real4Vector",
+      "body": {
+        "argument_id": "key_color",
+        "register": 57,
+        "description": "key color value for pixels to clip"
+      }
+    }
+  ]
+}

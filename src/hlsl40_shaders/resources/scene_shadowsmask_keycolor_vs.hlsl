@@ -33,11 +33,13 @@ cbuffer constargs : register(b0)
 struct VS_INPUT 
 {
     float3 Position : POSITION;
+    float4 TexCoord0 : TEXCOORD0;
 };
 
 struct VS_OUTPUT 
 {
     float4 Position : SV_POSITION;
+    float2 TexCoord0 : TEXCOORD0;
     float2 TexCoord1 : TEXCOORD1;
     float4 TexCoord2 : TEXCOORD2;
 };
@@ -55,11 +57,15 @@ VS_OUTPUT vs_main( VS_INPUT Input )
     // compute vertex position from secondary view (shadow map scene)    
     float4 projected_pos_secondaryview = mul(pos, mat[matWorldViewProjectionSecondary]);
     
-    Output.Position = projected_pos_mainview;        
+    Output.Position = projected_pos_mainview;
+    Output.TexCoord0 = Input.TexCoord0.xy;
+    
+    
     Output.TexCoord1 = projected_pos_secondaryview.xy;
     
     float4 wvp = mul(pos, mat[matWorldViewSecondary]);
     Output.TexCoord2 = wvp;
-        
+    
+    
     return( Output );   
 }

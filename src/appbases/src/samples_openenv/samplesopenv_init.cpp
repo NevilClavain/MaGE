@@ -1730,10 +1730,10 @@ void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::strin
 
 		const std::vector<RenderState> tree_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
 
-		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
+		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_1, std::make_pair("tree2_tex.bmp", Texture())) };
 
 		const auto tree_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "tree_ShadowsChannel_Proxy_Entity",
-															"scene_shadowsmask_vs", "scene_shadowsmask_ps",
+															"scene_shadowsmask_keycolor_vs", "scene_shadowsmask_keycolor_ps",															
 															tree_rs_list,
 															1000,
 															tree_textures) };
@@ -1759,10 +1759,11 @@ void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::strin
 		////////////////////////////////////////////////////////////////////////
 
 		auto& tree_rendering_aspect{ tree_proxy_entity->aspectAccess(core::renderingAspect::id) };
-
 		rendering::DrawingControl& drawingControl{ tree_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
 
 		drawingControl.pshaders_map.push_back(std::make_pair("shadow_bias", "shadow_bias"));
+		drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
+
 	}	
 }
 
