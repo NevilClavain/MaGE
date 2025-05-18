@@ -396,6 +396,9 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					//////////////////////////////////////////////////
 
 					create_openenv_shadows_channel_rendergraph("bufferRendering_Scene_ShadowsChannel_Queue_Entity");
+					//create_openenv_shadows_channel_rendergraph("bufferRendering_Scene_Debug_Queue_Entity");
+
+
 					create_openenv_shadowmap_channel_rendergraph("bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
 
 
@@ -1733,10 +1736,16 @@ void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::strin
 		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_1, std::make_pair("tree2_tex.bmp", Texture())) };
 
 		const auto tree_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "tree_ShadowsChannel_Proxy_Entity",
-															"scene_shadowsmask_keycolor_vs", "scene_shadowsmask_keycolor_ps",															
+															//"scene_shadowsmask_keycolor_vs", "scene_shadowsmask_keycolor_ps",
+															"scene_shadowsmask_vs", "scene_shadowsmask_ps",
 															tree_rs_list,
 															1000,
 															tree_textures) };
+
+
+		auto& resource_aspect{ tree_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+		resource_aspect.addComponent<std::pair<size_t, Texture>*>("texture_ref", sm_texture_ptr);
+
 
 		//////////////////////////////////////////////////////////////////////
 
@@ -1867,7 +1876,7 @@ void SamplesOpenEnv::create_openenv_shadowmap_channel_rendergraph(const std::str
 		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
 
 		const auto tree_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "tree_ShadowMapChannel_Proxy_Entity",
-															"scene_zdepth_vs", "scene_zdepth_ps",
+															"scene_zdepth_keycolor_vs", "scene_zdepth_keycolor_ps",
 															tree_rs_list,
 															1000,
 															tree_textures) };
