@@ -1736,8 +1736,8 @@ void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::strin
 		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_1, std::make_pair("tree2_tex.bmp", Texture())) };
 
 		const auto tree_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "tree_ShadowsChannel_Proxy_Entity",
-															//"scene_shadowsmask_keycolor_vs", "scene_shadowsmask_keycolor_ps",
-															"scene_shadowsmask_vs", "scene_shadowsmask_ps",
+															"scene_shadowsmask_keycolor_vs", "scene_shadowsmask_keycolor_ps",
+															//"scene_shadowsmask_vs", "scene_shadowsmask_ps",
 															tree_rs_list,
 															1000,
 															tree_textures) };

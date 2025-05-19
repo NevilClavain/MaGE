@@ -869,11 +869,20 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 
 			if (renderingTexturesSet.size() > 0)
 			{
-				texturesSet = renderingTexturesSet;
+				//texturesSet = renderingTexturesSet;
+
+				int index = 0;
+				for (auto& tc : renderingTexturesSet)
+				{
+					cc.addComponent<std::pair<size_t, Texture>>("texturesFromRendering" + std::to_string(index++), tc->getPurpose() );
+				}
 			}
-			else if(renderingTexturesSetPtr.size())
+
+			if(renderingTexturesSetPtr.size() > 0)
 			{
-				// HERE
+				// uniformize texture set format : convert from std::pair<size_t,std::pair<std::string,Texture>> to std::pair<size_t,Texture>
+
+				int index = 0;
 				for (auto& tc : renderingTexturesSetPtr)
 				{
 					const std::pair<size_t, Texture>* t{ tc->getPurpose() };
@@ -881,24 +890,25 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 					const size_t stage_copy{ t->first };
 					Texture texture_copy{ t->second };
 
-					cc.addComponent<std::pair<size_t, Texture>>("texturesFromPtr", std::make_pair(stage_copy, texture_copy));
+					cc.addComponent<std::pair<size_t, Texture>>("texturesFromPtr" + std::to_string(index++), std::make_pair(stage_copy, texture_copy));
 				}
-
-				texturesSet = cc.getComponentsByType<std::pair<size_t, Texture>>();
 			}
-			else if (texturesFromFileSet.size() > 0)
+
+			if (texturesFromFileSet.size() > 0)
 			{
 				// uniformize texture set format : convert from std::pair<size_t,std::pair<std::string,Texture>> to std::pair<size_t,Texture>
+
+				int index = 0;
 				for (auto& tc : texturesFromFileSet)
 				{
 					const auto t{ tc->getPurpose() };
 
-					cc.addComponent<std::pair<size_t, Texture>>("texturesFromFileList", std::make_pair(t.first, t.second.second));
+					cc.addComponent<std::pair<size_t, Texture>>("texturesFromFileList" + std::to_string(index++), std::make_pair(t.first, t.second.second));
 				}
-
-				texturesSet = cc.getComponentsByType<std::pair<size_t, Texture>>();
 			}
 
+
+			texturesSet = cc.getComponentsByType<std::pair<size_t, Texture>>();
 					
 			// rendering order channel : 0 by default
 			int rendering_channel{ 0 };
