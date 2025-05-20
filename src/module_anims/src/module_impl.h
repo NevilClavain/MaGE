@@ -101,6 +101,9 @@ private:
     void                            complete_openenv_ambientlight_channel_rendergraph(const std::string& p_queueEntityId);
     void                            complete_openenv_lit_channel_rendergraph(const std::string& p_queueEntityId);
 
+    void                            complete_openenv_shadowmap_channel_rendergraph(const std::string& p_queueEntityId);
+    void                            complete_openenv_shadows_channel_rendergraph(const std::string& p_queueEntityId);
+
     void                            complete_emissive_lit_channel_rendergraph(const std::string& p_queueEntityId);
 
     void                            complete_zdepth_channel_rendergraph(const std::string& p_queueEntityId);

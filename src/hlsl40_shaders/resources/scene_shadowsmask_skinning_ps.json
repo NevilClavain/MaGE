@@ -1,0 +1,12 @@
+{
+  "inputs": [
+    {
+      "type": "Real4Vector",
+      "body": {
+        "argument_id": "shadow_bias",
+        "register": 56,
+        "description": "bias for shadows computation"
+      }
+    }
+  ]
+}
