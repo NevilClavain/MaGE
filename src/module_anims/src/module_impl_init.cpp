@@ -432,7 +432,7 @@ void ModuleImpl::complete_textures_channel_rendergraph(const std::string& p_queu
 	///// Raptor
 
 	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
 		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
 		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
 		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
@@ -485,7 +485,7 @@ void ModuleImpl::complete_zdepth_channel_rendergraph(const std::string& p_queueE
 	///// Raptor
 
 	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
 		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
 		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
 		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
@@ -534,7 +534,7 @@ void ModuleImpl::complete_openenv_ambientlight_channel_rendergraph(const std::st
 	///// Raptor
 
 	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
 		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
 		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
 		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
@@ -592,7 +592,7 @@ void ModuleImpl::complete_openenv_lit_channel_rendergraph(const std::string& p_q
 	///// Raptor
 
 	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
 		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
 		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
 		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
@@ -649,7 +649,7 @@ void ModuleImpl::complete_emissive_lit_channel_rendergraph(const std::string& p_
 	///// Raptor
 
 	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
 		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
 		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
 		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
@@ -717,7 +717,7 @@ void ModuleImpl::complete_openenv_shadows_channel_rendergraph(const std::string&
 	///// Raptor
 
 	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
 		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
 		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
 		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
@@ -777,7 +777,7 @@ void ModuleImpl::complete_openenv_shadowmap_channel_rendergraph(const std::strin
 	///// Raptor
 
 	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "ccw");
 		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
 		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
 		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");

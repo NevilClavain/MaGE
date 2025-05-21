@@ -1823,7 +1823,7 @@ void SamplesOpenEnv::create_openenv_shadowmap_channel_rendergraph(const std::str
 	///////////////	add sphere
 
 	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "ccw");
 		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
 		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
 		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
