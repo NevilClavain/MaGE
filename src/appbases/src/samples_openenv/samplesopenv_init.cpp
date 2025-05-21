@@ -383,7 +383,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// SHADOWMAP TARGET TEXTURE
 					// Plug shadowmap just bellow, to be sure shadowmap is rendered before shadosw mask PASS above (remind : leaf to root order)
-					helpers::plugTargetTexture(m_entitygraph, "bufferRendering_Scene_ShadowsChannel_Queue_Entity", "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 4096, 4096)));
+					helpers::plugTargetTexture(m_entitygraph, "bufferRendering_Scene_ShadowsChannel_Queue_Entity", "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 2048, 2048)));
 
 					rendering::Queue shadowMapChannelRenderingQueue("shadowmap_channel_queue");
 					shadowMapChannelRenderingQueue.setTargetClearColor({ 255, 255, 255, 255 });

@@ -58,13 +58,23 @@ float4 ps_main(PS_INTPUT input) : SV_Target
     if (shadowmap_texcoords.x >= 0.0 && shadowmap_texcoords.x <= 1.0 && shadowmap_texcoords.y >= 0.0 && shadowmap_texcoords.y <= 1.0)
     {
         // get shadow map depth
-        float shadowmap_depth = shadowMap.Sample(shadowMapSampler, shadowmap_texcoords);
         float current_depth = input.TexCoord2.z;
-   
-        if (current_depth < shadowmap_depth - bias)
+        
+        float2 texelSize = 1.0 / 2048;
+        float shadow = 0.0;
+        
+        for (int x = -1; x <= 1; ++x)
         {
-            mask_val = 0.0;
-        }                
+            for (int y = -1; y <= 1; ++y)
+            {
+                float shadowmap_depth = shadowMap.Sample(shadowMapSampler, shadowmap_texcoords + float2(x, y) * texelSize);
+                
+                shadow += current_depth < shadowmap_depth - bias ? 0.0 : 1.0;
+
+            }
+        }
+        
+        mask_val = shadow / 9.0;        
     }
     color.rgba = mask_val;
     
