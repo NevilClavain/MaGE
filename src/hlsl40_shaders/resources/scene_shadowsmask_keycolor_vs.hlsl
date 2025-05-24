@@ -63,8 +63,8 @@ VS_OUTPUT vs_main( VS_INPUT Input )
     
     Output.TexCoord1 = projected_pos_secondaryview.xy;
     
-    float4 wvp = mul(pos, mat[matWorldViewSecondary]);
-    Output.TexCoord2 = wvp;
+    float4 wv = mul(pos, mat[matWorldViewSecondary]);
+    Output.TexCoord2 = wv;
     
     
     return( Output );   

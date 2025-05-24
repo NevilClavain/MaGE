@@ -80,3 +80,4 @@ float4x4 getTransformationMatrixForBone(int boneid, int array_begin_offset, floa
 
     return bone_transform;
 }
+
