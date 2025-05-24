@@ -44,7 +44,8 @@ struct PS_INTPUT
 float4 ps_main(PS_INTPUT input) : SV_Target
 {    
     float4 color;        
-    float bias = vec[56].x;      
-    color.rgba = computeShadows(input.TexCoord2.z, input.TexCoord1, shadowMap, shadowMapSampler);
+    float bias = vec[56].x;
+    int shadowMapResol = vec[57].x;
+    color.rgba = computeShadows(input.TexCoord2.z, input.TexCoord1, shadowMap, shadowMapSampler, shadowMapResol);
     return color;
 }

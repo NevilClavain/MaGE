@@ -52,7 +52,7 @@ float randomForShadows(float2 uv)
 }
 
 // compute shadow mask value with help of shadow map
-float computeShadows(float p_current_depth, float2 p_projected_pos_secondaryview, Texture2D p_shadowMap, SamplerState p_shadowMapSampler)
+float computeShadows(float p_current_depth, float2 p_projected_pos_secondaryview, Texture2D p_shadowMap, SamplerState p_shadowMapSampler, int p_shadowmapResol)
 {
     float mask_val = 1.0;
     
@@ -77,7 +77,7 @@ float computeShadows(float p_current_depth, float2 p_projected_pos_secondaryview
         {
             int index = 4 * randomForShadows(float2(i, i + 1));
             
-            float shadowmap_depth = p_shadowMap.Sample(p_shadowMapSampler, shadowmap_texcoords + poissonDisk[index] / 2048.0);
+            float shadowmap_depth = p_shadowMap.Sample(p_shadowMapSampler, shadowmap_texcoords + poissonDisk[index] / p_shadowmapResol);
             
             if (p_current_depth > shadowmap_depth)
             {

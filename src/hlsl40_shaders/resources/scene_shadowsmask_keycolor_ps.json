@@ -11,8 +11,16 @@
     {
       "type": "Real4Vector",
       "body": {
-        "argument_id": "key_color",
+        "argument_id": "shadowmap_resol",
         "register": 57,
+        "description": "shadow map width"
+      }
+    },
+    {
+      "type": "Real4Vector",
+      "body": {
+        "argument_id": "key_color",
+        "register": 58,
         "description": "key color value for pixels to clip"
       }
     }

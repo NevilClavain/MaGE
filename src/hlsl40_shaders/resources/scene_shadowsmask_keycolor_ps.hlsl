@@ -46,7 +46,7 @@ struct PS_INTPUT
 
 float4 ps_main(PS_INTPUT input) : SV_Target
 {        
-    float4 key_color = vec[57];
+    float4 key_color = vec[58];
     float4 texture_color = txDiffuse.Sample(txDiffuseSampler, input.TexCoord0);
     
     if (texture_color.r == key_color.r && texture_color.g == key_color.g && texture_color.b == key_color.b)
@@ -55,7 +55,8 @@ float4 ps_main(PS_INTPUT input) : SV_Target
     }
     
     float4 color;    
-    float bias = vec[56].x;      
-    color.rgba = computeShadows(input.TexCoord2.z, input.TexCoord1, shadowMap, shadowMapSampler);    
+    float bias = vec[56].x;
+    int shadowMapResol = vec[57].x;
+    color.rgba = computeShadows(input.TexCoord2.z, input.TexCoord1, shadowMap, shadowMapSampler, shadowMapResol);
     return color;
 }

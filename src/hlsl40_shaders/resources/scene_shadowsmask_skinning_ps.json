@@ -7,6 +7,14 @@
         "register": 56,
         "description": "bias for shadows computation"
       }
+    },
+    {
+      "type": "Real4Vector",
+      "body": {
+        "argument_id": "shadowmap_resol",
+        "register": 57,
+        "description": "shadow map width"
+      }
     }
   ]
 }

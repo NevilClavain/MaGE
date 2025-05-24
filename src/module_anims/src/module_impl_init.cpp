@@ -769,6 +769,7 @@ void ModuleImpl::complete_openenv_shadows_channel_rendergraph(const std::string&
 
 		rendering::DrawingControl& drawingControl{ raptor_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
 		drawingControl.pshaders_map.push_back(std::make_pair("shadow_bias", "shadow_bias"));
+		drawingControl.pshaders_map.push_back(std::make_pair("shadowmap_resol", "shadowmap_resol"));
 	}
 }
 

@@ -168,6 +168,10 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					dataCloud->registerData<maths::Real4Vector>("shadow_bias");
 					dataCloud->updateDataValue<maths::Real4Vector>("shadow_bias", maths::Real4Vector(0.005, 0, 0, 0));
 
+					dataCloud->registerData<maths::Real4Vector>("shadowmap_resol");
+					dataCloud->updateDataValue<maths::Real4Vector>("shadowmap_resol", maths::Real4Vector(2048, 0, 0, 0));
+
+
 
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1661,6 +1665,7 @@ void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::strin
 
 		rendering::DrawingControl& drawingControl{ ground_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
 		drawingControl.pshaders_map.push_back(std::make_pair("shadow_bias", "shadow_bias"));
+		drawingControl.pshaders_map.push_back(std::make_pair("shadowmap_resol", "shadowmap_resol"));
 
 
 	}
@@ -1714,6 +1719,7 @@ void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::strin
 
 		rendering::DrawingControl& drawingControl{ sphere_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
 		drawingControl.pshaders_map.push_back(std::make_pair("shadow_bias", "shadow_bias"));
+		drawingControl.pshaders_map.push_back(std::make_pair("shadowmap_resol", "shadowmap_resol"));
 
 
 	}
@@ -1770,6 +1776,7 @@ void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::strin
 
 		drawingControl.pshaders_map.push_back(std::make_pair("shadow_bias", "shadow_bias"));
 		drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
+		drawingControl.pshaders_map.push_back(std::make_pair("shadowmap_resol", "shadowmap_resol"));
 
 	}	
 }
