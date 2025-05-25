@@ -87,10 +87,10 @@ private:
     bool                                    m_show_mouse_cursor{ true };
     bool                                    m_mouse_relative_mode{ false };
 
-    mage::core::Entitygraph             m_entitygraph;
+    mage::core::Entitygraph                 m_entitygraph;
 
-    mage::rendering::Queue*             m_windowRenderingQueue{ nullptr };
-    mage::rendering::Queue*             m_bufferRenderingQueue{ nullptr };
+    mage::rendering::Queue*                 m_windowRenderingQueue{ nullptr };
+    mage::rendering::Queue*                 m_bufferRenderingQueue{ nullptr };
 
     bool                                    m_quadEntity0_state_request{ true };
     bool                                    m_quadEntity0_state { false };
