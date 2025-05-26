@@ -127,9 +127,6 @@ Entitygraph::Node& Entitygraph::insertParent(Node& p_node, const std::string& p_
 		_EXCEPTION("Cant move entity " + entity.getId() + " : it has children");
 	}
 
-	// retrieve ref to the node unique ptr to keep it
-	auto& node_uptr{ m_entites.at(entity_id) };
-
 	// retrieve node parent
 	Entity* original_parent_entity{ entity.getParent()};
 	const auto original_parent_entity_id{ original_parent_entity->getId() };
@@ -154,9 +151,83 @@ Entitygraph::Node& Entitygraph::insertParent(Node& p_node, const std::string& p_
 	m_nodes[entity_id] = &*ite_new_node;
 
 	m_entites.at(entity_id)->m_depth = inserted_parent_node.data()->m_depth + 1;
+	m_entites.at(entity_id)->m_parent = inserted_parent_node.data();
 	
-
 	return inserted_parent_node;
+}
+
+void Entitygraph::removeParent(Node& p_node)
+{
+	const auto& entity{ *p_node.data() };
+	const auto entity_id{ entity.getId() };
+
+	if (!m_entites.count(entity_id))
+	{
+		_EXCEPTION("node not registered : " + entity_id)
+	}
+
+	// do not support operation if node to move is the root
+	if (!entity.getParent())
+	{
+		_EXCEPTION("refused because " + entity_id + " is root")
+	}
+
+	// retrieve node parent
+	Entity* parent_entity{ entity.getParent() };
+	const auto parent_entity_id{ parent_entity->getId() };
+
+	// do not support operation also if parent of node to move is the root
+	if (!parent_entity->getParent())
+	{
+		_EXCEPTION("refused because " + entity_id + " parent is root")
+	}
+
+	// leaf only
+	if (!p_node.empty())
+	{
+		_EXCEPTION("Cant move entity " + entity_id + " : it has children");
+	}
+
+	// retrieve node upper parent
+
+	p_node.erase(); // erase the node to move
+	m_nodes.erase(entity_id);
+
+	// and move this node under upper parent
+
+	Entity* upper_parent_entity{ parent_entity->getParent() };
+	const auto upper_parent_entity_id{ upper_parent_entity->getId() };
+
+	Node* upper_parent_node{ nullptr };
+	for (const auto& e : m_nodes)
+	{
+		Entity* curr_entity = e.second->data();
+		if (e.second->data()->getId() == upper_parent_entity_id)
+		{
+			upper_parent_node = e.second;
+		}
+	}
+
+
+	NodeIterator ite_new_node{ upper_parent_node->insert(&*(m_entites.at(entity_id).get())) };
+	m_nodes[entity_id] = &*ite_new_node;
+
+	m_entites.at(entity_id)->m_depth = upper_parent_node->data()->m_depth + 1;
+	m_entites.at(entity_id)->m_parent = upper_parent_node->data();
+
+	// then finally remove previous node parent
+
+	Node* parent_node{ nullptr };
+	for (const auto& e : m_nodes)
+	{
+		Entity* curr_entity = e.second->data();
+		if (e.second->data()->getId() == parent_entity_id)
+		{
+			parent_node = e.second;
+		}
+	}
+
+	remove(*parent_node);
 }
 
 Entitygraph::Node& Entitygraph::node(const std::string& p_entity_id)
