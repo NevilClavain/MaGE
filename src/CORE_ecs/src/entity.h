@@ -118,7 +118,7 @@ namespace mage
 			Entity*								m_parent{ nullptr };
 
 
-			friend Entitygraph;
+			friend class Entitygraph;
 		};
 	}
 }
