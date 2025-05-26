@@ -130,7 +130,6 @@ namespace mage
                     {
                         m_vector[i] *= p_scale;
                     }
-
                 }
 
                 static Vector<T, Size> lerp(const Vector<T, Size>& p_v1, const Vector<T, Size>& p_v2, float p_blend)

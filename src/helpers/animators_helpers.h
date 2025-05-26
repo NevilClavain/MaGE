@@ -252,19 +252,24 @@ namespace mage
 					{
 						transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>(p_keys.at("lookatJointAnim.output"))->getPurpose() };
 
-						// compute source (current node) absolute position : parent global pos + actual loca pos
+						// compute source (current node) absolute position : parent global pos + actual local pos
 						core::maths::Real4Vector pos(0.0, 0.0, 0.0, 1.0);												
 						core::maths::Real4Vector source4;
-						const core::maths::Matrix absolute_transformation{ wp.local_pos * p_parent_pos.global_pos };
+
+						const auto local_pos { p_world_aspect.getComponent<core::maths::Real3Vector>(p_keys.at("lookatJointAnim.localpos"))->getPurpose() };
+						const core::maths::Matrix absolute_transformation{ core::maths::Matrix::buildTranslation(local_pos) * p_parent_pos.global_pos };
 												
 						absolute_transformation.transform(&pos, &source4);
 
 						core::maths::Real3Vector source3(source4[0], source4[1], source4[2]);
 
+
+
 						const auto dest { p_world_aspect.getComponent<core::maths::Real3Vector>(p_keys.at("lookatJointAnim.dest"))->getPurpose()};
 
 						// vector from dest to source
-						const core::maths::Real3Vector forward(source3[0] - dest[0], source3[1] - dest[1], source3[2] - dest[2]);						
+						const core::maths::Real3Vector forward(source3[0] - dest[0], source3[1] - dest[1], source3[2] - dest[2]);
+
 						const auto quat{ core::maths::Quaternion::lookRotation(forward, core::maths::YAxisVector) };
 
 						core::maths::Matrix orientation;
@@ -274,14 +279,14 @@ namespace mage
 						translation_from_parent.translation( p_parent_pos.global_pos.getPosition() );
 
 						core::maths::Matrix translation_from_current_local;
-						translation_from_current_local.translation(wp.local_pos.getPosition());
+						translation_from_current_local.translation(local_pos);
 
 					
 						// store result
 						
 						wp.composition_operation = transform::WorldPosition::TransformationComposition::TRANSFORMATION_ABSOLUTE;
 
-						wp.local_pos = orientation * translation_from_current_local * translation_from_parent;
+						wp.local_pos = wp.local_pos * orientation * translation_from_current_local * translation_from_parent;
 					}
 				};
 

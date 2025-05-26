@@ -13,6 +13,7 @@ libs/
 [Dd]ebug/
 [Rr]elease/
 [Rr]elWithDebInfo/
+[Mm]inSizeRel/
 x64/
 build/
 [Bb]in/

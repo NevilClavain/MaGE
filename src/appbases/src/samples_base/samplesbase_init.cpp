@@ -68,7 +68,7 @@
 #include "textures_service.h"
 
 #include "entitygraph_helpers.h"
-#include "graphicobjects_helpers.h"
+
 
 using namespace mage;
 using namespace mage::core;
@@ -126,12 +126,21 @@ void SamplesBase::d3d11_system_events_base()
 
 					const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 
+					dataCloud->registerData<maths::Real4Vector>("screen_channel_number");
+					dataCloud->updateDataValue<maths::Real4Vector>("screen_channel_number", maths::Real4Vector(0.0, 0.0, 0.0, 0.0));
+					//dataCloud->updateDataValue<maths::Real4Vector>("screen_channel_number", maths::Real4Vector(1.0, 0.0, 0.0, 0.0));
+
+
+
+
+
 					const auto window_dims{ dataCloud->readDataValue<mage::core::maths::IntCoords2D>("std.window_resol") };
 
 					const int w_width{ window_dims.x() };
 					const int w_height{ window_dims.y() };
 
-					const auto rendering_quad_textures_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
+					const auto rendering_quad_textures_channnelA{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
+					const auto rendering_quad_textures_channnelB{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
 
 					auto& screen_rendering_queue{ mage::helpers::plugRenderingQuad(m_entitygraph,
 						"screen_queue",
@@ -140,15 +149,46 @@ void SamplesBase::d3d11_system_events_base()
 						"screenRendering_Filter_DirectForward_Queue_Entity",
 						"screenRendering_Filter_DirectForward_Quad_Entity",
 						"screenRendering_Filter_DirectForward_View_Entity",
-						"filter_directforward_vs",
-						"filter_directforward_ps",
+						"filter_directforward_switch2chan_vs",
+						"filter_directforward_switch2chan_ps",
 
 						{
-							std::make_pair(Texture::STAGE_0, rendering_quad_textures_channnel)
+							std::make_pair(Texture::STAGE_0, rendering_quad_textures_channnelA),
+							std::make_pair(Texture::STAGE_1, rendering_quad_textures_channnelB)
 						},
 						Texture::STAGE_0
 
 					)};
+
+					Entity* screenRendering_Filter_DirectForward_Quad_Entity{ m_entitygraph.node("screenRendering_Filter_DirectForward_Quad_Entity").data() };
+
+					auto& screenRendering_Filter_DirectForward_Quad_Entity_rendering_aspect{ screenRendering_Filter_DirectForward_Quad_Entity->aspectAccess(core::renderingAspect::id) };
+
+					rendering::DrawingControl& fogDrawingControl{ screenRendering_Filter_DirectForward_Quad_Entity_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+					fogDrawingControl.pshaders_map.push_back(std::make_pair("screen_channel_number", "input_channel"));
+
+
+
+
+
+					// channel B : for debug purposes
+
+					rendering::Queue debugChannelsRenderingQueue("debug_channel_queue");
+					debugChannelsRenderingQueue.setTargetClearColor({ 0, 63, 128, 255 });
+					debugChannelsRenderingQueue.enableTargetClearing(true);
+					debugChannelsRenderingQueue.enableTargetDepthClearing(true);
+					debugChannelsRenderingQueue.setTargetStage(Texture::STAGE_1);
+
+					mage::helpers::plugRenderingQueue(m_entitygraph, debugChannelsRenderingQueue, "screenRendering_Filter_DirectForward_Quad_Entity", "bufferRendering_Scene_Debug_Queue_Entity");
+
+
+
+
+
+
+
+
+
 
 					m_windowRenderingQueue = &screen_rendering_queue;
 

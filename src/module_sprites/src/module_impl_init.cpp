@@ -63,8 +63,6 @@
 
 #include "entitygraph_helpers.h"
 
-#include "graphicobjects_helpers.h"
-
 
 using namespace mage;
 using namespace mage::core;
@@ -266,7 +264,7 @@ void ModuleImpl::d3d11_system_events()
 					m_currentCamera = "cameraEntity";
 
 					auto texturesChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Filter_DirectForward_Queue_Entity") };
-					texturesChannelRenderingQueue->setCurrentView(m_currentCamera);
+					texturesChannelRenderingQueue->setMainView(m_currentCamera);
 
 					/////////////////////////////////
 

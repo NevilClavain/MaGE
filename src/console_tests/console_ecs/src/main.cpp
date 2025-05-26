@@ -116,6 +116,8 @@ int main( int argc, char* argv[] )
 		for (auto it = eg.preBegin(); it != eg.preEnd(); ++it)
 		{
 			const auto currId{ it->data()->getId() };
+
+			for (int i = 0; i < it->data()->getDepth(); i++) std::cout << " ";
 			std::cout << currId << "\n";
 		}
 		std::cout << "\n";
@@ -126,6 +128,8 @@ int main( int argc, char* argv[] )
 		for (auto it = eg.postBegin(); it != eg.postEnd(); ++it)
 		{
 			const auto currId{ it->data()->getId() };
+
+			for (int i = 0; i < it->data()->getDepth(); i++) std::cout << " ";
 			std::cout << currId << "\n";
 		}
 		std::cout << "\n";
@@ -139,8 +143,49 @@ int main( int argc, char* argv[] )
 		for (auto it = eg.preBegin(); it != eg.preEnd(); ++it)
 		{
 			const auto currId{ it->data()->getId() };
+
+			for (int i = 0; i < it->data()->getDepth(); i++) std::cout << " ";
 			std::cout << currId << "\n";
 		}
+
+		std::cout << "////////////////////////////////////\n";
+		std::cout << "parent insertion test\n\n";
+		{
+			auto& ent111{ eg.node("ent111") };
+
+			eg.insertParent(ent111, "ent11_inserted");
+
+			std::cout << "root to leaf browsing\n";
+
+			// root to leaf browsing
+			for (auto it = eg.preBegin(); it != eg.preEnd(); ++it)
+			{
+				const auto currId{ it->data()->getId() };
+
+				for (int i = 0; i < it->data()->getDepth(); i++) std::cout << " ";
+				std::cout << currId << "\n";
+			}
+			std::cout << "\n";
+		}
+		std::cout << "////////////////////////////////////\n";
+
+		std::cout << "remove parent test\n\n";
+		{
+			auto& ent111{ eg.node("ent111") };
+
+			eg.removeParent(ent111);
+
+			// root to leaf browsing
+			for (auto it = eg.preBegin(); it != eg.preEnd(); ++it)
+			{
+				const auto currId{ it->data()->getId() };
+
+				for (int i = 0; i < it->data()->getDepth(); i++) std::cout << " ";
+				std::cout << currId << "\n";
+			}
+			std::cout << "\n";
+		}
+
 
 	}
     return 0;

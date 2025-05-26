@@ -35,7 +35,6 @@
 #include "aspects.h"
 #include "syncvariable.h"
 #include "entitygraph_helpers.h"
-#include "graphicobjects_helpers.h"
 
 #include "worldposition.h"
 

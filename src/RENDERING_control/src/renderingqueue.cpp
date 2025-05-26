@@ -59,27 +59,19 @@ void Queue::setScreenRenderingPurpose()
 	m_purpose = Purpose::SCREEN_RENDERING;
 }
 
-void Queue::setBufferRenderingPurpose(core::ComponentList<std::pair<size_t, mage::Texture>> p_textures_list)
+void Queue::setBufferRenderingPurpose(mage::Texture& p_target_texture)
 {
-	if (m_targetStage < p_textures_list.size())
-	{
-		auto& render_target{ p_textures_list.at(m_targetStage)->getPurpose().second };
-
-
-		render_target.m_source = Texture::Source::CONTENT_FROM_RENDERINGQUEUE;
-		render_target.m_source_id = m_name;
-
-		render_target.compute_resource_uid();
-
-		m_targetTextureUID = render_target.getResourceUID();
-		render_target.setState(Texture::State::BLOBLOADED);
-	}
-	else
-	{
-		_EXCEPTION("Missing rendertarget texture on requested stage for BUFFER_RENDERING queue : " + getName());
-	}
-
 	m_purpose = Purpose::BUFFER_RENDERING;
+
+	auto& render_target{ p_target_texture };
+
+	render_target.m_source = Texture::Source::CONTENT_FROM_RENDERINGQUEUE;
+	render_target.m_source_id = m_name;
+
+	render_target.compute_resource_uid();
+
+	m_targetTextureUID = render_target.getResourceUID();
+	render_target.setState(Texture::State::BLOBLOADED);	
 }
 
 void Queue::enableTargetClearing(bool p_enable)
@@ -117,14 +109,24 @@ void Queue::setQueueNodes(const Queue::QueueNodes& p_nodes)
 	m_queueNodes = p_nodes;
 }
 
-void Queue::setCurrentView(const std::string& p_entityId)
+void Queue::setMainView(const std::string& p_entityId)
 {
-	m_currentView = p_entityId;
+	m_mainView = p_entityId;
 }
 
-std::string	Queue::getCurrentView() const
+std::string	Queue::getMainView() const
 {
-	return m_currentView;
+	return m_mainView;
+}
+
+void Queue::setSecondaryView(const std::string& p_entityId)
+{
+	m_secondaryView = p_entityId;
+}
+
+std::string	Queue::getSecondaryView() const
+{
+	return m_secondaryView;
 }
 
 std::string	Queue::getTargetTextureUID() const

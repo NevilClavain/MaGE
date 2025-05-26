@@ -78,19 +78,6 @@ namespace mage
 			std::function<void()> setup{ [] {} };
 			std::function<void()> teardown{ [] {} };
 
-			std::function<std::tuple<core::maths::Matrix, core::maths::Matrix, core::maths::Matrix>
-				(const core::maths::Matrix&,
-					const core::maths::Matrix&,
-					const core::maths::Matrix&)> wvpFilter
-			{
-				[](const core::maths::Matrix& p_world,
-					const core::maths::Matrix& p_view,
-					const core::maths::Matrix& p_proj)
-				{
-					return std::make_tuple(p_world, p_view, p_proj);
-				}
-			};
-
 			//shaders params mapping description
 			// dataCloud variable id / shader argument section id in shader json
 			std::vector<std::pair<std::string, std::string>> vshaders_map;
@@ -117,12 +104,6 @@ namespace mage
 
 			std::function<void()>* setup{ nullptr };
 			std::function<void()>* teardown{ nullptr };
-
-			std::function<std::tuple<core::maths::Matrix, core::maths::Matrix, core::maths::Matrix>
-				(const core::maths::Matrix&,
-				 const core::maths::Matrix&,
-				 const core::maths::Matrix&)>* wvpFilter{ nullptr };
-
 			
 			// shaders generic params to apply
 			// dataCloud variable id/shader argument
@@ -249,17 +230,20 @@ namespace mage
 			QueueNodes					getQueueNodes() const;
 			void						setQueueNodes(const QueueNodes& p_nodes);
 
-			void						setCurrentView(const std::string& p_entityId);
-			std::string					getCurrentView() const;
+			void						setMainView(const std::string& p_entityId);
+			std::string					getMainView() const;
+
+			void						setSecondaryView(const std::string& p_entityId);
+			std::string					getSecondaryView() const;
 
 			
 			std::string					getTargetTextureUID() const;
-			void						setTargetStage(size_t p_stage);
-			
 
-			
-		
+			void						setTargetStage(size_t p_stage);
+
+								
 		private:
+	
 			std::string						m_name;
 			Purpose							m_purpose{ Purpose::UNDEFINED };
 			State							m_state{ State::WAIT_INIT };
@@ -274,25 +258,21 @@ namespace mage
 
 			QueueNodes						m_queueNodes;
 
-			std::string						m_currentView; // entity name
+			std::string						m_mainView; // entity name
+			std::string						m_secondaryView; // entity name
 
 
 			size_t							m_targetStage{ 0 };
 
 			std::string						m_targetTextureUID; // for BUFFER_RENDERING
-
-			
-
+	
 			void							setState(State p_newstate);
 
 			void							setScreenRenderingPurpose();
-			void							setBufferRenderingPurpose(core::ComponentList<std::pair<size_t, mage::Texture>> p_textures_list);
-
-			
-
+			void							setBufferRenderingPurpose(mage::Texture& p_target_texture);
+					
 			friend class mage::RenderingQueueSystem;
 			friend class mage::D3D11System;
-
 		};
 	}
 }

@@ -29,18 +29,11 @@
 #include "maths_helpers.h"
 
 #include "aspects.h"
-#include "datacloud.h"
 #include "sysengine.h"
 
-#include "linemeshe.h"
-#include "trianglemeshe.h"
-#include "renderstate.h"
 
 #include "syncvariable.h"
 
-#include "worldposition.h"
-#include "animatorfunc.h"
-#include "animators_helpers.h"
 
 #include "resourcesystem.h"
 

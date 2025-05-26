@@ -106,11 +106,19 @@ namespace mage
 				return m_parent;
 			}
 
+			int getDepth() const
+			{
+				return m_depth;
+			}
+
 		private:
 			std::map<int, ComponentContainer>	m_aspects;
 			const std::string					m_id;
-
+			int									m_depth{ 0 };
 			Entity*								m_parent{ nullptr };
+
+
+			friend class Entitygraph;
 		};
 	}
 }

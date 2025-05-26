@@ -452,37 +452,49 @@ void RenderingQueueSystem::handleRenderingQueuesState(Entity* p_entity, renderin
 						auto parent_rendering_target_comp{ parent_rendering_aspect.getComponent<core::renderingAspect::renderingTarget>("eg.std.renderingTarget") };
 						if (parent_rendering_target_comp)
 						{
-							if (core::renderingAspect::renderingTarget::SCREEN_RENDERINGTARGET == parent_rendering_target_comp->getPurpose())
+							if (rendering::Queue::State::WAIT_INIT == p_renderingQueue.getState())
 							{
-								// SCREEN_RENDERINGTARGET
-								// 
-								// parent is a screen-target pass 
-								// set queue purpose accordingly
+								if (core::renderingAspect::renderingTarget::SCREEN_RENDERINGTARGET == parent_rendering_target_comp->getPurpose())
+								{
+									// SCREEN_RENDERINGTARGET
+									// 
+									// parent is a screen-target pass 
+									// set queue purpose accordingly
 
-								p_renderingQueue.setScreenRenderingPurpose();
-								_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName() + " set to READY, SCREEN_RENDERING")
+									p_renderingQueue.setScreenRenderingPurpose();
+									_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName() + " set to READY, SCREEN_RENDERING")
+								}
+								else
+								{
+									// BUFFER_RENDERINGTARGET
+									// 
+									// parent is a texture-target pass
+									// set queue purpose accordingly
+
+									// parent is a texture-target pass
+									// search for a target texture in it
+
+									// search in resource aspect
+
+									const auto& parent_resource_aspect{ parent_entity->aspectAccess(core::resourcesAspect::id) };
+									const ComponentList<std::pair<size_t, mage::Texture>> textures_list{ parent_resource_aspect.getComponentsByType<std::pair<size_t,mage::Texture>>() };
+
+									const auto queue_target_stage{ p_renderingQueue.m_targetStage };
+
+									if (queue_target_stage < textures_list.size())
+									{
+										p_renderingQueue.setBufferRenderingPurpose(textures_list.at(queue_target_stage)->getPurpose().second);
+									}
+									else
+									{
+										_EXCEPTION("Missing rendertarget texture on requested stage for BUFFER_RENDERING queue : " + p_renderingQueue.getName());
+									}
+
+									_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName() + " set to READY, BUFFER_RENDERING")
+								}
+
+								p_renderingQueue.setState(rendering::Queue::State::READY);
 							}
-							else
-							{
-								// BUFFER_RENDERINGTARGET
-								// 
-								// parent is a texture-target pass
-								// set queue purpose accordingly
-
-								// parent is a texture-target pass
-								// search for a target texture in it
-
-								// search in resource aspect
-
-								const auto& parent_resource_aspect{ parent_entity->aspectAccess(core::resourcesAspect::id) };
-								const ComponentList<std::pair<size_t, mage::Texture>> textures_list{ parent_resource_aspect.getComponentsByType<std::pair<size_t,mage::Texture>>() };
-
-								p_renderingQueue.setBufferRenderingPurpose(textures_list);
-
-								_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName() + " set to READY, BUFFER_RENDERING")
-							}
-
-							p_renderingQueue.setState(rendering::Queue::State::READY);
 						}
 						else
 						{
@@ -499,7 +511,7 @@ void RenderingQueueSystem::handleRenderingQueuesState(Entity* p_entity, renderin
 						// parent has no rendering aspect 
 						p_renderingQueue.setState(rendering::Queue::State::ERROR_ORPHAN);
 
-						_EXCEPTION("Rendering queue set to ERROR_ORPHAN : parent rendering aspect has no rendering aspect : " + p_renderingQueue.getName() + ", parent is " + parent_entity->getId());
+						_EXCEPTION("Rendering queue set to ERROR_ORPHAN : parent has no rendering aspect : " + p_renderingQueue.getName() + ", parent is " + parent_entity->getId());
 
 						// log it (WARN)
 						//_MAGE_WARN(m_localLogger, "Rendering queue set to ERROR_ORPHAN : parent has no rendering aspect")
@@ -591,7 +603,6 @@ static rendering::Queue::TriangleMeshePayload build_TriangleMesheAndTexturesPayl
 
 			trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
 			trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
-			trianglesQueueDrawingControl.wvpFilter = &trianglesDrawingControl.wvpFilter;
 
 			connect_shaders_args(p_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, p_vshader, p_pshader);
 
@@ -642,7 +653,6 @@ static rendering::Queue::TriangleMeshePayload build_TriangleMesheAndTexturesPayl
 			trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
 			trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
 			trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
-			trianglesQueueDrawingControl.wvpFilter = &trianglesDrawingControl.wvpFilter;
 
 			connect_shaders_args(p_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, p_vshader, p_pshader);
 
@@ -687,7 +697,6 @@ static rendering::Queue::LineMeshePayload build_LineMeshePayload(const std::vect
 		linesQueueDrawingControl.world = &linesDrawingControl.world;
 		linesQueueDrawingControl.setup = &linesDrawingControl.setup;
 		linesQueueDrawingControl.teardown = &linesDrawingControl.teardown;
-		linesQueueDrawingControl.wvpFilter = &linesDrawingControl.wvpFilter;
 
 		connect_shaders_args(p_localLogger, linesDrawingControl, linesQueueDrawingControl, p_vshader, p_pshader);
 
@@ -852,6 +861,7 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 			// search for textures set
 			
 			const auto renderingTexturesSet{ p_resourceAspect.getComponentsByType<std::pair<size_t,Texture>>() };
+			const auto renderingTexturesSetPtr{ p_resourceAspect.getComponentsByType<std::pair<size_t,Texture>*>() };
 			const auto texturesFromFileSet{ p_resourceAspect.getComponentsByType<std::pair<size_t,std::pair<std::string,Texture>>>() };
 			
 			ComponentList<std::pair<size_t, Texture>> texturesSet;
@@ -859,21 +869,46 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 
 			if (renderingTexturesSet.size() > 0)
 			{
-				texturesSet = renderingTexturesSet;
+				//texturesSet = renderingTexturesSet;
+
+				int index = 0;
+				for (auto& tc : renderingTexturesSet)
+				{
+					cc.addComponent<std::pair<size_t, Texture>>("texturesFromRendering" + std::to_string(index++), tc->getPurpose() );
+				}
 			}
-			else if (texturesFromFileSet.size() > 0)
+
+			if(renderingTexturesSetPtr.size() > 0)
 			{
 				// uniformize texture set format : convert from std::pair<size_t,std::pair<std::string,Texture>> to std::pair<size_t,Texture>
+
+				int index = 0;
+				for (auto& tc : renderingTexturesSetPtr)
+				{
+					const std::pair<size_t, Texture>* t{ tc->getPurpose() };
+
+					const size_t stage_copy{ t->first };
+					Texture texture_copy{ t->second };
+
+					cc.addComponent<std::pair<size_t, Texture>>("texturesFromPtr" + std::to_string(index++), std::make_pair(stage_copy, texture_copy));
+				}
+			}
+
+			if (texturesFromFileSet.size() > 0)
+			{
+				// uniformize texture set format : convert from std::pair<size_t,std::pair<std::string,Texture>> to std::pair<size_t,Texture>
+
+				int index = 0;
 				for (auto& tc : texturesFromFileSet)
 				{
 					const auto t{ tc->getPurpose() };
 
-					cc.addComponent<std::pair<size_t, Texture>>("texturesFromFileList", std::make_pair(t.first, t.second.second));
+					cc.addComponent<std::pair<size_t, Texture>>("texturesFromFileList" + std::to_string(index++), std::make_pair(t.first, t.second.second));
 				}
-
-				texturesSet = cc.getComponentsByType<std::pair<size_t, Texture>>();
 			}
 
+
+			texturesSet = cc.getComponentsByType<std::pair<size_t, Texture>>();
 					
 			// rendering order channel : 0 by default
 			int rendering_channel{ 0 };
@@ -1006,7 +1041,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 												linesQueueDrawingControl.world = &linesDrawingControl.world;
 												linesQueueDrawingControl.setup = &linesDrawingControl.setup;
 												linesQueueDrawingControl.teardown = &linesDrawingControl.teardown;
-												linesQueueDrawingControl.wvpFilter = &linesDrawingControl.wvpFilter;
 
 												connect_shaders_args(m_localLogger, linesDrawingControl, linesQueueDrawingControl, vshader, pshader);
 
@@ -1067,8 +1101,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 													trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
 													trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
 													trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
-													trianglesQueueDrawingControl.wvpFilter = &trianglesDrawingControl.wvpFilter;
-
 													connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
 													/////////////// HERE manage vector array for shaders
 													trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
@@ -1120,7 +1152,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 														trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
 														trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
 														trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
-														trianglesQueueDrawingControl.wvpFilter = &trianglesDrawingControl.wvpFilter;
 
 														connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
 														/////////////// HERE manage vector array for shaders
@@ -1144,7 +1175,7 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 												}
 												else
 												{
-													// add this new textureset + drawing control under new texturset
+													// add this new textureset + drawing control under new textureset
 
 													rendering::Queue::TextureSetPayload textureSetPayload;
 
@@ -1168,7 +1199,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 														trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
 														trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
 														trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
-														trianglesQueueDrawingControl.wvpFilter = &trianglesDrawingControl.wvpFilter;
 
 														connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
 														/////////////// HERE manage vector array for shaders
@@ -1233,7 +1263,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 													trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
 													trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
 													trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
-													trianglesQueueDrawingControl.wvpFilter = &trianglesDrawingControl.wvpFilter;
 
 													connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
 													/////////////// HERE manage vector array for shaders
@@ -1286,7 +1315,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 														trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
 														trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
 														trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
-														trianglesQueueDrawingControl.wvpFilter = &trianglesDrawingControl.wvpFilter;
 
 														connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
 														/////////////// HERE manage vector array for shaders
@@ -1334,7 +1362,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 														trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
 														trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
 														trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
-														trianglesQueueDrawingControl.wvpFilter = &trianglesDrawingControl.wvpFilter;
 
 														connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
 														/////////////// HERE manage vector array for shaders

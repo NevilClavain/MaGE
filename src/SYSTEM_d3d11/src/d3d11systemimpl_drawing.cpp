@@ -99,7 +99,9 @@ void D3D11SystemImpl::drawLineMeshe(const mage::core::maths::Matrix& p_world, co
     m_lpd3ddevcontext->DrawIndexed(m_next_nblines * 2, 0, 0);
 }
 
-void D3D11SystemImpl::drawTriangleMeshe(const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj)
+void D3D11SystemImpl::drawTriangleMeshe(const mage::core::maths::Matrix& p_world, 
+                                        const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
+                                        const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj)
 {
     // setting transformation    
     Matrix inv;
@@ -165,6 +167,70 @@ void D3D11SystemImpl::drawTriangleMeshe(const mage::core::maths::Matrix& p_world
     proj.transpose();
     setVertexshaderConstantsMat(20, proj);
     
+    //////////////////////////////////////////////////////////////////////
+    // for secondary view
+    //////////////////////////////////////////////////////////////////////
+
+
+    inv.identity();
+    inv(2, 2) = -1.0;
+    const auto final_secondary_view{ p_secondary_view * inv };
+
+    MatrixChain chain2;
+    chain2.pushMatrix(p_secondary_proj);
+    chain2.pushMatrix(final_secondary_view);
+    chain2.pushMatrix(p_world);
+    chain2.buildResult();
+    auto result2{ chain2.getResultTransform() };
+    result2.transpose();
+
+    setVertexshaderConstantsMat(24, result2);
+    setPixelshaderConstantsMat(24, result2);
+
+
+
+    Matrix worldviewSecondary{ p_world * p_secondary_view };
+
+    //pixel shaders : need not transposed version. Whyyy ?    
+    setPixelshaderConstantsMat(28, worldviewSecondary);
+
+    worldviewSecondary.transpose();
+    setVertexshaderConstantsMat(28, worldviewSecondary);
+
+
+
+
+
+    auto secondary_view{ p_secondary_view };
+
+    //pixel shaders : need not transposed version. Whyyy ?
+    setPixelshaderConstantsMat(32, secondary_view);
+
+    secondary_view.transpose();
+    setVertexshaderConstantsMat(32, secondary_view);
+
+
+    //////////////////////////////////////////////////////////////////////
+
+    auto secondary_cam{ p_secondary_view };
+    secondary_cam.inverse();
+
+    //pixel shaders : need not transposed version. Whyyy ?
+    setPixelshaderConstantsMat(36, secondary_cam);
+
+    secondary_cam.transpose();
+    setVertexshaderConstantsMat(36, secondary_cam);
+
+    auto secondary_proj{ p_secondary_proj };
+
+    //pixel shaders : need not transposed version. Whyyy ?
+    setPixelshaderConstantsMat(40, secondary_proj);
+
+    secondary_proj.transpose();
+    setVertexshaderConstantsMat(40, secondary_proj);
+
+
+    //////////////////////////////////////////////////////////////////////
 
     // update des shaders legacy constants buffers...
 

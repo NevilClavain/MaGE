@@ -24,8 +24,8 @@
 
 float computeExp2Fog(float depth, float density)
 {
-    float4 d = abs(depth);
-    return 1 / exp2(d * density);
+    float d = abs(depth);
+    return 1.0 / exp2(d * density);
 }
 
 float4 fractal_texture(Texture2D tex, SamplerState sam, float2 uv, float depth)
@@ -80,3 +80,4 @@ float4x4 getTransformationMatrixForBone(int boneid, int array_begin_offset, floa
 
     return bone_transform;
 }
+

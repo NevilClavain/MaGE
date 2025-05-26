@@ -43,6 +43,7 @@ namespace mage
         SamplesOpenEnv& operator=(const SamplesOpenEnv& t) = delete;
 
         void                            init(const std::string p_appWindowsEntityName);
+        void                            run(void);
 
     protected:
 
@@ -72,6 +73,10 @@ namespace mage
         static constexpr double         skydomeKr{ 0.0033 };
         static constexpr double         skydomeScaleDepth{ 0.25 };
 
+        mage::core::maths::Matrix       m_perpective_projection;
+        mage::core::maths::Matrix       m_orthogonal_projection;
+
+
         void                            d3d11_system_events_openenv();
 
         void                            create_openenv_scenegraph(const std::string& p_mainWindowsEntityId);
@@ -80,6 +85,9 @@ namespace mage
         void                            create_openenv_ambientlight_channel_rendergraph(const std::string& p_queueEntityId);
         void                            create_openenv_lit_channel_rendergraph(const std::string& p_queueEntityId);
         void                            create_openenv_emissive_channel_rendergraph(const std::string& p_queueEntityId);
+
+        void                            create_openenv_shadows_channel_rendergraph(const std::string& p_queueEntityId);
+        void                            create_openenv_shadowmap_channel_rendergraph(const std::string& p_queueEntityId);
 
         void                            create_openenv_zdepth_channel_rendergraph(const std::string& p_queueEntityId);
 

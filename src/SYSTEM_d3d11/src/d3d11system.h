@@ -92,7 +92,7 @@ namespace mage
         core::services::ShadersCompilationService::Callback     m_shadercompilation_invocation_cb;
         core::services::TextureContentCopyService::Callback     m_texturecontentcopy_invocation_cb;
 
-        mage::core::Runner                                  m_runner;
+        mage::core::Runner                                      m_runner;
 
         void    manageInitialization();       
         void    manageResources();

@@ -22,10 +22,23 @@
 */
 /* -*-LIC_END-*- */
 
-#define matWorldViewProjection      0
-#define matWorldView                4
-#define matWorld                    8
-#define matView                     12
-#define matCam                      16
-#define matProj                     20
+#define matWorldViewProjection                  0
+#define matWorldView                            4
 
+#define matWorld                                8
+
+#define matView                                 12
+#define matCam                                  16
+#define matProj                                 20
+
+
+#define matWorldViewProjectionSecondary         24
+#define matWorldViewSecondary                   28
+
+#define matSecondaryView                        32
+#define matSecondaryCam                         36
+#define matSecondaryProj                        40
+
+                                                // 44 : reserved
+                                                // 48 : reserved
+                                                // 52 : reserved

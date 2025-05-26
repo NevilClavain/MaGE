@@ -41,7 +41,7 @@ struct PS_INTPUT
 
 float ps_main(PS_INTPUT input) : SV_Target
 { 
-    float4 key_color = vec[24];
+    float4 key_color = vec[56];
     
     float4 color = txDiffuse.Sample(sam, input.TexCoord0);
     

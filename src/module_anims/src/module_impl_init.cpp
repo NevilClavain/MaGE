@@ -67,7 +67,6 @@
 #include "textures_service.h"
 
 #include "entitygraph_helpers.h"
-#include "graphicobjects_helpers.h"
 
 using namespace mage;
 using namespace mage::core;
@@ -295,32 +294,56 @@ void ModuleImpl::d3d11_system_events()
 					complete_textures_channel_rendergraph("bufferRendering_Scene_TexturesChannel_Queue_Entity");
 
 					complete_openenv_ambientlight_channel_rendergraph("bufferRendering_Scene_AmbientLightChannel_Queue_Entity");
+
 					complete_openenv_lit_channel_rendergraph("bufferRendering_Scene_LitChannel_Queue_Entity");
+					//complete_openenv_lit_channel_rendergraph("bufferRendering_Scene_Debug_Queue_Entity");
 
 					complete_emissive_lit_channel_rendergraph("bufferRendering_Scene_EmissiveChannel_Queue_Entity");
 
 					complete_zdepth_channel_rendergraph("bufferRendering_Scene_ZDepthChannel_Queue_Entity");
+
+					complete_openenv_shadows_channel_rendergraph("bufferRendering_Scene_ShadowsChannel_Queue_Entity");
+					complete_openenv_shadowmap_channel_rendergraph("bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
 
 
 					{
 						///////Select camera
 
 						m_currentCamera = "camera_Entity";
+						//m_currentCamera = "shadowmap_camera_Entity";
+
+						auto debugChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_Debug_Queue_Entity") };
+						debugChannelRenderingQueue->setMainView(m_currentCamera);
+						debugChannelRenderingQueue->setSecondaryView("shadowmap_camera_Entity");
+
 
 						auto texturesChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Queue_Entity") };
-						texturesChannelRenderingQueue->setCurrentView(m_currentCamera);
+						texturesChannelRenderingQueue->setMainView(m_currentCamera);
 
 						auto ambientLightChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_AmbientLightChannel_Queue_Entity") };
-						ambientLightChannelRenderingQueue->setCurrentView(m_currentCamera);
+						ambientLightChannelRenderingQueue->setMainView(m_currentCamera);
 
 						auto emissiveChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
-						emissiveChannelRenderingQueue->setCurrentView(m_currentCamera);
+						emissiveChannelRenderingQueue->setMainView(m_currentCamera);
+
+						auto shadowsChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
+						shadowsChannelRenderingQueue->setMainView(m_currentCamera);
+
+						shadowsChannelRenderingQueue->setSecondaryView("shadowmap_camera_Entity");
+						
+
+
 
 						auto litChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_LitChannel_Queue_Entity") };
-						litChannelRenderingQueue->setCurrentView(m_currentCamera);
+						litChannelRenderingQueue->setMainView(m_currentCamera);
 
-						auto fogChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
-						fogChannelRenderingQueue->setCurrentView(m_currentCamera);
+						auto zDepthChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
+						zDepthChannelRenderingQueue->setMainView(m_currentCamera);
+
+
+						auto shadowMapChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
+						shadowMapChannelRenderingQueue->setMainView("shadowmap_camera_Entity");
+
 					}
 				}
 				break;
@@ -399,41 +422,6 @@ void ModuleImpl::complete_scenegraph(const std::string& p_mainWindowsEntityId)
 
 		m_raptorEntity = entity;
 	}
-	
-
-	/////////////// add camera with gimbal lock jointure ////////////////
-
-	auto& gblJointEntityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "gblJoint_Entity") };
-
-	const auto gblJointEntity{ gblJointEntityNode.data() };
-
-	gblJointEntity->makeAspect(core::timeAspect::id);
-	auto& gbl_world_aspect{ gblJointEntity->makeAspect(core::worldAspect::id) };
-
-	gbl_world_aspect.addComponent<transform::WorldPosition>("gbl_output");
-
-	gbl_world_aspect.addComponent<double>("gbl_theta", 0);
-	gbl_world_aspect.addComponent<double>("gbl_phi", 0);
-	gbl_world_aspect.addComponent<double>("gbl_speed", 0);
-	gbl_world_aspect.addComponent<maths::Real3Vector>("gbl_pos", maths::Real3Vector(-50.0, skydomeInnerRadius + groundLevel + 5, 1.0));
-
-	gbl_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
-		{
-			// input-output/components keys id mapping
-			{"gimbalLockJointAnim.theta", "gbl_theta"},
-			{"gimbalLockJointAnim.phi", "gbl_phi"},
-			{"gimbalLockJointAnim.position", "gbl_pos"},
-			{"gimbalLockJointAnim.speed", "gbl_speed"},
-			{"gimbalLockJointAnim.output", "gbl_output"}
-
-		}, helpers::animators::makeGimbalLockJointAnimator()));
-
-
-	// add camera
-	maths::Matrix projection;
-	projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
-	helpers::plugCamera(m_entitygraph, projection, "gblJoint_Entity", "camera_Entity");
-
 }
 
 
@@ -444,7 +432,7 @@ void ModuleImpl::complete_textures_channel_rendergraph(const std::string& p_queu
 	///// Raptor
 
 	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
 		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
 		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
 		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
@@ -497,7 +485,7 @@ void ModuleImpl::complete_zdepth_channel_rendergraph(const std::string& p_queueE
 	///// Raptor
 
 	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
 		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
 		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
 		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
@@ -546,7 +534,7 @@ void ModuleImpl::complete_openenv_ambientlight_channel_rendergraph(const std::st
 	///// Raptor
 
 	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
 		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
 		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
 		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
@@ -604,7 +592,7 @@ void ModuleImpl::complete_openenv_lit_channel_rendergraph(const std::string& p_q
 	///// Raptor
 
 	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
 		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
 		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
 		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
@@ -661,7 +649,7 @@ void ModuleImpl::complete_emissive_lit_channel_rendergraph(const std::string& p_
 	///// Raptor
 
 	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
 		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
 		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
 		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
@@ -681,7 +669,7 @@ void ModuleImpl::complete_emissive_lit_channel_rendergraph(const std::string& p_
 		auto& rendering_aspect{ raptor_proxy_entity->aspectAccess(core::renderingAspect::id) };
 
 		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("std.black_emissive_color", "color"));
+		drawingControl.pshaders_map.push_back(std::make_pair("black_color", "color"));
 
 
 		//////////////////////////////////////////////////////////////////////
@@ -713,3 +701,125 @@ void ModuleImpl::complete_emissive_lit_channel_rendergraph(const std::string& p_
 		raptor_animations_aspect.getComponent<std::vector<std::pair<std::string, Shader>*>>("target_vshaders")->getPurpose().push_back(vshader_ref);
 	}
 }
+
+void ModuleImpl::complete_openenv_shadows_channel_rendergraph(const std::string& p_queueEntityId)
+{
+
+	// get ptr on rendered shadow map
+
+	auto& shadowMapNode{ m_entitygraph.node("shadowMap_Texture_Entity") };
+	const auto shadowmap_texture_entity{ shadowMapNode.data() };
+
+	auto& sm_resource_aspect{ shadowmap_texture_entity->aspectAccess(core::resourcesAspect::id) };
+
+	std::pair<size_t, Texture>* sm_texture_ptr{ &sm_resource_aspect.getComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture")->getPurpose() };
+
+	///// Raptor
+
+	{
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
+		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
+		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
+		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
+
+		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
+
+		const std::vector<RenderState> raptor_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
+
+		const auto raptor_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "raptor_ShadowsChannel_Proxy_Entity",
+															"scene_shadowsmask_skinning_vs", "scene_shadowsmask_skinning_ps",
+															raptor_rs_list,
+															1000) };
+
+
+		auto& resource_aspect{ raptor_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+		resource_aspect.addComponent<std::pair<size_t, Texture>*>("texture_ref", sm_texture_ptr);
+
+
+		//////////////////////////////////////////////////////////////////////
+
+		// link triangle meshe to related entity in scenegraph side 
+		auto& raptor_resource_aspect{ m_raptorEntity->aspectAccess(core::resourcesAspect::id) };
+		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &raptor_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
+
+		auto& proxy_resource_aspect{ raptor_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
+
+		////////////////////////////////////////////////////////////////////////
+
+		auto& raptor_world_aspect{ m_raptorEntity->aspectAccess(core::worldAspect::id) };
+		transform::WorldPosition* position_ref{ &raptor_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+
+		auto& proxy_world_aspect{ raptor_proxy_entity->makeAspect(core::worldAspect::id) };
+		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
+
+
+		////////////////////////////////////////////////////////////////////////
+
+		auto& proxy_raptor_resource_aspect{ raptor_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+		std::pair<std::string, Shader>* vshader_ref{ &proxy_raptor_resource_aspect.getComponent<std::pair<std::string, Shader>>("vertexShader")->getPurpose() };
+		std::pair<std::string, Shader>* pshader_ref{ &proxy_raptor_resource_aspect.getComponent<std::pair<std::string, Shader>>("pixelShader")->getPurpose() };
+
+		auto& raptor_animations_aspect{ m_raptorEntity->aspectAccess(core::animationsAspect::id) };
+
+		raptor_animations_aspect.getComponent<std::vector<std::pair<std::string, Shader>*>>("target_vshaders")->getPurpose().push_back(vshader_ref);
+
+
+		auto& raptor_rendering_aspect{ raptor_proxy_entity->aspectAccess(core::renderingAspect::id) };
+
+		rendering::DrawingControl& drawingControl{ raptor_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+		drawingControl.pshaders_map.push_back(std::make_pair("shadow_bias", "shadow_bias"));
+		drawingControl.pshaders_map.push_back(std::make_pair("shadowmap_resol", "shadowmap_resol"));
+	}
+}
+
+void ModuleImpl::complete_openenv_shadowmap_channel_rendergraph(const std::string& p_queueEntityId)
+{
+	///// Raptor
+
+	{
+		RenderState rs_noculling(RenderState::Operation::SETCULLING, "ccw");
+		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
+		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
+		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
+
+		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
+
+		const std::vector<RenderState> raptor_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
+
+		const auto raptor_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "raptor_ShadowMapChannel_Proxy_Entity",
+															"scene_zdepth_skinning_vs", "scene_zdepth_skinning_ps",
+															raptor_rs_list,
+															1000) };
+
+		//////////////////////////////////////////////////////////////////////
+
+		// link triangle meshe to related entity in scenegraph side 
+		auto& raptor_resource_aspect{ m_raptorEntity->aspectAccess(core::resourcesAspect::id) };
+		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &raptor_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
+
+		auto& proxy_resource_aspect{ raptor_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
+
+		////////////////////////////////////////////////////////////////////////
+
+		auto& raptor_world_aspect{ m_raptorEntity->aspectAccess(core::worldAspect::id) };
+		transform::WorldPosition* position_ref{ &raptor_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+
+		auto& proxy_world_aspect{ raptor_proxy_entity->makeAspect(core::worldAspect::id) };
+		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
+
+
+		////////////////////////////////////////////////////////////////////////
+
+		auto& proxy_raptor_resource_aspect{ raptor_proxy_entity->aspectAccess(core::resourcesAspect::id) };
+		std::pair<std::string, Shader>* vshader_ref{ &proxy_raptor_resource_aspect.getComponent<std::pair<std::string, Shader>>("vertexShader")->getPurpose() };
+		std::pair<std::string, Shader>* pshader_ref{ &proxy_raptor_resource_aspect.getComponent<std::pair<std::string, Shader>>("pixelShader")->getPurpose() };
+
+		auto& raptor_animations_aspect{ m_raptorEntity->aspectAccess(core::animationsAspect::id) };
+
+		raptor_animations_aspect.getComponent<std::vector<std::pair<std::string, Shader>*>>("target_vshaders")->getPurpose().push_back(vshader_ref);
+	}
+}
+
+

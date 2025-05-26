@@ -30,17 +30,7 @@
 #include "datacloud.h"
 #include "sysengine.h"
 
-#include "linemeshe.h"
-#include "trianglemeshe.h"
-#include "renderstate.h"
 
-#include "syncvariable.h"
-
-#include "worldposition.h"
-#include "animatorfunc.h"
-#include "animators_helpers.h"
-
-#include "resourcesystem.h"
 
 #include "maths_helpers.h"
 
@@ -90,5 +80,6 @@ void ModuleImpl::run(void)
 		mage::core::maths::sphericaltoCartesian(light_spherical, light_cartesian);
 
 		dataCloud->updateDataValue<maths::Real4Vector>("std.light0.dir", light_cartesian);
+
 	}
 }

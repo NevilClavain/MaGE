@@ -40,7 +40,7 @@ using namespace mage::core;
 
 void ModuleImpl::onKeyPress(long p_key)
 {
-	const auto current_view_entity_id{ m_bufferRenderingQueue->getCurrentView() };
+	const auto current_view_entity_id{ m_bufferRenderingQueue->getMainView() };
 
 	if ('Q' == p_key)
 	{
@@ -204,11 +204,18 @@ void ModuleImpl::onKeyPress(long p_key)
 		}
 		else if (VK_UP == p_key)
 		{
+			auto& y_slide_pos{ slider_time_aspect.getComponent< SyncVariable>("y_slide_pos")->getPurpose() };
+
+			y_slide_pos.direction = SyncVariable::Direction::DEC;
+			y_slide_pos.state = SyncVariable::State::ON;
 
 		}
 		else if (VK_DOWN == p_key)
 		{
+			auto& y_slide_pos{ slider_time_aspect.getComponent< SyncVariable>("y_slide_pos")->getPurpose() };
 
+			y_slide_pos.direction = SyncVariable::Direction::INC;
+			y_slide_pos.state = SyncVariable::State::ON;
 		}
 	}
 }
@@ -217,7 +224,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 {
 	auto& eventsLogger{ services::LoggerSharing::getInstance()->getLogger("Events") };
 
-	const auto current_view_entity_id{ m_bufferRenderingQueue->getCurrentView() };
+	const auto current_view_entity_id{ m_bufferRenderingQueue->getMainView() };
 
 
 	if (VK_SPACE == p_key)
@@ -470,10 +477,14 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		}
 		else if (VK_UP == p_key)
 		{
+			auto& y_slide_pos{ slider_time_aspect.getComponent< SyncVariable>("y_slide_pos")->getPurpose() };
+			y_slide_pos.state = SyncVariable::State::OFF;
 
 		}
 		else if (VK_DOWN == p_key)
 		{
+			auto& y_slide_pos{ slider_time_aspect.getComponent< SyncVariable>("y_slide_pos")->getPurpose() };
+			y_slide_pos.state = SyncVariable::State::OFF;
 
 		}
 	}

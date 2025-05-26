@@ -135,6 +135,18 @@ void Matrix::perspective(double p_w, double p_h, double p_zn, double p_zf)
     m_configinfos.type = ConfigurationType::CONFIG_PROJ;
 }
 
+void Matrix::orthogonal(double p_w, double p_h, double p_zn, double p_zf)
+{
+    zero();
+    m_matrix[0][0] = 2.0 / p_w;
+    m_matrix[1][1] = 2.0 / p_h;
+    m_matrix[2][2] = 1.0 / (p_zf - p_zn);
+    m_matrix[3][2] = -p_zn / (p_zf - p_zn);
+    m_matrix[3][3] = 1.0;
+
+    m_configinfos.type = ConfigurationType::CONFIG_PROJ;
+}
+
 void Matrix::transpose(void)
 {
     double msave[4][4];

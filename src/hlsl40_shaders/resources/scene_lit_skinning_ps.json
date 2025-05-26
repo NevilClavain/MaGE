@@ -4,7 +4,7 @@
       "type": "Real4Vector",
       "body": {
         "argument_id": "light_dir",
-        "register": 24,
+        "register": 56,
         "description": "light direction"
       }
     }

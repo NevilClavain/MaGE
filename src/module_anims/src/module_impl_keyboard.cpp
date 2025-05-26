@@ -189,10 +189,19 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 	else if (VK_F8 == p_key)
 	{
-		auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
-		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
-
-		renderingQueueSystemInstance->requestRenderingqueueLogging("bufferRendering_Scene_TexturesChannel_Queue_Entity");
+		// switch camera projection type
+		/*
+		if (m_is_perspective)
+		{
+			mage::helpers::updateCameraProjection(m_entitygraph, "camera_Entity", m_orthogonal_projection);
+			m_is_perspective = false;
+		}
+		else
+		{
+			mage::helpers::updateCameraProjection(m_entitygraph, "camera_Entity", m_perpective_projection);
+			m_is_perspective = true;
+		}
+		*/
 	}
 
 	else if (VK_F9 == p_key)
