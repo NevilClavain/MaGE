@@ -159,7 +159,7 @@ void ModuleImpl::run(void)
 				{"yRotJointAnim.angle", "y_rotation_angle"},
 				{"yRotJointAnim.output", "output"}
 			},
-			helpers::animators::makeYRotationJointAnimator()
+			helpers::makeYRotationJointAnimator()
 		));
 
 
@@ -428,7 +428,7 @@ void ModuleImpl::run(void)
 				{"oscillationJointAnim.oscillation2", "quad2_oscillation2"},
 				{"oscillationJointAnim.output", "position"}
 
-			}, helpers::animators::makeOscillationJointAnimator()));
+			}, helpers::makeOscillationJointAnimator()));
 
 		world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
 		(

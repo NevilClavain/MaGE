@@ -627,7 +627,7 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_mainWindowsE
 			{"lookatJointAnim.localpos", "lookat_localpos"},
 
 		},
-		helpers::animators::makeLookatJointAnimator())
+		helpers::makeLookatJointAnimator())
 	);
 
 
@@ -669,7 +669,7 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_mainWindowsE
 			{"gimbalLockJointAnim.speed", "gbl_speed"},
 			{"gimbalLockJointAnim.output", "gbl_output"}
 
-		}, helpers::animators::makeGimbalLockJointAnimator()));
+		}, helpers::makeGimbalLockJointAnimator()));
 
 
 	// add camera
