@@ -25,6 +25,5 @@
 #include "logsink.h"
 #include "logconf.h"
 #include "logging.h"
-#include "animators_helpers.h"
 
 mage::core::logger::Sink localLogger("Helpers", mage::core::logger::Configuration::getInstance());
