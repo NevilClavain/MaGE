@@ -32,12 +32,16 @@
 
 #include "worldposition.h"
 
+#include "renderingqueue.h"
+
 namespace mage
 {
 	// fwd decl
 	namespace core
 	{
 		class Entitygraph;
+		class Entity;
+		struct SyncVariable;
 
 		namespace maths
 		{
@@ -47,8 +51,17 @@ namespace mage
 
 	namespace rendering
 	{
-		struct Queue;
+		class RenderState;
+
+		/*
+		struct Queue
+		{
+			struct Text;
+		};
+		*/
 	}
+
+	class Texture;
 
 	namespace helpers
 	{

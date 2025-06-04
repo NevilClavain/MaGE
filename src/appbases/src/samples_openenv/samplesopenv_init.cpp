@@ -68,6 +68,8 @@
 
 #include "entitygraph_helpers.h"
 
+#include "rendering_helpers.h"
+
 using namespace mage;
 using namespace mage::core;
 using namespace mage::rendering;
@@ -178,6 +180,20 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					// SCENEGRAPH
 
 					create_openenv_scenegraph(p_id);
+
+
+					// create passes default configs
+
+					const auto renderingHelper { mage::helpers::Rendering::getInstance() };
+
+					renderingHelper->registerPass("TexturesChannel");
+					renderingHelper->registerPass("ZDepthChannel");
+					renderingHelper->registerPass("AmbientLightChannel");
+					renderingHelper->registerPass("LitChannel");
+					renderingHelper->registerPass("EmissiveChannel");
+					renderingHelper->registerPass("ShadowsChannel");
+					renderingHelper->registerPass("ShadowMapChannel");
+
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// RENDERGRAPH
