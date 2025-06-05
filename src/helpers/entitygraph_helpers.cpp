@@ -812,7 +812,6 @@ namespace mage
 			world_aspect.addComponent<double>("x_pos", p_xpos);
 			world_aspect.addComponent<double>("y_pos", p_ypos);
 
-
 			world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
 			(
 				{},

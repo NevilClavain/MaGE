@@ -30,6 +30,8 @@
 #include "entity.h"
 #include "aspects.h"
 
+#include "trianglemeshe.h"
+
 using namespace mage::core;
 using namespace mage::helpers;
 
@@ -48,13 +50,14 @@ PassConfig Rendering::getPassConfig(const std::string& p_id) const
 	return m_configs_table.at(p_id);
 }
 
-std::vector<Entity*> Rendering::registerToPasses(mage::core::Entitygraph& p_entitygraph,
+std::unordered_map<std::string, Entity*> Rendering::registerToPasses(mage::core::Entitygraph& p_entitygraph,
 									mage::core::Entity* p_entity,
-									const std::vector<std::pair<std::string, PassConfig>> p_config,
+									//const std::vector<std::pair<std::string, PassConfig>> p_config,
+									const std::unordered_map<std::string, PassConfig> p_config,
 									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_vertex_shaders_params,
 									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_pixel_shaders_params)
 {
-	std::vector<Entity*> entities;
+	std::unordered_map<std::string, core::Entity*> proxy_entities;
 
 	const std::string base_entity_id{ p_entity->getId() };
 
@@ -62,7 +65,7 @@ std::vector<Entity*> Rendering::registerToPasses(mage::core::Entitygraph& p_enti
 	{
 		std::string proxy_entity_name = base_entity_id + std::string("_") + e.first + std::string("_ProxyEntity");
 
-		const auto entity{ helpers::plugRenderingProxyEntity(p_entitygraph, 
+		const auto proxy_entity{ helpers::plugRenderingProxyEntity(p_entitygraph, 
 																e.second.queue_entity_id, 
 																proxy_entity_name,
 																e.second.vshader,
@@ -71,9 +74,78 @@ std::vector<Entity*> Rendering::registerToPasses(mage::core::Entitygraph& p_enti
 																e.second.rendering_order,
 																e.second.textures_files_list) };
 
-		entities.push_back(entity);
+		///// plug textures references if any
+		auto& proxy_entity_resource_aspect{ proxy_entity->aspectAccess(core::resourcesAspect::id) };
 
+		int counter{ 0 };
+		for (const auto& t : e.second.textures_ptr_list)
+		{
+			std::string comp_id{ "texture_ref" + std::to_string(counter++) };
+			proxy_entity_resource_aspect.addComponent<std::pair<size_t, Texture>*>("texture_ref", t);
+		}
 
+		
+		///// link triangle meshe to related entity in scenegraph side 
+		const auto& base_entity_resource_aspect{ p_entity->aspectAccess(core::resourcesAspect::id) };
+		auto* meshe_ref{ &base_entity_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
+
+		proxy_entity_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
+
+		
+		///// link transforms to related entity in scenegraph side 
+
+		const auto& base_entity_world_aspect{ p_entity->aspectAccess(core::worldAspect::id) };
+		transform::WorldPosition* position_ref{ &base_entity_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+
+		auto& proxy_entity_world_aspect{ proxy_entity->makeAspect(core::worldAspect::id) };
+		proxy_entity_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
+		
+		proxy_entities[e.first] = proxy_entity;
 	}
-	return entities;
+
+	///// manage shader args
+
+	for (const auto& e : p_vertex_shaders_params)
+	{
+		const std::string channel_id{ e.first };
+
+		if (proxy_entities.count(channel_id))
+		{
+			const auto& rendering_aspect{ proxy_entities.at(channel_id)->aspectAccess(core::renderingAspect::id)};
+			rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+
+			const auto& args_cnx{ e.second };
+			for (const auto& c : args_cnx)
+			{
+				drawingControl.vshaders_map.push_back(std::make_pair(c.first, c.second));
+			}
+		}
+		else
+		{
+			_EXCEPTION("Cannot find " + channel_id + " passes config table");
+		}
+	}
+
+	for (const auto& e : p_pixel_shaders_params)
+	{
+		const std::string channel_id{ e.first };
+
+		if (proxy_entities.count(channel_id))
+		{
+			const auto& rendering_aspect{ proxy_entities.at(channel_id)->aspectAccess(core::renderingAspect::id) };
+			rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+
+			const auto& args_cnx{ e.second };
+			for (const auto& c : args_cnx)
+			{
+				drawingControl.pshaders_map.push_back(std::make_pair(c.first, c.second));
+			}
+		}
+		else
+		{
+			_EXCEPTION("Cannot find " + channel_id + " passes config table");
+		}
+	}
+
+	return proxy_entities;
 }
