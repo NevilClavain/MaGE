@@ -182,18 +182,6 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					create_openenv_scenegraph(p_id);
 
 
-					// create passes default configs
-
-					const auto renderingHelper { mage::helpers::Rendering::getInstance() };
-
-					renderingHelper->registerPass("TexturesChannel");
-					renderingHelper->registerPass("ZDepthChannel");
-					renderingHelper->registerPass("AmbientLightChannel");
-					renderingHelper->registerPass("LitChannel");
-					renderingHelper->registerPass("EmissiveChannel");
-					renderingHelper->registerPass("ShadowsChannel");
-					renderingHelper->registerPass("ShadowMapChannel");
-
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// RENDERGRAPH
@@ -431,44 +419,49 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 
 
+					// create passes default configs
+
+					const auto renderingHelper{ mage::helpers::Rendering::getInstance() };
+
+					renderingHelper->registerPass("TexturesChannel", "bufferRendering_Scene_TexturesChannel_Queue_Entity");
+					renderingHelper->registerPass("ZDepthChannel", "bufferRendering_Scene_ZDepthChannel_Queue_Entity");
+					renderingHelper->registerPass("AmbientLightChannel", "bufferRendering_Scene_AmbientLightChannel_Queue_Entity");
+					renderingHelper->registerPass("LitChannel", "bufferRendering_Scene_LitChannel_Queue_Entity");
+					renderingHelper->registerPass("EmissiveChannel", "bufferRendering_Scene_EmissiveChannel_Queue_Entity");
+					renderingHelper->registerPass("ShadowsChannel", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
+					renderingHelper->registerPass("ShadowMapChannel", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
+
 
 
 					// sphere rendering
 					{
 						auto textures_channel_config{ renderingHelper->getPassConfig("TexturesChannel") };
-						textures_channel_config.queue_entity_id = "bufferRendering_Scene_TexturesChannel_Queue_Entity";
 						textures_channel_config.vshader = "scene_texture1stage_keycolor_vs";
 						textures_channel_config.pshader = "scene_texture1stage_keycolor_ps";
 						textures_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("marbre.jpg", Texture())) };
 
 						auto zdepth_channel_config{ renderingHelper->getPassConfig("ZDepthChannel") };
-						zdepth_channel_config.queue_entity_id = "bufferRendering_Scene_ZDepthChannel_Queue_Entity";
 						zdepth_channel_config.vshader = "scene_zdepth_vs";
 						zdepth_channel_config.pshader = "scene_zdepth_ps";
 						
 						auto ambientlight_channel_config{ renderingHelper->getPassConfig("AmbientLightChannel") };
-						ambientlight_channel_config.queue_entity_id = "bufferRendering_Scene_AmbientLightChannel_Queue_Entity";
 						ambientlight_channel_config.vshader = "scene_flatcolor_vs";
 						ambientlight_channel_config.pshader = "scene_flatcolor_ps";
 
 						auto lit_channel_config{ renderingHelper->getPassConfig("LitChannel") };
-						lit_channel_config.queue_entity_id = "bufferRendering_Scene_LitChannel_Queue_Entity";
 						lit_channel_config.vshader = "scene_lit_vs";
 						lit_channel_config.pshader = "scene_lit_ps";
 
 						auto em_channel_config{ renderingHelper->getPassConfig("EmissiveChannel") };
-						em_channel_config.queue_entity_id = "bufferRendering_Scene_EmissiveChannel_Queue_Entity";
 						em_channel_config.vshader = "scene_flatcolor_vs";
 						em_channel_config.pshader = "scene_flatcolor_ps";
 
 						auto shadows_channel_config{ renderingHelper->getPassConfig("ShadowsChannel") };
-						shadows_channel_config.queue_entity_id = "bufferRendering_Scene_ShadowsChannel_Queue_Entity";
 						shadows_channel_config.vshader = "scene_shadowsmask_vs";
 						shadows_channel_config.pshader = "scene_shadowsmask_ps";
 						shadows_channel_config.textures_ptr_list = { sm_texture_ptr };
 
 						auto shadowmap_channel_config{ renderingHelper->getPassConfig("ShadowMapChannel") };
-						shadowmap_channel_config.queue_entity_id = "bufferRendering_Scene_ShadowMapChannel_Queue_Entity";
 						shadowmap_channel_config.vshader = "scene_zdepth_vs";
 						shadowmap_channel_config.pshader = "scene_zdepth_ps";
 						shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);

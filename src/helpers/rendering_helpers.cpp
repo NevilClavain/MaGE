@@ -40,7 +40,15 @@ void Rendering::registerPass(const std::string& p_id)
 	m_configs_table.emplace(p_id, PassConfig());
 }
 
-void Rendering::registerPassDefaultConfig(const std::string& p_id, const PassConfig& p_config)
+void Rendering::registerPass(const std::string& p_id, const std::string& queue_entity_id)
+{
+	PassConfig pc;
+	pc.queue_entity_id = queue_entity_id;
+
+	m_configs_table.emplace(p_id, pc);
+}
+
+void Rendering::registerPass(const std::string& p_id, const PassConfig& p_config)
 {
 	m_configs_table.emplace(p_id, p_config);
 }
