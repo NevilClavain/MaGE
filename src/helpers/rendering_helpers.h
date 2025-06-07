@@ -83,7 +83,6 @@ namespace mage
 
 			std::unordered_map<std::string, core::Entity*> registerToPasses(mage::core::Entitygraph& p_entitygraph,
 									mage::core::Entity* p_entity, 
-									//const std::vector<std::pair<std::string, PassConfig>> p_config,
 									const std::unordered_map< std::string, PassConfig> p_config,
 									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_vertex_shaders_params,
 									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_pixel_shaders_params);

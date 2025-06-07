@@ -669,7 +669,7 @@ void ModuleImpl::complete_emissive_lit_channel_rendergraph(const std::string& p_
 		auto& rendering_aspect{ raptor_proxy_entity->aspectAccess(core::renderingAspect::id) };
 
 		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("black_color", "color"));
+		drawingControl.pshaders_map.push_back(std::make_pair("std.black_color", "color"));
 
 
 		//////////////////////////////////////////////////////////////////////

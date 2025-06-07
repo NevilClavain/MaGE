@@ -81,7 +81,7 @@ std::unordered_map<std::string, Entity*> Rendering::registerToPasses(mage::core:
 		for (const auto& t : e.second.textures_ptr_list)
 		{
 			std::string comp_id{ "texture_ref" + std::to_string(counter++) };
-			proxy_entity_resource_aspect.addComponent<std::pair<size_t, Texture>*>("texture_ref", t);
+			proxy_entity_resource_aspect.addComponent<std::pair<size_t, Texture>*>(comp_id, t);
 		}
 
 		
