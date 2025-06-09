@@ -60,7 +60,6 @@ PassConfig Rendering::getPassConfig(const std::string& p_id) const
 
 std::unordered_map<std::string, Entity*> Rendering::registerToPasses(mage::core::Entitygraph& p_entitygraph,
 									mage::core::Entity* p_entity,
-									//const std::vector<std::pair<std::string, PassConfig>> p_config,
 									const std::unordered_map<std::string, PassConfig> p_config,
 									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_vertex_shaders_params,
 									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_pixel_shaders_params)

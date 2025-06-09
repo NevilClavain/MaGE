@@ -708,6 +708,67 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						renderingHelper->registerToPasses(m_entitygraph, m_treeEntity, config, vertex_shaders_params, pixel_shaders_params);
 					}
 
+
+					// clouds rendering
+					{
+						auto textures_channel_config{ renderingHelper->getPassConfig("TexturesChannel") };
+						textures_channel_config.vshader = "scene_flatclouds_vs";
+						textures_channel_config.pshader = "scene_flatclouds_ps";
+						textures_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("flatclouds.jpg", Texture())) };
+						textures_channel_config.rendering_order = 999;
+
+
+						textures_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+						textures_channel_config.rs_list.at(0).setArg("none");
+
+						textures_channel_config.rs_list.at(3).setOperation(RenderState::Operation::SETTEXTUREFILTERTYPE);
+						textures_channel_config.rs_list.at(3).setArg("linear_uvwrap");
+
+
+						textures_channel_config.rs_list.at(4).setOperation(RenderState::Operation::ALPHABLENDENABLE);
+						textures_channel_config.rs_list.at(4).setArg("true");
+
+						RenderState rs_alphablendop(RenderState::Operation::ALPHABLENDOP, "add");
+						RenderState rs_alphablendfunc(RenderState::Operation::ALPHABLENDFUNC, "always");
+						RenderState rs_alphablenddest(RenderState::Operation::ALPHABLENDDEST, "invsrcalpha");
+						RenderState rs_alphablendsrc(RenderState::Operation::ALPHABLENDSRC, "srcalpha");
+
+						textures_channel_config.rs_list.push_back(rs_alphablendop);
+						textures_channel_config.rs_list.push_back(rs_alphablendfunc);
+						textures_channel_config.rs_list.push_back(rs_alphablenddest);
+						textures_channel_config.rs_list.push_back(rs_alphablendsrc);
+
+
+						auto em_channel_config{ renderingHelper->getPassConfig("EmissiveChannel") };
+						em_channel_config.vshader = "scene_flatcolor_vs";
+						em_channel_config.pshader = "scene_flatcolor_ps";
+						em_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
+						em_channel_config.rendering_order = 999;
+
+
+						const std::unordered_map< std::string, helpers::PassConfig> config =
+						{
+							{ "TexturesChannel", textures_channel_config },
+							{ "EmissiveChannel", em_channel_config }
+						};
+
+
+						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
+						{
+						};
+
+						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
+						{
+							{ "EmissiveChannel",
+								{									
+									{ std::make_pair("skydome_emissive_color", "color") }
+								}
+							}
+						};
+
+						renderingHelper->registerToPasses(m_entitygraph, m_cloudsEntity, config, vertex_shaders_params, pixel_shaders_params);
+					}
+
 				}
 				break;
 			}
@@ -985,55 +1046,6 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_mainWindowsE
 void SamplesOpenEnv::create_openenv_textures_channel_rendergraph(const std::string& p_queueEntityId)
 {
 
-	/////////////////// add clouds
-	
-	{
-
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "false");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "true");
-		RenderState rs_alphablendop(RenderState::Operation::ALPHABLENDOP, "add");
-		RenderState rs_alphablendfunc(RenderState::Operation::ALPHABLENDFUNC, "always");
-		RenderState rs_alphablenddest(RenderState::Operation::ALPHABLENDDEST, "invsrcalpha");
-		RenderState rs_alphablendsrc(RenderState::Operation::ALPHABLENDSRC, "srcalpha");
-
-		const std::vector<RenderState> clouds_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling,
-															rs_alphablend, rs_alphablendop, rs_alphablendfunc, rs_alphablenddest, rs_alphablendsrc
-		};
-
-		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> clouds_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("flatclouds.jpg", Texture())) };
-
-		const auto clouds_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "clouds_TexturesChannel_Proxy_Entity",
-															"scene_flatclouds_vs", "scene_flatclouds_ps",
-															clouds_rs_list,
-															999,
-															clouds_textures) };
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& clouds_resource_aspect{ m_cloudsEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &clouds_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ clouds_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side 
-		auto& clouds_world_aspect{ m_cloudsEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &clouds_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ clouds_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-	}
-	
-
-	
 	///// skydome
 	
 	{
@@ -1112,61 +1124,6 @@ void SamplesOpenEnv::create_openenv_lit_channel_rendergraph(const std::string& p
 
 void SamplesOpenEnv::create_openenv_emissive_channel_rendergraph(const std::string& p_queueEntityId)
 {
-	/////////////////// add clouds
-
-	{
-
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "false");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "true");
-		RenderState rs_alphablendop(RenderState::Operation::ALPHABLENDOP, "add");
-		RenderState rs_alphablendfunc(RenderState::Operation::ALPHABLENDFUNC, "always");
-		RenderState rs_alphablenddest(RenderState::Operation::ALPHABLENDDEST, "invsrcalpha");
-		RenderState rs_alphablendsrc(RenderState::Operation::ALPHABLENDSRC, "srcalpha");
-
-		const std::vector<RenderState> clouds_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling,
-															rs_alphablend, rs_alphablendop, rs_alphablendfunc, rs_alphablenddest, rs_alphablendsrc
-		};
-
-		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> clouds_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("flatclouds.jpg", Texture())) };
-
-		const auto clouds_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "clouds_EmissiveChannel_Proxy_Entity",
-															"scene_flatcolor_keycolor_vs", "scene_flatcolor_keycolor_ps",
-															clouds_rs_list,
-															999,
-															clouds_textures) };
-
-		/// connect shaders args
-
-		auto& rendering_aspect{ clouds_proxy_entity->aspectAccess(core::renderingAspect::id) };
-
-		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
-		drawingControl.pshaders_map.push_back(std::make_pair("skydome_emissive_color", "color"));
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side
-		auto& clouds_resource_aspect{ m_cloudsEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &clouds_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ clouds_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side
-		auto& clouds_world_aspect{ m_cloudsEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &clouds_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ clouds_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-	}
-
 	///// skydome
 	{
 
