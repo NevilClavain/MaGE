@@ -106,7 +106,17 @@ std::unordered_map<std::string, Entity*> Rendering::registerToPasses(mage::core:
 
 		auto& proxy_entity_world_aspect{ proxy_entity->makeAspect(core::worldAspect::id) };
 		proxy_entity_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-		
+
+		// if animation aspect in entity, connect vshader
+
+		if (p_entity->hasAspect(core::animationsAspect::id))
+		{
+			std::pair<std::string, Shader>* vshader_ref{ &proxy_entity_resource_aspect.getComponent<std::pair<std::string, Shader>>("vertexShader")->getPurpose() };
+
+			auto& entity_animations_aspect{ p_entity->aspectAccess(core::animationsAspect::id) };
+			entity_animations_aspect.getComponent<std::vector<std::pair<std::string, Shader>*>>("target_vshaders")->getPurpose().push_back(vshader_ref);
+		}
+
 		proxy_entities[e.first] = proxy_entity;
 	}
 
