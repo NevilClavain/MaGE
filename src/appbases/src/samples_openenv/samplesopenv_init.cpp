@@ -745,6 +745,9 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						em_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
 						em_channel_config.rendering_order = 999;
 
+						em_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+						em_channel_config.rs_list.at(0).setArg("ccw");
+
 
 						const std::unordered_map< std::string, helpers::PassConfig> config =
 						{
@@ -1045,7 +1048,7 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_mainWindowsE
 
 void SamplesOpenEnv::create_openenv_textures_channel_rendergraph(const std::string& p_queueEntityId)
 {
-
+	
 	///// skydome
 	
 	{
@@ -1124,6 +1127,7 @@ void SamplesOpenEnv::create_openenv_lit_channel_rendergraph(const std::string& p
 
 void SamplesOpenEnv::create_openenv_emissive_channel_rendergraph(const std::string& p_queueEntityId)
 {
+	
 	///// skydome
 	{
 
@@ -1179,6 +1183,7 @@ void SamplesOpenEnv::create_openenv_emissive_channel_rendergraph(const std::stri
 
 
 	}	
+	
 }
 
 void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::string& p_queueEntityId)
