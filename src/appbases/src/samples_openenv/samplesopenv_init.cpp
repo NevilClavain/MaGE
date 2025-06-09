@@ -719,7 +719,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 
 						textures_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
-						textures_channel_config.rs_list.at(0).setArg("none");
+						textures_channel_config.rs_list.at(0).setArg("ccw");
 
 						textures_channel_config.rs_list.at(3).setOperation(RenderState::Operation::SETTEXTUREFILTERTYPE);
 						textures_channel_config.rs_list.at(3).setArg("linear_uvwrap");
