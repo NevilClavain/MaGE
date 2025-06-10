@@ -778,7 +778,7 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_parentEntity
 			{
 
 				maths::Matrix positionmat;
-				positionmat.translation(-25.0, skydomeInnerRadius + groundLevel + 0.0, -70.0);
+				positionmat.translation(-25.0, skydomeInnerRadius + groundLevel + 0.0, -55.0);
 
 				maths::Matrix rotationmat;
 				rotationmat.rotation(core::maths::Real3Vector(0, 1, 0), core::maths::degToRad(0));
