@@ -70,6 +70,8 @@
 
 #include "rendering_helpers.h"
 
+#include "maths_helpers.h"
+
 using namespace mage;
 using namespace mage::core;
 using namespace mage::rendering;
@@ -279,6 +281,86 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						renderingHelper->registerToPasses(m_entitygraph, m_groundEntity, config, vertex_shaders_params, pixel_shaders_params);
 					}
 
+					// wall rendering
+					{
+						auto textures_channel_config{ renderingHelper->getPassConfig("TexturesChannel") };
+						textures_channel_config.vshader = "scene_texture1stage_keycolor_vs";
+						textures_channel_config.pshader = "scene_texture1stage_keycolor_ps";
+						textures_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("wall.jpg", Texture())) };
+
+						auto zdepth_channel_config{ renderingHelper->getPassConfig("ZDepthChannel") };
+						zdepth_channel_config.vshader = "scene_zdepth_vs";
+						zdepth_channel_config.pshader = "scene_zdepth_ps";
+
+						auto ambientlight_channel_config{ renderingHelper->getPassConfig("AmbientLightChannel") };
+						ambientlight_channel_config.vshader = "scene_flatcolor_vs";
+						ambientlight_channel_config.pshader = "scene_flatcolor_ps";
+
+						auto lit_channel_config{ renderingHelper->getPassConfig("LitChannel") };
+						lit_channel_config.vshader = "scene_lit_vs";
+						lit_channel_config.pshader = "scene_lit_ps";
+
+						auto em_channel_config{ renderingHelper->getPassConfig("EmissiveChannel") };
+						em_channel_config.vshader = "scene_flatcolor_vs";
+						em_channel_config.pshader = "scene_flatcolor_ps";
+
+						auto shadows_channel_config{ renderingHelper->getPassConfig("ShadowsChannel") };
+						shadows_channel_config.vshader = "scene_shadowsmask_vs";
+						shadows_channel_config.pshader = "scene_shadowsmask_ps";
+						shadows_channel_config.textures_ptr_list = { sm_texture_ptr };
+
+
+						auto shadowmap_channel_config{ renderingHelper->getPassConfig("ShadowMapChannel") };
+						shadowmap_channel_config.vshader = "scene_zdepth_vs";
+						shadowmap_channel_config.pshader = "scene_zdepth_ps";
+						shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+						shadowmap_channel_config.rs_list.at(0).setArg("ccw");
+
+
+						const std::unordered_map< std::string, helpers::PassConfig> config =
+						{
+							{ "TexturesChannel", textures_channel_config },
+							{ "ZDepthChannel", zdepth_channel_config },
+							{ "AmbientLightChannel", ambientlight_channel_config },
+							{ "LitChannel", lit_channel_config },
+							{ "EmissiveChannel", em_channel_config },
+							{ "ShadowsChannel", shadows_channel_config },
+							{ "ShadowMapChannel", shadowmap_channel_config }
+						};
+
+						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
+						{
+						};
+
+						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
+						{
+
+							{ "AmbientLightChannel",
+								{
+									{ std::make_pair("std.ambientlight.color", "color") }
+								}
+							},
+							{ "LitChannel",
+								{
+									{ std::make_pair("std.light0.dir", "light_dir") }
+								}
+							},
+							{ "EmissiveChannel",
+								{
+									{ std::make_pair("std.black_color", "color") }
+								}
+							},
+							{ "ShadowsChannel",
+								{
+									{ std::make_pair("shadow_bias", "shadow_bias") },
+									{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
+								}
+							}
+						};
+
+						renderingHelper->registerToPasses(m_entitygraph, m_wallEntity, config, vertex_shaders_params, pixel_shaders_params);
+
+					}
 
 
 					// sphere rendering
@@ -674,6 +756,46 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_parentEntity
 
 		m_groundEntity = entity;
 	}
+
+
+	////////////////////////////////
+
+	{
+		auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "wall_Entity") };
+		const auto entity{ entityNode.data() };
+
+		auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
+		entity->makeAspect(core::timeAspect::id);
+
+		world_aspect.addComponent<transform::WorldPosition>("position");
+		world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
+		(
+			{},
+			[=](const core::ComponentContainer& p_world_aspect,
+				const core::ComponentContainer& p_time_aspect,
+				const transform::WorldPosition&,
+				const std::unordered_map<std::string, std::string>&)
+			{
+
+				maths::Matrix positionmat;
+				positionmat.translation(-25.0, skydomeInnerRadius + groundLevel + 0.0, -70.0);
+
+				maths::Matrix rotationmat;
+				rotationmat.rotation(core::maths::Real3Vector(0, 1, 0), core::maths::degToRad(0));
+
+				transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+				wp.local_pos = wp.local_pos * rotationmat * positionmat;
+			}
+		));
+
+		auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
+		resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("box", "wall.ac"), TriangleMeshe()));
+
+		m_wallEntity = entity;
+	}
+
+
+
 
 
 	////////////////////////////////

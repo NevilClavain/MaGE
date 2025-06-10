@@ -52,6 +52,7 @@ namespace mage
         mage::core::Entity*             m_treeEntity{ nullptr };
         mage::core::Entity*             m_skydomeEntity{ nullptr };
         mage::core::Entity*             m_sphereEntity{ nullptr };
+        mage::core::Entity*             m_wallEntity{ nullptr };
 
         std::string                     m_currentCamera;
 
