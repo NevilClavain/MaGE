@@ -174,219 +174,10 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					dataCloud->updateDataValue<maths::Real4Vector>("shadowmap_resol", maths::Real4Vector(2048, 0, 0, 0));
 
 
-
-
-					///////////////////////////////////////////////////////////////////////////////////////////////////////////
-					// SCENEGRAPH
-
 					create_openenv_scenegraph(p_id);
 
+					create_openenv_rendergraph("screenRendering_Filter_DirectForward_Quad_Entity", w_width, w_height, characteristics_v_width, characteristics_v_height);
 
-
-					///////////////////////////////////////////////////////////////////////////////////////////////////////////
-					// RENDERGRAPH
-
-					const auto combiner_fog_input_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-					const auto combiner_fog_zdepths_channnel{ Texture(Texture::Format::TEXTURE_FLOAT32, w_width, w_height) };
-
-					mage::helpers::plugRenderingQuad(m_entitygraph,
-						"fog_queue",
-						characteristics_v_width, characteristics_v_height,
-						"screenRendering_Filter_DirectForward_Quad_Entity",
-						"bufferRendering_Combiner_Fog_Queue_Entity",
-						"bufferRendering_Combiner_Fog_Quad_Entity",
-						"bufferRendering_Combiner_Fog_View_Entity",
-						"combiner_fog_vs",
-						"combiner_fog_ps",
-						{
-							std::make_pair(Texture::STAGE_0, combiner_fog_input_channnel),
-							std::make_pair(Texture::STAGE_1, combiner_fog_zdepths_channnel),
-						},
-						Texture::STAGE_0);
-
-					Entity* bufferRendering_Combiner_Fog_Quad_Entity{ m_entitygraph.node("bufferRendering_Combiner_Fog_Quad_Entity").data() };
-
-					auto& screenRendering_Combiner_Fog_Quad_Entity_rendering_aspect{ bufferRendering_Combiner_Fog_Quad_Entity->aspectAccess(core::renderingAspect::id) };
-
-					rendering::DrawingControl& fogDrawingControl{ screenRendering_Combiner_Fog_Quad_Entity_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-					fogDrawingControl.pshaders_map.push_back(std::make_pair("std.fog.color", "fog_color"));
-					fogDrawingControl.pshaders_map.push_back(std::make_pair("std.fog.density", "fog_density"));
-
-
-					// channel : zdepth
-
-					rendering::Queue zdepthChannelRenderingQueue("zdepth_channel_queue");
-					zdepthChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					zdepthChannelRenderingQueue.enableTargetClearing(true);
-					zdepthChannelRenderingQueue.enableTargetDepthClearing(true);
-					zdepthChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
-
-					mage::helpers::plugRenderingQueue(m_entitygraph, zdepthChannelRenderingQueue, "bufferRendering_Combiner_Fog_Quad_Entity", "bufferRendering_Scene_ZDepthChannel_Queue_Entity");
-
-
-
-					const auto combiner_modulate_inputA_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-					const auto combiner_modulate_inputB_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-
-					mage::helpers::plugRenderingQuad(m_entitygraph,
-						"modulate_queue",
-						characteristics_v_width, characteristics_v_height,
-						"bufferRendering_Combiner_Fog_Quad_Entity",
-						"bufferRendering_Combiner_Modulate_Queue_Entity",
-						"bufferRendering_Combiner_Modulate_Quad_Entity",
-						"bufferRendering_Combiner_Modulate_View_Entity",
-						"combiner_modulate_vs",
-						"combiner_modulate_ps",
-						{
-							std::make_pair(Texture::STAGE_0, combiner_modulate_inputA_channnel),
-							std::make_pair(Texture::STAGE_1, combiner_modulate_inputB_channnel),
-						},
-						Texture::STAGE_0);
-
-
-					/////////////////////////////////////////////////////////////////
-
-
-					// channel : textures
-					
-					rendering::Queue texturesChannelRenderingQueue("textures_channel_queue");
-					texturesChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					texturesChannelRenderingQueue.enableTargetClearing(true);
-					texturesChannelRenderingQueue.enableTargetDepthClearing(true);
-					texturesChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
-
-					mage::helpers::plugRenderingQueue(m_entitygraph, texturesChannelRenderingQueue, "bufferRendering_Combiner_Modulate_Quad_Entity", "bufferRendering_Scene_TexturesChannel_Queue_Entity");
-
-					
-
-
-					// channel : ligths and shadows effect
-					
-					const auto combiner_accumulate_inputA_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-					const auto combiner_accumulate_inputB_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-					const auto combiner_accumulate_inputC_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-
-
-					mage::helpers::plugRenderingQuad(m_entitygraph,
-						"acc_lit_queue",
-						characteristics_v_width, characteristics_v_height,
-						"bufferRendering_Combiner_Modulate_Quad_Entity",
-						"bufferRendering_Combiner_Accumulate_Queue_Entity",
-						"bufferRendering_Combiner_Accumulate_Quad_Entity",
-						"bufferRendering_Combiner_Accumulate_View_Entity",
-						
-						"combiner_accumulate3chan_vs",
-						"combiner_accumulate3chan_ps",
-						{
-							std::make_pair(Texture::STAGE_0, combiner_accumulate_inputA_channnel),
-							std::make_pair(Texture::STAGE_1, combiner_accumulate_inputB_channnel),
-							std::make_pair(Texture::STAGE_2, combiner_accumulate_inputC_channnel),
-						},
-						Texture::STAGE_0);
-
-
-
-					// channel : ambient light
-
-					rendering::Queue ambientLightChannelRenderingQueue("ambientlight_channel_queue");
-					ambientLightChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					ambientLightChannelRenderingQueue.enableTargetClearing(true);
-					ambientLightChannelRenderingQueue.enableTargetDepthClearing(true);
-					ambientLightChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
-
-					mage::helpers::plugRenderingQueue(m_entitygraph, ambientLightChannelRenderingQueue, "bufferRendering_Combiner_Accumulate_Quad_Entity", "bufferRendering_Scene_AmbientLightChannel_Queue_Entity");
-
-
-
-
-					// channel : emissive
-
-					rendering::Queue emissiveChannelRenderingQueue("emissive_channel_queue");
-					emissiveChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					emissiveChannelRenderingQueue.enableTargetClearing(true);
-					emissiveChannelRenderingQueue.enableTargetDepthClearing(true);
-					emissiveChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
-
-					mage::helpers::plugRenderingQueue(m_entitygraph, emissiveChannelRenderingQueue, "bufferRendering_Combiner_Accumulate_Quad_Entity", "bufferRendering_Scene_EmissiveChannel_Queue_Entity");
-
-
-
-
-
-
-
-
-
-					// channel to modulate directional lit and shadow map
-
-
-
-					const auto combiner_modulatelitshadows_inputA_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-					const auto combiner_modulatelitshadows_inputB_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-
-
-
-					mage::helpers::plugRenderingQuad(m_entitygraph,
-						"mod_lit_shadows_queue",
-						characteristics_v_width, characteristics_v_height,
-						"bufferRendering_Combiner_Accumulate_Quad_Entity",
-						"bufferRendering_Combiner_ModulateLitAndShadows_Queue_Entity",
-						"bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity",
-						"bufferRendering_Combiner_ModulateLitAndShadows_View_Entity",
-
-						"combiner_modulate_vs",
-						"combiner_modulate_ps",
-						{
-							std::make_pair(Texture::STAGE_0, combiner_modulatelitshadows_inputA_channnel),
-							std::make_pair(Texture::STAGE_1, combiner_modulatelitshadows_inputB_channnel),
-						},
-						Texture::STAGE_2);
-
-
-
-
-
-
-
-					// channel : directional lit
-
-					rendering::Queue litChannelRenderingQueue("lit_channel_queue");
-					litChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					litChannelRenderingQueue.enableTargetClearing(true);
-					litChannelRenderingQueue.enableTargetDepthClearing(true);
-					litChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
-
-					mage::helpers::plugRenderingQueue(m_entitygraph, litChannelRenderingQueue, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_LitChannel_Queue_Entity");
-
-
-
-					// channel : shadow
-
-					rendering::Queue shadowsChannelRenderingQueue("shadows_channel_queue");
-					shadowsChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					shadowsChannelRenderingQueue.enableTargetClearing(true);
-					shadowsChannelRenderingQueue.enableTargetDepthClearing(true);
-					shadowsChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
-
-					mage::helpers::plugRenderingQueue(m_entitygraph, shadowsChannelRenderingQueue, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
-
-
-					///////////////////////////////////////////////////////////////////////////////////////////////////////////
-					// SHADOWMAP TARGET TEXTURE
-					// Plug shadowmap just bellow, to be sure shadowmap is rendered before shadosw mask PASS above (remind : leaf to root order)
-					helpers::plugTargetTexture(m_entitygraph, "bufferRendering_Scene_ShadowsChannel_Queue_Entity", "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 2048, 2048)));
-
-					rendering::Queue shadowMapChannelRenderingQueue("shadowmap_channel_queue");
-					shadowMapChannelRenderingQueue.setTargetClearColor({ 255, 255, 255, 255 });
-					shadowMapChannelRenderingQueue.enableTargetClearing(true);
-					shadowMapChannelRenderingQueue.enableTargetDepthClearing(true);
-					shadowMapChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
-
-					mage::helpers::plugRenderingQueue(m_entitygraph, shadowMapChannelRenderingQueue, "shadowMap_Texture_Entity", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
-					
-					//////////////////////////////////////////////////
-
-					////////////////////////////////////////////////////////////////////////////////////////
 
 					auto& shadowMapNode{ m_entitygraph.node("shadowMap_Texture_Entity") };
 					const auto shadowmap_texture_entity{ shadowMapNode.data() };
@@ -842,9 +633,9 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 }
 
 
-void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_mainWindowsEntityId)
+void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_parentEntityId)
 {
-	auto& appwindowNode{ m_entitygraph.node(p_mainWindowsEntityId) };
+	auto& appwindowNode{ m_entitygraph.node(p_parentEntityId) };
 	const auto appwindow{ appwindowNode.data() };
 
 	const auto& mainwindows_rendering_aspect{ appwindow->aspectAccess(mage::core::renderingAspect::id) };
@@ -1105,4 +896,180 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_mainWindowsE
 
 	helpers::plugCamera(m_entitygraph, m_perpective_projection, "gblJoint_Entity", "camera_Entity");
 
+}
+
+void SamplesOpenEnv::create_openenv_rendergraph(const std::string& p_parentEntityId, int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height)
+{
+
+	const auto combiner_fog_input_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
+	const auto combiner_fog_zdepths_channnel{ Texture(Texture::Format::TEXTURE_FLOAT32, p_w_width, p_w_height) };
+
+	mage::helpers::plugRenderingQuad(m_entitygraph,
+		"fog_queue",
+		p_characteristics_v_width, p_characteristics_v_height,
+		//"screenRendering_Filter_DirectForward_Quad_Entity",
+		p_parentEntityId,
+		"bufferRendering_Combiner_Fog_Queue_Entity",
+		"bufferRendering_Combiner_Fog_Quad_Entity",
+		"bufferRendering_Combiner_Fog_View_Entity",
+		"combiner_fog_vs",
+		"combiner_fog_ps",
+		{
+			std::make_pair(Texture::STAGE_0, combiner_fog_input_channnel),
+			std::make_pair(Texture::STAGE_1, combiner_fog_zdepths_channnel),
+		},
+		Texture::STAGE_0);
+
+	Entity* bufferRendering_Combiner_Fog_Quad_Entity{ m_entitygraph.node("bufferRendering_Combiner_Fog_Quad_Entity").data() };
+
+	auto& screenRendering_Combiner_Fog_Quad_Entity_rendering_aspect{ bufferRendering_Combiner_Fog_Quad_Entity->aspectAccess(core::renderingAspect::id) };
+
+	rendering::DrawingControl& fogDrawingControl{ screenRendering_Combiner_Fog_Quad_Entity_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+	fogDrawingControl.pshaders_map.push_back(std::make_pair("std.fog.color", "fog_color"));
+	fogDrawingControl.pshaders_map.push_back(std::make_pair("std.fog.density", "fog_density"));
+
+
+	// channel : zdepth
+
+	rendering::Queue zdepthChannelRenderingQueue("zdepth_channel_queue");
+	zdepthChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+	zdepthChannelRenderingQueue.enableTargetClearing(true);
+	zdepthChannelRenderingQueue.enableTargetDepthClearing(true);
+	zdepthChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
+
+	mage::helpers::plugRenderingQueue(m_entitygraph, zdepthChannelRenderingQueue, "bufferRendering_Combiner_Fog_Quad_Entity", "bufferRendering_Scene_ZDepthChannel_Queue_Entity");
+
+
+	const auto combiner_modulate_inputA_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
+	const auto combiner_modulate_inputB_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
+
+	mage::helpers::plugRenderingQuad(m_entitygraph,
+		"modulate_queue",
+		p_characteristics_v_width, p_characteristics_v_height,
+		"bufferRendering_Combiner_Fog_Quad_Entity",
+		"bufferRendering_Combiner_Modulate_Queue_Entity",
+		"bufferRendering_Combiner_Modulate_Quad_Entity",
+		"bufferRendering_Combiner_Modulate_View_Entity",
+		"combiner_modulate_vs",
+		"combiner_modulate_ps",
+		{
+			std::make_pair(Texture::STAGE_0, combiner_modulate_inputA_channnel),
+			std::make_pair(Texture::STAGE_1, combiner_modulate_inputB_channnel),
+		},
+		Texture::STAGE_0);
+
+
+	/////////////////////////////////////////////////////////////////
+
+	// channel : textures
+
+	rendering::Queue texturesChannelRenderingQueue("textures_channel_queue");
+	texturesChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+	texturesChannelRenderingQueue.enableTargetClearing(true);
+	texturesChannelRenderingQueue.enableTargetDepthClearing(true);
+	texturesChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
+
+	mage::helpers::plugRenderingQueue(m_entitygraph, texturesChannelRenderingQueue, "bufferRendering_Combiner_Modulate_Quad_Entity", "bufferRendering_Scene_TexturesChannel_Queue_Entity");
+
+	// channel : ligths and shadows effect
+
+	const auto combiner_accumulate_inputA_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
+	const auto combiner_accumulate_inputB_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
+	const auto combiner_accumulate_inputC_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
+
+
+	mage::helpers::plugRenderingQuad(m_entitygraph,
+		"acc_lit_queue",
+		p_characteristics_v_width, p_characteristics_v_height,
+		"bufferRendering_Combiner_Modulate_Quad_Entity",
+		"bufferRendering_Combiner_Accumulate_Queue_Entity",
+		"bufferRendering_Combiner_Accumulate_Quad_Entity",
+		"bufferRendering_Combiner_Accumulate_View_Entity",
+
+		"combiner_accumulate3chan_vs",
+		"combiner_accumulate3chan_ps",
+		{
+			std::make_pair(Texture::STAGE_0, combiner_accumulate_inputA_channnel),
+			std::make_pair(Texture::STAGE_1, combiner_accumulate_inputB_channnel),
+			std::make_pair(Texture::STAGE_2, combiner_accumulate_inputC_channnel),
+		},
+		Texture::STAGE_0);
+
+
+	// channel : ambient light
+
+	rendering::Queue ambientLightChannelRenderingQueue("ambientlight_channel_queue");
+	ambientLightChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+	ambientLightChannelRenderingQueue.enableTargetClearing(true);
+	ambientLightChannelRenderingQueue.enableTargetDepthClearing(true);
+	ambientLightChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
+
+	mage::helpers::plugRenderingQueue(m_entitygraph, ambientLightChannelRenderingQueue, "bufferRendering_Combiner_Accumulate_Quad_Entity", "bufferRendering_Scene_AmbientLightChannel_Queue_Entity");
+
+	// channel : emissive
+
+	rendering::Queue emissiveChannelRenderingQueue("emissive_channel_queue");
+	emissiveChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+	emissiveChannelRenderingQueue.enableTargetClearing(true);
+	emissiveChannelRenderingQueue.enableTargetDepthClearing(true);
+	emissiveChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
+
+	mage::helpers::plugRenderingQueue(m_entitygraph, emissiveChannelRenderingQueue, "bufferRendering_Combiner_Accumulate_Quad_Entity", "bufferRendering_Scene_EmissiveChannel_Queue_Entity");
+
+	// channel to modulate directional lit and shadow map
+
+	const auto combiner_modulatelitshadows_inputA_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
+	const auto combiner_modulatelitshadows_inputB_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
+
+	mage::helpers::plugRenderingQuad(m_entitygraph,
+		"mod_lit_shadows_queue",
+		p_characteristics_v_width, p_characteristics_v_height,
+		"bufferRendering_Combiner_Accumulate_Quad_Entity",
+		"bufferRendering_Combiner_ModulateLitAndShadows_Queue_Entity",
+		"bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity",
+		"bufferRendering_Combiner_ModulateLitAndShadows_View_Entity",
+
+		"combiner_modulate_vs",
+		"combiner_modulate_ps",
+		{
+			std::make_pair(Texture::STAGE_0, combiner_modulatelitshadows_inputA_channnel),
+			std::make_pair(Texture::STAGE_1, combiner_modulatelitshadows_inputB_channnel),
+		},
+		Texture::STAGE_2);
+
+
+	// channel : directional lit
+
+	rendering::Queue litChannelRenderingQueue("lit_channel_queue");
+	litChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+	litChannelRenderingQueue.enableTargetClearing(true);
+	litChannelRenderingQueue.enableTargetDepthClearing(true);
+	litChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
+
+	mage::helpers::plugRenderingQueue(m_entitygraph, litChannelRenderingQueue, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_LitChannel_Queue_Entity");
+
+
+	// channel : shadow
+
+	rendering::Queue shadowsChannelRenderingQueue("shadows_channel_queue");
+	shadowsChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+	shadowsChannelRenderingQueue.enableTargetClearing(true);
+	shadowsChannelRenderingQueue.enableTargetDepthClearing(true);
+	shadowsChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
+
+	mage::helpers::plugRenderingQueue(m_entitygraph, shadowsChannelRenderingQueue, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
+
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// SHADOWMAP TARGET TEXTURE
+	// Plug shadowmap just bellow, to be sure shadowmap is rendered before shadosw mask PASS above (remind : leaf to root order)
+	helpers::plugTargetTexture(m_entitygraph, "bufferRendering_Scene_ShadowsChannel_Queue_Entity", "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 2048, 2048)));
+
+	rendering::Queue shadowMapChannelRenderingQueue("shadowmap_channel_queue");
+	shadowMapChannelRenderingQueue.setTargetClearColor({ 255, 255, 255, 255 });
+	shadowMapChannelRenderingQueue.enableTargetClearing(true);
+	shadowMapChannelRenderingQueue.enableTargetDepthClearing(true);
+	shadowMapChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
+
+	mage::helpers::plugRenderingQueue(m_entitygraph, shadowMapChannelRenderingQueue, "shadowMap_Texture_Entity", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
 }
