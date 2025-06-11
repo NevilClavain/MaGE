@@ -50,6 +50,8 @@ TriangleMeshe::TriangleMeshe(const TriangleMeshe& p_other)
 
 	m_animations_keys = p_other.m_animations_keys;
 
+	m_smooth_normales_generations = p_other.m_smooth_normales_generations;
+
 	m_state_mutex.lock();
 	p_other.m_state_mutex.lock();
 	m_state = p_other.m_state;

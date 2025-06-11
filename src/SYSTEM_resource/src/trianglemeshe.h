@@ -83,6 +83,8 @@ namespace mage
 
 			m_animations_keys = p_other.m_animations_keys;
 
+			m_smooth_normales_generations = p_other.m_smooth_normales_generations;
+
 			m_state_mutex.lock();
 			p_other.m_state_mutex.lock();
 			m_state = p_other.m_state;
@@ -182,7 +184,6 @@ namespace mage
 
 		std::unordered_map<std::string, AnimationKeys>							m_animations_keys;
 
-		//AnimationKeys															m_transition_animation;
 		std::string																m_previous_animation;
 
 		// IF NEW MEMBERS HERE :
