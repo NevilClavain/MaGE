@@ -125,7 +125,8 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 
 					dataCloud->registerData<maths::Real4Vector>("std.ambientlight.color");
-					dataCloud->updateDataValue<maths::Real4Vector>("std.ambientlight.color", maths::Real4Vector(0.33, 0.33, 0.33, 1));
+					//dataCloud->updateDataValue<maths::Real4Vector>("std.ambientlight.color", maths::Real4Vector(0.33, 0.33, 0.33, 1));
+					dataCloud->updateDataValue<maths::Real4Vector>("std.ambientlight.color", maths::Real4Vector(0.03, 0.03, 0.03, 1));
 
 
 					dataCloud->registerData<maths::Real4Vector>("skydome_emissive_color");
@@ -313,8 +314,8 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						auto shadowmap_channel_config{ renderingHelper->getPassConfig("ShadowMapChannel") };
 						shadowmap_channel_config.vshader = "scene_zdepth_vs";
 						shadowmap_channel_config.pshader = "scene_zdepth_ps";
-						shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
-						shadowmap_channel_config.rs_list.at(0).setArg("ccw");
+						//shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+						//shadowmap_channel_config.rs_list.at(0).setArg("ccw");
 
 
 						const std::unordered_map< std::string, helpers::PassConfig> config =
@@ -778,10 +779,10 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_parentEntity
 			{
 
 				maths::Matrix positionmat;
-				positionmat.translation(-25.0, skydomeInnerRadius + groundLevel + 0.0, -55.0);
+				positionmat.translation(-25.0, skydomeInnerRadius + groundLevel + 0.0, -40.0);
 
 				maths::Matrix rotationmat;
-				rotationmat.rotation(core::maths::Real3Vector(0, 1, 0), core::maths::degToRad(0));
+				rotationmat.rotation(core::maths::Real3Vector(0, 1, 0), core::maths::degToRad(90));
 
 				transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
 				wp.local_pos = wp.local_pos * rotationmat * positionmat;
@@ -789,7 +790,11 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_parentEntity
 		));
 
 		auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
-		resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("box", "wall.ac"), TriangleMeshe()));
+
+		TriangleMeshe wall_triangle_meshe;
+		wall_triangle_meshe.setSmoothNormalesGeneration(false);
+
+		resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("box", "wall.ac"), wall_triangle_meshe));
 
 		m_wallEntity = entity;
 	}
@@ -820,8 +825,12 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_parentEntity
 				maths::Matrix positionmat;
 				positionmat.translation(-45.0, skydomeInnerRadius + groundLevel + 8.0, -20.0);
 
+				maths::Matrix rotationmat;
+				rotationmat.rotation(core::maths::Real3Vector(0, 1, 0), core::maths::degToRad(135));
+
+
 				transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-				wp.local_pos = wp.local_pos * positionmat;
+				wp.local_pos = wp.local_pos * rotationmat * positionmat;
 			}
 		));
 
