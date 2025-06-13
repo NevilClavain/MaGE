@@ -123,11 +123,9 @@ void D3D11SystemImpl::drawTriangleMeshe(const mage::core::maths::Matrix& p_world
     //////////////////////////////////////////////////////////////////////
 
     Matrix worldview{ p_world * p_view };
-
-    //pixel shaders : need not transposed version. Whyyy ?    
-    setPixelshaderConstantsMat(4, worldview);
-
     worldview.transpose();
+
+    setPixelshaderConstantsMat(4, worldview);
     setVertexshaderConstantsMat(4, worldview);
 
 
@@ -136,13 +134,12 @@ void D3D11SystemImpl::drawTriangleMeshe(const mage::core::maths::Matrix& p_world
     auto world{ p_world };   
     auto view{ p_view };
 
-    //pixel shaders : need not transposed version. Whyyy ?
-    setPixelshaderConstantsMat(8, world);
-    setPixelshaderConstantsMat(12, view);
-   
     world.transpose();
     view.transpose();
 
+    setPixelshaderConstantsMat(8, world);
+    setPixelshaderConstantsMat(12, view);
+   
     setVertexshaderConstantsMat(8, world);
     setVertexshaderConstantsMat(12, view);
 
@@ -152,19 +149,15 @@ void D3D11SystemImpl::drawTriangleMeshe(const mage::core::maths::Matrix& p_world
     auto cam{ p_view };
 
     cam.inverse();
-
-    //pixel shaders : need not transposed version. Whyyy ?
-    setPixelshaderConstantsMat(16, cam);
-
     cam.transpose();
+
+    setPixelshaderConstantsMat(16, cam);
     setVertexshaderConstantsMat(16, cam);
     
     auto proj{ p_proj };
 
-    //pixel shaders : need not transposed version. Whyyy ?
-    setPixelshaderConstantsMat(20, proj);
-
     proj.transpose();
+    setPixelshaderConstantsMat(20, proj);    
     setVertexshaderConstantsMat(20, proj);
     
     //////////////////////////////////////////////////////////////////////
@@ -188,25 +181,16 @@ void D3D11SystemImpl::drawTriangleMeshe(const mage::core::maths::Matrix& p_world
     setPixelshaderConstantsMat(24, result2);
 
 
-
     Matrix worldviewSecondary{ p_world * p_secondary_view };
-
-    //pixel shaders : need not transposed version. Whyyy ?    
-    setPixelshaderConstantsMat(28, worldviewSecondary);
-
     worldviewSecondary.transpose();
+
+    setPixelshaderConstantsMat(28, worldviewSecondary);    
     setVertexshaderConstantsMat(28, worldviewSecondary);
 
-
-
-
-
     auto secondary_view{ p_secondary_view };
-
-    //pixel shaders : need not transposed version. Whyyy ?
-    setPixelshaderConstantsMat(32, secondary_view);
-
     secondary_view.transpose();
+
+    setPixelshaderConstantsMat(32, secondary_view);    
     setVertexshaderConstantsMat(32, secondary_view);
 
 
@@ -215,18 +199,16 @@ void D3D11SystemImpl::drawTriangleMeshe(const mage::core::maths::Matrix& p_world
     auto secondary_cam{ p_secondary_view };
     secondary_cam.inverse();
 
-    //pixel shaders : need not transposed version. Whyyy ?
-    setPixelshaderConstantsMat(36, secondary_cam);
-
     secondary_cam.transpose();
+
+    setPixelshaderConstantsMat(36, secondary_cam);    
     setVertexshaderConstantsMat(36, secondary_cam);
 
     auto secondary_proj{ p_secondary_proj };
 
-    //pixel shaders : need not transposed version. Whyyy ?
-    setPixelshaderConstantsMat(40, secondary_proj);
-
     secondary_proj.transpose();
+
+    setPixelshaderConstantsMat(40, secondary_proj);    
     setVertexshaderConstantsMat(40, secondary_proj);
 
 
