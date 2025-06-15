@@ -122,10 +122,13 @@ namespace mage
 					const double fps_speed{ p_world_aspect.getComponent<double>(p_keys.at("gimbalLockJointAnim.speed"))->getPurpose() };
 					if (std::abs(fps_speed) > 0.0)
 					{
+						const auto tc{ core::TimeControl::getInstance() };
+						const auto sync_fps_speed{ fps_speed / tc->getInstance()->getFPS() };
+
 						//project speed vector in global coords
 
 						// on neg z axis...
-						core::maths::Real4Vector local_speed(0.0, 0.0, -fps_speed, 1.0);
+						core::maths::Real4Vector local_speed(0.0, 0.0, -sync_fps_speed, 1.0);
 						core::maths::Real4Vector global_speed;
 
 						orientation.transform(&local_speed, &global_speed);
@@ -172,7 +175,7 @@ namespace mage
 
 					// work variables
 					core::maths::Matrix orientation;
-					//const auto tm{ core::TimeManager::getInstance() };
+
 					const auto tc{ core::TimeControl::getInstance() };
 					double fps;
 					core::maths::Quaternion q_axis;
@@ -220,10 +223,14 @@ namespace mage
 					const double speed{ p_world_aspect.getComponent<double>(p_keys.at("fullGimbalJointAnim.speed"))->getPurpose() };
 					if (std::abs(speed) > 0.0)
 					{
+						const auto tc{ core::TimeControl::getInstance() };
+						const auto sync_speed{ speed / tc->getInstance()->getFPS() };
+
+
 						//project speed vector in global coords
 
 						// on neg z axis...
-						core::maths::Real4Vector local_speed(0.0, 0.0, -speed, 1.0);
+						core::maths::Real4Vector local_speed(0.0, 0.0, -sync_speed, 1.0);
 						core::maths::Real4Vector global_speed;
 
 						orientation.transform(&local_speed, &global_speed);

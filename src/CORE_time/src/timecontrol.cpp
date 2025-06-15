@@ -551,3 +551,8 @@ TimeControl::TimeScale TimeControl::getTimeFactor() const
 {
     return m_mode;
 }
+
+long TimeControl::getFPS() const
+{
+    return m_tm.getFPS();
+}
