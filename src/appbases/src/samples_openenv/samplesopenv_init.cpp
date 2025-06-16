@@ -68,6 +68,10 @@
 
 #include "entitygraph_helpers.h"
 
+#include "rendering_helpers.h"
+
+#include "maths_helpers.h"
+
 using namespace mage;
 using namespace mage::core;
 using namespace mage::rendering;
@@ -122,14 +126,15 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 					dataCloud->registerData<maths::Real4Vector>("std.ambientlight.color");
 					dataCloud->updateDataValue<maths::Real4Vector>("std.ambientlight.color", maths::Real4Vector(0.33, 0.33, 0.33, 1));
+					
 
 
 					dataCloud->registerData<maths::Real4Vector>("skydome_emissive_color");
 					dataCloud->updateDataValue<maths::Real4Vector>("skydome_emissive_color", maths::Real4Vector(1.0, 1.0, 1.0, 1));
 
 
-					dataCloud->registerData<maths::Real4Vector>("black_color");
-					dataCloud->updateDataValue<maths::Real4Vector>("black_color", maths::Real4Vector(0.0, 0.0, 0.0, 1));
+					dataCloud->registerData<maths::Real4Vector>("std.black_color");
+					dataCloud->updateDataValue<maths::Real4Vector>("std.black_color", maths::Real4Vector(0.0, 0.0, 0.0, 1));
 
 					dataCloud->registerData<maths::Real4Vector>("white_color");
 					dataCloud->updateDataValue<maths::Real4Vector>("white_color", maths::Real4Vector(1.0, 1.0, 1.0, 1));
@@ -172,237 +177,535 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					dataCloud->updateDataValue<maths::Real4Vector>("shadowmap_resol", maths::Real4Vector(2048, 0, 0, 0));
 
 
-
-
-					///////////////////////////////////////////////////////////////////////////////////////////////////////////
-					// SCENEGRAPH
-
 					create_openenv_scenegraph(p_id);
 
-					///////////////////////////////////////////////////////////////////////////////////////////////////////////
-					// RENDERGRAPH
+					create_openenv_rendergraph("screenRendering_Filter_DirectForward_Quad_Entity", w_width, w_height, characteristics_v_width, characteristics_v_height);
 
-					const auto combiner_fog_input_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-					const auto combiner_fog_zdepths_channnel{ Texture(Texture::Format::TEXTURE_FLOAT32, w_width, w_height) };
 
-					mage::helpers::plugRenderingQuad(m_entitygraph,
-						"fog_queue",
-						characteristics_v_width, characteristics_v_height,
-						"screenRendering_Filter_DirectForward_Quad_Entity",
-						"bufferRendering_Combiner_Fog_Queue_Entity",
-						"bufferRendering_Combiner_Fog_Quad_Entity",
-						"bufferRendering_Combiner_Fog_View_Entity",
-						"combiner_fog_vs",
-						"combiner_fog_ps",
+					auto& shadowMapNode{ m_entitygraph.node("shadowMap_Texture_Entity") };
+					const auto shadowmap_texture_entity{ shadowMapNode.data() };
+					auto& sm_resource_aspect{ shadowmap_texture_entity->aspectAccess(core::resourcesAspect::id) };
+					std::pair<size_t, Texture>* sm_texture_ptr{ &sm_resource_aspect.getComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture")->getPurpose() };
+
+
+
+
+					// create passes default configs
+
+					const auto renderingHelper{ mage::helpers::Rendering::getInstance() };
+
+					renderingHelper->registerPass("TexturesChannel", "bufferRendering_Scene_TexturesChannel_Queue_Entity");
+					renderingHelper->registerPass("ZDepthChannel", "bufferRendering_Scene_ZDepthChannel_Queue_Entity");
+					renderingHelper->registerPass("AmbientLightChannel", "bufferRendering_Scene_AmbientLightChannel_Queue_Entity");
+					renderingHelper->registerPass("LitChannel", "bufferRendering_Scene_LitChannel_Queue_Entity");
+					renderingHelper->registerPass("EmissiveChannel", "bufferRendering_Scene_EmissiveChannel_Queue_Entity");
+					renderingHelper->registerPass("ShadowsChannel", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
+					renderingHelper->registerPass("ShadowMapChannel", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
+
+
+
+					// ground rendering
+					{
+						auto textures_channel_config{ renderingHelper->getPassConfig("TexturesChannel") };
+						textures_channel_config.vshader = "scene_recursive_texture_vs";
+						textures_channel_config.pshader = "scene_recursive_texture_ps";
+						textures_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("grass08.jpg", Texture())) };
+						textures_channel_config.rs_list.at(3).setOperation(RenderState::Operation::SETTEXTUREFILTERTYPE);
+						textures_channel_config.rs_list.at(3).setArg("linear_uvwrap");
+
+						auto zdepth_channel_config{ renderingHelper->getPassConfig("ZDepthChannel") };
+						zdepth_channel_config.vshader = "scene_zdepth_vs";
+						zdepth_channel_config.pshader = "scene_zdepth_ps";
+
+						auto ambientlight_channel_config{ renderingHelper->getPassConfig("AmbientLightChannel") };
+						ambientlight_channel_config.vshader = "scene_flatcolor_vs";
+						ambientlight_channel_config.pshader = "scene_flatcolor_ps";
+
+						auto lit_channel_config{ renderingHelper->getPassConfig("LitChannel") };
+						lit_channel_config.vshader = "scene_lit_vs";
+						lit_channel_config.pshader = "scene_lit_ps";
+
+						auto em_channel_config{ renderingHelper->getPassConfig("EmissiveChannel") };
+						em_channel_config.vshader = "scene_flatcolor_vs";
+						em_channel_config.pshader = "scene_flatcolor_ps";
+
+						auto shadows_channel_config{ renderingHelper->getPassConfig("ShadowsChannel") };
+						shadows_channel_config.vshader = "scene_shadowsmask_vs";
+						shadows_channel_config.pshader = "scene_shadowsmask_ps";
+						shadows_channel_config.textures_ptr_list = { sm_texture_ptr };
+
+						auto shadowmap_channel_config{ renderingHelper->getPassConfig("ShadowMapChannel") };
+						shadowmap_channel_config.vshader = "scene_zdepth_vs";
+						shadowmap_channel_config.pshader = "scene_zdepth_ps";
+
+						const std::unordered_map< std::string, helpers::PassConfig> config =
 						{
-							std::make_pair(Texture::STAGE_0, combiner_fog_input_channnel),
-							std::make_pair(Texture::STAGE_1, combiner_fog_zdepths_channnel),
-						},
-						Texture::STAGE_0);
+							{ "TexturesChannel", textures_channel_config },
+							{ "ZDepthChannel", zdepth_channel_config },
+							{ "AmbientLightChannel", ambientlight_channel_config },
+							{ "LitChannel", lit_channel_config },
+							{ "EmissiveChannel", em_channel_config },
+							{ "ShadowsChannel", shadows_channel_config },
+							{ "ShadowMapChannel", shadowmap_channel_config }
+						};
 
-					Entity* bufferRendering_Combiner_Fog_Quad_Entity{ m_entitygraph.node("bufferRendering_Combiner_Fog_Quad_Entity").data() };
-
-					auto& screenRendering_Combiner_Fog_Quad_Entity_rendering_aspect{ bufferRendering_Combiner_Fog_Quad_Entity->aspectAccess(core::renderingAspect::id) };
-
-					rendering::DrawingControl& fogDrawingControl{ screenRendering_Combiner_Fog_Quad_Entity_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-					fogDrawingControl.pshaders_map.push_back(std::make_pair("std.fog.color", "fog_color"));
-					fogDrawingControl.pshaders_map.push_back(std::make_pair("std.fog.density", "fog_density"));
-
-
-					// channel : zdepth
-
-					rendering::Queue zdepthChannelRenderingQueue("zdepth_channel_queue");
-					zdepthChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					zdepthChannelRenderingQueue.enableTargetClearing(true);
-					zdepthChannelRenderingQueue.enableTargetDepthClearing(true);
-					zdepthChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
-
-					mage::helpers::plugRenderingQueue(m_entitygraph, zdepthChannelRenderingQueue, "bufferRendering_Combiner_Fog_Quad_Entity", "bufferRendering_Scene_ZDepthChannel_Queue_Entity");
-
-
-					create_openenv_zdepth_channel_rendergraph("bufferRendering_Scene_ZDepthChannel_Queue_Entity");
-
-
-
-
-
-					const auto combiner_modulate_inputA_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-					const auto combiner_modulate_inputB_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-
-					mage::helpers::plugRenderingQuad(m_entitygraph,
-						"modulate_queue",
-						characteristics_v_width, characteristics_v_height,
-						"bufferRendering_Combiner_Fog_Quad_Entity",
-						"bufferRendering_Combiner_Modulate_Queue_Entity",
-						"bufferRendering_Combiner_Modulate_Quad_Entity",
-						"bufferRendering_Combiner_Modulate_View_Entity",
-						"combiner_modulate_vs",
-						"combiner_modulate_ps",
+						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
 						{
-							std::make_pair(Texture::STAGE_0, combiner_modulate_inputA_channnel),
-							std::make_pair(Texture::STAGE_1, combiner_modulate_inputB_channnel),
-						},
-						Texture::STAGE_0);
+						};
+
+						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
+						{
+
+							{ "AmbientLightChannel",
+								{
+									{ std::make_pair("std.ambientlight.color", "color") }
+								}
+							},
+							{ "LitChannel",
+								{
+									{ std::make_pair("std.light0.dir", "light_dir") }
+								}
+							},
+							{ "EmissiveChannel",
+								{
+									{ std::make_pair("std.black_color", "color") }
+								}
+							},
+							{ "ShadowsChannel",
+								{
+									{ std::make_pair("shadow_bias", "shadow_bias") },
+									{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
+								}
+							}
+						};
+
+						renderingHelper->registerToPasses(m_entitygraph, m_groundEntity, config, vertex_shaders_params, pixel_shaders_params);
+					}
+
+					// wall rendering
+					{
+						auto textures_channel_config{ renderingHelper->getPassConfig("TexturesChannel") };
+						textures_channel_config.vshader = "scene_texture1stage_keycolor_vs";
+						textures_channel_config.pshader = "scene_texture1stage_keycolor_ps";
+						textures_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("wall.jpg", Texture())) };
+
+						auto zdepth_channel_config{ renderingHelper->getPassConfig("ZDepthChannel") };
+						zdepth_channel_config.vshader = "scene_zdepth_vs";
+						zdepth_channel_config.pshader = "scene_zdepth_ps";
+
+						auto ambientlight_channel_config{ renderingHelper->getPassConfig("AmbientLightChannel") };
+						ambientlight_channel_config.vshader = "scene_flatcolor_vs";
+						ambientlight_channel_config.pshader = "scene_flatcolor_ps";
+
+						auto lit_channel_config{ renderingHelper->getPassConfig("LitChannel") };
+						lit_channel_config.vshader = "scene_lit_vs";
+						lit_channel_config.pshader = "scene_lit_ps";
+
+						auto em_channel_config{ renderingHelper->getPassConfig("EmissiveChannel") };
+						em_channel_config.vshader = "scene_flatcolor_vs";
+						em_channel_config.pshader = "scene_flatcolor_ps";
+
+						auto shadows_channel_config{ renderingHelper->getPassConfig("ShadowsChannel") };
+						shadows_channel_config.vshader = "scene_shadowsmask_vs";
+						shadows_channel_config.pshader = "scene_shadowsmask_ps";
+						shadows_channel_config.textures_ptr_list = { sm_texture_ptr };
 
 
-					/////////////////////////////////////////////////////////////////
+						auto shadowmap_channel_config{ renderingHelper->getPassConfig("ShadowMapChannel") };
+						shadowmap_channel_config.vshader = "scene_zdepth_vs";
+						shadowmap_channel_config.pshader = "scene_zdepth_ps";
+						//shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+						//shadowmap_channel_config.rs_list.at(0).setArg("ccw");
 
 
-					// channel : textures
-					
-					rendering::Queue texturesChannelRenderingQueue("textures_channel_queue");
-					texturesChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					texturesChannelRenderingQueue.enableTargetClearing(true);
-					texturesChannelRenderingQueue.enableTargetDepthClearing(true);
-					texturesChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
+						const std::unordered_map< std::string, helpers::PassConfig> config =
+						{
+							{ "TexturesChannel", textures_channel_config },
+							{ "ZDepthChannel", zdepth_channel_config },
+							{ "AmbientLightChannel", ambientlight_channel_config },
+							{ "LitChannel", lit_channel_config },
+							{ "EmissiveChannel", em_channel_config },
+							{ "ShadowsChannel", shadows_channel_config },
+							{ "ShadowMapChannel", shadowmap_channel_config }
+						};
 
-					mage::helpers::plugRenderingQueue(m_entitygraph, texturesChannelRenderingQueue, "bufferRendering_Combiner_Modulate_Quad_Entity", "bufferRendering_Scene_TexturesChannel_Queue_Entity");
+						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
+						{
+						};
 
-					create_openenv_textures_channel_rendergraph("bufferRendering_Scene_TexturesChannel_Queue_Entity");
-					
+						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
+						{
+
+							{ "AmbientLightChannel",
+								{
+									{ std::make_pair("std.ambientlight.color", "color") }
+								}
+							},
+							{ "LitChannel",
+								{
+									{ std::make_pair("std.light0.dir", "light_dir") }
+								}
+							},
+							{ "EmissiveChannel",
+								{
+									{ std::make_pair("std.black_color", "color") }
+								}
+							},
+							{ "ShadowsChannel",
+								{
+									{ std::make_pair("shadow_bias", "shadow_bias") },
+									{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
+								}
+							}
+						};
+
+						renderingHelper->registerToPasses(m_entitygraph, m_wallEntity, config, vertex_shaders_params, pixel_shaders_params);
+
+					}
 
 
+					// sphere rendering
+					{
+						auto textures_channel_config{ renderingHelper->getPassConfig("TexturesChannel") };
+						textures_channel_config.vshader = "scene_texture1stage_keycolor_vs";
+						textures_channel_config.pshader = "scene_texture1stage_keycolor_ps";
+						textures_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("marbre.jpg", Texture())) };
 
-
-
-
-
-
-
-					// channel : ligths and shadows effect
-					
-					const auto combiner_accumulate_inputA_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-					const auto combiner_accumulate_inputB_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-					const auto combiner_accumulate_inputC_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-
-
-					mage::helpers::plugRenderingQuad(m_entitygraph,
-						"acc_lit_queue",
-						characteristics_v_width, characteristics_v_height,
-						"bufferRendering_Combiner_Modulate_Quad_Entity",
-						"bufferRendering_Combiner_Accumulate_Queue_Entity",
-						"bufferRendering_Combiner_Accumulate_Quad_Entity",
-						"bufferRendering_Combiner_Accumulate_View_Entity",
+						auto zdepth_channel_config{ renderingHelper->getPassConfig("ZDepthChannel") };
+						zdepth_channel_config.vshader = "scene_zdepth_vs";
+						zdepth_channel_config.pshader = "scene_zdepth_ps";
 						
-						"combiner_accumulate3chan_vs",
-						"combiner_accumulate3chan_ps",
+						auto ambientlight_channel_config{ renderingHelper->getPassConfig("AmbientLightChannel") };
+						ambientlight_channel_config.vshader = "scene_flatcolor_vs";
+						ambientlight_channel_config.pshader = "scene_flatcolor_ps";
+
+						auto lit_channel_config{ renderingHelper->getPassConfig("LitChannel") };
+						lit_channel_config.vshader = "scene_lit_vs";
+						lit_channel_config.pshader = "scene_lit_ps";
+
+						auto em_channel_config{ renderingHelper->getPassConfig("EmissiveChannel") };
+						em_channel_config.vshader = "scene_flatcolor_vs";
+						em_channel_config.pshader = "scene_flatcolor_ps";
+
+						auto shadows_channel_config{ renderingHelper->getPassConfig("ShadowsChannel") };
+						shadows_channel_config.vshader = "scene_shadowsmask_vs";
+						shadows_channel_config.pshader = "scene_shadowsmask_ps";
+						shadows_channel_config.textures_ptr_list = { sm_texture_ptr };
+
+						auto shadowmap_channel_config{ renderingHelper->getPassConfig("ShadowMapChannel") };
+						shadowmap_channel_config.vshader = "scene_zdepth_vs";
+						shadowmap_channel_config.pshader = "scene_zdepth_ps";
+						shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+						shadowmap_channel_config.rs_list.at(0).setArg("ccw");
+
+						const std::unordered_map< std::string, helpers::PassConfig> config =
 						{
-							std::make_pair(Texture::STAGE_0, combiner_accumulate_inputA_channnel),
-							std::make_pair(Texture::STAGE_1, combiner_accumulate_inputB_channnel),
-							std::make_pair(Texture::STAGE_2, combiner_accumulate_inputC_channnel),
-						},
-						Texture::STAGE_0);
+							{ "TexturesChannel", textures_channel_config },
+							{ "ZDepthChannel", zdepth_channel_config },
+							{ "AmbientLightChannel", ambientlight_channel_config },
+							{ "LitChannel", lit_channel_config },
+							{ "EmissiveChannel", em_channel_config },
+							{ "ShadowsChannel", shadows_channel_config },
+							{ "ShadowMapChannel", shadowmap_channel_config }
+						};
 
 
-
-					// channel : ambient light
-
-					rendering::Queue ambientLightChannelRenderingQueue("ambientlight_channel_queue");
-					ambientLightChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					ambientLightChannelRenderingQueue.enableTargetClearing(true);
-					ambientLightChannelRenderingQueue.enableTargetDepthClearing(true);
-					ambientLightChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
-
-					mage::helpers::plugRenderingQueue(m_entitygraph, ambientLightChannelRenderingQueue, "bufferRendering_Combiner_Accumulate_Quad_Entity", "bufferRendering_Scene_AmbientLightChannel_Queue_Entity");
-
-					create_openenv_ambientlight_channel_rendergraph("bufferRendering_Scene_AmbientLightChannel_Queue_Entity");
-
-
-					// channel : emissive
-
-					rendering::Queue emissiveChannelRenderingQueue("emissive_channel_queue");
-					emissiveChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					emissiveChannelRenderingQueue.enableTargetClearing(true);
-					emissiveChannelRenderingQueue.enableTargetDepthClearing(true);
-					emissiveChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
-
-					mage::helpers::plugRenderingQueue(m_entitygraph, emissiveChannelRenderingQueue, "bufferRendering_Combiner_Accumulate_Quad_Entity", "bufferRendering_Scene_EmissiveChannel_Queue_Entity");
-
-					create_openenv_emissive_channel_rendergraph("bufferRendering_Scene_EmissiveChannel_Queue_Entity");
-
-
-
-
-
-
-
-					// channel to modulate directional lit and shadow map
-
-
-
-					const auto combiner_modulatelitshadows_inputA_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-					const auto combiner_modulatelitshadows_inputB_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
-
-
-
-					mage::helpers::plugRenderingQuad(m_entitygraph,
-						"mod_lit_shadows_queue",
-						characteristics_v_width, characteristics_v_height,
-						"bufferRendering_Combiner_Accumulate_Quad_Entity",
-						"bufferRendering_Combiner_ModulateLitAndShadows_Queue_Entity",
-						"bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity",
-						"bufferRendering_Combiner_ModulateLitAndShadows_View_Entity",
-
-						"combiner_modulate_vs",
-						"combiner_modulate_ps",
+						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
 						{
-							std::make_pair(Texture::STAGE_0, combiner_modulatelitshadows_inputA_channnel),
-							std::make_pair(Texture::STAGE_1, combiner_modulatelitshadows_inputB_channnel),
-						},
-						Texture::STAGE_2);
+						};
+
+						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
+						{
+
+							{ "AmbientLightChannel",
+								{
+									{ std::make_pair("std.ambientlight.color", "color") }
+								}
+							},
+							{ "LitChannel",
+								{
+									{ std::make_pair("std.light0.dir", "light_dir") }
+								}
+							},
+							{ "EmissiveChannel",
+								{
+									{ std::make_pair("std.black_color", "color") }
+								}
+							},
+							{ "ShadowsChannel",
+								{
+									{ std::make_pair("shadow_bias", "shadow_bias") },
+									{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
+								}
+							}
+						};
+
+						renderingHelper->registerToPasses(m_entitygraph, m_sphereEntity, config, vertex_shaders_params, pixel_shaders_params);
+					}
 
 
+					// tree rendering
+					{
+						auto textures_channel_config{ renderingHelper->getPassConfig("TexturesChannel") };
+						textures_channel_config.vshader = "scene_texture1stage_keycolor_vs";
+						textures_channel_config.pshader = "scene_texture1stage_keycolor_ps";
+						textures_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
+						textures_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+						textures_channel_config.rs_list.at(0).setArg("none");
+
+						auto zdepth_channel_config{ renderingHelper->getPassConfig("ZDepthChannel") };
+						zdepth_channel_config.vshader = "scene_zdepth_keycolor_vs";
+						zdepth_channel_config.pshader = "scene_zdepth_keycolor_ps";
+						zdepth_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
+						zdepth_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+						zdepth_channel_config.rs_list.at(0).setArg("none");
+
+						auto ambientlight_channel_config{ renderingHelper->getPassConfig("AmbientLightChannel") };
+						ambientlight_channel_config.vshader = "scene_flatcolor_keycolor_vs";
+						ambientlight_channel_config.pshader = "scene_flatcolor_keycolor_ps";
+						ambientlight_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
+						ambientlight_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+						ambientlight_channel_config.rs_list.at(0).setArg("none");
+
+						auto lit_channel_config{ renderingHelper->getPassConfig("LitChannel") };
+						lit_channel_config.vshader = "scene_lit_keycolor_vs";
+						lit_channel_config.pshader = "scene_lit_keycolor_ps";
+						lit_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
+						lit_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+						lit_channel_config.rs_list.at(0).setArg("none");
 
 
+						auto em_channel_config{ renderingHelper->getPassConfig("EmissiveChannel") };
+						em_channel_config.vshader = "scene_flatcolor_keycolor_vs";
+						em_channel_config.pshader = "scene_flatcolor_keycolor_ps";
+						em_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
+						em_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+						em_channel_config.rs_list.at(0).setArg("none");
+
+						auto shadows_channel_config{ renderingHelper->getPassConfig("ShadowsChannel") };
+						shadows_channel_config.vshader = "scene_shadowsmask_keycolor_vs";
+						shadows_channel_config.pshader = "scene_shadowsmask_keycolor_ps";
+						shadows_channel_config.textures_ptr_list = { sm_texture_ptr };
+						shadows_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_1, std::make_pair("tree2_tex.bmp", Texture())) };
+						shadows_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+						shadows_channel_config.rs_list.at(0).setArg("none");
+
+						auto shadowmap_channel_config{ renderingHelper->getPassConfig("ShadowMapChannel") };
+						shadowmap_channel_config.vshader = "scene_zdepth_keycolor_vs";
+						shadowmap_channel_config.pshader = "scene_zdepth_keycolor_ps";
+						shadowmap_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
+						shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+						shadowmap_channel_config.rs_list.at(0).setArg("none");
+
+						const std::unordered_map< std::string, helpers::PassConfig> config =
+						{
+							{ "TexturesChannel", textures_channel_config },
+							{ "ZDepthChannel", zdepth_channel_config },
+							{ "AmbientLightChannel", ambientlight_channel_config },
+							{ "LitChannel", lit_channel_config },
+							{ "EmissiveChannel", em_channel_config },
+							{ "ShadowsChannel", shadows_channel_config },
+							{ "ShadowMapChannel", shadowmap_channel_config }
+						};
+
+						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
+						{
+						};
+
+						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
+						{
+							{ "TexturesChannel",
+								{
+									{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
+								}
+							},
+							{ "ZDepthChannel",
+								{
+									{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
+								}
+							},
+							{ "AmbientLightChannel",
+								{
+									{ std::make_pair("texture_keycolor_ps.key_color", "key_color") },
+									{ std::make_pair("std.ambientlight.color", "color") }
+								}
+							},
+							{ "LitChannel",
+								{
+									{ std::make_pair("texture_keycolor_ps.key_color", "key_color") },
+									{ std::make_pair("std.light0.dir", "light_dir") }
+								}
+							},
+							{ "EmissiveChannel",
+								{
+									{ std::make_pair("texture_keycolor_ps.key_color", "key_color") },
+									{ std::make_pair("std.black_color", "color") }
+								}
+							},
+							{ "ShadowsChannel",
+								{
+									{ std::make_pair("shadow_bias", "shadow_bias") },
+									{ std::make_pair("shadowmap_resol", "shadowmap_resol") },
+									{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
+								}
+							},
+							{ "ShadowMapChannel",
+								{
+									{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
+								}
+							}
+						};
+
+						renderingHelper->registerToPasses(m_entitygraph, m_treeEntity, config, vertex_shaders_params, pixel_shaders_params);
+					}
 
 
-
-					// channel : directional lit
-
-					rendering::Queue litChannelRenderingQueue("lit_channel_queue");
-					litChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					litChannelRenderingQueue.enableTargetClearing(true);
-					litChannelRenderingQueue.enableTargetDepthClearing(true);
-					litChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
-
-					mage::helpers::plugRenderingQueue(m_entitygraph, litChannelRenderingQueue, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_LitChannel_Queue_Entity");
-
-					create_openenv_lit_channel_rendergraph("bufferRendering_Scene_LitChannel_Queue_Entity");
-					//create_openenv_lit_channel_rendergraph("bufferRendering_Scene_Debug_Queue_Entity");
+					// clouds rendering
+					{
+						auto textures_channel_config{ renderingHelper->getPassConfig("TexturesChannel") };
+						textures_channel_config.vshader = "scene_flatclouds_vs";
+						textures_channel_config.pshader = "scene_flatclouds_ps";
+						textures_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("flatclouds.jpg", Texture())) };
+						textures_channel_config.rendering_order = 999;
 
 
+						textures_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+						textures_channel_config.rs_list.at(0).setArg("ccw");
+
+						textures_channel_config.rs_list.at(1).setOperation(RenderState::Operation::ENABLEZBUFFER);
+						textures_channel_config.rs_list.at(1).setArg("false");
 
 
-					// channel : shadow
-
-					rendering::Queue shadowsChannelRenderingQueue("shadows_channel_queue");
-					shadowsChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-					shadowsChannelRenderingQueue.enableTargetClearing(true);
-					shadowsChannelRenderingQueue.enableTargetDepthClearing(true);
-					shadowsChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
-
-					mage::helpers::plugRenderingQueue(m_entitygraph, shadowsChannelRenderingQueue, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
+						textures_channel_config.rs_list.at(3).setOperation(RenderState::Operation::SETTEXTUREFILTERTYPE);
+						textures_channel_config.rs_list.at(3).setArg("linear_uvwrap");
 
 
-					///////////////////////////////////////////////////////////////////////////////////////////////////////////
-					// SHADOWMAP TARGET TEXTURE
-					// Plug shadowmap just bellow, to be sure shadowmap is rendered before shadosw mask PASS above (remind : leaf to root order)
-					helpers::plugTargetTexture(m_entitygraph, "bufferRendering_Scene_ShadowsChannel_Queue_Entity", "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 2048, 2048)));
+						textures_channel_config.rs_list.at(4).setOperation(RenderState::Operation::ALPHABLENDENABLE);
+						textures_channel_config.rs_list.at(4).setArg("true");
 
-					rendering::Queue shadowMapChannelRenderingQueue("shadowmap_channel_queue");
-					shadowMapChannelRenderingQueue.setTargetClearColor({ 255, 255, 255, 255 });
-					shadowMapChannelRenderingQueue.enableTargetClearing(true);
-					shadowMapChannelRenderingQueue.enableTargetDepthClearing(true);
-					shadowMapChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
+						RenderState rs_alphablendop(RenderState::Operation::ALPHABLENDOP, "add");
+						RenderState rs_alphablendfunc(RenderState::Operation::ALPHABLENDFUNC, "always");
+						RenderState rs_alphablenddest(RenderState::Operation::ALPHABLENDDEST, "invsrcalpha");
+						RenderState rs_alphablendsrc(RenderState::Operation::ALPHABLENDSRC, "srcalpha");
 
-					mage::helpers::plugRenderingQueue(m_entitygraph, shadowMapChannelRenderingQueue, "shadowMap_Texture_Entity", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
-					
-					//////////////////////////////////////////////////
+						textures_channel_config.rs_list.push_back(rs_alphablendop);
+						textures_channel_config.rs_list.push_back(rs_alphablendfunc);
+						textures_channel_config.rs_list.push_back(rs_alphablenddest);
+						textures_channel_config.rs_list.push_back(rs_alphablendsrc);
 
-					create_openenv_shadows_channel_rendergraph("bufferRendering_Scene_ShadowsChannel_Queue_Entity");
-					//create_openenv_shadows_channel_rendergraph("bufferRendering_Scene_Debug_Queue_Entity");
 
-					create_openenv_shadowmap_channel_rendergraph("bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
+						auto em_channel_config{ renderingHelper->getPassConfig("EmissiveChannel") };
+						em_channel_config.vshader = "scene_flatcolor_vs";
+						em_channel_config.pshader = "scene_flatcolor_ps";
+						em_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
+						em_channel_config.rendering_order = 999;
+
+						em_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+						em_channel_config.rs_list.at(0).setArg("ccw");
+
+						em_channel_config.rs_list.at(1).setOperation(RenderState::Operation::ENABLEZBUFFER);
+						em_channel_config.rs_list.at(1).setArg("false");
+
+
+						const std::unordered_map< std::string, helpers::PassConfig> config =
+						{
+							{ "TexturesChannel", textures_channel_config },
+							{ "EmissiveChannel", em_channel_config }
+						};
+
+
+						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
+						{
+						};
+
+						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
+						{
+							{ "EmissiveChannel",
+								{									
+									{ std::make_pair("skydome_emissive_color", "color") }
+								}
+							}
+						};
+
+						renderingHelper->registerToPasses(m_entitygraph, m_cloudsEntity, config, vertex_shaders_params, pixel_shaders_params);
+					}
+
+
+					// skydome rendering
+					{
+						auto textures_channel_config{ renderingHelper->getPassConfig("TexturesChannel") };
+						textures_channel_config.vshader = "scene_skydome_vs";
+						textures_channel_config.pshader = "scene_skydome_ps";
+						textures_channel_config.rendering_order = 900;
+
+						textures_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+						textures_channel_config.rs_list.at(0).setArg("ccw");
+
+						textures_channel_config.rs_list.at(1).setOperation(RenderState::Operation::ENABLEZBUFFER);
+						textures_channel_config.rs_list.at(1).setArg("false");
+
+
+						textures_channel_config.rs_list.at(4).setOperation(RenderState::Operation::ALPHABLENDENABLE);
+						textures_channel_config.rs_list.at(4).setArg("true");
+
+						RenderState rs_alphablendop(RenderState::Operation::ALPHABLENDOP, "add");
+						RenderState rs_alphablendfunc(RenderState::Operation::ALPHABLENDFUNC, "always");
+						RenderState rs_alphablenddest(RenderState::Operation::ALPHABLENDDEST, "invsrcalpha");
+						RenderState rs_alphablendsrc(RenderState::Operation::ALPHABLENDSRC, "srcalpha");
+
+						textures_channel_config.rs_list.push_back(rs_alphablendop);
+						textures_channel_config.rs_list.push_back(rs_alphablendfunc);
+						textures_channel_config.rs_list.push_back(rs_alphablenddest);
+						textures_channel_config.rs_list.push_back(rs_alphablendsrc);
+
+
+						auto em_channel_config{ renderingHelper->getPassConfig("EmissiveChannel") };
+						em_channel_config.vshader = "scene_flatcolor_vs";
+						em_channel_config.pshader = "scene_flatcolor_ps";
+
+						em_channel_config.rendering_order = 990;
+
+						em_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+						em_channel_config.rs_list.at(0).setArg("ccw");
+
+						em_channel_config.rs_list.at(1).setOperation(RenderState::Operation::ENABLEZBUFFER);
+						em_channel_config.rs_list.at(1).setArg("false");
+
+
+						const std::unordered_map< std::string, helpers::PassConfig> config =
+						{
+							{ "TexturesChannel", textures_channel_config },
+							{ "EmissiveChannel", em_channel_config }
+						};
+
+
+						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
+						{
+						};
+
+						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
+						{
+							{ "TexturesChannel",
+								{
+									{ std::make_pair("std.light0.dir", "light0_dir") },
+									{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_0", "atmo_scattering_flag_0") },
+									{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_1", "atmo_scattering_flag_1") },
+									{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_2", "atmo_scattering_flag_2") },
+									{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_3", "atmo_scattering_flag_3") },
+									{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_4", "atmo_scattering_flag_4") },
+									{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_5", "atmo_scattering_flag_5") },
+								}
+							},
+
+							{ "EmissiveChannel",
+								{
+									{ std::make_pair("skydome_emissive_color", "color") }
+								}
+							}
+						};
+
+						renderingHelper->registerToPasses(m_entitygraph, m_skydomeEntity, config, vertex_shaders_params, pixel_shaders_params);
+					}
 
 				}
 				break;
@@ -413,9 +716,9 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 }
 
 
-void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_mainWindowsEntityId)
+void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_parentEntityId)
 {
-	auto& appwindowNode{ m_entitygraph.node(p_mainWindowsEntityId) };
+	auto& appwindowNode{ m_entitygraph.node(p_parentEntityId) };
 	const auto appwindow{ appwindowNode.data() };
 
 	const auto& mainwindows_rendering_aspect{ appwindow->aspectAccess(mage::core::renderingAspect::id) };
@@ -459,6 +762,50 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_mainWindowsE
 	////////////////////////////////
 
 	{
+		auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "wall_Entity") };
+		const auto entity{ entityNode.data() };
+
+		auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
+		entity->makeAspect(core::timeAspect::id);
+
+		world_aspect.addComponent<transform::WorldPosition>("position");
+		world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
+		(
+			{},
+			[=](const core::ComponentContainer& p_world_aspect,
+				const core::ComponentContainer& p_time_aspect,
+				const transform::WorldPosition&,
+				const std::unordered_map<std::string, std::string>&)
+			{
+
+				maths::Matrix positionmat;
+				positionmat.translation(-25.0, skydomeInnerRadius + groundLevel + 0.0, -40.0);
+
+				maths::Matrix rotationmat;
+				rotationmat.rotation(core::maths::Real3Vector(0, 1, 0), core::maths::degToRad(90));
+
+				transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+				wp.local_pos = wp.local_pos * rotationmat * positionmat;
+			}
+		));
+
+		auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
+
+		TriangleMeshe wall_triangle_meshe;
+		wall_triangle_meshe.setSmoothNormalesGeneration(false);
+
+		resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair("box", "wall.ac"), wall_triangle_meshe));
+
+		m_wallEntity = entity;
+	}
+
+
+
+
+
+	////////////////////////////////
+
+	{
 		auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "sphere_Entity") };
 		const auto entity{ entityNode.data() };
 
@@ -478,8 +825,12 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_mainWindowsE
 				maths::Matrix positionmat;
 				positionmat.translation(-45.0, skydomeInnerRadius + groundLevel + 8.0, -20.0);
 
+				maths::Matrix rotationmat;
+				rotationmat.rotation(core::maths::Real3Vector(0, 1, 0), core::maths::degToRad(135));
+
+
 				transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-				wp.local_pos = wp.local_pos * positionmat;
+				wp.local_pos = wp.local_pos * rotationmat * positionmat;
 			}
 		));
 
@@ -627,7 +978,7 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_mainWindowsE
 			{"lookatJointAnim.localpos", "lookat_localpos"},
 
 		},
-		helpers::animators::makeLookatJointAnimator())
+		helpers::makeLookatJointAnimator())
 	);
 
 
@@ -669,7 +1020,7 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_mainWindowsE
 			{"gimbalLockJointAnim.speed", "gbl_speed"},
 			{"gimbalLockJointAnim.output", "gbl_output"}
 
-		}, helpers::animators::makeGimbalLockJointAnimator()));
+		}, helpers::makeGimbalLockJointAnimator()));
 
 
 	// add camera
@@ -678,1239 +1029,178 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_mainWindowsE
 
 }
 
-void SamplesOpenEnv::create_openenv_textures_channel_rendergraph(const std::string& p_queueEntityId)
+void SamplesOpenEnv::create_openenv_rendergraph(const std::string& p_parentEntityId, int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height)
 {
 
-	///////////////	add ground
+	const auto combiner_fog_input_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
+	const auto combiner_fog_zdepths_channnel{ Texture(Texture::Format::TEXTURE_FLOAT32, p_w_width, p_w_height) };
+
+	mage::helpers::plugRenderingQuad(m_entitygraph,
+		"fog_queue",
+		p_characteristics_v_width, p_characteristics_v_height,
+		//"screenRendering_Filter_DirectForward_Quad_Entity",
+		p_parentEntityId,
+		"bufferRendering_Combiner_Fog_Queue_Entity",
+		"bufferRendering_Combiner_Fog_Quad_Entity",
+		"bufferRendering_Combiner_Fog_View_Entity",
+		"combiner_fog_vs",
+		"combiner_fog_ps",
+		{
+			std::make_pair(Texture::STAGE_0, combiner_fog_input_channnel),
+			std::make_pair(Texture::STAGE_1, combiner_fog_zdepths_channnel),
+		},
+		Texture::STAGE_0);
 
-	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
+	Entity* bufferRendering_Combiner_Fog_Quad_Entity{ m_entitygraph.node("bufferRendering_Combiner_Fog_Quad_Entity").data() };
 
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
+	auto& screenRendering_Combiner_Fog_Quad_Entity_rendering_aspect{ bufferRendering_Combiner_Fog_Quad_Entity->aspectAccess(core::renderingAspect::id) };
 
-		const std::vector<RenderState> ground_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
+	rendering::DrawingControl& fogDrawingControl{ screenRendering_Combiner_Fog_Quad_Entity_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+	fogDrawingControl.pshaders_map.push_back(std::make_pair("std.fog.color", "fog_color"));
+	fogDrawingControl.pshaders_map.push_back(std::make_pair("std.fog.density", "fog_density"));
+
+
+	// channel : zdepth
+
+	rendering::Queue zdepthChannelRenderingQueue("zdepth_channel_queue");
+	zdepthChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+	zdepthChannelRenderingQueue.enableTargetClearing(true);
+	zdepthChannelRenderingQueue.enableTargetDepthClearing(true);
+	zdepthChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
+
+	mage::helpers::plugRenderingQueue(m_entitygraph, zdepthChannelRenderingQueue, "bufferRendering_Combiner_Fog_Quad_Entity", "bufferRendering_Scene_ZDepthChannel_Queue_Entity");
+
+
+	const auto combiner_modulate_inputA_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
+	const auto combiner_modulate_inputB_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
+
+	mage::helpers::plugRenderingQuad(m_entitygraph,
+		"modulate_queue",
+		p_characteristics_v_width, p_characteristics_v_height,
+		"bufferRendering_Combiner_Fog_Quad_Entity",
+		"bufferRendering_Combiner_Modulate_Queue_Entity",
+		"bufferRendering_Combiner_Modulate_Quad_Entity",
+		"bufferRendering_Combiner_Modulate_View_Entity",
+		"combiner_modulate_vs",
+		"combiner_modulate_ps",
+		{
+			std::make_pair(Texture::STAGE_0, combiner_modulate_inputA_channnel),
+			std::make_pair(Texture::STAGE_1, combiner_modulate_inputB_channnel),
+		},
+		Texture::STAGE_0);
 
 
-		const std::vector<std::pair<size_t, std::pair<std::string, Texture>>> ground_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("grass08.jpg", Texture())) };
+	/////////////////////////////////////////////////////////////////
 
+	// channel : textures
 
+	rendering::Queue texturesChannelRenderingQueue("textures_channel_queue");
+	texturesChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+	texturesChannelRenderingQueue.enableTargetClearing(true);
+	texturesChannelRenderingQueue.enableTargetDepthClearing(true);
+	texturesChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
 
-		const auto ground_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "ground_TexturesChannel_Proxy_Entity",
-															"scene_recursive_texture_vs", "scene_recursive_texture_ps",
-															ground_rs_list,
-															1000,
-															ground_textures) };
+	mage::helpers::plugRenderingQueue(m_entitygraph, texturesChannelRenderingQueue, "bufferRendering_Combiner_Modulate_Quad_Entity", "bufferRendering_Scene_TexturesChannel_Queue_Entity");
 
+	// channel : ligths and shadows effect
 
-		//////////////////////////////////////////////////////////////////////
+	const auto combiner_accumulate_inputA_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
+	const auto combiner_accumulate_inputB_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
+	const auto combiner_accumulate_inputC_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
 
-		// link triangle meshe to related entity in scenegraph side 
-		auto& ground_resource_aspect{ m_groundEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &ground_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
 
-		auto& proxy_resource_aspect{ ground_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
+	mage::helpers::plugRenderingQuad(m_entitygraph,
+		"acc_lit_queue",
+		p_characteristics_v_width, p_characteristics_v_height,
+		"bufferRendering_Combiner_Modulate_Quad_Entity",
+		"bufferRendering_Combiner_Accumulate_Queue_Entity",
+		"bufferRendering_Combiner_Accumulate_Quad_Entity",
+		"bufferRendering_Combiner_Accumulate_View_Entity",
 
+		"combiner_accumulate3chan_vs",
+		"combiner_accumulate3chan_ps",
+		{
+			std::make_pair(Texture::STAGE_0, combiner_accumulate_inputA_channnel),
+			std::make_pair(Texture::STAGE_1, combiner_accumulate_inputB_channnel),
+			std::make_pair(Texture::STAGE_2, combiner_accumulate_inputC_channnel),
+		},
+		Texture::STAGE_0);
 
-		///////////////////////////////////////////////////////////////////////
 
-		// link transforms to related entity in scenegraph side 
-		auto& ground_world_aspect{ m_groundEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &ground_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+	// channel : ambient light
 
-		auto& proxy_world_aspect{ ground_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
+	rendering::Queue ambientLightChannelRenderingQueue("ambientlight_channel_queue");
+	ambientLightChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+	ambientLightChannelRenderingQueue.enableTargetClearing(true);
+	ambientLightChannelRenderingQueue.enableTargetDepthClearing(true);
+	ambientLightChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
 
-	}
+	mage::helpers::plugRenderingQueue(m_entitygraph, ambientLightChannelRenderingQueue, "bufferRendering_Combiner_Accumulate_Quad_Entity", "bufferRendering_Scene_AmbientLightChannel_Queue_Entity");
 
+	// channel : emissive
 
-	///////////////	add sphere
+	rendering::Queue emissiveChannelRenderingQueue("emissive_channel_queue");
+	emissiveChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+	emissiveChannelRenderingQueue.enableTargetClearing(true);
+	emissiveChannelRenderingQueue.enableTargetDepthClearing(true);
+	emissiveChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
 
-	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
+	mage::helpers::plugRenderingQueue(m_entitygraph, emissiveChannelRenderingQueue, "bufferRendering_Combiner_Accumulate_Quad_Entity", "bufferRendering_Scene_EmissiveChannel_Queue_Entity");
 
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
+	// channel to modulate directional lit and shadow map
 
-		const std::vector<RenderState> sphere_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
+	const auto combiner_modulatelitshadows_inputA_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
+	const auto combiner_modulatelitshadows_inputB_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
 
+	mage::helpers::plugRenderingQuad(m_entitygraph,
+		"mod_lit_shadows_queue",
+		p_characteristics_v_width, p_characteristics_v_height,
+		"bufferRendering_Combiner_Accumulate_Quad_Entity",
+		"bufferRendering_Combiner_ModulateLitAndShadows_Queue_Entity",
+		"bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity",
+		"bufferRendering_Combiner_ModulateLitAndShadows_View_Entity",
 
-		const std::vector<std::pair<size_t, std::pair<std::string, Texture>>> sphere_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("marbre.jpg", Texture())) };
+		"combiner_modulate_vs",
+		"combiner_modulate_ps",
+		{
+			std::make_pair(Texture::STAGE_0, combiner_modulatelitshadows_inputA_channnel),
+			std::make_pair(Texture::STAGE_1, combiner_modulatelitshadows_inputB_channnel),
+		},
+		Texture::STAGE_2);
 
 
+	// channel : directional lit
 
-		const auto sphere_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "sphere_TexturesChannel_Proxy_Entity",
-															"scene_texture1stage_keycolor_vs", "scene_texture1stage_keycolor_ps",
-															sphere_rs_list,
-															1000,
-															sphere_textures) };
+	rendering::Queue litChannelRenderingQueue("lit_channel_queue");
+	litChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+	litChannelRenderingQueue.enableTargetClearing(true);
+	litChannelRenderingQueue.enableTargetDepthClearing(true);
+	litChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
 
+	mage::helpers::plugRenderingQueue(m_entitygraph, litChannelRenderingQueue, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_LitChannel_Queue_Entity");
 
-		//////////////////////////////////////////////////////////////////////
 
-		// link triangle meshe to related entity in scenegraph side 
-		auto& resource_aspect{ m_sphereEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
+	// channel : shadow
 
-		auto& proxy_resource_aspect{ sphere_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
+	rendering::Queue shadowsChannelRenderingQueue("shadows_channel_queue");
+	shadowsChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+	shadowsChannelRenderingQueue.enableTargetClearing(true);
+	shadowsChannelRenderingQueue.enableTargetDepthClearing(true);
+	shadowsChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
 
+	mage::helpers::plugRenderingQueue(m_entitygraph, shadowsChannelRenderingQueue, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
 
-		///////////////////////////////////////////////////////////////////////
 
-		// link transforms to related entity in scenegraph side 
-		auto& world_aspect{ m_sphereEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// SHADOWMAP TARGET TEXTURE
+	// Plug shadowmap just bellow, to be sure shadowmap is rendered before shadosw mask PASS above (remind : leaf to root order)
+	helpers::plugTargetTexture(m_entitygraph, "bufferRendering_Scene_ShadowsChannel_Queue_Entity", "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 2048, 2048)));
 
-		auto& proxy_world_aspect{ sphere_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
+	rendering::Queue shadowMapChannelRenderingQueue("shadowmap_channel_queue");
+	shadowMapChannelRenderingQueue.setTargetClearColor({ 255, 255, 255, 255 });
+	shadowMapChannelRenderingQueue.enableTargetClearing(true);
+	shadowMapChannelRenderingQueue.enableTargetDepthClearing(true);
+	shadowMapChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
 
-	}
-
-
-	/////////////////// add clouds
-	
-	{
-
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "false");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "true");
-		RenderState rs_alphablendop(RenderState::Operation::ALPHABLENDOP, "add");
-		RenderState rs_alphablendfunc(RenderState::Operation::ALPHABLENDFUNC, "always");
-		RenderState rs_alphablenddest(RenderState::Operation::ALPHABLENDDEST, "invsrcalpha");
-		RenderState rs_alphablendsrc(RenderState::Operation::ALPHABLENDSRC, "srcalpha");
-
-		const std::vector<RenderState> clouds_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling,
-															rs_alphablend, rs_alphablendop, rs_alphablendfunc, rs_alphablenddest, rs_alphablendsrc
-		};
-
-		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> clouds_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("flatclouds.jpg", Texture())) };
-
-		const auto clouds_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "clouds_TexturesChannel_Proxy_Entity",
-															"scene_flatclouds_vs", "scene_flatclouds_ps",
-															clouds_rs_list,
-															999,
-															clouds_textures) };
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& clouds_resource_aspect{ m_cloudsEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &clouds_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ clouds_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side 
-		auto& clouds_world_aspect{ m_cloudsEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &clouds_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ clouds_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-	}
-	
-
-	///// add tree
-
-	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-		const std::vector<RenderState> tree_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
-
-		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
-
-		const auto tree_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "tree_TexturesChannel_Proxy_Entity",
-															"scene_texture1stage_keycolor_vs", "scene_texture1stage_keycolor_ps",
-															tree_rs_list,
-															1000,
-															tree_textures) };
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& tree_resource_aspect{ m_treeEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &tree_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ tree_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side 
-		auto& tree_world_aspect{ m_treeEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &tree_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ tree_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-		////////////////////////////////////////////////////////////////////////
-
-		auto& tree_rendering_aspect{ tree_proxy_entity->aspectAccess(core::renderingAspect::id) };
-
-		rendering::DrawingControl& drawingControl{ tree_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
-
-	}
-
-	///// skydome
-	
-	{
-
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "false");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "true");
-		RenderState rs_alphablendop(RenderState::Operation::ALPHABLENDOP, "add");
-		RenderState rs_alphablendfunc(RenderState::Operation::ALPHABLENDFUNC, "always");
-		RenderState rs_alphablenddest(RenderState::Operation::ALPHABLENDDEST, "invsrcalpha");
-		RenderState rs_alphablendsrc(RenderState::Operation::ALPHABLENDSRC, "srcalpha");
-
-		const std::vector<RenderState> skydome_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling,
-															rs_alphablend, rs_alphablendop, rs_alphablendfunc, rs_alphablenddest, rs_alphablendsrc
-		};
-
-
-		const auto skydome_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "skydome_TexturesChannel_Proxy_Entity",
-									"scene_skydome_vs", "scene_skydome_ps",
-									skydome_rs_list,
-									900
-									) };
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& skydome_resource_aspect{ m_skydomeEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &skydome_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ skydome_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-		////////////////////////////////////////////////////////////////////////
-
-		auto& skydome_world_aspect{ m_skydomeEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &skydome_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ skydome_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-		////////////////////////////////////////////////////////////////////////
-
-		auto& skydom_rendering_aspect{ skydome_proxy_entity->aspectAccess(core::renderingAspect::id) };
-
-		rendering::DrawingControl& drawingControl{ skydom_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-
-		drawingControl.pshaders_map.push_back(std::make_pair("std.light0.dir", "light0_dir"));
-		drawingControl.pshaders_map.push_back(std::make_pair("scene_skydome_ps.atmo_scattering_flag_0", "atmo_scattering_flag_0"));
-		drawingControl.pshaders_map.push_back(std::make_pair("scene_skydome_ps.atmo_scattering_flag_1", "atmo_scattering_flag_1"));
-		drawingControl.pshaders_map.push_back(std::make_pair("scene_skydome_ps.atmo_scattering_flag_2", "atmo_scattering_flag_2"));
-		drawingControl.pshaders_map.push_back(std::make_pair("scene_skydome_ps.atmo_scattering_flag_3", "atmo_scattering_flag_3"));
-		drawingControl.pshaders_map.push_back(std::make_pair("scene_skydome_ps.atmo_scattering_flag_4", "atmo_scattering_flag_4"));
-		drawingControl.pshaders_map.push_back(std::make_pair("scene_skydome_ps.atmo_scattering_flag_5", "atmo_scattering_flag_5"));
-	}
-	
-}
-
-void SamplesOpenEnv::create_openenv_zdepth_channel_rendergraph(const std::string& p_queueEntityId)
-{
-	///////////////	add ground
-
-	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-		const std::vector<RenderState> ground_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
-
-		const auto ground_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "ground_ZDepthChannel_Proxy_Entity",
-															"scene_zdepth_vs", "scene_zdepth_ps",
-															ground_rs_list,
-															1000) };
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& ground_resource_aspect{ m_groundEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &ground_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ ground_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-
-		///////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side 
-		auto& ground_world_aspect{ m_groundEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &ground_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ ground_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-	}
-
-	///////////////	add sphere
-
-	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-		const std::vector<RenderState> sphere_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
-
-		const auto sphere_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "sphere_ZDepthChannel_Proxy_Entity",
-															"scene_zdepth_vs", "scene_zdepth_ps",
-															sphere_rs_list,
-															1000) };
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& resource_aspect{ m_sphereEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ sphere_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-
-		///////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side 
-		auto& world_aspect{ m_sphereEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ sphere_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-	}
-
-
-	///// add tree
-
-	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-		const std::vector<RenderState> tree_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
-
-		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
-
-		const auto tree_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "tree_ZDepthChannel_Proxy_Entity",
-															"scene_zdepth_keycolor_vs", "scene_zdepth_keycolor_ps",
-															tree_rs_list,
-															1000,
-															tree_textures) };
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& tree_resource_aspect{ m_treeEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &tree_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ tree_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side 
-		auto& tree_world_aspect{ m_treeEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &tree_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ tree_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-		////////////////////////////////////////////////////////////////////////
-
-		auto& tree_rendering_aspect{ tree_proxy_entity->aspectAccess(core::renderingAspect::id) };
-
-		rendering::DrawingControl& drawingControl{ tree_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
-
-	}
-}
-
-void SamplesOpenEnv::create_openenv_ambientlight_channel_rendergraph(const std::string& p_queueEntityId)
-{
-	///////////////	add ground
-
-	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-		const std::vector<RenderState> ground_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
-
-		const auto ground_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "ground_AmbientLightChannel_Proxy_Entity",
-															"scene_flatcolor_vs", "scene_flatcolor_ps",
-															ground_rs_list,
-															1000) };
-
-
-		/// connect shader arg
-
-		auto& rendering_aspect{ ground_proxy_entity->aspectAccess(core::renderingAspect::id) };
-
-		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("std.ambientlight.color", "color"));
-		
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& ground_resource_aspect{ m_groundEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &ground_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ ground_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-
-		///////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side 
-		auto& ground_world_aspect{ m_groundEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &ground_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ ground_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-	}
-
-	///////////////	add sphere
-
-	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-		const std::vector<RenderState> sphere_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
-
-		const auto sphere_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "sphere_AmbientLightChannel_Proxy_Entity",
-															"scene_flatcolor_vs", "scene_flatcolor_ps",
-															sphere_rs_list,
-															1000) };
-
-
-		/// connect shader arg
-
-		auto& rendering_aspect{ sphere_proxy_entity->aspectAccess(core::renderingAspect::id) };
-
-		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("std.ambientlight.color", "color"));
-
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& resource_aspect{ m_sphereEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ sphere_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-
-		///////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side 
-		auto& world_aspect{ m_sphereEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ sphere_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-	}
-
-	///// add tree
-
-	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-		const std::vector<RenderState> tree_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
-
-		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
-
-		const auto tree_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "tree_AmbientLightChannel_Proxy_Entity",
-															"scene_flatcolor_keycolor_vs", "scene_flatcolor_keycolor_ps",
-															tree_rs_list,
-															1000,
-															tree_textures) };
-
-		/// connect shaders args
-
-		auto& rendering_aspect{ tree_proxy_entity->aspectAccess(core::renderingAspect::id) };
-
-		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
-		drawingControl.pshaders_map.push_back(std::make_pair("std.ambientlight.color", "color"));
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& tree_resource_aspect{ m_treeEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &tree_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ tree_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side 
-		auto& tree_world_aspect{ m_treeEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &tree_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ tree_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-		////////////////////////////////////////////////////////////////////////
-	}
-}
-
-void SamplesOpenEnv::create_openenv_lit_channel_rendergraph(const std::string& p_queueEntityId)
-{
-	///////////////	add ground
-
-	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-		const std::vector<RenderState> ground_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
-
-		const auto ground_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "ground_LitChannel_Proxy_Entity",
-															"scene_lit_vs", "scene_lit_ps",
-															ground_rs_list,
-															1000) };
-
-
-		/// connect shader arg
-
-		auto& rendering_aspect{ ground_proxy_entity->aspectAccess(core::renderingAspect::id) };
-
-		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("std.light0.dir", "light_dir"));
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& ground_resource_aspect{ m_groundEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &ground_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ ground_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-
-		///////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side 
-		auto& ground_world_aspect{ m_groundEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &ground_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ ground_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-	}
-
-	///////////////	add sphere
-
-	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-		const std::vector<RenderState> sphere_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
-
-		const auto sphere_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "sphere_LitChannel_Proxy_Entity",
-															"scene_lit_vs", "scene_lit_ps",
-															sphere_rs_list,
-															1000) };
-
-
-		/// connect shader arg
-
-		auto& rendering_aspect{ sphere_proxy_entity->aspectAccess(core::renderingAspect::id) };
-
-		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("std.light0.dir", "light_dir"));
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& resource_aspect{ m_sphereEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ sphere_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-
-		///////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side 
-		auto& world_aspect{ m_sphereEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ sphere_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-	}
-
-	///////////////	add tree
-
-	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-		const std::vector<RenderState> tree_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
-
-		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
-
-		const auto tree_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "tree_LitChannel_Proxy_Entity",
-															"scene_lit_keycolor_vs", "scene_lit_keycolor_ps",
-															tree_rs_list,
-															1000,
-															tree_textures) };
-
-
-		/// connect shader arg
-
-		auto& rendering_aspect{ tree_proxy_entity->aspectAccess(core::renderingAspect::id) };
-
-		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
-		drawingControl.pshaders_map.push_back(std::make_pair("std.light0.dir", "light_dir"));
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& tree_resource_aspect{ m_treeEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &tree_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ tree_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-
-		///////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side 
-		auto& tree_world_aspect{ m_treeEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &tree_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ tree_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-	}
-}
-
-void SamplesOpenEnv::create_openenv_emissive_channel_rendergraph(const std::string& p_queueEntityId)
-{
-	///////////////	add ground
-
-	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-		const std::vector<RenderState> ground_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
-
-		const auto ground_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "ground_EmissiveChannel_Proxy_Entity",
-															"scene_flatcolor_vs", "scene_flatcolor_ps",
-															ground_rs_list,
-															1000) };
-
-
-		/// connect shader arg
-
-		auto& rendering_aspect{ ground_proxy_entity->aspectAccess(core::renderingAspect::id) };
-
-		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("black_color", "color"));
-
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& ground_resource_aspect{ m_groundEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &ground_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ ground_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-
-		///////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side 
-		auto& ground_world_aspect{ m_groundEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &ground_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ ground_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-	}
-
-	/////////////////// add clouds
-
-	{
-
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "false");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "true");
-		RenderState rs_alphablendop(RenderState::Operation::ALPHABLENDOP, "add");
-		RenderState rs_alphablendfunc(RenderState::Operation::ALPHABLENDFUNC, "always");
-		RenderState rs_alphablenddest(RenderState::Operation::ALPHABLENDDEST, "invsrcalpha");
-		RenderState rs_alphablendsrc(RenderState::Operation::ALPHABLENDSRC, "srcalpha");
-
-		const std::vector<RenderState> clouds_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling,
-															rs_alphablend, rs_alphablendop, rs_alphablendfunc, rs_alphablenddest, rs_alphablendsrc
-		};
-
-		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> clouds_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("flatclouds.jpg", Texture())) };
-
-		const auto clouds_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "clouds_EmissiveChannel_Proxy_Entity",
-															"scene_flatcolor_keycolor_vs", "scene_flatcolor_keycolor_ps",
-															clouds_rs_list,
-															999,
-															clouds_textures) };
-
-		/// connect shaders args
-
-		auto& rendering_aspect{ clouds_proxy_entity->aspectAccess(core::renderingAspect::id) };
-
-		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
-		drawingControl.pshaders_map.push_back(std::make_pair("skydome_emissive_color", "color"));
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side
-		auto& clouds_resource_aspect{ m_cloudsEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &clouds_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ clouds_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side
-		auto& clouds_world_aspect{ m_cloudsEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &clouds_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ clouds_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-	}
-
-	///// skydome
-	{
-
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "false");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "true");
-		RenderState rs_alphablendop(RenderState::Operation::ALPHABLENDOP, "add");
-		RenderState rs_alphablendfunc(RenderState::Operation::ALPHABLENDFUNC, "always");
-		RenderState rs_alphablenddest(RenderState::Operation::ALPHABLENDDEST, "invsrcalpha");
-		RenderState rs_alphablendsrc(RenderState::Operation::ALPHABLENDSRC, "srcalpha");
-
-		const std::vector<RenderState> skydome_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling,
-															rs_alphablend, rs_alphablendop, rs_alphablendfunc, rs_alphablenddest, rs_alphablendsrc
-		};
-
-
-		const auto skydome_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "skydome_EmissiveChannel_Proxy_Entity",
-									"scene_flatcolor_vs", "scene_flatcolor_ps",
-									skydome_rs_list,
-									900
-									) };
-
-		/// connect shaders args
-
-		auto& rendering_aspect{ skydome_proxy_entity->aspectAccess(core::renderingAspect::id) };
-
-		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
-		drawingControl.pshaders_map.push_back(std::make_pair("skydome_emissive_color", "color"));
-
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side
-		auto& skydome_resource_aspect{ m_skydomeEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &skydome_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ skydome_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-		////////////////////////////////////////////////////////////////////////
-
-		auto& skydome_world_aspect{ m_skydomeEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &skydome_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ skydome_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-		////////////////////////////////////////////////////////////////////////
-
-
-	}
-
-	///////////////	add sphere
-
-	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear_uvwrap");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-		const std::vector<RenderState> sphere_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
-
-		const auto sphere_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "sphere_EmissiveChannel_Proxy_Entity",
-															"scene_flatcolor_vs", "scene_flatcolor_ps",
-															sphere_rs_list,
-															1000) };
-
-
-		/// connect shader arg
-
-		auto& rendering_aspect{ sphere_proxy_entity->aspectAccess(core::renderingAspect::id) };
-
-		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("black_color", "color"));
-
-
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& resource_aspect{ m_sphereEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ sphere_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-
-		///////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side 
-		auto& world_aspect{ m_sphereEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ sphere_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-	}
-
-
-
-	///// add tree
-
-	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-		const std::vector<RenderState> tree_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
-
-		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
-
-		const auto tree_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "tree_EmissiveChannel_Proxy_Entity",
-															"scene_flatcolor_keycolor_vs", "scene_flatcolor_keycolor_ps",
-															tree_rs_list,
-															1000,
-															tree_textures) };
-
-		/// connect shaders args
-
-		auto& rendering_aspect{ tree_proxy_entity->aspectAccess(core::renderingAspect::id) };
-
-		rendering::DrawingControl& drawingControl{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
-		drawingControl.pshaders_map.push_back(std::make_pair("black_color", "color"));
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& tree_resource_aspect{ m_treeEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &tree_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ tree_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side 
-		auto& tree_world_aspect{ m_treeEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &tree_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ tree_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-		////////////////////////////////////////////////////////////////////////
-	}
-}
-
-void SamplesOpenEnv::create_openenv_shadows_channel_rendergraph(const std::string& p_queueEntityId)
-{
-	// get ptr on rendered shadow map
-	
-	auto& shadowMapNode{ m_entitygraph.node("shadowMap_Texture_Entity") };
-	const auto shadowmap_texture_entity{ shadowMapNode.data() };
-
-	auto& sm_resource_aspect{ shadowmap_texture_entity->aspectAccess(core::resourcesAspect::id) };
-
-	std::pair<size_t, Texture>* sm_texture_ptr{ &sm_resource_aspect.getComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture")->getPurpose() };
-
-
-
-	///////////////	add ground
-
-	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-		const std::vector<RenderState> ground_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
-
-		const auto ground_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "ground_ShadowsChannel_Proxy_Entity",
-															"scene_shadowsmask_vs", "scene_shadowsmask_ps",
-															ground_rs_list,
-															1000) };
-
-		
-		auto& resource_aspect{ ground_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		resource_aspect.addComponent<std::pair<size_t, Texture>*>("texture_ref", sm_texture_ptr);
-		
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& ground_resource_aspect{ m_groundEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &ground_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ ground_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-
-		///////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side 
-		auto& ground_world_aspect{ m_groundEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &ground_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ ground_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-		///////////////////////////////////////////////////////////////////////
-
-		auto& ground_rendering_aspect{ ground_proxy_entity->aspectAccess(core::renderingAspect::id) };
-
-		rendering::DrawingControl& drawingControl{ ground_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("shadow_bias", "shadow_bias"));
-		drawingControl.pshaders_map.push_back(std::make_pair("shadowmap_resol", "shadowmap_resol"));
-
-
-	}
-
-	///////////////	add sphere
-
-	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-		const std::vector<RenderState> sphere_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
-
-		const auto sphere_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "sphere_ShadowsChannel_Proxy_Entity",
-															"scene_shadowsmask_vs", "scene_shadowsmask_ps",
-															sphere_rs_list,
-															1000) };
-
-
-
-		auto& resource_aspect{ sphere_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		resource_aspect.addComponent<std::pair<size_t, Texture>*>("texture_ref", sm_texture_ptr);
-
-
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& sphere_resource_aspect{ m_sphereEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &sphere_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ sphere_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-
-		///////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side 
-		auto& world_aspect{ m_sphereEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ sphere_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-		////////////////////////////////////////////////////////////////////////
-
-		auto& sphere_rendering_aspect{ sphere_proxy_entity->aspectAccess(core::renderingAspect::id) };
-
-		rendering::DrawingControl& drawingControl{ sphere_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("shadow_bias", "shadow_bias"));
-		drawingControl.pshaders_map.push_back(std::make_pair("shadowmap_resol", "shadowmap_resol"));
-
-
-	}
-
-
-	///// add tree
-
-	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-		const std::vector<RenderState> tree_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
-
-		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_1, std::make_pair("tree2_tex.bmp", Texture())) };
-
-		const auto tree_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "tree_ShadowsChannel_Proxy_Entity",
-															"scene_shadowsmask_keycolor_vs", "scene_shadowsmask_keycolor_ps",
-															//"scene_shadowsmask_vs", "scene_shadowsmask_ps",
-															tree_rs_list,
-															1000,
-															tree_textures) };
-
-
-		auto& resource_aspect{ tree_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		resource_aspect.addComponent<std::pair<size_t, Texture>*>("texture_ref", sm_texture_ptr);
-
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& tree_resource_aspect{ m_treeEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &tree_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ tree_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side 
-		auto& tree_world_aspect{ m_treeEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &tree_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ tree_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-		////////////////////////////////////////////////////////////////////////
-
-		auto& tree_rendering_aspect{ tree_proxy_entity->aspectAccess(core::renderingAspect::id) };
-		rendering::DrawingControl& drawingControl{ tree_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-
-		drawingControl.pshaders_map.push_back(std::make_pair("shadow_bias", "shadow_bias"));
-		drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
-		drawingControl.pshaders_map.push_back(std::make_pair("shadowmap_resol", "shadowmap_resol"));
-
-	}	
-}
-
-void SamplesOpenEnv::create_openenv_shadowmap_channel_rendergraph(const std::string& p_queueEntityId)
-{
-	///////////////	add ground
-
-	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "cw");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-		const std::vector<RenderState> ground_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
-
-		const auto ground_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "ground_ShadowMapChannel_Proxy_Entity",
-															"scene_zdepth_vs", "scene_zdepth_ps",
-															ground_rs_list,
-															1000) };
-
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& ground_resource_aspect{ m_groundEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &ground_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ ground_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-
-		///////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side 
-		auto& ground_world_aspect{ m_groundEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &ground_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ ground_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-		////////////////////////////////////////////////////////////////////////
-
-
-
-	}
-
-
-	///////////////	add sphere
-
-	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "ccw");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-		const std::vector<RenderState> sphere_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
-
-		const auto sphere_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "sphere_ShadowMapChannel_Proxy_Entity",
-															"scene_zdepth_vs", "scene_zdepth_ps",
-															sphere_rs_list,
-															1000) };
-
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& resource_aspect{ m_sphereEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ sphere_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-
-		///////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side 
-		auto& world_aspect{ m_sphereEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ sphere_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-	}
-
-	///// add tree
-
-	{
-		RenderState rs_noculling(RenderState::Operation::SETCULLING, "none");
-		RenderState rs_zbuffer(RenderState::Operation::ENABLEZBUFFER, "true");
-		RenderState rs_fill(RenderState::Operation::SETFILLMODE, "solid");
-		RenderState rs_texturepointsampling(RenderState::Operation::SETTEXTUREFILTERTYPE, "linear");
-
-		RenderState rs_alphablend(RenderState::Operation::ALPHABLENDENABLE, "false");
-
-		const std::vector<RenderState> tree_rs_list = { rs_noculling, rs_zbuffer, rs_fill, rs_texturepointsampling, rs_alphablend };
-
-		const std::vector< std::pair<size_t, std::pair<std::string, Texture>>> tree_textures{ std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
-
-		const auto tree_proxy_entity{ helpers::plugRenderingProxyEntity(m_entitygraph, p_queueEntityId, "tree_ShadowMapChannel_Proxy_Entity",
-															"scene_zdepth_keycolor_vs", "scene_zdepth_keycolor_ps",
-															tree_rs_list,
-															1000,
-															tree_textures) };
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link triangle meshe to related entity in scenegraph side 
-		auto& tree_resource_aspect{ m_treeEntity->aspectAccess(core::resourcesAspect::id) };
-		std::pair<std::pair<std::string, std::string>, TriangleMeshe>* meshe_ref{ &tree_resource_aspect.getComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe")->getPurpose() };
-
-		auto& proxy_resource_aspect{ tree_proxy_entity->aspectAccess(core::resourcesAspect::id) };
-		proxy_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
-
-		//////////////////////////////////////////////////////////////////////
-
-		// link transforms to related entity in scenegraph side 
-		auto& tree_world_aspect{ m_treeEntity->aspectAccess(core::worldAspect::id) };
-		transform::WorldPosition* position_ref{ &tree_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
-
-		auto& proxy_world_aspect{ tree_proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
-
-		////////////////////////////////////////////////////////////////////////
-
-		auto& tree_rendering_aspect{ tree_proxy_entity->aspectAccess(core::renderingAspect::id) };
-
-		rendering::DrawingControl& drawingControl{ tree_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-		drawingControl.pshaders_map.push_back(std::make_pair("texture_keycolor_ps.key_color", "key_color"));
-
-		////////////////////////////////////////////////////////////////////////
-	}
+	mage::helpers::plugRenderingQueue(m_entitygraph, shadowMapChannelRenderingQueue, "shadowMap_Texture_Entity", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
 }

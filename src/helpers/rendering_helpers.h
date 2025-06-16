@@ -1,0 +1,97 @@
+
+/* -*-LIC_BEGIN-*- */
+/*
+*
+* MaGE rendering framework
+* Emmanuel Chaumont Copyright (c) 2013-2025
+*
+* This file is part of MaGE.
+*
+*    MaGE is free software: you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation, either version 3 of the License, or
+*    (at your option) any later version.
+*
+*    MaGE is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with MaGE.  If not, see <http://www.gnu.org/licenses/>.
+*
+*/
+/* -*-LIC_END-*- */
+
+#pragma once
+
+#include <string>
+#include <vector>
+#include <unordered_map>
+#include <utility>  
+
+#include "singleton.h"
+#include "renderstate.h"
+#include "texture.h"
+
+namespace mage
+{
+	//fwd decl
+
+	// fwd decl
+	namespace core
+	{
+		class Entitygraph;
+		class Entity;
+	};
+
+	namespace helpers
+	{
+		struct PassConfig
+		{
+			std::string	queue_entity_id;
+			std::vector<rendering::RenderState>	rs_list
+			{
+				{ rendering::RenderState::Operation::SETCULLING, "cw" },
+				{ rendering::RenderState::Operation::ENABLEZBUFFER, "true" },
+				{ rendering::RenderState::Operation::SETFILLMODE, "solid" },
+				{ rendering::RenderState::Operation::SETTEXTUREFILTERTYPE, "linear" },
+				{ rendering::RenderState::Operation::ALPHABLENDENABLE, "false" }
+			};
+
+			int	rendering_order{ 1000 };
+
+			std::vector<std::pair<size_t, std::pair<std::string, Texture>>> textures_files_list;
+			std::vector<std::pair<size_t, Texture>*>						textures_ptr_list;
+
+			std::string vshader;
+			std::string pshader;
+		};
+
+		// rendering passes helper struct
+		struct Rendering : public property::Singleton<Rendering>
+		{
+		public:
+			Rendering() = default;
+			~Rendering() = default;
+
+			void registerPass(const std::string& p_id);
+			void registerPass(const std::string& p_id, const std::string& queue_entity_id);
+
+			void registerPass(const std::string& p_id, const PassConfig& p_config);
+
+			PassConfig getPassConfig(const std::string& p_id) const;
+
+			std::unordered_map<std::string, core::Entity*> registerToPasses(mage::core::Entitygraph& p_entitygraph,
+									mage::core::Entity* p_entity, 
+									const std::unordered_map< std::string, PassConfig> p_config,
+									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_vertex_shaders_params,
+									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_pixel_shaders_params);
+
+		private:
+
+			std::unordered_map<std::string, PassConfig> m_configs_table;
+
+		};
+	}
+}

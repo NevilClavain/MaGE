@@ -53,7 +53,7 @@ void ModuleImpl::onKeyPress(long p_key)
 
 			double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
 
-			speed = 0.1;
+			speed = 10.0;
 		}
 		else if ("Camera02Entity" == current_view_entity_id)
 		{
@@ -64,7 +64,7 @@ void ModuleImpl::onKeyPress(long p_key)
 
 			double& speed{ world_aspect.getComponent<double>("fullgbl_speed")->getPurpose() };
 
-			speed = 0.02;
+			speed = 2.0;
 		}
 		else if ("Camera03Entity" == current_view_entity_id)
 		{
@@ -89,7 +89,7 @@ void ModuleImpl::onKeyPress(long p_key)
 
 			double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
 
-			speed = -0.1;
+			speed = -10.0;
 		}
 		else if ("Camera02Entity" == current_view_entity_id)
 		{
@@ -100,7 +100,7 @@ void ModuleImpl::onKeyPress(long p_key)
 
 			double& speed{ world_aspect.getComponent<double>("fullgbl_speed")->getPurpose() };
 
-			speed = -0.02;
+			speed = -2.0;
 		}
 		else if ("Camera03Entity" == current_view_entity_id)
 		{
@@ -125,7 +125,7 @@ void ModuleImpl::onKeyPress(long p_key)
 			auto& world_aspect{ fullGblJointEntity->aspectAccess(core::worldAspect::id) };
 
 			double& rspeed_y{ world_aspect.getComponent<double>("rspeed_y")->getPurpose() };
-			rspeed_y = 0.9;
+			rspeed_y = 9.0f;
 		}
 		else if (VK_RIGHT == p_key)
 		{
@@ -135,7 +135,7 @@ void ModuleImpl::onKeyPress(long p_key)
 			auto& world_aspect{ fullGblJointEntity->aspectAccess(core::worldAspect::id) };
 
 			double& rspeed_y{ world_aspect.getComponent<double>("rspeed_y")->getPurpose() };
-			rspeed_y = -0.9;
+			rspeed_y = -9.0f;
 		}
 		else if (VK_UP == p_key)
 		{
@@ -145,7 +145,7 @@ void ModuleImpl::onKeyPress(long p_key)
 			auto& world_aspect{ fullGblJointEntity->aspectAccess(core::worldAspect::id) };
 
 			double& rspeed_x{ world_aspect.getComponent<double>("rspeed_x")->getPurpose() };
-			rspeed_x = 0.9;
+			rspeed_x = 9.0f;
 
 		}
 		else if (VK_DOWN == p_key)
@@ -156,7 +156,7 @@ void ModuleImpl::onKeyPress(long p_key)
 			auto& world_aspect{ fullGblJointEntity->aspectAccess(core::worldAspect::id) };
 
 			double& rspeed_x{ world_aspect.getComponent<double>("rspeed_x")->getPurpose() };
-			rspeed_x = -0.9;
+			rspeed_x = -9.0;
 		}
 		else if ('A' == p_key)
 		{
@@ -166,7 +166,7 @@ void ModuleImpl::onKeyPress(long p_key)
 			auto& world_aspect{ fullGblJointEntity->aspectAccess(core::worldAspect::id) };
 
 			double& rspeed_z{ world_aspect.getComponent<double>("rspeed_z")->getPurpose() };
-			rspeed_z = 0.9;
+			rspeed_z = 9.0;
 		}
 		else if ('E' == p_key)
 		{
@@ -176,7 +176,7 @@ void ModuleImpl::onKeyPress(long p_key)
 			auto& world_aspect{ fullGblJointEntity->aspectAccess(core::worldAspect::id) };
 
 			double& rspeed_z{ world_aspect.getComponent<double>("rspeed_z")->getPurpose() };
-			rspeed_z = -0.9;
+			rspeed_z = -9.0;
 		}
 	}
 	else if ("Camera03Entity" == current_view_entity_id)

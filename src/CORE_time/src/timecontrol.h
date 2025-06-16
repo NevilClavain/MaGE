@@ -100,6 +100,8 @@ namespace mage
             void    translationSpeedInc(double* p_translation, double p_speed);
             void    translationSpeedDec(double* p_translation, double p_speed);
 
+            long    getFPS() const;
+
             TimeMark buildTimeMark();
 
         private:

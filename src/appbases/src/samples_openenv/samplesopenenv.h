@@ -52,6 +52,7 @@ namespace mage
         mage::core::Entity*             m_treeEntity{ nullptr };
         mage::core::Entity*             m_skydomeEntity{ nullptr };
         mage::core::Entity*             m_sphereEntity{ nullptr };
+        mage::core::Entity*             m_wallEntity{ nullptr };
 
         std::string                     m_currentCamera;
 
@@ -79,17 +80,9 @@ namespace mage
 
         void                            d3d11_system_events_openenv();
 
-        void                            create_openenv_scenegraph(const std::string& p_mainWindowsEntityId);
-
-        void                            create_openenv_textures_channel_rendergraph(const std::string& p_queueEntityId);
-        void                            create_openenv_ambientlight_channel_rendergraph(const std::string& p_queueEntityId);
-        void                            create_openenv_lit_channel_rendergraph(const std::string& p_queueEntityId);
-        void                            create_openenv_emissive_channel_rendergraph(const std::string& p_queueEntityId);
-
-        void                            create_openenv_shadows_channel_rendergraph(const std::string& p_queueEntityId);
-        void                            create_openenv_shadowmap_channel_rendergraph(const std::string& p_queueEntityId);
-
-        void                            create_openenv_zdepth_channel_rendergraph(const std::string& p_queueEntityId);
+        void                            create_openenv_scenegraph(const std::string& p_parentEntityId);
+        void                            create_openenv_rendergraph(const std::string& p_parentEntityId, int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
+        
 
     };
 }

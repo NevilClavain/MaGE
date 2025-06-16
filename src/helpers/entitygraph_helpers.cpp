@@ -23,6 +23,8 @@
 */
 /* -*-LIC_END-*- */
 
+#include "entitygraph_helpers.h"
+
 #include <map>
 #include <string>
 #include <functional>
@@ -36,7 +38,7 @@
 #include "logconf.h"
 #include "logging.h"
 
-#include "renderingqueue.h"
+//#include "renderingqueue.h"
 
 #include "syncvariable.h"
 #include "worldposition.h"
@@ -683,9 +685,9 @@ namespace mage
 			const std::vector<rendering::RenderState>& p_renderstates_list,
 			int p_rendering_order,
 			transform::WorldPosition::TransformationComposition p_composition_operation,
-			float p_xpos = 0,
-			float p_ypos = 0,
-			float p_rot_radians = 0
+			float p_xpos,
+			float p_ypos,
+			float p_rot_radians
 		)
 		{
 			auto& parentNode{ p_entitygraph.node(p_parentid) };
@@ -790,8 +792,8 @@ namespace mage
 			const std::string& p_textEntityid,
 			const mage::rendering::Queue::Text& p_queue_text,
 			transform::WorldPosition::TransformationComposition p_composition_operation,
-			float p_xpos = 0,
-			float p_ypos = 0)
+			float p_xpos,
+			float p_ypos)
 		{
 			auto& parentNode{ p_entitygraph.node(p_parentid) };
 
@@ -809,7 +811,6 @@ namespace mage
 
 			world_aspect.addComponent<double>("x_pos", p_xpos);
 			world_aspect.addComponent<double>("y_pos", p_ypos);
-
 
 			world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
 			(

@@ -54,9 +54,7 @@ float4 ps_main(PS_INTPUT input) : SV_Target
     {
         clip(-1);
     }
-    
-    
-        
+               
     float4x4 mat_World = mat[matWorld];
     
     float4 light_dir_global;

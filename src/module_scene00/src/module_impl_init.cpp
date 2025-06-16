@@ -282,7 +282,7 @@ void ModuleImpl::d3d11_system_events()
 								{"gimbalLockJointAnim.speed", "gbl_speed"},
 								{"gimbalLockJointAnim.output", "gbl_output"}
 
-							}, helpers::animators::makeGimbalLockJointAnimator()));
+							}, helpers::makeGimbalLockJointAnimator()));
 
 
 						// add camera to scene
@@ -332,7 +332,7 @@ void ModuleImpl::d3d11_system_events()
 								{"fullGimbalJointAnim.rot_speed_z", "rspeed_z"},
 								{"fullGimbalJointAnim.output", "fullgbl_output"}
 
-							}, helpers::animators::makeFullGimbalJointAnimator()));
+							}, helpers::makeFullGimbalJointAnimator()));
 
 						// add camera to scene
 						maths::Matrix projection;
@@ -375,7 +375,7 @@ void ModuleImpl::d3d11_system_events()
 								{"xyzSliderJointAnim.z_pos", "z_slide_pos"},
 								{"xyzSliderJointAnim.output", "slider_output"}
 
-							}, helpers::animators::makeXYZSliderJointAnimator()));
+							}, helpers::makeXYZSliderJointAnimator()));
 
 
 						auto& lookatJointEntityNode{ m_entitygraph.add(sliderJointEntityNode, "lookatJointEntity") };
@@ -398,7 +398,7 @@ void ModuleImpl::d3d11_system_events()
 								{"lookatJointAnim.dest", "lookat_dest"},
 								{"lookatJointAnim.localpos", "lookat_localpos"},
 							},
-							helpers::animators::makeLookatJointAnimator())
+							helpers::makeLookatJointAnimator())
 						);
 
 						// add camera to scene
