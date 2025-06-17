@@ -182,10 +182,10 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					create_openenv_rendergraph("screenRendering_Filter_DirectForward_Quad_Entity", w_width, w_height, characteristics_v_width, characteristics_v_height);
 
 
-					auto& shadowMapNode{ m_entitygraph.node("shadowMap_Texture_Entity") };
-					const auto shadowmap_texture_entity{ shadowMapNode.data() };
-					auto& sm_resource_aspect{ shadowmap_texture_entity->aspectAccess(core::resourcesAspect::id) };
-					std::pair<size_t, Texture>* sm_texture_ptr{ &sm_resource_aspect.getComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture")->getPurpose() };
+					//auto& shadowMapNode{ m_entitygraph.node("shadowMap_Texture_Entity") };
+					//const auto shadowmap_texture_entity{ shadowMapNode.data() };
+					//auto& sm_resource_aspect{ shadowmap_texture_entity->aspectAccess(core::resourcesAspect::id) };
+					//std::pair<size_t, Texture>* sm_texture_ptr{ &sm_resource_aspect.getComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture")->getPurpose() };
 
 
 
@@ -199,8 +199,10 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					renderingHelper->registerPass("AmbientLightChannel", "bufferRendering_Scene_AmbientLightChannel_Queue_Entity");
 					renderingHelper->registerPass("LitChannel", "bufferRendering_Scene_LitChannel_Queue_Entity");
 					renderingHelper->registerPass("EmissiveChannel", "bufferRendering_Scene_EmissiveChannel_Queue_Entity");
-					renderingHelper->registerPass("ShadowsChannel", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
-					renderingHelper->registerPass("ShadowMapChannel", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
+
+					
+					//renderingHelper->registerPass("ShadowsChannel", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
+					//renderingHelper->registerPass("ShadowMapChannel", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
 
 
 
@@ -229,14 +231,14 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						em_channel_config.vshader = "scene_flatcolor_vs";
 						em_channel_config.pshader = "scene_flatcolor_ps";
 
-						auto shadows_channel_config{ renderingHelper->getPassConfig("ShadowsChannel") };
-						shadows_channel_config.vshader = "scene_shadowsmask_vs";
-						shadows_channel_config.pshader = "scene_shadowsmask_ps";
-						shadows_channel_config.textures_ptr_list = { sm_texture_ptr };
+						//auto shadows_channel_config{ renderingHelper->getPassConfig("ShadowsChannel") };
+						//shadows_channel_config.vshader = "scene_shadowsmask_vs";
+						//shadows_channel_config.pshader = "scene_shadowsmask_ps";
+						//shadows_channel_config.textures_ptr_list = { sm_texture_ptr };
 
-						auto shadowmap_channel_config{ renderingHelper->getPassConfig("ShadowMapChannel") };
-						shadowmap_channel_config.vshader = "scene_zdepth_vs";
-						shadowmap_channel_config.pshader = "scene_zdepth_ps";
+						//auto shadowmap_channel_config{ renderingHelper->getPassConfig("ShadowMapChannel") };
+						//shadowmap_channel_config.vshader = "scene_zdepth_vs";
+						//shadowmap_channel_config.pshader = "scene_zdepth_ps";
 
 						const std::unordered_map< std::string, helpers::PassConfig> config =
 						{
@@ -245,8 +247,8 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 							{ "AmbientLightChannel", ambientlight_channel_config },
 							{ "LitChannel", lit_channel_config },
 							{ "EmissiveChannel", em_channel_config },
-							{ "ShadowsChannel", shadows_channel_config },
-							{ "ShadowMapChannel", shadowmap_channel_config }
+							//{ "ShadowsChannel", shadows_channel_config },
+							//{ "ShadowMapChannel", shadowmap_channel_config }
 						};
 
 						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
@@ -271,12 +273,12 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 									{ std::make_pair("std.black_color", "color") }
 								}
 							},
-							{ "ShadowsChannel",
-								{
-									{ std::make_pair("shadow_bias", "shadow_bias") },
-									{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
-								}
-							}
+							//{ "ShadowsChannel",
+							//	{
+							//		{ std::make_pair("shadow_bias", "shadow_bias") },
+							//		{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
+							//	}
+							//}
 						};
 
 						renderingHelper->registerToPasses(m_entitygraph, m_groundEntity, config, vertex_shaders_params, pixel_shaders_params);
@@ -305,18 +307,14 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						em_channel_config.vshader = "scene_flatcolor_vs";
 						em_channel_config.pshader = "scene_flatcolor_ps";
 
-						auto shadows_channel_config{ renderingHelper->getPassConfig("ShadowsChannel") };
-						shadows_channel_config.vshader = "scene_shadowsmask_vs";
-						shadows_channel_config.pshader = "scene_shadowsmask_ps";
-						shadows_channel_config.textures_ptr_list = { sm_texture_ptr };
+						//auto shadows_channel_config{ renderingHelper->getPassConfig("ShadowsChannel") };
+						//shadows_channel_config.vshader = "scene_shadowsmask_vs";
+						//shadows_channel_config.pshader = "scene_shadowsmask_ps";
+						//shadows_channel_config.textures_ptr_list = { sm_texture_ptr };
 
-
-						auto shadowmap_channel_config{ renderingHelper->getPassConfig("ShadowMapChannel") };
-						shadowmap_channel_config.vshader = "scene_zdepth_vs";
-						shadowmap_channel_config.pshader = "scene_zdepth_ps";
-						//shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
-						//shadowmap_channel_config.rs_list.at(0).setArg("ccw");
-
+						//auto shadowmap_channel_config{ renderingHelper->getPassConfig("ShadowMapChannel") };
+						//shadowmap_channel_config.vshader = "scene_zdepth_vs";
+						//shadowmap_channel_config.pshader = "scene_zdepth_ps";
 
 						const std::unordered_map< std::string, helpers::PassConfig> config =
 						{
@@ -325,8 +323,8 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 							{ "AmbientLightChannel", ambientlight_channel_config },
 							{ "LitChannel", lit_channel_config },
 							{ "EmissiveChannel", em_channel_config },
-							{ "ShadowsChannel", shadows_channel_config },
-							{ "ShadowMapChannel", shadowmap_channel_config }
+							//{ "ShadowsChannel", shadows_channel_config },
+							//{ "ShadowMapChannel", shadowmap_channel_config }
 						};
 
 						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
@@ -351,12 +349,12 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 									{ std::make_pair("std.black_color", "color") }
 								}
 							},
-							{ "ShadowsChannel",
-								{
-									{ std::make_pair("shadow_bias", "shadow_bias") },
-									{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
-								}
-							}
+							//{ "ShadowsChannel",
+							//	{
+							//		{ std::make_pair("shadow_bias", "shadow_bias") },
+							//		{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
+							//	}
+							//}
 						};
 
 						renderingHelper->registerToPasses(m_entitygraph, m_wallEntity, config, vertex_shaders_params, pixel_shaders_params);
@@ -387,16 +385,16 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						em_channel_config.vshader = "scene_flatcolor_vs";
 						em_channel_config.pshader = "scene_flatcolor_ps";
 
-						auto shadows_channel_config{ renderingHelper->getPassConfig("ShadowsChannel") };
-						shadows_channel_config.vshader = "scene_shadowsmask_vs";
-						shadows_channel_config.pshader = "scene_shadowsmask_ps";
-						shadows_channel_config.textures_ptr_list = { sm_texture_ptr };
+						//auto shadows_channel_config{ renderingHelper->getPassConfig("ShadowsChannel") };
+						//shadows_channel_config.vshader = "scene_shadowsmask_vs";
+						//shadows_channel_config.pshader = "scene_shadowsmask_ps";
+						//shadows_channel_config.textures_ptr_list = { sm_texture_ptr };
 
-						auto shadowmap_channel_config{ renderingHelper->getPassConfig("ShadowMapChannel") };
-						shadowmap_channel_config.vshader = "scene_zdepth_vs";
-						shadowmap_channel_config.pshader = "scene_zdepth_ps";
-						shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
-						shadowmap_channel_config.rs_list.at(0).setArg("ccw");
+						//auto shadowmap_channel_config{ renderingHelper->getPassConfig("ShadowMapChannel") };
+						//shadowmap_channel_config.vshader = "scene_zdepth_vs";
+						//shadowmap_channel_config.pshader = "scene_zdepth_ps";
+						//shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+						//shadowmap_channel_config.rs_list.at(0).setArg("ccw");
 
 						const std::unordered_map< std::string, helpers::PassConfig> config =
 						{
@@ -405,8 +403,8 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 							{ "AmbientLightChannel", ambientlight_channel_config },
 							{ "LitChannel", lit_channel_config },
 							{ "EmissiveChannel", em_channel_config },
-							{ "ShadowsChannel", shadows_channel_config },
-							{ "ShadowMapChannel", shadowmap_channel_config }
+							//{ "ShadowsChannel", shadows_channel_config },
+							//{ "ShadowMapChannel", shadowmap_channel_config }
 						};
 
 
@@ -432,12 +430,12 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 									{ std::make_pair("std.black_color", "color") }
 								}
 							},
-							{ "ShadowsChannel",
-								{
-									{ std::make_pair("shadow_bias", "shadow_bias") },
-									{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
-								}
-							}
+							//{ "ShadowsChannel",
+							//	{
+							//		{ std::make_pair("shadow_bias", "shadow_bias") },
+							//		{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
+							//	}
+							//}
 						};
 
 						renderingHelper->registerToPasses(m_entitygraph, m_sphereEntity, config, vertex_shaders_params, pixel_shaders_params);
@@ -482,20 +480,20 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						em_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
 						em_channel_config.rs_list.at(0).setArg("none");
 
-						auto shadows_channel_config{ renderingHelper->getPassConfig("ShadowsChannel") };
-						shadows_channel_config.vshader = "scene_shadowsmask_keycolor_vs";
-						shadows_channel_config.pshader = "scene_shadowsmask_keycolor_ps";
-						shadows_channel_config.textures_ptr_list = { sm_texture_ptr };
-						shadows_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_1, std::make_pair("tree2_tex.bmp", Texture())) };
-						shadows_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
-						shadows_channel_config.rs_list.at(0).setArg("none");
+						//auto shadows_channel_config{ renderingHelper->getPassConfig("ShadowsChannel") };
+						//shadows_channel_config.vshader = "scene_shadowsmask_keycolor_vs";
+						//shadows_channel_config.pshader = "scene_shadowsmask_keycolor_ps";
+						//shadows_channel_config.textures_ptr_list = { sm_texture_ptr };
+						//shadows_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_1, std::make_pair("tree2_tex.bmp", Texture())) };
+						//shadows_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+						//shadows_channel_config.rs_list.at(0).setArg("none");
 
-						auto shadowmap_channel_config{ renderingHelper->getPassConfig("ShadowMapChannel") };
-						shadowmap_channel_config.vshader = "scene_zdepth_keycolor_vs";
-						shadowmap_channel_config.pshader = "scene_zdepth_keycolor_ps";
-						shadowmap_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
-						shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
-						shadowmap_channel_config.rs_list.at(0).setArg("none");
+						//auto shadowmap_channel_config{ renderingHelper->getPassConfig("ShadowMapChannel") };
+						//shadowmap_channel_config.vshader = "scene_zdepth_keycolor_vs";
+						//shadowmap_channel_config.pshader = "scene_zdepth_keycolor_ps";
+						//shadowmap_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
+						//shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+						//shadowmap_channel_config.rs_list.at(0).setArg("none");
 
 						const std::unordered_map< std::string, helpers::PassConfig> config =
 						{
@@ -504,8 +502,8 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 							{ "AmbientLightChannel", ambientlight_channel_config },
 							{ "LitChannel", lit_channel_config },
 							{ "EmissiveChannel", em_channel_config },
-							{ "ShadowsChannel", shadows_channel_config },
-							{ "ShadowMapChannel", shadowmap_channel_config }
+							//{ "ShadowsChannel", shadows_channel_config },
+							//{ "ShadowMapChannel", shadowmap_channel_config }
 						};
 
 						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
@@ -542,18 +540,18 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 									{ std::make_pair("std.black_color", "color") }
 								}
 							},
-							{ "ShadowsChannel",
-								{
-									{ std::make_pair("shadow_bias", "shadow_bias") },
-									{ std::make_pair("shadowmap_resol", "shadowmap_resol") },
-									{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
-								}
-							},
-							{ "ShadowMapChannel",
-								{
-									{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
-								}
-							}
+							//{ "ShadowsChannel",
+							//	{
+							//		{ std::make_pair("shadow_bias", "shadow_bias") },
+							//		{ std::make_pair("shadowmap_resol", "shadowmap_resol") },
+							//		{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
+							//	}
+							//},
+							//{ "ShadowMapChannel",
+							//	{
+							//		{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
+							//	}
+							//}
 						};
 
 						renderingHelper->registerToPasses(m_entitygraph, m_treeEntity, config, vertex_shaders_params, pixel_shaders_params);
@@ -1147,60 +1145,75 @@ void SamplesOpenEnv::create_openenv_rendergraph(const std::string& p_parentEntit
 
 	mage::helpers::plugRenderingQueue(m_entitygraph, emissiveChannelRenderingQueue, "bufferRendering_Combiner_Accumulate_Quad_Entity", "bufferRendering_Scene_EmissiveChannel_Queue_Entity");
 
-	// channel to modulate directional lit and shadow map
-
-	const auto combiner_modulatelitshadows_inputA_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
-	const auto combiner_modulatelitshadows_inputB_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
-
-	mage::helpers::plugRenderingQuad(m_entitygraph,
-		"mod_lit_shadows_queue",
-		p_characteristics_v_width, p_characteristics_v_height,
-		"bufferRendering_Combiner_Accumulate_Quad_Entity",
-		"bufferRendering_Combiner_ModulateLitAndShadows_Queue_Entity",
-		"bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity",
-		"bufferRendering_Combiner_ModulateLitAndShadows_View_Entity",
-
-		"combiner_modulate_vs",
-		"combiner_modulate_ps",
-		{
-			std::make_pair(Texture::STAGE_0, combiner_modulatelitshadows_inputA_channnel),
-			std::make_pair(Texture::STAGE_1, combiner_modulatelitshadows_inputB_channnel),
-		},
-		Texture::STAGE_2);
-
-
+	// DEACTIVATE SHADOWS
 	// channel : directional lit
 
 	rendering::Queue litChannelRenderingQueue("lit_channel_queue");
 	litChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
 	litChannelRenderingQueue.enableTargetClearing(true);
 	litChannelRenderingQueue.enableTargetDepthClearing(true);
-	litChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
+	//litChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
+	litChannelRenderingQueue.setTargetStage(Texture::STAGE_2);
 
-	mage::helpers::plugRenderingQueue(m_entitygraph, litChannelRenderingQueue, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_LitChannel_Queue_Entity");
+	mage::helpers::plugRenderingQueue(m_entitygraph, litChannelRenderingQueue, "bufferRendering_Combiner_Accumulate_Quad_Entity", "bufferRendering_Scene_LitChannel_Queue_Entity");
+
+	// DEACTIVATE SHADOWS
+	
+	// channel to modulate directional lit and shadow map
+
+	//const auto combiner_modulatelitshadows_inputA_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
+	//const auto combiner_modulatelitshadows_inputB_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
+
+	//mage::helpers::plugRenderingQuad(m_entitygraph,
+	//	"mod_lit_shadows_queue",
+	//	p_characteristics_v_width, p_characteristics_v_height,
+	//	"bufferRendering_Combiner_Accumulate_Quad_Entity",
+	//	"bufferRendering_Combiner_ModulateLitAndShadows_Queue_Entity",
+	//	"bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity",
+	//	"bufferRendering_Combiner_ModulateLitAndShadows_View_Entity",
+
+	//	"combiner_modulate_vs",
+	//	"combiner_modulate_ps",
+	//	{
+	//		std::make_pair(Texture::STAGE_0, combiner_modulatelitshadows_inputA_channnel),
+	//		std::make_pair(Texture::STAGE_1, combiner_modulatelitshadows_inputB_channnel),
+	//	},
+	//	Texture::STAGE_2);
 
 
-	// channel : shadow
+	//// channel : directional lit
 
-	rendering::Queue shadowsChannelRenderingQueue("shadows_channel_queue");
-	shadowsChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-	shadowsChannelRenderingQueue.enableTargetClearing(true);
-	shadowsChannelRenderingQueue.enableTargetDepthClearing(true);
-	shadowsChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
+	//rendering::Queue litChannelRenderingQueue("lit_channel_queue");
+	//litChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+	//litChannelRenderingQueue.enableTargetClearing(true);
+	//litChannelRenderingQueue.enableTargetDepthClearing(true);
+	//litChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
 
-	mage::helpers::plugRenderingQueue(m_entitygraph, shadowsChannelRenderingQueue, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
+	//mage::helpers::plugRenderingQueue(m_entitygraph, litChannelRenderingQueue, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_LitChannel_Queue_Entity");
 
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// SHADOWMAP TARGET TEXTURE
-	// Plug shadowmap just bellow, to be sure shadowmap is rendered before shadosw mask PASS above (remind : leaf to root order)
-	helpers::plugTargetTexture(m_entitygraph, "bufferRendering_Scene_ShadowsChannel_Queue_Entity", "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 2048, 2048)));
+	//// channel : shadow
 
-	rendering::Queue shadowMapChannelRenderingQueue("shadowmap_channel_queue");
-	shadowMapChannelRenderingQueue.setTargetClearColor({ 255, 255, 255, 255 });
-	shadowMapChannelRenderingQueue.enableTargetClearing(true);
-	shadowMapChannelRenderingQueue.enableTargetDepthClearing(true);
-	shadowMapChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
+	//rendering::Queue shadowsChannelRenderingQueue("shadows_channel_queue");
+	//shadowsChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+	//shadowsChannelRenderingQueue.enableTargetClearing(true);
+	//shadowsChannelRenderingQueue.enableTargetDepthClearing(true);
+	//shadowsChannelRenderingQueue.setTargetStage(Texture::STAGE_1);
 
-	mage::helpers::plugRenderingQueue(m_entitygraph, shadowMapChannelRenderingQueue, "shadowMap_Texture_Entity", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
+	//mage::helpers::plugRenderingQueue(m_entitygraph, shadowsChannelRenderingQueue, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
+
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//// SHADOWMAP TARGET TEXTURE
+	//// Plug shadowmap just bellow, to be sure shadowmap is rendered before shadosw mask PASS above (remind : leaf to root order)
+	//helpers::plugTargetTexture(m_entitygraph, "bufferRendering_Scene_ShadowsChannel_Queue_Entity", "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 2048, 2048)));
+
+	//rendering::Queue shadowMapChannelRenderingQueue("shadowmap_channel_queue");
+	//shadowMapChannelRenderingQueue.setTargetClearColor({ 255, 255, 255, 255 });
+	//shadowMapChannelRenderingQueue.enableTargetClearing(true);
+	//shadowMapChannelRenderingQueue.enableTargetDepthClearing(true);
+	//shadowMapChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
+
+	//mage::helpers::plugRenderingQueue(m_entitygraph, shadowMapChannelRenderingQueue, "shadowMap_Texture_Entity", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
+	//
 }
