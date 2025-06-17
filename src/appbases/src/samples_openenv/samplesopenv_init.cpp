@@ -1152,7 +1152,6 @@ void SamplesOpenEnv::create_openenv_rendergraph(const std::string& p_parentEntit
 	litChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
 	litChannelRenderingQueue.enableTargetClearing(true);
 	litChannelRenderingQueue.enableTargetDepthClearing(true);
-	//litChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
 	litChannelRenderingQueue.setTargetStage(Texture::STAGE_2);
 
 	mage::helpers::plugRenderingQueue(m_entitygraph, litChannelRenderingQueue, "bufferRendering_Combiner_Accumulate_Quad_Entity", "bufferRendering_Scene_LitChannel_Queue_Entity");
