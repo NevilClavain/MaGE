@@ -68,9 +68,8 @@ namespace mage
 			Node&			add(Node& p_parent, const std::string& p_entity_id);
 			void			remove(Node& p_node);
 
-			Node&			insertParent(Node& p_node, const std::string& p_parent_entity_id);
-
-			void			removeParent(Node& p_node);
+			//Node&			insertParent(Node& p_node, const std::string& p_parent_entity_id);
+			//void			removeParent(Node& p_node);
 
 			Node&			node(const std::string& p_entity_id);
 
@@ -80,6 +79,8 @@ namespace mage
 
 			PostIterator	postBegin();
 			PostIterator	postEnd();
+
+			void			move_subtree(Node& p_parent_dest, Node& p_src);
 
 		private:
 			st_tree::tree<core::Entity*>								m_tree;

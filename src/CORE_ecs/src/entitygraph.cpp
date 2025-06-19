@@ -22,6 +22,8 @@
 */
 /* -*-LIC_END-*- */
 
+#include <iostream>
+
 #include "entitygraph.h"
 #include "entity.h"
 #include "exceptions.h"
@@ -105,6 +107,70 @@ void Entitygraph::remove(Node& p_node)
 	m_entites.erase(id);
 }
 
+void Entitygraph::move_subtree(Node& p_parent_dest, Node& p_src)
+{
+	st_tree::tree<core::Entity*> temp_tree;
+
+
+
+	/*
+// Fonction récursive pour copier une sous-arborescence dans un autre arbre
+template <typename Tree>
+typename Tree::node_type clone_subtree(Tree& src_tree, typename Tree::node_type src_node,
+									   Tree& dest_tree, typename Tree::node_type dest_parent) {
+	auto new_node = dest_tree.insert(dest_parent, *src_node);
+	for (auto it = src_tree.begin(src_node); it != src_tree.end(src_node); ++it) {
+		if (src_tree.parent(it) == src_node) {
+			clone_subtree(src_tree, it, dest_tree, new_node);
+		}
+	}
+	return new_node;
+}
+	
+	*/
+
+
+
+	const auto& entity{ *p_src.data() };
+	const auto entity_id{ entity.getId() };
+
+	temp_tree.insert(m_entites.at(entity_id).get());
+
+	const std::function<void(Node&, Node&)> clone_subtree
+	{
+		[&] (Node& p_src, Node& p_parent_dest)
+		{
+			const auto& entity{ *p_src.data() };
+			const auto entity_id{ entity.getId() };
+
+			auto new_node = p_parent_dest.insert(m_entites.at(entity_id).get());
+
+			for (auto it = m_tree.df_pre_begin(); it != m_tree.df_pre_end(); ++it)
+			{
+				if (!it->is_root() && it->parent() == p_src) 
+				{
+					clone_subtree(*it, *new_node);
+				}
+			}
+		}
+	};
+
+	clone_subtree(p_src, temp_tree.root());
+
+
+	std::cout << "###\n";
+	for (auto it = temp_tree.df_pre_begin(); it != temp_tree.df_pre_end(); ++it)
+	{
+		const auto currId{ it->data()->getId() };
+		//std::cout << std::string(it->depth(), ' ') << currId << "\n";
+		for (int i = 0; i < it->data()->getDepth(); i++) std::cout << " ";
+		std::cout << currId << "\n";
+
+	}
+	std::cout << "###\n";
+}
+
+/*
 Entitygraph::Node& Entitygraph::insertParent(Node& p_node, const std::string& p_parent_entity_id)
 {
 	const auto& entity{ *p_node.data() };
@@ -229,6 +295,7 @@ void Entitygraph::removeParent(Node& p_node)
 
 	remove(*parent_node);
 }
+*/
 
 Entitygraph::Node& Entitygraph::node(const std::string& p_entity_id)
 {
