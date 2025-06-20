@@ -111,42 +111,15 @@ void Entitygraph::move_subtree(Node& p_parent_dest, Node& p_src)
 {
 	st_tree::tree<core::Entity*> temp_tree;
 
-
-
-	/*
-// Fonction récursive pour copier une sous-arborescence dans un autre arbre
-template <typename Tree>
-typename Tree::node_type clone_subtree(Tree& src_tree, typename Tree::node_type src_node,
-									   Tree& dest_tree, typename Tree::node_type dest_parent) {
-	auto new_node = dest_tree.insert(dest_parent, *src_node);
-	for (auto it = src_tree.begin(src_node); it != src_tree.end(src_node); ++it) {
-		if (src_tree.parent(it) == src_node) {
-			clone_subtree(src_tree, it, dest_tree, new_node);
-		}
-	}
-	return new_node;
-}
-	
-	*/
-
-
-
 	const auto& entity{ *p_src.data() };
 	const auto entity_id{ entity.getId() };
 
 	temp_tree.insert(m_entites.at(entity_id).get());
 
-	const std::function<void(Node&, Node&)> clone_subtree
+	const std::function<void(const st_tree::tree<core::Entity*>&, Node&, Node&)> clone_subtree
 	{
-		[&] (Node& p_src, Node& p_parent_dest)
+		[&] (const st_tree::tree<core::Entity*>& p_tree_src, Node& p_src, Node& p_parent_dest)
 		{
-			/*
-			const auto& entity{ *p_src.data() };
-			const auto entity_id{ entity.getId() };
-
-			auto new_node = p_parent_dest.insert(m_entites.at(entity_id).get());
-			*/
-
 			for (auto it = m_tree.df_pre_begin(); it != m_tree.df_pre_end(); ++it)
 			{
 				if (!it->is_root() && it->parent() == p_src) 
@@ -156,15 +129,19 @@ typename Tree::node_type clone_subtree(Tree& src_tree, typename Tree::node_type 
 
 					auto new_node = p_parent_dest.insert(m_entites.at(entity_id).get());
 
-
-
-					clone_subtree(*it, *new_node);
+					clone_subtree(p_tree_src, *it, *new_node);
 				}
 			}
 		}
 	};
 
-	clone_subtree(p_src, temp_tree.root());
+	clone_subtree(m_tree, p_src, temp_tree.root());
+
+	p_src.erase();
+	const auto id{ entity.getId() };
+	m_nodes.erase(id);
+
+
 
 
 	std::cout << "###\n";
