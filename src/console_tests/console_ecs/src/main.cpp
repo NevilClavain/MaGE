@@ -127,9 +127,9 @@ int main( int argc, char* argv[] )
 		std::cout << "////////////////////////////////////\n\n";
 		std::cout << "move_subtree test\n";
 
-		eg.move_subtree(ent2, eg.node("ent1"));
 
 
+		eg.move_subtree(eg.node("ent21"), eg.node("ent1"));
 
 		std::cout << "root to leaf browsing\n";
 
@@ -145,52 +145,31 @@ int main( int argc, char* argv[] )
 
 
 
+
 		//std::cout << "leaf to root browsing\n";
 
 		//// leaf to root browsing
-		//for (auto it = eg.postBegin(); it != eg.postEnd(); ++it)
+		//for (auto it = eg.postbegin(); it != eg.postend(); ++it)
 		//{
-		//	const auto currId{ it->data()->getId() };
+		//	const auto currid{ it->data()->getid() };
 
-		//	for (int i = 0; i < it->data()->getDepth(); i++) std::cout << " ";
-		//	std::cout << currId << "\n";
+		//	for (int i = 0; i < it->data()->getdepth(); i++) std::cout << " ";
+		//	std::cout << currid << "\n";
 		//}
 		//std::cout << "\n";
-		//
-		//// remove a node
-		//eg.remove(eg.node("ent21"));
-		//eg.remove(eg.node("ent2"));
+		
+		// remove a node
+		eg.remove(eg.node("ent111"));
 
-		//std::cout << "root to leaf browsing\n";
-		//// root to leaf browsing
-		//for (auto it = eg.preBegin(); it != eg.preEnd(); ++it)
-		//{
-		//	const auto currId{ it->data()->getId() };
+		std::cout << "root to leaf browsing\n";
+		// root to leaf browsing
+		for (auto it = eg.preBegin(); it != eg.preEnd(); ++it)
+		{
+			const auto currid{ it->data()->getId() };
 
-		//	for (int i = 0; i < it->data()->getDepth(); i++) std::cout << " ";
-		//	std::cout << currId << "\n";
-		//}
-
-		//std::cout << "////////////////////////////////////\n";
-		//std::cout << "parent insertion test\n\n";
-		//{
-		//	auto& ent111{ eg.node("ent111") };
-
-		//	eg.insertParent(ent111, "ent11_inserted");
-
-		//	std::cout << "root to leaf browsing\n";
-
-		//	// root to leaf browsing
-		//	for (auto it = eg.preBegin(); it != eg.preEnd(); ++it)
-		//	{
-		//		const auto currId{ it->data()->getId() };
-
-		//		for (int i = 0; i < it->data()->getDepth(); i++) std::cout << " ";
-		//		std::cout << currId << "\n";
-		//	}
-		//	std::cout << "\n";
-		//}
-		//std::cout << "////////////////////////////////////\n";
+			for (int i = 0; i < it->data()->getDepth(); i++) std::cout << " ";
+			std::cout << currid << "\n";
+		}
 
 		//std::cout << "remove parent test\n\n";
 		//{
