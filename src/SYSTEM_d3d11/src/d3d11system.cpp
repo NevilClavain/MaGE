@@ -557,6 +557,10 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 			current_mainview_cam = entity_worldposition.global_pos;
 		}
 	}
+	else
+	{
+		_EXCEPTION("entity world aspect : renderingQueue missing main view id " + p_renderingQueue.m_name);
+	}
 
 	maths::Matrix current_mainview_view = current_mainview_cam;
 	current_mainview_view.inverse();

@@ -143,6 +143,8 @@ void Entitygraph::move_subtree(Node& p_parent_dest, Node& p_src)
 	auto new_node{ p_parent_dest.insert(m_entites.at(entity_id).get()) };
 	m_nodes[entity_id] = &*new_node;
 	m_entites.at(entity_id)->m_depth = p_parent_dest.data()->m_depth + 1;
+
+	m_entites.at(entity_id)->m_parent = p_parent_dest.data();
 	
 	const std::function<void(Node&, Node&)> restore_subtree
 	{

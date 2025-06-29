@@ -148,3 +148,9 @@ bool Queue::getTargetDepthClearing() const
 {
 	return m_clear_target_depth;
 }
+
+void Queue::resetStates()
+{
+	m_purpose = Purpose::UNDEFINED;
+	m_state = State::WAIT_INIT;
+}

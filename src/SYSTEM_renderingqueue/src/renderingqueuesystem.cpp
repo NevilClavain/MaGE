@@ -122,8 +122,8 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 	const std::map<rendering::Queue::State, std::string> state_translate
 	{
 		{ rendering::Queue::State::WAIT_INIT, "WAIT_INIT" },
-		{ rendering::Queue::State::READY, "READY" },
-		{ rendering::Queue::State::ERROR_ORPHAN, "ERROR_ORPHAN" },
+		{ rendering::Queue::State::READY, "READY" }/*,
+		{ rendering::Queue::State::ERROR_ORPHAN, "ERROR_ORPHAN" },*/
 	};
 	_MAGE_DEBUG(m_localLogger, "state : " + state_translate.at(p_renderingQueue.getState()))
 
@@ -440,9 +440,10 @@ void RenderingQueueSystem::handleRenderingQueuesState(Entity* p_entity, renderin
 
 				if (nullptr == parent_entity)
 				{
-					p_renderingQueue.setState(rendering::Queue::State::ERROR_ORPHAN);
+					//p_renderingQueue.setState(rendering::Queue::State::ERROR_ORPHAN);
+					_EXCEPTION("Rendering queue set to ERROR_ORPHAN : no parent");
 					// log it (WARN)
-					_MAGE_WARN(m_localLogger, "Rendering queue set to ERROR_ORPHAN : no parent")
+					//_MAGE_WARN(m_localLogger, "Rendering queue set to ERROR_ORPHAN : no parent")
 				}
 				else
 				{
@@ -499,7 +500,7 @@ void RenderingQueueSystem::handleRenderingQueuesState(Entity* p_entity, renderin
 						else
 						{
 							// parent rendering aspect has no renderingTarget component !
-							p_renderingQueue.setState(rendering::Queue::State::ERROR_ORPHAN);
+							//p_renderingQueue.setState(rendering::Queue::State::ERROR_ORPHAN);
 
 							_EXCEPTION("Rendering queue set to ERROR_ORPHAN : parent rendering aspect has no renderingTarget component : " + p_renderingQueue.getName() + ", parent is " + parent_entity->getId());
 							// log it (WARN)
@@ -509,7 +510,7 @@ void RenderingQueueSystem::handleRenderingQueuesState(Entity* p_entity, renderin
 					else
 					{
 						// parent has no rendering aspect 
-						p_renderingQueue.setState(rendering::Queue::State::ERROR_ORPHAN);
+						//p_renderingQueue.setState(rendering::Queue::State::ERROR_ORPHAN);
 
 						_EXCEPTION("Rendering queue set to ERROR_ORPHAN : parent has no rendering aspect : " + p_renderingQueue.getName() + ", parent is " + parent_entity->getId());
 

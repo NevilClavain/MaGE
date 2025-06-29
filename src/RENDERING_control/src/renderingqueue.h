@@ -134,15 +134,16 @@ namespace mage
 			{
 				WAIT_INIT,
 				READY,
-				ERROR_ORPHAN
+				// useless (throw exception instead)
+				//ERROR_ORPHAN
 			};
 
 			struct Text
 			{
 				std::string							text;
 				std::string							font;
-				mage::core::maths::RGBAColor	color{ 255, 255, 255, 255 };
-				mage::core::maths::IntCoords2D	position;
+				mage::core::maths::RGBAColor		color{ 255, 255, 255, 255 };
+				mage::core::maths::IntCoords2D		position;
 				float								rotation_rad{ 0.0 };
 			};
 
@@ -241,6 +242,7 @@ namespace mage
 
 			void						setTargetStage(size_t p_stage);
 
+			void						resetStates();
 								
 		private:
 	
