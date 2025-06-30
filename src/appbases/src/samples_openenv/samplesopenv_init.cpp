@@ -705,7 +705,27 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						renderingHelper->registerToPasses(m_entitygraph, m_skydomeEntity, config, vertex_shaders_params, pixel_shaders_params);
 					}
 
-					enable_shadowcaster(w_width, w_height, characteristics_v_width, characteristics_v_height);
+
+
+
+
+					///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+					install_shadows_renderer_queues(w_width, w_height, characteristics_v_width, characteristics_v_height);
+					install_shadows_renderer_objects();
+
+					/////////////////////////////////////////////////////////////////////////////////////
+					/////// set queue current cameras
+
+					auto shadowsChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
+
+					shadowsChannelRenderingQueue->setMainView("camera_Entity");    //TEMP
+					shadowsChannelRenderingQueue->setSecondaryView("shadowmap_camera_Entity");
+
+					auto shadowMapChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
+					shadowMapChannelRenderingQueue->setMainView("shadowmap_camera_Entity");
+
+
 				}
 				break;
 			}
@@ -1218,7 +1238,7 @@ void SamplesOpenEnv::create_openenv_rendergraph(const std::string& p_parentEntit
 	//
 }
 
-void SamplesOpenEnv::enable_shadowcaster(int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height)
+void SamplesOpenEnv::install_shadows_renderer_queues(int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height)
 {
 	/////////////////////////////////////////////////////////////////////////////////////
 	/////// update rendering graph : queue hierarchy
@@ -1283,15 +1303,14 @@ void SamplesOpenEnv::enable_shadowcaster(int p_w_width, int p_w_height, float p_
 
 	m_entitygraph.move_subtree(m_entitygraph.node("bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity"), m_entitygraph.node("bufferRendering_Scene_LitChannel_Queue_Entity"));
 
+}
 
-	/////////////////////////////////////////////////////////////////////////////////////
-	/////// update rendering graph : add scene objects proxy
-
+void SamplesOpenEnv::install_shadows_renderer_objects()
+{
 	auto& shadowMapNode{ m_entitygraph.node("shadowMap_Texture_Entity") };
 	const auto shadowmap_texture_entity{ shadowMapNode.data() };
 	auto& sm_resource_aspect{ shadowmap_texture_entity->aspectAccess(core::resourcesAspect::id) };
 	std::pair<size_t, Texture>* sm_texture_ptr{ &sm_resource_aspect.getComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture")->getPurpose() };
-
 
 	const auto renderingHelper{ mage::helpers::Rendering::getInstance() };
 
@@ -1454,21 +1473,4 @@ void SamplesOpenEnv::enable_shadowcaster(int p_w_width, int p_w_height, float p_
 
 		renderingHelper->registerToPasses(m_entitygraph, m_treeEntity, config, vertex_shaders_params, pixel_shaders_params);
 	}
-
-
-	/////////////////////////////////////////////////////////////////////////////////////
-	/////// set queue current cameras
-
-	
-	auto shadowsChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
-
-	shadowsChannelRenderingQueue->setMainView("camera_Entity");    //TEMP
-	shadowsChannelRenderingQueue->setSecondaryView("shadowmap_camera_Entity");
-
-
-	auto shadowMapChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
-	
-	shadowMapChannelRenderingQueue->setMainView("shadowmap_camera_Entity");
-
-
 }
