@@ -1411,6 +1411,52 @@ void SamplesOpenEnv::enable_shadowcaster(int p_w_width, int p_w_height, float p_
 	}
 
 
+	// tree shadows rendering
+	{
+		auto shadows_channel_config{ renderingHelper->getPassConfig("ShadowsChannel") };
+		shadows_channel_config.vshader = "scene_shadowsmask_keycolor_vs";
+		shadows_channel_config.pshader = "scene_shadowsmask_keycolor_ps";
+		shadows_channel_config.textures_ptr_list = { sm_texture_ptr };
+		shadows_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_1, std::make_pair("tree2_tex.bmp", Texture())) };
+		shadows_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+		shadows_channel_config.rs_list.at(0).setArg("none");
+
+		auto shadowmap_channel_config{ renderingHelper->getPassConfig("ShadowMapChannel") };
+		shadowmap_channel_config.vshader = "scene_zdepth_keycolor_vs";
+		shadowmap_channel_config.pshader = "scene_zdepth_keycolor_ps";
+		shadowmap_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
+		shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+		shadowmap_channel_config.rs_list.at(0).setArg("none");
+
+		const std::unordered_map< std::string, helpers::PassConfig> config =
+		{
+			{ "ShadowsChannel", shadows_channel_config },
+			{ "ShadowMapChannel", shadowmap_channel_config }
+		};
+
+		std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
+		{
+		};
+
+		std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
+		{
+			{ "ShadowsChannel",
+				{
+					{ std::make_pair("shadow_bias", "shadow_bias") },
+					{ std::make_pair("shadowmap_resol", "shadowmap_resol") },
+					{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
+				}
+			},
+			{ "ShadowMapChannel",
+				{
+					{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
+				}
+			}
+		};
+
+		renderingHelper->registerToPasses(m_entitygraph, m_treeEntity, config, vertex_shaders_params, pixel_shaders_params);
+	}
+
 
 	/////////////////////////////////////////////////////////
 	
