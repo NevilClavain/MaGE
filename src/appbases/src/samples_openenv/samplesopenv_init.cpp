@@ -1220,6 +1220,9 @@ void SamplesOpenEnv::create_openenv_rendergraph(const std::string& p_parentEntit
 
 void SamplesOpenEnv::enable_shadowcaster(int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height)
 {
+	/////////////////////////////////////////////////////////////////////////////////////
+	/////// update rendering graph : queue hierarchy
+
 	const auto combiner_modulatelitshadows_inputA_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
 	const auto combiner_modulatelitshadows_inputB_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
 
@@ -1266,10 +1269,6 @@ void SamplesOpenEnv::enable_shadowcaster(int p_w_width, int p_w_height, float p_
 	mage::helpers::plugRenderingQueue(m_entitygraph, shadowMapChannelRenderingQueueDef, "shadowMap_Texture_Entity", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
 
 
-
-
-
-
 	const auto queue_entity{ m_entitygraph.node("bufferRendering_Scene_LitChannel_Queue_Entity").data() };
 
 	auto& renderingAspect{ queue_entity->aspectAccess(core::renderingAspect::id) };
@@ -1285,9 +1284,8 @@ void SamplesOpenEnv::enable_shadowcaster(int p_w_width, int p_w_height, float p_
 	m_entitygraph.move_subtree(m_entitygraph.node("bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity"), m_entitygraph.node("bufferRendering_Scene_LitChannel_Queue_Entity"));
 
 
-
-
 	/////////////////////////////////////////////////////////////////////////////////////
+	/////// update rendering graph : add scene objects proxy
 
 	auto& shadowMapNode{ m_entitygraph.node("shadowMap_Texture_Entity") };
 	const auto shadowmap_texture_entity{ shadowMapNode.data() };
@@ -1458,7 +1456,9 @@ void SamplesOpenEnv::enable_shadowcaster(int p_w_width, int p_w_height, float p_
 	}
 
 
-	/////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////
+	/////// set queue current cameras
+
 	
 	auto shadowsChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
 
