@@ -378,13 +378,7 @@ void ModuleImpl::d3d11_system_events()
 						renderingHelper->registerToPasses(m_entitygraph, m_raptorEntity, config, vertex_shaders_params, pixel_shaders_params);
 					}
 
-
-
-
-
 					complete_install_shadows_renderer_objects();
-
-
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -393,12 +387,6 @@ void ModuleImpl::d3d11_system_events()
 
 						m_currentCamera = "camera_Entity";
 						
-
-						auto debugChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_Debug_Queue_Entity") };
-						debugChannelRenderingQueue->setMainView(m_currentCamera);
-						debugChannelRenderingQueue->setSecondaryView("shadowmap_camera_Entity");
-
-
 						auto texturesChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Queue_Entity") };
 						texturesChannelRenderingQueue->setMainView(m_currentCamera);
 
@@ -415,9 +403,6 @@ void ModuleImpl::d3d11_system_events()
 
 						auto zDepthChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
 						zDepthChannelRenderingQueue->setMainView(m_currentCamera);
-
-
-
 					}
 				}
 				break;
