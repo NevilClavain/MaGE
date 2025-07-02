@@ -291,12 +291,6 @@ void ModuleImpl::d3d11_system_events()
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// RENDERGRAPH
-				
-					//auto& shadowMapNode{ m_entitygraph.node("shadowMap_Texture_Entity") };
-					//const auto shadowmap_texture_entity{ shadowMapNode.data() };
-					//auto& sm_resource_aspect{ shadowmap_texture_entity->aspectAccess(core::resourcesAspect::id) };
-					//std::pair<size_t, Texture>* sm_texture_ptr{ &sm_resource_aspect.getComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture")->getPurpose() };
-
 
 					const auto renderingHelper{ mage::helpers::Rendering::getInstance() };
 
@@ -324,16 +318,7 @@ void ModuleImpl::d3d11_system_events()
 						em_channel_config.vshader = "scene_flatcolor_skinning_vs";
 						em_channel_config.pshader = "scene_flatcolor_skinning_ps";
 
-						//auto shadows_channel_config{ renderingHelper->getPassConfig("ShadowsChannel") };
-						//shadows_channel_config.vshader = "scene_shadowsmask_skinning_vs";
-						//shadows_channel_config.pshader = "scene_shadowsmask_skinning_ps";
-						//shadows_channel_config.textures_ptr_list = { sm_texture_ptr };
-
-						//auto shadowmap_channel_config{ renderingHelper->getPassConfig("ShadowMapChannel") };
-						//shadowmap_channel_config.vshader = "scene_zdepth_skinning_vs";
-						//shadowmap_channel_config.pshader = "scene_zdepth_skinning_ps";
-						//shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
-						//shadowmap_channel_config.rs_list.at(0).setArg("ccw");
+	
 
 						const std::unordered_map< std::string, helpers::PassConfig> config =
 						{
@@ -341,9 +326,7 @@ void ModuleImpl::d3d11_system_events()
 							{ "ZDepthChannel", zdepth_channel_config },
 							{ "AmbientLightChannel", ambientlight_channel_config },
 							{ "LitChannel", lit_channel_config },
-							{ "EmissiveChannel", em_channel_config },
-							//{ "ShadowsChannel", shadows_channel_config },
-							//{ "ShadowMapChannel", shadowmap_channel_config }
+							{ "EmissiveChannel", em_channel_config }
 						};
 
 						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
@@ -366,13 +349,7 @@ void ModuleImpl::d3d11_system_events()
 								{
 									{ std::make_pair("std.black_color", "color") }
 								}
-							},
-							//{ "ShadowsChannel",
-							//	{
-							//		{ std::make_pair("shadow_bias", "shadow_bias") },
-							//		{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
-							//	}
-							//}
+							}
 						};
 
 						renderingHelper->registerToPasses(m_entitygraph, m_raptorEntity, config, vertex_shaders_params, pixel_shaders_params);
