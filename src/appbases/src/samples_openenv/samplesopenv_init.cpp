@@ -627,7 +627,6 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					auto shadowMapChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
 					shadowMapChannelRenderingQueue->setMainView("shadowmap_camera_Entity");
 
-
 				}
 				break;
 			}

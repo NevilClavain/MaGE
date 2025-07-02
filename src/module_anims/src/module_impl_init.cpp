@@ -372,8 +372,6 @@ void ModuleImpl::d3d11_system_events()
 
 						auto emissiveChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
 						emissiveChannelRenderingQueue->setMainView(m_currentCamera);
-
-
 						
 						auto litChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_LitChannel_Queue_Entity") };
 						litChannelRenderingQueue->setMainView(m_currentCamera);
