@@ -82,9 +82,12 @@ namespace mage
         std::unordered_map<std::string, ViewGroup>          m_cameraViewGroups;
 
 
-        void        createViewGroup(const std::string& p_viewGroupId, const ViewGroup& p_viewGroup);
+        void        createViewGroup(const std::string& p_viewGroupId);
+
         void        setViewGroupMainView(const std::string& p_viewGroupId, const std::string& p_mainview);
         void        setViewGroupSecondaryView(const std::string& p_viewGroupId, const std::string& p_secondaryview);
+
+        void        addQueuesToViewGroup(const std::string& p_viewGroupId, const std::unordered_set<std::string>& p_queues_id_list);
 
         std::pair<std::string, std::string> getViewGroupCurrentViews(const std::string& p_viewGroupId) const;
 

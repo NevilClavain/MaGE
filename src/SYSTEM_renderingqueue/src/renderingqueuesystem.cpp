@@ -1801,11 +1801,11 @@ void RenderingQueueSystem::removeFromRenderingQueue(const std::string& p_entity_
 	p_renderingQueue.setQueueNodes(queueNodes);
 }
 
-void RenderingQueueSystem::createViewGroup(const std::string& p_viewGroupId, const ViewGroup& p_viewGroup)
+void RenderingQueueSystem::createViewGroup(const std::string& p_viewGroupId)
 {
 	if (!m_cameraViewGroups.count(p_viewGroupId))
 	{
-		m_cameraViewGroups[p_viewGroupId] = p_viewGroup;
+		m_cameraViewGroups[p_viewGroupId] = {};
 	}
 	else
 	{
@@ -1837,11 +1837,26 @@ void RenderingQueueSystem::setViewGroupSecondaryView(const std::string& p_viewGr
 	}
 }
 
-std::pair<std::string, std::string>  RenderingQueueSystem::getViewGroupCurrentViews(const std::string& p_viewGroupId) const
+std::pair<std::string, std::string> RenderingQueueSystem::getViewGroupCurrentViews(const std::string& p_viewGroupId) const
 {
 	if (m_cameraViewGroups.count(p_viewGroupId))
 	{
 		return { m_cameraViewGroups.at(p_viewGroupId).main_view, m_cameraViewGroups.at(p_viewGroupId).secondary_view };
+	}
+	else
+	{
+		_EXCEPTION("Unknow viewGroupId : " + p_viewGroupId);
+	}
+}
+
+void RenderingQueueSystem::addQueuesToViewGroup(const std::string& p_viewGroupId, const std::unordered_set<std::string>& p_queues_id_list)
+{
+	if (m_cameraViewGroups.count(p_viewGroupId))
+	{		
+		for (const std::string& queue_id : p_queues_id_list)
+		{
+			m_cameraViewGroups.at(p_viewGroupId).queues_id_list.insert(queue_id);
+		}
 	}
 	else
 	{
