@@ -610,7 +610,6 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						renderingHelper->registerToPasses(m_entitygraph, m_skydomeEntity, config, vertex_shaders_params, pixel_shaders_params);
 					}
 
-
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 					install_shadows_renderer_queues(w_width, w_height, characteristics_v_width, characteristics_v_height);
