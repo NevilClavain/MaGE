@@ -28,6 +28,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 #include "system.h"
 #include "logsink.h"
 #include "logconf.h"
@@ -83,8 +84,7 @@ namespace mage
         void        setViewGroupMainView(const std::string& p_viewGroupId, const std::string& p_mainview);
         void        setViewGroupSecondaryView(const std::string& p_viewGroupId, const std::string& p_secondaryview);
 
-        std::string getViewGroupCurrentMainView(const std::string& p_viewGroupId) const;
-        std::string getViewGroupCurrentSecondaryView(const std::string& p_viewGroupId) const;
+        std::pair<std::string, std::string> getViewGroupCurrentViews(const std::string& p_viewGroupId) const;
 
         void manageRenderingQueue();
         void handleRenderingQueuesState(core::Entity* p_entity, rendering::Queue& p_renderingQueue);

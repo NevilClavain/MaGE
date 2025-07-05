@@ -1829,23 +1829,11 @@ void RenderingQueueSystem::setViewGroupSecondaryView(const std::string& p_viewGr
 	}
 }
 
-std::string RenderingQueueSystem::getViewGroupCurrentMainView(const std::string& p_viewGroupId) const
+std::pair<std::string, std::string>  RenderingQueueSystem::getViewGroupCurrentViews(const std::string& p_viewGroupId) const
 {
 	if (m_cameraViewGroups.count(p_viewGroupId))
 	{
-		return m_cameraViewGroups.at(p_viewGroupId).main_view;
-	}
-	else
-	{
-		_EXCEPTION("Unknow viewGroupId : " + p_viewGroupId);
-	}
-}
-
-std::string RenderingQueueSystem::getViewGroupCurrentSecondaryView(const std::string& p_viewGroupId) const
-{
-	if (m_cameraViewGroups.count(p_viewGroupId))
-	{
-		return m_cameraViewGroups.at(p_viewGroupId).secondary_view;
+		return { m_cameraViewGroups.at(p_viewGroupId).main_view, m_cameraViewGroups.at(p_viewGroupId).secondary_view };
 	}
 	else
 	{
