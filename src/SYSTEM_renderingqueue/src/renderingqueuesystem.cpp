@@ -374,13 +374,21 @@ void RenderingQueueSystem::manageRenderingQueue()
 						{
 							if (queue_id == renderingQueue.getName())
 							{
-								if ("" == renderingQueue.getMainView())
+								if (vp.second.main_view != renderingQueue.getMainView())
 								{
 									renderingQueue.setMainView(vp.second.main_view);
+									for (const auto& call : m_callbacks)
+									{
+										call(RenderingQueueSystemEvent::MAINVIEW_QUEUE_UPDATED, queue_id + ", " + vp.second.main_view);
+									}
 								}
-								if ("" == renderingQueue.getSecondaryView())
+								if (vp.second.secondary_view != renderingQueue.getSecondaryView())
 								{
 									renderingQueue.setSecondaryView(vp.second.secondary_view);
+									for (const auto& call : m_callbacks)
+									{
+										call(RenderingQueueSystemEvent::SECONDARYVIEW_QUEUE_UPDATED, queue_id + ", " + vp.second.secondary_view);
+									}
 								}
 							}
 						}
