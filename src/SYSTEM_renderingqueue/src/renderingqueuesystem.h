@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <string>
+#include <unordered_map>
 #include <unordered_set>
 #include "system.h"
 #include "logsink.h"
@@ -47,6 +49,16 @@ namespace mage
         TRIANGLEDRAWING_REMOVED
     };
 
+    struct ViewGroup
+    {
+        ViewGroup() = default;
+
+        std::string                         main_view;
+        std::string                         secondary_view;
+
+        std::unordered_set<std::string>     queues_id_list;
+    };
+
     class RenderingQueueSystem : public core::System, public mage::property::EventSource<RenderingQueueSystemEvent, const std::string&>
     {
     public:
@@ -61,9 +73,18 @@ namespace mage
 
     private:
 
-        mutable mage::core::logger::Sink        m_localLogger;
+        mutable mage::core::logger::Sink                    m_localLogger;
+        std::unordered_set<std::string>                     m_queuesToLog;
 
-        std::unordered_set<std::string>             m_queuesToLog;
+        std::unordered_map<std::string, ViewGroup>          m_cameraViewGroups;
+
+
+        void        createViewGroup(const std::string& p_viewGroupId, const ViewGroup& p_viewGroup);
+        void        setViewGroupMainView(const std::string& p_viewGroupId, const std::string& p_mainview);
+        void        setViewGroupSecondaryView(const std::string& p_viewGroupId, const std::string& p_secondaryview);
+
+        std::string getViewGroupCurrentMainView(const std::string& p_viewGroupId) const;
+        std::string getViewGroupCurrentSecondaryView(const std::string& p_viewGroupId) const;
 
         void manageRenderingQueue();
         void handleRenderingQueuesState(core::Entity* p_entity, rendering::Queue& p_renderingQueue);

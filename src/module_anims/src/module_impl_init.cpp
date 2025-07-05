@@ -362,6 +362,20 @@ void ModuleImpl::d3d11_system_events()
 					{
 						///////Select camera
 
+						/*
+							"bufferRendering_Scene_TexturesChannel_Queue_Entity", "camera_Entity", ""
+							"bufferRendering_Scene_AmbientLightChannel_Queue_Entity", "camera_Entity", ""
+							...
+
+							"bufferRendering_Scene_ShadowsChannel_Queue_Entity", "camera_Entity", "shadowmap_camera_Entity"
+
+							"bufferRendering_Scene_ShadowMapChannel_Queue_Entity", "shadowmap_camera_Entity", ""
+
+
+						*/
+
+
+
 						m_currentCamera = "camera_Entity";
 						
 						auto texturesChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Queue_Entity") };

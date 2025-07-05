@@ -336,7 +336,7 @@ static rendering::Queue* searchRenderingQueueInAncestors(core::Entity* p_entity)
 
 void RenderingQueueSystem::manageRenderingQueue()
 {
-	////////Queue states//////////////////////////////////////
+	////////Manage Queues states//////////////////////////////////////
 	{
 		const auto forEachRenderingAspect
 		{
@@ -352,7 +352,45 @@ void RenderingQueueSystem::manageRenderingQueue()
 		};
 		mage::helpers::extractAspectsDownTop<mage::core::renderingAspect>(m_entitygraph, forEachRenderingAspect);
 	}
-	////////Queue build/updates/log//////////////////////////////////////
+
+	////////Manage Queues main and secondary views//////////////////////////////////////
+	{
+		for (auto it = m_entitygraph.preBegin(); it != m_entitygraph.preEnd(); ++it)
+		{
+			const auto current_entity{ it->data() };
+			const auto currEntityId{ current_entity->getId() };
+
+			if (current_entity->hasAspect(mage::core::renderingAspect::id))
+			{
+				const auto& rendering_aspect{ current_entity->aspectAccess(mage::core::renderingAspect::id) };
+
+				const auto rendering_queues_list{ rendering_aspect.getComponentsByType<rendering::Queue>() };
+				if (rendering_queues_list.size() > 0)
+				{
+					auto& renderingQueue{ rendering_queues_list.at(0)->getPurpose() };
+					for (const auto& vp : m_cameraViewGroups)
+					{
+						for (const std::string& queue_id : vp.second.queues_id_list)
+						{
+							if (queue_id == renderingQueue.getName())
+							{
+								if ("" == renderingQueue.getMainView())
+								{
+									renderingQueue.setMainView(vp.second.main_view);
+								}
+								if ("" == renderingQueue.getSecondaryView())
+								{
+									renderingQueue.setSecondaryView(vp.second.secondary_view);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	////////Manage Queues build/updates/log//////////////////////////////////////
 	{
 		for (auto it = m_entitygraph.preBegin(); it != m_entitygraph.preEnd(); ++it)
 		{
@@ -1753,4 +1791,64 @@ void RenderingQueueSystem::removeFromRenderingQueue(const std::string& p_entity_
 	}
 
 	p_renderingQueue.setQueueNodes(queueNodes);
+}
+
+void RenderingQueueSystem::createViewGroup(const std::string& p_viewGroupId, const ViewGroup& p_viewGroup)
+{
+	if (!m_cameraViewGroups.count(p_viewGroupId))
+	{
+		m_cameraViewGroups[p_viewGroupId] = p_viewGroup;
+	}
+	else
+	{
+		_EXCEPTION("ViewGroupId already exists ! -> " + p_viewGroupId);
+	}
+}
+
+void RenderingQueueSystem::setViewGroupMainView(const std::string& p_viewGroupId, const std::string& p_mainview)
+{
+	if (m_cameraViewGroups.count(p_viewGroupId))
+	{
+		m_cameraViewGroups.at(p_viewGroupId).main_view = p_mainview;
+	}
+	else
+	{
+		_EXCEPTION("Unknow viewGroupId : " + p_viewGroupId);
+	}
+}
+
+void RenderingQueueSystem::setViewGroupSecondaryView(const std::string& p_viewGroupId, const std::string& p_secondaryview)
+{
+	if (m_cameraViewGroups.count(p_viewGroupId))
+	{
+		m_cameraViewGroups.at(p_viewGroupId).secondary_view = p_secondaryview;
+	}
+	else
+	{
+		_EXCEPTION("Unknow viewGroupId : " + p_viewGroupId);
+	}
+}
+
+std::string RenderingQueueSystem::getViewGroupCurrentMainView(const std::string& p_viewGroupId) const
+{
+	if (m_cameraViewGroups.count(p_viewGroupId))
+	{
+		return m_cameraViewGroups.at(p_viewGroupId).main_view;
+	}
+	else
+	{
+		_EXCEPTION("Unknow viewGroupId : " + p_viewGroupId);
+	}
+}
+
+std::string RenderingQueueSystem::getViewGroupCurrentSecondaryView(const std::string& p_viewGroupId) const
+{
+	if (m_cameraViewGroups.count(p_viewGroupId))
+	{
+		return m_cameraViewGroups.at(p_viewGroupId).secondary_view;
+	}
+	else
+	{
+		_EXCEPTION("Unknow viewGroupId : " + p_viewGroupId);
+	}
 }

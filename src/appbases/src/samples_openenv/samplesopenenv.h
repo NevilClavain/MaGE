@@ -54,7 +54,7 @@ namespace mage
         mage::core::Entity*             m_sphereEntity{ nullptr };
         mage::core::Entity*             m_wallEntity{ nullptr };
 
-        std::string                     m_currentCamera;
+        //std::string                     m_currentCamera;
 
         static constexpr double         groundLevel{ -100 };
 
