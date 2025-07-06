@@ -97,8 +97,6 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 			{
 				case D3D11SystemEvent::D3D11_WINDOW_READY:
 				{
-
-
 					auto& appwindowNode{ m_entitygraph.node(p_id) };
 					const auto appwindow{ appwindowNode.data() };
 
@@ -612,20 +610,52 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-					install_shadows_renderer_queues(w_width, w_height, characteristics_v_width, characteristics_v_height);
-					install_shadows_renderer_objects();
-
 					/////////////////////////////////////////////////////////////////////////////////////
 					/////// set queue current cameras
 
-					auto shadowsChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
 
-					shadowsChannelRenderingQueue->setMainView("camera_Entity");    //TEMP
-					shadowsChannelRenderingQueue->setSecondaryView("shadowmap_camera_Entity");
 
-					auto shadowMapChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
-					shadowMapChannelRenderingQueue->setMainView("shadowmap_camera_Entity");
+					
 
+
+					auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot)) };
+
+					renderingQueueSystemInstance->createViewGroup("player_camera");
+					renderingQueueSystemInstance->setViewGroupMainView("player_camera", "camera_Entity");
+
+					renderingQueueSystemInstance->addQueuesToViewGroup("player_camera",
+					{ 
+						"bufferRendering_Scene_TexturesChannel_Queue_Entity",
+						"bufferRendering_Scene_AmbientLightChannel_Queue_Entity",
+						"bufferRendering_Scene_EmissiveChannel_Queue_Entity",
+						"bufferRendering_Scene_LitChannel_Queue_Entity",
+						"bufferRendering_Scene_ZDepthChannel_Queue_Entity"
+					});
+
+
+					// setup shadows rendering
+
+
+					install_shadows_renderer_queues(w_width, w_height, characteristics_v_width, characteristics_v_height);
+					install_shadows_renderer_objects();
+
+					renderingQueueSystemInstance->createViewGroup("player_camera_2");
+					renderingQueueSystemInstance->setViewGroupMainView("player_camera_2", "camera_Entity");
+					renderingQueueSystemInstance->setViewGroupSecondaryView("player_camera_2", "shadowmap_camera_Entity");
+					
+					renderingQueueSystemInstance->addQueuesToViewGroup("player_camera_2",
+					{
+						"bufferRendering_Scene_ShadowsChannel_Queue_Entity"
+					});
+
+					
+					renderingQueueSystemInstance->createViewGroup("shadowmap_camera");
+					renderingQueueSystemInstance->setViewGroupMainView("shadowmap_camera", "shadowmap_camera_Entity");
+					renderingQueueSystemInstance->addQueuesToViewGroup("shadowmap_camera",
+					{
+						"bufferRendering_Scene_ShadowMapChannel_Queue_Entity"
+					});
+					
 				}
 				break;
 			}

@@ -372,7 +372,7 @@ void RenderingQueueSystem::manageRenderingQueue()
 					{
 						for (const std::string& queue_id : vp.second.queues_id_list)
 						{
-							if (queue_id == renderingQueue.getName())
+							if (queue_id == currEntityId)
 							{
 								if (vp.second.main_view != renderingQueue.getMainView())
 								{

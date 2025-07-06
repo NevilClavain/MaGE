@@ -76,7 +76,6 @@ private:
     std::default_random_engine                                  m_random_engine;
     std::uniform_int_distribution<int>*                         m_distribution;
 
-    std::string                                                 m_currentCamera;
 
     double                                                      m_light_theta { 0 }; // azimutal
     double                                                      m_light_phi   { - mage::core::maths::pi / 3 }; // elevation
@@ -85,7 +84,8 @@ private:
 
     bool                                                        m_left_ctrl{ false };
 
-    //bool                                                        m_is_perspective{ true };
+
+    bool                                                        m_appReady{ false };
 
     void                            resource_system_events();
     void                            d3d11_system_events();

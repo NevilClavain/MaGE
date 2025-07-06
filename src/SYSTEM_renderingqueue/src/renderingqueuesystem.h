@@ -70,17 +70,8 @@ namespace mage
         RenderingQueueSystem(core::Entitygraph& p_entitygraph);
         ~RenderingQueueSystem() = default;
 
-        void run();
-
-        void requestRenderingqueueLogging(const std::string& p_entityid);
-
-    private:
-
-        mutable mage::core::logger::Sink                    m_localLogger;
-        std::unordered_set<std::string>                     m_queuesToLog;
-
-        std::unordered_map<std::string, ViewGroup>          m_cameraViewGroups;
-
+        void        run();
+        void        requestRenderingqueueLogging(const std::string& p_entityid);
 
         void        createViewGroup(const std::string& p_viewGroupId);
 
@@ -90,6 +81,13 @@ namespace mage
         void        addQueuesToViewGroup(const std::string& p_viewGroupId, const std::unordered_set<std::string>& p_queues_id_list);
 
         std::pair<std::string, std::string> getViewGroupCurrentViews(const std::string& p_viewGroupId) const;
+
+    private:
+
+        mutable mage::core::logger::Sink                    m_localLogger;
+        std::unordered_set<std::string>                     m_queuesToLog;
+
+        std::unordered_map<std::string, ViewGroup>          m_cameraViewGroups;
 
         void manageRenderingQueue();
         void handleRenderingQueuesState(core::Entity* p_entity, rendering::Queue& p_renderingQueue);

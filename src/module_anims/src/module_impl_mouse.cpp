@@ -26,6 +26,8 @@
 #include "module_impl.h"
 #include <string>
 
+#include "sysengine.h"
+#include "renderingqueuesystem.h"
 #include "datacloud.h"
 #include "aspects.h"
 #include "timecontrol.h"
@@ -36,6 +38,8 @@ using namespace mage::core;
 
 void ModuleImpl::onMouseMove(long p_xm, long p_ym, long p_dx, long p_dy)
 {
+	if (!m_appReady) return;
+
 	if (m_left_ctrl)
 	{
 		const auto tc{ TimeControl::getInstance() };
@@ -47,7 +51,10 @@ void ModuleImpl::onMouseMove(long p_xm, long p_ym, long p_dx, long p_dy)
 	}
 	else
 	{
-		if ("camera_Entity" == m_currentCamera)
+		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot)) };
+		auto& [mainView, secondaryView] { renderingQueueSystemInstance->getViewGroupCurrentViews("player_camera") };
+
+		if ("camera_Entity" == mainView)
 		{
 			const auto tc{ TimeControl::getInstance() };
 			if (tc->isReady())

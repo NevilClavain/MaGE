@@ -357,6 +357,9 @@ void ModuleImpl::d3d11_system_events()
 
 					complete_install_shadows_renderer_objects();
 
+
+					m_appReady = true;
+
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 					{
@@ -375,7 +378,7 @@ void ModuleImpl::d3d11_system_events()
 						*/
 
 
-
+						/*
 						m_currentCamera = "camera_Entity";
 						
 						auto texturesChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Queue_Entity") };
@@ -392,6 +395,7 @@ void ModuleImpl::d3d11_system_events()
 
 						auto zDepthChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
 						zDepthChannelRenderingQueue->setMainView(m_currentCamera);
+						*/
 					}
 				}
 				break;
