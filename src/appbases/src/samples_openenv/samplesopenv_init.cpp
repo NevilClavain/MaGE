@@ -658,7 +658,11 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					helpers::plugCamera(m_entitygraph, m_orthogonal_projection, "shadowmap_lookatJoint_Entity", "shadowmap_camera_Entity");
 
 					// update rendering graph
-					install_shadows_renderer_queues(w_width, w_height, characteristics_v_width, characteristics_v_height, dataCloud->readDataValue<maths::Real4Vector>("shadowmap_resol")[0]);
+					install_shadows_renderer_queues(w_width, w_height, 
+													characteristics_v_width, characteristics_v_height, 
+													dataCloud->readDataValue<maths::Real4Vector>("shadowmap_resol")[0],
+													"bufferRendering_Scene_LitChannel_Queue_Entity");
+
 					install_shadows_renderer_objects();
 
 					// manage viewgroups
@@ -1084,7 +1088,10 @@ void SamplesOpenEnv::create_openenv_rendergraph(const std::string& p_parentEntit
 	mage::helpers::plugRenderingQueue(m_entitygraph, litChannelRenderingQueue, "bufferRendering_Combiner_Accumulate_Quad_Entity", "bufferRendering_Scene_LitChannel_Queue_Entity");
 }
 
-void SamplesOpenEnv::install_shadows_renderer_queues(int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height, int p_shadowmap_resol)
+void SamplesOpenEnv::install_shadows_renderer_queues(int p_w_width, int p_w_height, 
+													float p_characteristics_v_width, float p_characteristics_v_height, 
+													int p_shadowmap_resol,
+													const std::string& p_modulatedpass_queue)
 {
 	/////////////////////////////////////////////////////////////////////////////////////
 	/////// update rendering graph : queue hierarchy
@@ -1120,8 +1127,9 @@ void SamplesOpenEnv::install_shadows_renderer_queues(int p_w_width, int p_w_heig
 	mage::helpers::plugRenderingQueue(m_entitygraph, shadowsChannelRenderingQueueDef, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
 
 
+	auto& lit_channel_queue_entity_node{ m_entitygraph.node(p_modulatedpass_queue) };
 	
-	const auto lit_channel_queue_entity{ m_entitygraph.node("bufferRendering_Scene_LitChannel_Queue_Entity").data() };
+	const auto lit_channel_queue_entity{ lit_channel_queue_entity_node.data() };
 
 	auto& renderingAspect{ lit_channel_queue_entity->aspectAccess(core::renderingAspect::id) };
 	auto& stored_rendering_queue{ renderingAspect.getComponent<rendering::Queue>("renderingQueue")->getPurpose() };
@@ -1133,7 +1141,7 @@ void SamplesOpenEnv::install_shadows_renderer_queues(int p_w_width, int p_w_heig
 	litChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
 	stored_rendering_queue = litChannelRenderingQueue;
 
-	m_entitygraph.move_subtree(m_entitygraph.node("bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity"), m_entitygraph.node("bufferRendering_Scene_LitChannel_Queue_Entity"));
+	m_entitygraph.move_subtree(m_entitygraph.node("bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity"), lit_channel_queue_entity_node);
 
 	
 
