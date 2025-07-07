@@ -83,7 +83,7 @@ namespace mage
         void                            create_openenv_scenegraph(const std::string& p_parentEntityId);
         void                            create_openenv_rendergraph(const std::string& p_parentEntityId, int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
         
-        void                            install_shadows_renderer_queues(int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
+        void                            install_shadows_renderer_queues(int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height, int p_shadowmap_resol);
 
         void                            install_shadows_renderer_objects();
     };

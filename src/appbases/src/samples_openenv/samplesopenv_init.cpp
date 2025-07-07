@@ -655,13 +655,13 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						helpers::makeLookatJointAnimator())
 						);
 
-					// add camera
 					helpers::plugCamera(m_entitygraph, m_orthogonal_projection, "shadowmap_lookatJoint_Entity", "shadowmap_camera_Entity");
 
-
-
-					install_shadows_renderer_queues(w_width, w_height, characteristics_v_width, characteristics_v_height);
+					// update rendering graph
+					install_shadows_renderer_queues(w_width, w_height, characteristics_v_width, characteristics_v_height, dataCloud->readDataValue<maths::Real4Vector>("shadowmap_resol")[0]);
 					install_shadows_renderer_objects();
+
+					// manage viewgroups
 
 					renderingQueueSystemInstance->createViewGroup("player_camera_2");
 					renderingQueueSystemInstance->setViewGroupMainView("player_camera_2", "camera_Entity");
@@ -671,7 +671,6 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					{
 						"bufferRendering_Scene_ShadowsChannel_Queue_Entity"
 					});
-
 					
 					renderingQueueSystemInstance->createViewGroup("shadowmap_camera");
 					renderingQueueSystemInstance->setViewGroupMainView("shadowmap_camera", "shadowmap_camera_Entity");
@@ -1085,7 +1084,7 @@ void SamplesOpenEnv::create_openenv_rendergraph(const std::string& p_parentEntit
 	mage::helpers::plugRenderingQueue(m_entitygraph, litChannelRenderingQueue, "bufferRendering_Combiner_Accumulate_Quad_Entity", "bufferRendering_Scene_LitChannel_Queue_Entity");
 }
 
-void SamplesOpenEnv::install_shadows_renderer_queues(int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height)
+void SamplesOpenEnv::install_shadows_renderer_queues(int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height, int p_shadowmap_resol)
 {
 	/////////////////////////////////////////////////////////////////////////////////////
 	/////// update rendering graph : queue hierarchy
@@ -1146,7 +1145,7 @@ void SamplesOpenEnv::install_shadows_renderer_queues(int p_w_width, int p_w_heig
 	// SHADOWMAP TARGET TEXTURE
 	// Plug shadowmap just bellow, to be sure shadowmap is rendered before shadosw mask PASS above (remind : leaf to root order)
 
-	helpers::plugTargetTexture(m_entitygraph, "bufferRendering_Scene_ShadowsChannel_Queue_Entity", "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 2048, 2048)));
+	helpers::plugTargetTexture(m_entitygraph, "bufferRendering_Scene_ShadowsChannel_Queue_Entity", "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, p_shadowmap_resol, p_shadowmap_resol)));
 
 	rendering::Queue shadowMapChannelRenderingQueueDef("shadowmap_channel_queue");
 	shadowMapChannelRenderingQueueDef.setTargetClearColor({ 255, 255, 255, 255 });
