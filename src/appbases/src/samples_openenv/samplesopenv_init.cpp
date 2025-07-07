@@ -612,12 +612,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 					/////////////////////////////////////////////////////////////////////////////////////
 					/////// set queue current cameras
-
-
-
-					
-
-
+		
 					auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot)) };
 
 					renderingQueueSystemInstance->createViewGroup("player_camera");
@@ -634,7 +629,6 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 
 					// setup shadows rendering
-
 
 					install_shadows_renderer_queues(w_width, w_height, characteristics_v_width, characteristics_v_height);
 					install_shadows_renderer_objects();

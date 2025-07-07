@@ -355,48 +355,10 @@ void ModuleImpl::d3d11_system_events()
 						renderingHelper->registerToPasses(m_entitygraph, m_raptorEntity, config, vertex_shaders_params, pixel_shaders_params);
 					}
 
+					// setup shadows rendering
 					complete_install_shadows_renderer_objects();
 
-
 					m_appReady = true;
-
-					///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-					{
-						///////Select camera
-
-						/*
-							"bufferRendering_Scene_TexturesChannel_Queue_Entity", "camera_Entity", ""
-							"bufferRendering_Scene_AmbientLightChannel_Queue_Entity", "camera_Entity", ""
-							...
-
-							"bufferRendering_Scene_ShadowsChannel_Queue_Entity", "camera_Entity", "shadowmap_camera_Entity"
-
-							"bufferRendering_Scene_ShadowMapChannel_Queue_Entity", "shadowmap_camera_Entity", ""
-
-
-						*/
-
-
-						/*
-						m_currentCamera = "camera_Entity";
-						
-						auto texturesChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Queue_Entity") };
-						texturesChannelRenderingQueue->setMainView(m_currentCamera);
-
-						auto ambientLightChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_AmbientLightChannel_Queue_Entity") };
-						ambientLightChannelRenderingQueue->setMainView(m_currentCamera);
-
-						auto emissiveChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
-						emissiveChannelRenderingQueue->setMainView(m_currentCamera);
-						
-						auto litChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_LitChannel_Queue_Entity") };
-						litChannelRenderingQueue->setMainView(m_currentCamera);
-
-						auto zDepthChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
-						zDepthChannelRenderingQueue->setMainView(m_currentCamera);
-						*/
-					}
 				}
 				break;
 			}
