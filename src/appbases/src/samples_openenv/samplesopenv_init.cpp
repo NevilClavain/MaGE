@@ -927,8 +927,6 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_parentEntity
 
 
 	// add camera
-
-	//helpers::plugCamera(m_entitygraph, m_perpective_projection, "shadowmap_lookatJoint_Entity", "shadowmap_camera_Entity");
 	helpers::plugCamera(m_entitygraph, m_orthogonal_projection, "shadowmap_lookatJoint_Entity", "shadowmap_camera_Entity");
 	
 
@@ -1136,6 +1134,27 @@ void SamplesOpenEnv::install_shadows_renderer_queues(int p_w_width, int p_w_heig
 	mage::helpers::plugRenderingQueue(m_entitygraph, shadowsChannelRenderingQueueDef, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
 
 
+	
+	const auto lit_channel_queue_entity{ m_entitygraph.node("bufferRendering_Scene_LitChannel_Queue_Entity").data() };
+
+	auto& renderingAspect{ lit_channel_queue_entity->aspectAccess(core::renderingAspect::id) };
+	auto& stored_rendering_queue{ renderingAspect.getComponent<rendering::Queue>("renderingQueue")->getPurpose() };
+
+	rendering::Queue litChannelRenderingQueue("lit_channel_queue");
+	litChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
+	litChannelRenderingQueue.enableTargetClearing(true);
+	litChannelRenderingQueue.enableTargetDepthClearing(true);
+	litChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
+	stored_rendering_queue = litChannelRenderingQueue;
+
+	m_entitygraph.move_subtree(m_entitygraph.node("bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity"), m_entitygraph.node("bufferRendering_Scene_LitChannel_Queue_Entity"));
+
+	
+
+
+
+
+
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// SHADOWMAP TARGET TEXTURE
 	// Plug shadowmap just bellow, to be sure shadowmap is rendered before shadosw mask PASS above (remind : leaf to root order)
@@ -1151,19 +1170,7 @@ void SamplesOpenEnv::install_shadows_renderer_queues(int p_w_width, int p_w_heig
 	mage::helpers::plugRenderingQueue(m_entitygraph, shadowMapChannelRenderingQueueDef, "shadowMap_Texture_Entity", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
 
 
-	const auto queue_entity{ m_entitygraph.node("bufferRendering_Scene_LitChannel_Queue_Entity").data() };
 
-	auto& renderingAspect{ queue_entity->aspectAccess(core::renderingAspect::id) };
-	auto& stored_rendering_queue{ renderingAspect.getComponent<rendering::Queue>("renderingQueue")->getPurpose() };
-
-	rendering::Queue litChannelRenderingQueue("lit_channel_queue");
-	litChannelRenderingQueue.setTargetClearColor({ 0, 0, 0, 255 });
-	litChannelRenderingQueue.enableTargetClearing(true);
-	litChannelRenderingQueue.enableTargetDepthClearing(true);
-	litChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
-	stored_rendering_queue = litChannelRenderingQueue;
-
-	m_entitygraph.move_subtree(m_entitygraph.node("bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity"), m_entitygraph.node("bufferRendering_Scene_LitChannel_Queue_Entity"));
 
 }
 
