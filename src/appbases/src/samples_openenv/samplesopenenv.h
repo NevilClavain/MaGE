@@ -87,8 +87,13 @@ namespace mage
                                                                            float p_characteristics_v_width, float p_characteristics_v_height, 
                                                                             int p_shadowmap_resol, 
                                                                             const std::string& p_modulatedpass_queue,
-                                                                            const std::string& p_combiner_entities_prefix);
+                                                                            const std::string& p_combiner_entities_prefix,
+                                                                            const std::string& p_shadows_scene_entity_id,
+                                                                            const std::string& p_shadowmap_scene_entity_id,
+                                                                            const std::string& p_shadowmap_target_entity_id);
 
-        void                            install_shadows_renderer_objects();
+        void                            install_shadows_renderer_objects(const std::string& p_shadows_scene_entity_id,
+                                                                            const std::string& p_shadowmap_scene_entity_id,
+                                                                            const std::string& p_shadowmap_target_entity_id);
     };
 }

@@ -662,9 +662,13 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 													characteristics_v_width, characteristics_v_height, 
 													dataCloud->readDataValue<maths::Real4Vector>("shadowmap_resol")[0],
 													"bufferRendering_Scene_LitChannel_Queue_Entity",
-													"bufferRendering_Combiner_ModulateLitAndShadows");
+													"bufferRendering_Combiner_ModulateLitAndShadows",
+													"bufferRendering_Scene_ShadowsChannel_Queue_Entity",
+													"bufferRendering_Scene_ShadowMapChannel_Queue_Entity",
+													"shadowMap_Texture_Entity"
+													);
 
-					install_shadows_renderer_objects();
+					install_shadows_renderer_objects("bufferRendering_Scene_ShadowsChannel_Queue_Entity", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity", "shadowMap_Texture_Entity");
 
 					// manage viewgroups
 
@@ -1093,7 +1097,10 @@ void SamplesOpenEnv::install_shadows_renderer_queues(int p_w_width, int p_w_heig
 													float p_characteristics_v_width, float p_characteristics_v_height, 
 													int p_shadowmap_resol,
 													const std::string& p_modulatedpass_queue,
-													const std::string& p_combiner_entities_prefix)
+													const std::string& p_combiner_entities_prefix,
+													const std::string& p_shadows_scene_entity_id,
+													const std::string& p_shadowmap_scene_entity_id,
+													const std::string& p_shadowmap_target_entity_id)
 {
 	const std::string combiner_queue_entity_id = p_combiner_entities_prefix + "_Queue_Entity";
 	const std::string combiner_quad_entity_id = p_combiner_entities_prefix + "_Quad_Entity";
@@ -1131,7 +1138,7 @@ void SamplesOpenEnv::install_shadows_renderer_queues(int p_w_width, int p_w_heig
 	shadowsChannelRenderingQueueDef.enableTargetDepthClearing(true);
 	shadowsChannelRenderingQueueDef.setTargetStage(Texture::STAGE_1);
 
-	mage::helpers::plugRenderingQueue(m_entitygraph, shadowsChannelRenderingQueueDef, combiner_quad_entity_id, "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
+	mage::helpers::plugRenderingQueue(m_entitygraph, shadowsChannelRenderingQueueDef, combiner_quad_entity_id, p_shadows_scene_entity_id);
 
 
 	auto& lit_channel_queue_entity_node{ m_entitygraph.node(p_modulatedpass_queue) };
@@ -1160,7 +1167,7 @@ void SamplesOpenEnv::install_shadows_renderer_queues(int p_w_width, int p_w_heig
 	// SHADOWMAP TARGET TEXTURE
 	// Plug shadowmap just bellow, to be sure shadowmap is rendered before shadosw mask PASS above (remind : leaf to root order)
 
-	helpers::plugTargetTexture(m_entitygraph, "bufferRendering_Scene_ShadowsChannel_Queue_Entity", "shadowMap_Texture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, p_shadowmap_resol, p_shadowmap_resol)));
+	helpers::plugTargetTexture(m_entitygraph, p_shadows_scene_entity_id, p_shadowmap_target_entity_id, std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, p_shadowmap_resol, p_shadowmap_resol)));
 
 	rendering::Queue shadowMapChannelRenderingQueueDef("shadowmap_channel_queue");
 	shadowMapChannelRenderingQueueDef.setTargetClearColor({ 255, 255, 255, 255 });
@@ -1168,24 +1175,22 @@ void SamplesOpenEnv::install_shadows_renderer_queues(int p_w_width, int p_w_heig
 	shadowMapChannelRenderingQueueDef.enableTargetDepthClearing(true);
 	shadowMapChannelRenderingQueueDef.setTargetStage(Texture::STAGE_0);
 
-	mage::helpers::plugRenderingQueue(m_entitygraph, shadowMapChannelRenderingQueueDef, "shadowMap_Texture_Entity", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
-
-
-
-
+	mage::helpers::plugRenderingQueue(m_entitygraph, shadowMapChannelRenderingQueueDef, p_shadowmap_target_entity_id, p_shadowmap_scene_entity_id);
 }
 
-void SamplesOpenEnv::install_shadows_renderer_objects()
+void SamplesOpenEnv::install_shadows_renderer_objects(const std::string& p_shadows_scene_entity_id,
+														const std::string& p_shadowmap_scene_entity_id,
+														const std::string& p_shadowmap_target_entity_id)
 {
-	auto& shadowMapNode{ m_entitygraph.node("shadowMap_Texture_Entity") };
+	auto& shadowMapNode{ m_entitygraph.node(p_shadowmap_target_entity_id) };
 	const auto shadowmap_texture_entity{ shadowMapNode.data() };
 	auto& sm_resource_aspect{ shadowmap_texture_entity->aspectAccess(core::resourcesAspect::id) };
 	std::pair<size_t, Texture>* sm_texture_ptr{ &sm_resource_aspect.getComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture")->getPurpose() };
 
 	const auto renderingHelper{ mage::helpers::Rendering::getInstance() };
 
-	renderingHelper->registerPass("ShadowsChannel", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
-	renderingHelper->registerPass("ShadowMapChannel", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
+	renderingHelper->registerPass("ShadowsChannel", p_shadows_scene_entity_id);
+	renderingHelper->registerPass("ShadowMapChannel", p_shadowmap_scene_entity_id);
 
 
 	// ground shadows rendering
