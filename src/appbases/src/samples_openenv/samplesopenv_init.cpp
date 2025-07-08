@@ -661,7 +661,8 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					install_shadows_renderer_queues(w_width, w_height, 
 													characteristics_v_width, characteristics_v_height, 
 													dataCloud->readDataValue<maths::Real4Vector>("shadowmap_resol")[0],
-													"bufferRendering_Scene_LitChannel_Queue_Entity");
+													"bufferRendering_Scene_LitChannel_Queue_Entity",
+													"bufferRendering_Combiner_ModulateLitAndShadows");
 
 					install_shadows_renderer_objects();
 
@@ -1091,8 +1092,14 @@ void SamplesOpenEnv::create_openenv_rendergraph(const std::string& p_parentEntit
 void SamplesOpenEnv::install_shadows_renderer_queues(int p_w_width, int p_w_height, 
 													float p_characteristics_v_width, float p_characteristics_v_height, 
 													int p_shadowmap_resol,
-													const std::string& p_modulatedpass_queue)
+													const std::string& p_modulatedpass_queue,
+													const std::string& p_combiner_entities_prefix)
 {
+	const std::string combiner_queue_entity_id = p_combiner_entities_prefix + "_Queue_Entity";
+	const std::string combiner_quad_entity_id = p_combiner_entities_prefix + "_Quad_Entity";
+	const std::string combiner_view_entity_id = p_combiner_entities_prefix + "_View_Entity";
+
+
 	/////////////////////////////////////////////////////////////////////////////////////
 	/////// update rendering graph : queue hierarchy
 
@@ -1103,9 +1110,9 @@ void SamplesOpenEnv::install_shadows_renderer_queues(int p_w_width, int p_w_heig
 		"mod_lit_shadows_queue",
 		p_characteristics_v_width, p_characteristics_v_height,
 		"bufferRendering_Combiner_Accumulate_Quad_Entity",
-		"bufferRendering_Combiner_ModulateLitAndShadows_Queue_Entity",
-		"bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity",
-		"bufferRendering_Combiner_ModulateLitAndShadows_View_Entity",
+		combiner_queue_entity_id,
+		combiner_quad_entity_id,
+		combiner_view_entity_id,
 
 		"combiner_modulate_vs",
 		"combiner_modulate_ps",
@@ -1124,7 +1131,7 @@ void SamplesOpenEnv::install_shadows_renderer_queues(int p_w_width, int p_w_heig
 	shadowsChannelRenderingQueueDef.enableTargetDepthClearing(true);
 	shadowsChannelRenderingQueueDef.setTargetStage(Texture::STAGE_1);
 
-	mage::helpers::plugRenderingQueue(m_entitygraph, shadowsChannelRenderingQueueDef, "bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
+	mage::helpers::plugRenderingQueue(m_entitygraph, shadowsChannelRenderingQueueDef, combiner_quad_entity_id, "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
 
 
 	auto& lit_channel_queue_entity_node{ m_entitygraph.node(p_modulatedpass_queue) };
@@ -1141,7 +1148,7 @@ void SamplesOpenEnv::install_shadows_renderer_queues(int p_w_width, int p_w_heig
 	litChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
 	stored_rendering_queue = litChannelRenderingQueue;
 
-	m_entitygraph.move_subtree(m_entitygraph.node("bufferRendering_Combiner_ModulateLitAndShadows_Quad_Entity"), lit_channel_queue_entity_node);
+	m_entitygraph.move_subtree(m_entitygraph.node(combiner_quad_entity_id), lit_channel_queue_entity_node);
 
 	
 
