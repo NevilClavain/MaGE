@@ -660,8 +660,9 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					// update rendering graph
 					install_shadows_renderer_queues(w_width, w_height, 
 													characteristics_v_width, characteristics_v_height, 
-													dataCloud->readDataValue<maths::Real4Vector>("shadowmap_resol")[0],
+													dataCloud->readDataValue<maths::Real4Vector>("shadowmap_resol")[0],													
 													"bufferRendering_Scene_LitChannel_Queue_Entity",
+													"bufferRendering_Combiner_Accumulate_Quad_Entity",
 													"bufferRendering_Combiner_ModulateLitAndShadows",
 													"bufferRendering_Scene_ShadowsChannel_Queue_Entity",
 													"bufferRendering_Scene_ShadowMapChannel_Queue_Entity",
@@ -1096,7 +1097,8 @@ void SamplesOpenEnv::create_openenv_rendergraph(const std::string& p_parentEntit
 void SamplesOpenEnv::install_shadows_renderer_queues(int p_w_width, int p_w_height, 
 													float p_characteristics_v_width, float p_characteristics_v_height, 
 													int p_shadowmap_resol,
-													const std::string& p_modulatedpass_queue,
+													const std::string& p_queue_to_move,
+													const std::string& p_rootpass_queue,
 													const std::string& p_combiner_entities_prefix,
 													const std::string& p_shadows_scene_entity_id,
 													const std::string& p_shadowmap_scene_entity_id,
@@ -1116,7 +1118,7 @@ void SamplesOpenEnv::install_shadows_renderer_queues(int p_w_width, int p_w_heig
 	mage::helpers::plugRenderingQuad(m_entitygraph,
 		"mod_lit_shadows_queue",
 		p_characteristics_v_width, p_characteristics_v_height,
-		"bufferRendering_Combiner_Accumulate_Quad_Entity",
+		p_rootpass_queue,
 		combiner_queue_entity_id,
 		combiner_quad_entity_id,
 		combiner_view_entity_id,
@@ -1141,7 +1143,7 @@ void SamplesOpenEnv::install_shadows_renderer_queues(int p_w_width, int p_w_heig
 	mage::helpers::plugRenderingQueue(m_entitygraph, shadowsChannelRenderingQueueDef, combiner_quad_entity_id, p_shadows_scene_entity_id);
 
 
-	auto& lit_channel_queue_entity_node{ m_entitygraph.node(p_modulatedpass_queue) };
+	auto& lit_channel_queue_entity_node{ m_entitygraph.node(p_queue_to_move) };
 	
 	const auto lit_channel_queue_entity{ lit_channel_queue_entity_node.data() };
 
