@@ -69,11 +69,11 @@ namespace mage
 		};
 
 		// rendering passes helper struct
-		struct Rendering : public property::Singleton<Rendering>
+		struct RenderingPasses : public property::Singleton<RenderingPasses>
 		{
 		public:
-			Rendering() = default;
-			~Rendering() = default;
+			RenderingPasses() = default;
+			~RenderingPasses() = default;
 
 			void registerPass(const std::string& p_id);
 			void registerPass(const std::string& p_id, const std::string& queue_entity_id);

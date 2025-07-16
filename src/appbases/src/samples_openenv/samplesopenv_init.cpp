@@ -67,8 +67,7 @@
 #include "textures_service.h"
 
 #include "entitygraph_helpers.h"
-
-#include "rendering_helpers.h"
+#include "renderingpasses_helpers.h"
 
 #include "maths_helpers.h"
 
@@ -182,7 +181,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 					// create passes default configs
 
-					const auto renderingHelper{ mage::helpers::Rendering::getInstance() };
+					const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
 
 					renderingHelper->registerPass("TexturesChannel", "bufferRendering_Scene_TexturesChannel_Queue_Entity");
 					renderingHelper->registerPass("ZDepthChannel", "bufferRendering_Scene_ZDepthChannel_Queue_Entity");
@@ -1189,7 +1188,7 @@ void SamplesOpenEnv::install_shadows_renderer_objects(const std::string& p_shado
 	auto& sm_resource_aspect{ shadowmap_texture_entity->aspectAccess(core::resourcesAspect::id) };
 	std::pair<size_t, Texture>* sm_texture_ptr{ &sm_resource_aspect.getComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture")->getPurpose() };
 
-	const auto renderingHelper{ mage::helpers::Rendering::getInstance() };
+	const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
 
 	renderingHelper->registerPass("ShadowsChannel", p_shadows_scene_entity_id);
 	renderingHelper->registerPass("ShadowMapChannel", p_shadowmap_scene_entity_id);

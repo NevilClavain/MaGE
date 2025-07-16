@@ -67,7 +67,7 @@
 #include "textures_service.h"
 
 #include "entitygraph_helpers.h"
-#include "rendering_helpers.h"
+#include "renderingpasses_helpers.h"
 
 using namespace mage;
 using namespace mage::core;
@@ -292,7 +292,7 @@ void ModuleImpl::d3d11_system_events()
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// RENDERGRAPH
 
-					const auto renderingHelper{ mage::helpers::Rendering::getInstance() };
+					const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
 
 					// raptor rendering
 					{
@@ -446,7 +446,7 @@ void ModuleImpl::complete_install_shadows_renderer_objects()
 	auto& sm_resource_aspect{ shadowmap_texture_entity->aspectAccess(core::resourcesAspect::id) };
 	std::pair<size_t, Texture>* sm_texture_ptr{ &sm_resource_aspect.getComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture")->getPurpose() };
 
-	const auto renderingHelper{ mage::helpers::Rendering::getInstance() };
+	const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
 
 	renderingHelper->registerPass("ShadowsChannel", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
 	renderingHelper->registerPass("ShadowMapChannel", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity");

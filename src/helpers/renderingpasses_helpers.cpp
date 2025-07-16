@@ -23,7 +23,7 @@
 */
 /* -*-LIC_END-*- */
 
-#include "rendering_helpers.h"
+#include "renderingpasses_helpers.h"
 #include "entitygraph_helpers.h"
 
 #include "entitygraph.h"
@@ -35,12 +35,12 @@
 using namespace mage::core;
 using namespace mage::helpers;
 
-void Rendering::registerPass(const std::string& p_id)
+void RenderingPasses::registerPass(const std::string& p_id)
 {
 	m_configs_table.emplace(p_id, PassConfig());
 }
 
-void Rendering::registerPass(const std::string& p_id, const std::string& queue_entity_id)
+void RenderingPasses::registerPass(const std::string& p_id, const std::string& queue_entity_id)
 {
 	PassConfig pc;
 	pc.queue_entity_id = queue_entity_id;
@@ -48,17 +48,17 @@ void Rendering::registerPass(const std::string& p_id, const std::string& queue_e
 	m_configs_table.emplace(p_id, pc);
 }
 
-void Rendering::registerPass(const std::string& p_id, const PassConfig& p_config)
+void RenderingPasses::registerPass(const std::string& p_id, const PassConfig& p_config)
 {
 	m_configs_table.emplace(p_id, p_config);
 }
 
-PassConfig Rendering::getPassConfig(const std::string& p_id) const
+PassConfig RenderingPasses::getPassConfig(const std::string& p_id) const
 {
 	return m_configs_table.at(p_id);
 }
 
-std::unordered_map<std::string, Entity*> Rendering::registerToPasses(mage::core::Entitygraph& p_entitygraph,
+std::unordered_map<std::string, Entity*> RenderingPasses::registerToPasses(mage::core::Entitygraph& p_entitygraph,
 									mage::core::Entity* p_entity,
 									const std::unordered_map<std::string, PassConfig> p_config,
 									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_vertex_shaders_params,
