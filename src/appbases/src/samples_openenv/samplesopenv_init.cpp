@@ -656,6 +656,8 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 					helpers::plugCamera(m_entitygraph, m_orthogonal_projection, "shadowmap_lookatJoint_Entity", "shadowmap_camera_Entity");
 
+					m_shadowmap_joints_list.push_back("shadowmap_lookatJoint_Entity");
+
 					// update rendering graph
 					install_shadows_renderer_queues(w_width, w_height, 
 													characteristics_v_width, characteristics_v_height, 

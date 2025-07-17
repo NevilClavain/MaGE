@@ -26,6 +26,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include "samplesbase.h"
 
@@ -54,7 +55,8 @@ namespace mage
         mage::core::Entity*             m_sphereEntity{ nullptr };
         mage::core::Entity*             m_wallEntity{ nullptr };
 
-        //std::string                     m_currentCamera;
+        
+        std::vector<std::string>        m_shadowmap_joints_list;
 
         static constexpr double         groundLevel{ -100 };
 

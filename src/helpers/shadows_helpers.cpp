@@ -23,33 +23,26 @@
 */
 /* -*-LIC_END-*- */
 
-#include "samplesopenenv.h"
-#include <string>
-
-#include "maths_helpers.h"
 #include "shadows_helpers.h"
 
+#include "entitygraph.h"
+#include "entity.h"
 #include "aspects.h"
-#include "datacloud.h"
 
+void mage::helpers::updateShadowMapDirection(mage::core::Entity* p_shadowmap_lookatJoint_Entity, 
+											const mage::core::maths::Real4Vector& p_light_vector, 
+											const mage::core::maths::Real4Vector& p_base_vector, 
+											double p_vectorscale)
+{	
+	auto light_cartesian{ p_light_vector };
+	light_cartesian.normalize();
+	light_cartesian.scale(p_vectorscale);
 
-using namespace mage;
-using namespace mage::core;
-using namespace mage::rendering;
+	auto& lookat_world_aspect{ p_shadowmap_lookatJoint_Entity->aspectAccess(core::worldAspect::id) };
 
-void SamplesOpenEnv::run(void)
-{
-	SamplesBase::run();
+	core::maths::Real3Vector& lookat_localpos{ lookat_world_aspect.getComponent<core::maths::Real3Vector>("lookat_localpos")->getPurpose() };
 
-	/////////////////////////////////////////////////////
-
-	// update all shadowmaps camera pos/direction
-
-	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-	const auto light_cartesian{ dataCloud->readDataValue<maths::Real4Vector>("std.light0.dir") };
-
-	for (const auto& camera_joint_id : m_shadowmap_joints_list)
-	{
-		mage::helpers::updateShadowMapDirection(m_entitygraph.node(camera_joint_id).data(), light_cartesian, core::maths::Real4Vector(0, skydomeInnerRadius + groundLevel, 0, 0), 400);
-	}
+	lookat_localpos[0] = -light_cartesian[0] + p_base_vector[0];
+	lookat_localpos[1] = -light_cartesian[1] + p_base_vector[1];
+	lookat_localpos[2] = -light_cartesian[2] + p_base_vector[2];
 }

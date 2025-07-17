@@ -37,8 +37,6 @@
 namespace mage
 {
 	//fwd decl
-
-	// fwd decl
 	namespace core
 	{
 		class Entitygraph;

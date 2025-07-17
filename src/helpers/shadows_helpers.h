@@ -23,33 +23,24 @@
 */
 /* -*-LIC_END-*- */
 
-#include "samplesopenenv.h"
+#pragma once
+
 #include <string>
-
 #include "maths_helpers.h"
-#include "shadows_helpers.h"
 
-#include "aspects.h"
-#include "datacloud.h"
-
-
-using namespace mage;
-using namespace mage::core;
-using namespace mage::rendering;
-
-void SamplesOpenEnv::run(void)
+namespace mage
 {
-	SamplesBase::run();
-
-	/////////////////////////////////////////////////////
-
-	// update all shadowmaps camera pos/direction
-
-	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-	const auto light_cartesian{ dataCloud->readDataValue<maths::Real4Vector>("std.light0.dir") };
-
-	for (const auto& camera_joint_id : m_shadowmap_joints_list)
+	// fwd decl
+	namespace core
 	{
-		mage::helpers::updateShadowMapDirection(m_entitygraph.node(camera_joint_id).data(), light_cartesian, core::maths::Real4Vector(0, skydomeInnerRadius + groundLevel, 0, 0), 400);
+		class Entity;
+	}
+
+	namespace helpers
+	{
+		void updateShadowMapDirection(mage::core::Entity* p_shadowmap_lookatJoint_Entity, 
+										const mage::core::maths::Real4Vector& p_light_vector, 
+										const mage::core::maths::Real4Vector& p_base_vector, 
+										double p_vectorscale);
 	}
 }
