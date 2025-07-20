@@ -296,25 +296,25 @@ void ModuleImpl::d3d11_system_events()
 
 					// raptor rendering
 					{
-						auto textures_channel_config{ renderingHelper->getPassConfig("TexturesChannel") };
+						auto textures_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_TexturesChannel_Queue_Entity") };
 						textures_channel_config.vshader = "scene_texture1stage_skinning_vs";
 						textures_channel_config.pshader = "scene_texture1stage_skinning_ps";
 						textures_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("raptorDif2.png", Texture())) };
 
 
-						auto zdepth_channel_config{ renderingHelper->getPassConfig("ZDepthChannel") };
+						auto zdepth_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
 						zdepth_channel_config.vshader = "scene_zdepth_skinning_vs";
 						zdepth_channel_config.pshader = "scene_zdepth_skinning_ps";
 
-						auto ambientlight_channel_config{ renderingHelper->getPassConfig("AmbientLightChannel") };
+						auto ambientlight_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_AmbientLightChannel_Queue_Entity") };
 						ambientlight_channel_config.vshader = "scene_flatcolor_skinning_vs";
 						ambientlight_channel_config.pshader = "scene_flatcolor_skinning_ps";
 
-						auto lit_channel_config{ renderingHelper->getPassConfig("LitChannel") };
+						auto lit_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_LitChannel_Queue_Entity") };
 						lit_channel_config.vshader = "scene_lit_skinning_vs";
 						lit_channel_config.pshader = "scene_lit_skinning_ps";
 
-						auto em_channel_config{ renderingHelper->getPassConfig("EmissiveChannel") };
+						auto em_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
 						em_channel_config.vshader = "scene_flatcolor_skinning_vs";
 						em_channel_config.pshader = "scene_flatcolor_skinning_ps";
 
@@ -448,18 +448,18 @@ void ModuleImpl::complete_install_shadows_renderer_objects()
 
 	const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
 
-	renderingHelper->registerPass("ShadowsChannel", "bufferRendering_Scene_ShadowsChannel_Queue_Entity");
-	renderingHelper->registerPass("ShadowMapChannel", "bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
+	renderingHelper->registerPass("bufferRendering_Scene_ShadowsChannel_Queue_Entity");
+	renderingHelper->registerPass("bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
 
 
 	// raptor shadows rendering
 	{
-		auto shadows_channel_config{ renderingHelper->getPassConfig("ShadowsChannel") };
+		auto shadows_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
 		shadows_channel_config.vshader = "scene_shadowsmask_skinning_vs";
 		shadows_channel_config.pshader = "scene_shadowsmask_skinning_ps";
 		shadows_channel_config.textures_ptr_list = { sm_texture_ptr };
 
-		auto shadowmap_channel_config{ renderingHelper->getPassConfig("ShadowMapChannel") };
+		auto shadowmap_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
 		shadowmap_channel_config.vshader = "scene_zdepth_skinning_vs";
 		shadowmap_channel_config.pshader = "scene_zdepth_skinning_ps";
 		shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
@@ -467,8 +467,8 @@ void ModuleImpl::complete_install_shadows_renderer_objects()
 
 		const std::unordered_map< std::string, helpers::PassConfig> config =
 		{
-			{ "ShadowsChannel", shadows_channel_config },
-			{ "ShadowMapChannel", shadowmap_channel_config }
+			{ "bufferRendering_Scene_ShadowsChannel_Queue_Entity", shadows_channel_config},
+			{ "bufferRendering_Scene_ShadowMapChannel_Queue_Entity", shadowmap_channel_config }
 		};
 
 		std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
@@ -477,7 +477,7 @@ void ModuleImpl::complete_install_shadows_renderer_objects()
 
 		std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
 		{
-			{ "ShadowsChannel",
+			{ "bufferRendering_Scene_ShadowsChannel_Queue_Entity",
 				{
 					{ std::make_pair("shadow_bias", "shadow_bias") },
 					{ std::make_pair("shadowmap_resol", "shadowmap_resol") }

@@ -73,9 +73,9 @@ namespace mage
 			RenderingPasses() = default;
 			~RenderingPasses() = default;
 
-			void registerPass(const std::string& p_id, const std::string& queue_entity_id);
+			void registerPass(const std::string& p_queue_entity_id);
 
-			PassConfig getPassConfig(const std::string& p_id) const;
+			PassConfig getPassConfig(const std::string& p_queue_entity_id) const;
 
 			std::unordered_map<std::string, core::Entity*> registerToPasses(mage::core::Entitygraph& p_entitygraph,
 									mage::core::Entity* p_entity, 

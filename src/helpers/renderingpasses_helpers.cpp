@@ -36,17 +36,17 @@ using namespace mage::core;
 using namespace mage::helpers;
 
 
-void RenderingPasses::registerPass(const std::string& p_id, const std::string& queue_entity_id)
+void RenderingPasses::registerPass(const std::string& p_queue_entity_id)
 {
 	PassConfig pc;
-	pc.queue_entity_id = queue_entity_id;
+	pc.queue_entity_id = p_queue_entity_id;
 
-	m_configs_table.emplace(p_id, pc);
+	m_configs_table.emplace(p_queue_entity_id, pc);
 }
 
-PassConfig RenderingPasses::getPassConfig(const std::string& p_id) const
+PassConfig RenderingPasses::getPassConfig(const std::string& p_queue_entity_id) const
 {
-	return m_configs_table.at(p_id);
+	return m_configs_table.at(p_queue_entity_id);
 }
 
 std::unordered_map<std::string, Entity*> RenderingPasses::registerToPasses(mage::core::Entitygraph& p_entitygraph,
