@@ -630,9 +630,9 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					///////////////////////////////////////////////////////////////////////////////////////
 					/////// setup shadows rendering
 
-					// create shadow map camera
+					////// create shadow map camera
 
-
+					
 					auto& lookatJointEntityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "shadowmap_lookatJoint_Entity") };
 
 					const auto lookatJointEntity{ lookatJointEntityNode.data() };
@@ -645,20 +645,19 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_localpos");
 
 					lookat_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
-						{
-							{"lookatJointAnim.output", "lookat_output"},
-							{"lookatJointAnim.dest", "lookat_dest"},
-							{"lookatJointAnim.localpos", "lookat_localpos"},
+							{
+								{"lookatJointAnim.output", "lookat_output"},
+								{"lookatJointAnim.dest", "lookat_dest"},
+								{"lookatJointAnim.localpos", "lookat_localpos"},
 
-						},
-						helpers::makeLookatJointAnimator())
+							},
+							helpers::makeLookatJointAnimator())
 						);
 
 					helpers::plugCamera(m_entitygraph, m_orthogonal_projection, "shadowmap_lookatJoint_Entity", "shadowmap_camera_Entity");
-
 					m_shadowmap_joints_list.push_back("shadowmap_lookatJoint_Entity");
 
-					// update rendering graph
+					/////// update rendering graph
 					install_shadows_renderer_queues(w_width, w_height, 
 													characteristics_v_width, characteristics_v_height, 
 													dataCloud->readDataValue<maths::Real4Vector>("shadowmap_resol")[0],													
