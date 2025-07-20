@@ -35,10 +35,6 @@
 using namespace mage::core;
 using namespace mage::helpers;
 
-void RenderingPasses::registerPass(const std::string& p_id)
-{
-	m_configs_table.emplace(p_id, PassConfig());
-}
 
 void RenderingPasses::registerPass(const std::string& p_id, const std::string& queue_entity_id)
 {
@@ -46,11 +42,6 @@ void RenderingPasses::registerPass(const std::string& p_id, const std::string& q
 	pc.queue_entity_id = queue_entity_id;
 
 	m_configs_table.emplace(p_id, pc);
-}
-
-void RenderingPasses::registerPass(const std::string& p_id, const PassConfig& p_config)
-{
-	m_configs_table.emplace(p_id, p_config);
 }
 
 PassConfig RenderingPasses::getPassConfig(const std::string& p_id) const

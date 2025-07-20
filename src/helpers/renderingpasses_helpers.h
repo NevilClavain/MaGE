@@ -73,10 +73,7 @@ namespace mage
 			RenderingPasses() = default;
 			~RenderingPasses() = default;
 
-			void registerPass(const std::string& p_id);
 			void registerPass(const std::string& p_id, const std::string& queue_entity_id);
-
-			void registerPass(const std::string& p_id, const PassConfig& p_config);
 
 			PassConfig getPassConfig(const std::string& p_id) const;
 
