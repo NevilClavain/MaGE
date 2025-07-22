@@ -215,40 +215,41 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						em_channel_config.vshader = "scene_flatcolor_vs";
 						em_channel_config.pshader = "scene_flatcolor_ps";
 
-						const std::unordered_map< std::string, helpers::PassConfig> config =
+						helpers::PassesDescriptors passesDescriptors =
 						{
-							{ "bufferRendering_Scene_TexturesChannel_Queue_Entity", textures_channel_config },
-							{ "bufferRendering_Scene_ZDepthChannel_Queue_Entity", zdepth_channel_config },
-							{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity", ambientlight_channel_config },
-							{ "bufferRendering_Scene_LitChannel_Queue_Entity", lit_channel_config },
-							{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity", em_channel_config }
-						};
-
-						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
-						{
-						};
-
-						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
-						{
-
-							{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity",
-								{
-									{ std::make_pair("std.ambientlight.color", "color") }
-								}
+							// config
+							{
+								{ "bufferRendering_Scene_TexturesChannel_Queue_Entity", textures_channel_config },
+								{ "bufferRendering_Scene_ZDepthChannel_Queue_Entity", zdepth_channel_config },
+								{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity", ambientlight_channel_config },
+								{ "bufferRendering_Scene_LitChannel_Queue_Entity", lit_channel_config },
+								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity", em_channel_config }
 							},
-							{ "bufferRendering_Scene_LitChannel_Queue_Entity",
-								{
-									{ std::make_pair("std.light0.dir", "light_dir") }
-								}
+
+							{
 							},
-							{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
-								{
-									{ std::make_pair("std.black_color", "color") }
+
+							{
+
+								{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity",
+									{
+										{ std::make_pair("std.ambientlight.color", "color") }
+									}
+								},
+								{ "bufferRendering_Scene_LitChannel_Queue_Entity",
+									{
+										{ std::make_pair("std.light0.dir", "light_dir") }
+									}
+								},
+								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
+									{
+										{ std::make_pair("std.black_color", "color") }
+									}
 								}
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_groundEntity, config, vertex_shaders_params, pixel_shaders_params);
+						renderingHelper->registerToPasses(m_entitygraph, m_groundEntity, passesDescriptors);
 					}
 
 					// wall rendering
@@ -274,42 +275,46 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						em_channel_config.vshader = "scene_flatcolor_vs";
 						em_channel_config.pshader = "scene_flatcolor_ps";
 
-						const std::unordered_map< std::string, helpers::PassConfig> config =
-						{
-							{ "bufferRendering_Scene_TexturesChannel_Queue_Entity", textures_channel_config },
-							{ "bufferRendering_Scene_ZDepthChannel_Queue_Entity", zdepth_channel_config },
-							{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity", ambientlight_channel_config },
-							{ "bufferRendering_Scene_LitChannel_Queue_Entity", lit_channel_config },
-							{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity", em_channel_config }
-						};
 
-						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
+						helpers::PassesDescriptors passesDescriptors =
 						{
-						};
-
-						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
-						{
-
-							{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity",
-								{
-									{ std::make_pair("std.ambientlight.color", "color") }
-								}
+							// config
+							{
+								{ "bufferRendering_Scene_TexturesChannel_Queue_Entity", textures_channel_config },
+								{ "bufferRendering_Scene_ZDepthChannel_Queue_Entity", zdepth_channel_config },
+								{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity", ambientlight_channel_config },
+								{ "bufferRendering_Scene_LitChannel_Queue_Entity", lit_channel_config },
+								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity", em_channel_config }
 							},
-							{ "bufferRendering_Scene_LitChannel_Queue_Entity",
-								{
-									{ std::make_pair("std.light0.dir", "light_dir") }
-								}
+
+							// vertex shader params
+							{
 							},
-							{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
-								{
-									{ std::make_pair("std.black_color", "color") }
+
+							// pixel shader params
+							{
+
+								{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity",
+									{
+										{ std::make_pair("std.ambientlight.color", "color") }
+									}
+								},
+								{ "bufferRendering_Scene_LitChannel_Queue_Entity",
+									{
+										{ std::make_pair("std.light0.dir", "light_dir") }
+									}
+								},
+								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
+									{
+										{ std::make_pair("std.black_color", "color") }
+									}
 								}
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_wallEntity, config, vertex_shaders_params, pixel_shaders_params);
-
+						renderingHelper->registerToPasses(m_entitygraph, m_wallEntity, passesDescriptors);
 					}
+
 
 
 					// sphere rendering
@@ -335,41 +340,44 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						em_channel_config.vshader = "scene_flatcolor_vs";
 						em_channel_config.pshader = "scene_flatcolor_ps";
 
-						const std::unordered_map< std::string, helpers::PassConfig> config =
+
+						helpers::PassesDescriptors passesDescriptors =
 						{
-							{ "bufferRendering_Scene_TexturesChannel_Queue_Entity", textures_channel_config },
-							{ "bufferRendering_Scene_ZDepthChannel_Queue_Entity", zdepth_channel_config },
-							{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity", ambientlight_channel_config },
-							{ "bufferRendering_Scene_LitChannel_Queue_Entity", lit_channel_config },
-							{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity", em_channel_config }
-						};
-
-
-						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
-						{
-						};
-
-						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
-						{
-
-							{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity",
-								{
-									{ std::make_pair("std.ambientlight.color", "color") }
-								}
+							// config
+							{
+								{ "bufferRendering_Scene_TexturesChannel_Queue_Entity", textures_channel_config },
+								{ "bufferRendering_Scene_ZDepthChannel_Queue_Entity", zdepth_channel_config },
+								{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity", ambientlight_channel_config },
+								{ "bufferRendering_Scene_LitChannel_Queue_Entity", lit_channel_config },
+								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity", em_channel_config }
 							},
-							{ "bufferRendering_Scene_LitChannel_Queue_Entity",
-								{
-									{ std::make_pair("std.light0.dir", "light_dir") }
-								}
+
+							// vertex shader params
+							{
 							},
-							{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
-								{
-									{ std::make_pair("std.black_color", "color") }
+
+							// pixel shader params
+							{
+
+								{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity",
+									{
+										{ std::make_pair("std.ambientlight.color", "color") }
+									}
+								},
+								{ "bufferRendering_Scene_LitChannel_Queue_Entity",
+									{
+										{ std::make_pair("std.light0.dir", "light_dir") }
+									}
+								},
+								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
+									{
+										{ std::make_pair("std.black_color", "color") }
+									}
 								}
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_sphereEntity, config, vertex_shaders_params, pixel_shaders_params);
+						renderingHelper->registerToPasses(m_entitygraph, m_sphereEntity, passesDescriptors);
 					}
 
 
@@ -411,52 +419,56 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						em_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
 						em_channel_config.rs_list.at(0).setArg("none");
 
-						const std::unordered_map< std::string, helpers::PassConfig> config =
-						{
-							{ "bufferRendering_Scene_TexturesChannel_Queue_Entity", textures_channel_config },
-							{ "bufferRendering_Scene_ZDepthChannel_Queue_Entity", zdepth_channel_config },
-							{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity", ambientlight_channel_config },
-							{ "bufferRendering_Scene_LitChannel_Queue_Entity", lit_channel_config },
-							{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity", em_channel_config }
-						};
 
-						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
+						helpers::PassesDescriptors passesDescriptors =
 						{
-						};
+							// config
+							{
+								{ "bufferRendering_Scene_TexturesChannel_Queue_Entity", textures_channel_config },
+								{ "bufferRendering_Scene_ZDepthChannel_Queue_Entity", zdepth_channel_config },
+								{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity", ambientlight_channel_config },
+								{ "bufferRendering_Scene_LitChannel_Queue_Entity", lit_channel_config },
+								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity", em_channel_config }
+							},
 
-						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
-						{
-							{ "bufferRendering_Scene_TexturesChannel_Queue_Entity",
-								{
-									{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
-								}
+							// vertex shader params
+							{
 							},
-							{ "bufferRendering_Scene_ZDepthChannel_Queue_Entity",
-								{
-									{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
-								}
-							},
-							{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity",
-								{
-									{ std::make_pair("texture_keycolor_ps.key_color", "key_color") },
-									{ std::make_pair("std.ambientlight.color", "color") }
-								}
-							},
-							{ "bufferRendering_Scene_LitChannel_Queue_Entity",
-								{
-									{ std::make_pair("texture_keycolor_ps.key_color", "key_color") },
-									{ std::make_pair("std.light0.dir", "light_dir") }
-								}
-							},
-							{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
-								{
-									{ std::make_pair("texture_keycolor_ps.key_color", "key_color") },
-									{ std::make_pair("std.black_color", "color") }
+
+							// pixel shader params
+							{
+								{ "bufferRendering_Scene_TexturesChannel_Queue_Entity",
+									{
+										{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
+									}
+								},
+								{ "bufferRendering_Scene_ZDepthChannel_Queue_Entity",
+									{
+										{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
+									}
+								},
+								{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity",
+									{
+										{ std::make_pair("texture_keycolor_ps.key_color", "key_color") },
+										{ std::make_pair("std.ambientlight.color", "color") }
+									}
+								},
+								{ "bufferRendering_Scene_LitChannel_Queue_Entity",
+									{
+										{ std::make_pair("texture_keycolor_ps.key_color", "key_color") },
+										{ std::make_pair("std.light0.dir", "light_dir") }
+									}
+								},
+								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
+									{
+										{ std::make_pair("texture_keycolor_ps.key_color", "key_color") },
+										{ std::make_pair("std.black_color", "color") }
+									}
 								}
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_treeEntity, config, vertex_shaders_params, pixel_shaders_params);
+						renderingHelper->registerToPasses(m_entitygraph, m_treeEntity, passesDescriptors);
 					}
 
 
@@ -507,27 +519,30 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						em_channel_config.rs_list.at(1).setArg("false");
 
 
-						const std::unordered_map< std::string, helpers::PassConfig> config =
+						helpers::PassesDescriptors passesDescriptors =
 						{
-							{ "bufferRendering_Scene_TexturesChannel_Queue_Entity", textures_channel_config },
-							{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity", em_channel_config }
-						};
+							// config
+							{
+								{ "bufferRendering_Scene_TexturesChannel_Queue_Entity", textures_channel_config },
+								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity", em_channel_config }
+							},
 
 
-						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
-						{
-						};
+							// vertex shader params
+							{
+							},
 
-						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
-						{
-							{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
-								{									
-									{ std::make_pair("skydome_emissive_color", "color") }
+							// pixel shader params
+							{
+								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
+									{
+										{ std::make_pair("skydome_emissive_color", "color") }
+									}
 								}
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_cloudsEntity, config, vertex_shaders_params, pixel_shaders_params);
+						renderingHelper->registerToPasses(m_entitygraph, m_cloudsEntity, passesDescriptors);
 					}
 
 
@@ -572,39 +587,41 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						em_channel_config.rs_list.at(1).setArg("false");
 
 
-						const std::unordered_map< std::string, helpers::PassConfig> config =
+						helpers::PassesDescriptors passesDescriptors =
 						{
-							{ "bufferRendering_Scene_TexturesChannel_Queue_Entity", textures_channel_config },
-							{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity", em_channel_config }
-						};
-
-
-						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
-						{
-						};
-
-						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
-						{
-							{ "bufferRendering_Scene_TexturesChannel_Queue_Entity",
-								{
-									{ std::make_pair("std.light0.dir", "light0_dir") },
-									{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_0", "atmo_scattering_flag_0") },
-									{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_1", "atmo_scattering_flag_1") },
-									{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_2", "atmo_scattering_flag_2") },
-									{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_3", "atmo_scattering_flag_3") },
-									{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_4", "atmo_scattering_flag_4") },
-									{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_5", "atmo_scattering_flag_5") },
-								}
+							// config
+							{
+								{ "bufferRendering_Scene_TexturesChannel_Queue_Entity", textures_channel_config },
+								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity", em_channel_config }
 							},
 
-							{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
-								{
-									{ std::make_pair("skydome_emissive_color", "color") }
+							// vertex shader params
+							{
+							},
+
+							// pixel shader params
+							{
+								{ "bufferRendering_Scene_TexturesChannel_Queue_Entity",
+									{
+										{ std::make_pair("std.light0.dir", "light0_dir") },
+										{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_0", "atmo_scattering_flag_0") },
+										{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_1", "atmo_scattering_flag_1") },
+										{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_2", "atmo_scattering_flag_2") },
+										{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_3", "atmo_scattering_flag_3") },
+										{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_4", "atmo_scattering_flag_4") },
+										{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_5", "atmo_scattering_flag_5") },
+									}
+								},
+
+								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
+									{
+										{ std::make_pair("skydome_emissive_color", "color") }
+									}
 								}
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_skydomeEntity, config, vertex_shaders_params, pixel_shaders_params);
+						renderingHelper->registerToPasses(m_entitygraph, m_skydomeEntity, passesDescriptors);
 					}
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1194,7 +1211,7 @@ void SamplesOpenEnv::install_shadows_renderer_objects(const std::string& p_shado
 	renderingHelper->registerPass(p_shadows_scene_entity_id);
 	renderingHelper->registerPass(p_shadowmap_scene_entity_id);
 
-
+	
 	// ground shadows rendering
 	{
 		auto shadows_channel_config{ renderingHelper->getPassConfig(p_shadows_scene_entity_id) };
@@ -1206,30 +1223,33 @@ void SamplesOpenEnv::install_shadows_renderer_objects(const std::string& p_shado
 		shadowmap_channel_config.vshader = "scene_zdepth_vs";
 		shadowmap_channel_config.pshader = "scene_zdepth_ps";
 
-		const std::unordered_map< std::string, helpers::PassConfig> config =
+		helpers::PassesDescriptors passesDescriptors =
 		{
-			{ p_shadows_scene_entity_id, shadows_channel_config },
-			{ p_shadowmap_scene_entity_id, shadowmap_channel_config }
-		};
+			// config
+			{
+				{ p_shadows_scene_entity_id, shadows_channel_config },
+				{ p_shadowmap_scene_entity_id, shadowmap_channel_config }
+			},
 
-		std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
-		{
-		};
+			// vertex shader params
+			{
+			},
 
-		std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
-		{
+			// pixel shader params
+			{
 
-			{ p_shadows_scene_entity_id,
-				{
-					{ std::make_pair("shadow_bias", "shadow_bias") },
-					{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
+				{ p_shadows_scene_entity_id,
+					{
+						{ std::make_pair("shadow_bias", "shadow_bias") },
+						{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
+					}
 				}
 			}
 		};
 
-		renderingHelper->registerToPasses(m_entitygraph, m_groundEntity, config, vertex_shaders_params, pixel_shaders_params);
+		renderingHelper->registerToPasses(m_entitygraph, m_groundEntity, passesDescriptors);
 	}
-
+	
 	// wall shadows rendering
 	{
 		auto shadows_channel_config{ renderingHelper->getPassConfig(p_shadows_scene_entity_id) };
@@ -1241,32 +1261,34 @@ void SamplesOpenEnv::install_shadows_renderer_objects(const std::string& p_shado
 		shadowmap_channel_config.vshader = "scene_zdepth_vs";
 		shadowmap_channel_config.pshader = "scene_zdepth_ps";
 
-		const std::unordered_map< std::string, helpers::PassConfig> config =
+		helpers::PassesDescriptors passesDescriptors =
 		{
-			{ p_shadows_scene_entity_id, shadows_channel_config },
-			{ p_shadowmap_scene_entity_id, shadowmap_channel_config }
-		};
+			// config
+			{
+				{ p_shadows_scene_entity_id, shadows_channel_config },
+				{ p_shadowmap_scene_entity_id, shadowmap_channel_config }
+			},
 
+			// vertex shader params
+			{
+			},
 
-		std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
-		{
-		};
-
-		std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
-		{
-			{ p_shadows_scene_entity_id,
-				{
-					{ std::make_pair("shadow_bias", "shadow_bias") },
-					{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
+			// pixel shader params
+			{
+				{ p_shadows_scene_entity_id,
+					{
+						{ std::make_pair("shadow_bias", "shadow_bias") },
+						{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
+					}
 				}
 			}
 		};
 
-		renderingHelper->registerToPasses(m_entitygraph, m_wallEntity, config, vertex_shaders_params, pixel_shaders_params);
+		renderingHelper->registerToPasses(m_entitygraph, m_wallEntity, passesDescriptors);
 	}
 
 
-
+	
 	// sphere shadows rendering
 	{
 		auto shadows_channel_config{ renderingHelper->getPassConfig(p_shadows_scene_entity_id) };
@@ -1280,30 +1302,31 @@ void SamplesOpenEnv::install_shadows_renderer_objects(const std::string& p_shado
 		shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
 		shadowmap_channel_config.rs_list.at(0).setArg("ccw");
 
-		const std::unordered_map< std::string, helpers::PassConfig> config =
+		helpers::PassesDescriptors passesDescriptors =
 		{
-			{ p_shadows_scene_entity_id, shadows_channel_config },
-			{ p_shadowmap_scene_entity_id, shadowmap_channel_config }
-		};
+			// config
+			{
+				{ p_shadows_scene_entity_id, shadows_channel_config },
+				{ p_shadowmap_scene_entity_id, shadowmap_channel_config }
+			},
 
+			// vertex shader params
+			{
+			},
 
-		std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
-		{
-		};
-
-		std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
-		{
-			{ p_shadows_scene_entity_id,
-				{
-					{ std::make_pair("shadow_bias", "shadow_bias") },
-					{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
+			// pixel shader params
+			{
+				{ p_shadows_scene_entity_id,
+					{
+						{ std::make_pair("shadow_bias", "shadow_bias") },
+						{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
+					}
 				}
 			}
 		};
-
-		renderingHelper->registerToPasses(m_entitygraph, m_sphereEntity, config, vertex_shaders_params, pixel_shaders_params);
+	
+		renderingHelper->registerToPasses(m_entitygraph, m_sphereEntity, passesDescriptors);
 	}
-
 
 	// tree shadows rendering
 	{
@@ -1322,32 +1345,36 @@ void SamplesOpenEnv::install_shadows_renderer_objects(const std::string& p_shado
 		shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
 		shadowmap_channel_config.rs_list.at(0).setArg("none");
 
-		const std::unordered_map< std::string, helpers::PassConfig> config =
+		helpers::PassesDescriptors passesDescriptors =
 		{
-			{ p_shadows_scene_entity_id, shadows_channel_config },
-			{ p_shadowmap_scene_entity_id, shadowmap_channel_config }
-		};
-
-		std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
-		{
-		};
-
-		std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
-		{
-			{ p_shadows_scene_entity_id,
-				{
-					{ std::make_pair("shadow_bias", "shadow_bias") },
-					{ std::make_pair("shadowmap_resol", "shadowmap_resol") },
-					{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
-				}
+			// config
+			{
+				{ p_shadows_scene_entity_id, shadows_channel_config },
+				{ p_shadowmap_scene_entity_id, shadowmap_channel_config }
 			},
-			{ p_shadowmap_scene_entity_id,
-				{
-					{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
+
+			// vertex shader params
+			{
+			},
+
+			// pixel shader params
+			{
+				{ p_shadows_scene_entity_id,
+					{
+						{ std::make_pair("shadow_bias", "shadow_bias") },
+						{ std::make_pair("shadowmap_resol", "shadowmap_resol") },
+						{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
+					}
+				},
+				{ p_shadowmap_scene_entity_id,
+					{
+						{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
+					}
 				}
 			}
 		};
 
-		renderingHelper->registerToPasses(m_entitygraph, m_treeEntity, config, vertex_shaders_params, pixel_shaders_params);
+		renderingHelper->registerToPasses(m_entitygraph, m_treeEntity, passesDescriptors);
 	}
+	
 }

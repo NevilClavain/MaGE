@@ -50,16 +50,18 @@ PassConfig RenderingPasses::getPassConfig(const std::string& p_queue_entity_id) 
 }
 
 std::unordered_map<std::string, Entity*> RenderingPasses::registerToPasses(mage::core::Entitygraph& p_entitygraph,
-									mage::core::Entity* p_entity,
+									mage::core::Entity* p_entity,					
+									const PassesDescriptors& p_passesdescriptors
+									/*
 									const std::unordered_map<std::string, PassConfig> p_config,
 									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_vertex_shaders_params,
-									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_pixel_shaders_params)
+									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_pixel_shaders_params*/)
 {
 	std::unordered_map<std::string, core::Entity*> proxy_entities;
 
 	const std::string base_entity_id{ p_entity->getId() };
 
-	for (const auto& e : p_config)
+	for (const auto& e : p_passesdescriptors.config)
 	{
 		std::string proxy_entity_name = base_entity_id + std::string("_") + e.first + std::string("_ProxyEntity");
 
@@ -113,7 +115,7 @@ std::unordered_map<std::string, Entity*> RenderingPasses::registerToPasses(mage:
 
 	///// manage shader args
 
-	for (const auto& e : p_vertex_shaders_params)
+	for (const auto& e : p_passesdescriptors.vertex_shaders_params)
 	{
 		const std::string channel_id{ e.first };
 
@@ -134,7 +136,7 @@ std::unordered_map<std::string, Entity*> RenderingPasses::registerToPasses(mage:
 		}
 	}
 
-	for (const auto& e : p_pixel_shaders_params)
+	for (const auto& e : p_passesdescriptors.pixel_shaders_params)
 	{
 		const std::string channel_id{ e.first };
 

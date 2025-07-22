@@ -318,41 +318,41 @@ void ModuleImpl::d3d11_system_events()
 						em_channel_config.vshader = "scene_flatcolor_skinning_vs";
 						em_channel_config.pshader = "scene_flatcolor_skinning_ps";
 
-	
-
-						const std::unordered_map< std::string, helpers::PassConfig> config =
+						helpers::PassesDescriptors passesDescriptors =
 						{
-							{ "TexturesChannel", textures_channel_config },
-							{ "ZDepthChannel", zdepth_channel_config },
-							{ "AmbientLightChannel", ambientlight_channel_config },
-							{ "LitChannel", lit_channel_config },
-							{ "EmissiveChannel", em_channel_config }
-						};
-
-						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
-						{
-						};
-
-						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
-						{
-							{ "AmbientLightChannel",
-								{
-									{ std::make_pair("std.ambientlight.color", "color") }
-								}
+							// config
+							{
+								{ "TexturesChannel", textures_channel_config },
+								{ "ZDepthChannel", zdepth_channel_config },
+								{ "AmbientLightChannel", ambientlight_channel_config },
+								{ "LitChannel", lit_channel_config },
+								{ "EmissiveChannel", em_channel_config }
 							},
-							{ "LitChannel",
-								{
-									{ std::make_pair("std.light0.dir", "light_dir") }
-								}
+							// vertex shader params
+							{
 							},
-							{ "EmissiveChannel",
-								{
-									{ std::make_pair("std.black_color", "color") }
+
+							// pixel shader params
+							{
+								{ "AmbientLightChannel",
+									{
+										{ std::make_pair("std.ambientlight.color", "color") }
+									}
+								},
+								{ "LitChannel",
+									{
+										{ std::make_pair("std.light0.dir", "light_dir") }
+									}
+								},
+								{ "EmissiveChannel",
+									{
+										{ std::make_pair("std.black_color", "color") }
+									}
 								}
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_raptorEntity, config, vertex_shaders_params, pixel_shaders_params);
+						renderingHelper->registerToPasses(m_entitygraph, m_raptorEntity, passesDescriptors);
 					}
 
 					// setup shadows rendering
@@ -451,7 +451,7 @@ void ModuleImpl::complete_install_shadows_renderer_objects()
 	renderingHelper->registerPass("bufferRendering_Scene_ShadowsChannel_Queue_Entity");
 	renderingHelper->registerPass("bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
 
-
+	
 	// raptor shadows rendering
 	{
 		auto shadows_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
@@ -465,27 +465,31 @@ void ModuleImpl::complete_install_shadows_renderer_objects()
 		shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
 		shadowmap_channel_config.rs_list.at(0).setArg("ccw");
 
-		const std::unordered_map< std::string, helpers::PassConfig> config =
+		helpers::PassesDescriptors passesDescriptors =
 		{
-			{ "bufferRendering_Scene_ShadowsChannel_Queue_Entity", shadows_channel_config},
-			{ "bufferRendering_Scene_ShadowMapChannel_Queue_Entity", shadowmap_channel_config }
-		};
+			// config
+			{
+				{ "bufferRendering_Scene_ShadowsChannel_Queue_Entity", shadows_channel_config},
+				{ "bufferRendering_Scene_ShadowMapChannel_Queue_Entity", shadowmap_channel_config }
+			},
 
-		std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
-		{
-		};
+			// vertex shader params
+			{
+			},
 
-		std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
-		{
-			{ "bufferRendering_Scene_ShadowsChannel_Queue_Entity",
-				{
-					{ std::make_pair("shadow_bias", "shadow_bias") },
-					{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
+			// pixel shader params
+			{
+				{ "bufferRendering_Scene_ShadowsChannel_Queue_Entity",
+					{
+						{ std::make_pair("shadow_bias", "shadow_bias") },
+						{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
+					}
 				}
 			}
 		};
 
-		renderingHelper->registerToPasses(m_entitygraph, m_raptorEntity, config, vertex_shaders_params, pixel_shaders_params);
+		renderingHelper->registerToPasses(m_entitygraph, m_raptorEntity, passesDescriptors);
 	}
+	
 }
 
