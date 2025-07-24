@@ -83,20 +83,6 @@ namespace mage
         void                            d3d11_system_events_openenv();
 
         void                            create_openenv_scenegraph(const std::string& p_parentEntityId);
-        void                            create_openenv_rendergraph(const std::string& p_parentEntityId, int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
-        
-        void                            install_shadows_renderer_queues(int p_w_width, int p_w_height, 
-                                                                           float p_characteristics_v_width, float p_characteristics_v_height, 
-                                                                            int p_shadowmap_resol, 
-                                                                            const std::string& p_queue_to_move,
-                                                                            const std::string& p_rootpass_queue,
-                                                                            const std::string& p_combiner_entities_prefix,
-                                                                            const std::string& p_shadows_scene_entity_id,
-                                                                            const std::string& p_shadowmap_scene_entity_id,
-                                                                            const std::string& p_shadowmap_target_entity_id);
-
-        void                            install_shadows_renderer_objects(const std::string& p_shadows_scene_entity_id,
-                                                                            const std::string& p_shadowmap_scene_entity_id,
-                                                                            const std::string& p_shadowmap_target_entity_id);
+        void                            create_openenv_rendergraph(const std::string& p_parentEntityId, int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);       
     };
 }

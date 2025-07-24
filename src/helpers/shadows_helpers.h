@@ -25,8 +25,11 @@
 
 #pragma once
 
+#include <vector>
 #include <string>
+
 #include "maths_helpers.h"
+#include "renderingpasses_helpers.h"
 
 namespace mage
 {
@@ -34,13 +37,33 @@ namespace mage
 	namespace core
 	{
 		class Entity;
+		class Entitygraph;
 	}
 
 	namespace helpers
 	{
+
+		struct ShadowSourceEntity
+		{
+			mage::core::Entity* entity;
+			PassesDescriptors   passesDescriptors;
+		};
+
 		void updateShadowMapDirection(mage::core::Entity* p_shadowmap_lookatJoint_Entity, 
 										const mage::core::maths::Real4Vector& p_light_vector, 
 										const mage::core::maths::Real4Vector& p_base_vector, 
 										double p_vectorscale);
+
+		void install_shadows_renderer_queues(mage::core::Entitygraph& p_entitygraph,
+										int p_w_width, int p_w_height,
+										float p_characteristics_v_width, float p_characteristics_v_height,
+										int p_shadowmap_resol,
+										const std::string& p_queue_to_move,
+										const std::string& p_rootpass_queue,
+										const std::string& p_combiner_entities_prefix,
+										const std::string& p_shadows_scene_entity_id,
+										const std::string& p_shadowmap_scene_entity_id,
+										const std::string& p_shadowmap_target_entity_id);
+
 	}
 }
