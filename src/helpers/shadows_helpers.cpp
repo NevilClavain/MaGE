@@ -142,6 +142,7 @@ void mage::helpers::install_shadows_rendering(mage::core::Entitygraph& p_entityg
 												int p_w_width, int p_w_height,
 												float p_characteristics_v_width, float p_characteristics_v_height,
 												const std::string p_appwindows_entityname,
+												std::vector<std::pair<std::string, core::maths::Real3Vector>>& p_shadowmap_joints_list,
 												const ShadowsRenderingParams& p_shadows_rendering_params)
 {
 	////// step I : create shadow map camera
@@ -169,6 +170,24 @@ void mage::helpers::install_shadows_rendering(mage::core::Entitygraph& p_entityg
 
 	helpers::plugCamera(p_entitygraph, p_shadows_rendering_params.orthogonal_projection, p_shadows_rendering_params.shadowmap_lookatJoint_entity_id, p_shadows_rendering_params.shadowmap_camera_entity_id);
 
+	p_shadowmap_joints_list.push_back(std::make_pair(p_shadows_rendering_params.shadowmap_lookatJoint_entity_id, 
+														p_shadows_rendering_params.shadowmap_camerajoint_lookat_localpos_base));
 
-	// TO BE CONTINUED...
+
+	/////// II : update rendering graph
+
+	install_shadows_renderer_queues(p_entitygraph,
+		p_w_width, p_w_height,
+		p_characteristics_v_width, p_characteristics_v_height,
+		p_shadows_rendering_params.shadowmap_resol,
+		"bufferRendering_Scene_LitChannel_Queue_Entity",
+		"bufferRendering_Combiner_Accumulate_Quad_Entity",
+		"bufferRendering_Combiner_ModulateLitAndShadows",
+		"bufferRendering_Scene_ShadowsChannel_Queue_Entity",
+		"bufferRendering_Scene_ShadowMapChannel_Queue_Entity",
+		"shadowMap_Texture_Entity"
+	);
+
+	/////// III : entities in rendering graph
+
 }

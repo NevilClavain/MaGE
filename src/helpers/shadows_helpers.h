@@ -66,9 +66,9 @@ namespace mage
 			std::string						shadowmap_target_entity_id;
 			std::string						shadowmap_lookatJoint_entity_id;
 			std::string						shadowmap_camera_entity_id;
-
-			mage::core::maths::Real3Vector	shadowmap_camerajoint_lookat_localpos;
+			
 			mage::core::maths::Real3Vector	shadowmap_camerajoint_lookat_dest;
+			mage::core::maths::Real3Vector	shadowmap_camerajoint_lookat_localpos_base;
 		};
 
 		void updateShadowMapDirection(mage::core::Entity* p_shadowmap_lookatJoint_Entity, 
@@ -92,6 +92,7 @@ namespace mage
 										int p_w_width, int p_w_height,
 										float p_characteristics_v_width, float p_characteristics_v_height,
 										const std::string p_appwindows_entityname,
+										std::vector<std::pair<std::string, core::maths::Real3Vector>>& p_shadowmap_joints_list,
 										const ShadowsRenderingParams& p_shadows_rendering_params
 										);
 	}
