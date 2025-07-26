@@ -29,6 +29,9 @@
 #include <string>
 
 #include "maths_helpers.h"
+#include "matrix.h"
+#include "tvector.h"
+
 #include "renderingpasses_helpers.h"
 
 namespace mage
@@ -49,6 +52,25 @@ namespace mage
 			PassesDescriptors   passesDescriptors;
 		};
 
+		struct ShadowsRenderingParams
+		{
+			mage::core::maths::Matrix		orthogonal_projection;
+
+			int								shadowmap_resol;
+
+			std::string						queue_to_move;
+			std::string						rootpass_queue;
+			std::string						combiner_entities_prefix;
+			std::string						shadows_scene_entity_id;
+			std::string						shadowmap_scene_entity_id;
+			std::string						shadowmap_target_entity_id;
+			std::string						shadowmap_lookatJoint_entity_id;
+			std::string						shadowmap_camera_entity_id;
+
+			mage::core::maths::Real3Vector	shadowmap_camerajoint_lookat_localpos;
+			mage::core::maths::Real3Vector	shadowmap_camerajoint_lookat_dest;
+		};
+
 		void updateShadowMapDirection(mage::core::Entity* p_shadowmap_lookatJoint_Entity, 
 										const mage::core::maths::Real4Vector& p_light_vector, 
 										const mage::core::maths::Real4Vector& p_base_vector, 
@@ -63,7 +85,14 @@ namespace mage
 										const std::string& p_combiner_entities_prefix,
 										const std::string& p_shadows_scene_entity_id,
 										const std::string& p_shadowmap_scene_entity_id,
-										const std::string& p_shadowmap_target_entity_id);
+										const std::string& p_shadowmap_target_entity_id
+										);
 
+		void install_shadows_rendering(mage::core::Entitygraph& p_entitygraph,
+										int p_w_width, int p_w_height,
+										float p_characteristics_v_width, float p_characteristics_v_height,
+										const std::string p_appwindows_entityname,
+										const ShadowsRenderingParams& p_shadows_rendering_params
+										);
 	}
 }

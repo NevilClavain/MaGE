@@ -27,6 +27,9 @@
 
 #include "shadows_helpers.h"
 #include "entitygraph_helpers.h"
+#include "animators_helpers.h"
+
+#include "animatorfunc.h"
 
 #include "entitygraph.h"
 #include "entity.h"
@@ -133,4 +136,39 @@ void mage::helpers::install_shadows_renderer_queues(mage::core::Entitygraph& p_e
 	shadowMapChannelRenderingQueueDef.setTargetStage(Texture::STAGE_0);
 
 	mage::helpers::plugRenderingQueue(p_entitygraph, shadowMapChannelRenderingQueueDef, p_shadowmap_target_entity_id, p_shadowmap_scene_entity_id);
+}
+
+void mage::helpers::install_shadows_rendering(mage::core::Entitygraph& p_entitygraph,
+												int p_w_width, int p_w_height,
+												float p_characteristics_v_width, float p_characteristics_v_height,
+												const std::string p_appwindows_entityname,
+												const ShadowsRenderingParams& p_shadows_rendering_params)
+{
+	////// step I : create shadow map camera
+
+	auto& lookatJointEntityNode{ p_entitygraph.add(p_entitygraph.node(p_appwindows_entityname), "shadowmap_lookatJoint_Entity") };
+
+	const auto lookatJointEntity{ lookatJointEntityNode.data() };
+
+	auto& lookat_time_aspect{ lookatJointEntity->makeAspect(core::timeAspect::id) };
+	auto& lookat_world_aspect{ lookatJointEntity->makeAspect(core::worldAspect::id) };
+
+	lookat_world_aspect.addComponent<transform::WorldPosition>("lookat_output");
+	lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_dest", p_shadows_rendering_params.shadowmap_camerajoint_lookat_dest);
+	lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_localpos");
+
+	lookat_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
+		{
+			{"lookatJointAnim.output", "lookat_output"},
+			{"lookatJointAnim.dest", "lookat_dest"},
+			{"lookatJointAnim.localpos", "lookat_localpos"},
+
+		},
+		helpers::makeLookatJointAnimator())
+	);
+
+	helpers::plugCamera(p_entitygraph, p_shadows_rendering_params.orthogonal_projection, p_shadows_rendering_params.shadowmap_lookatJoint_entity_id, p_shadows_rendering_params.shadowmap_camera_entity_id);
+
+
+	// TO BE CONTINUED...
 }

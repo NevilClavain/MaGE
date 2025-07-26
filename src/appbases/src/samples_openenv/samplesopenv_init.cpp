@@ -648,8 +648,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					///////////////////////////////////////////////////////////////////////////////////////
 					/////// setup shadows rendering
 
-					////// create shadow map camera
-
+					////// I : create shadow map camera
 					
 					auto& lookatJointEntityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "shadowmap_lookatJoint_Entity") };
 
@@ -673,9 +672,10 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						);
 
 					helpers::plugCamera(m_entitygraph, m_orthogonal_projection, "shadowmap_lookatJoint_Entity", "shadowmap_camera_Entity");
+
 					m_shadowmap_joints_list.push_back("shadowmap_lookatJoint_Entity");
 
-					/////// update rendering graph
+					/////// II : update rendering graph
 					helpers::install_shadows_renderer_queues(m_entitygraph,
 																w_width, w_height,
 																characteristics_v_width, characteristics_v_height, 
@@ -688,8 +688,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 																"shadowMap_Texture_Entity"
 																);
 
-
-
+					/////// III : entities in rendering graph
 
 					renderingHelper->registerPass("bufferRendering_Scene_ShadowsChannel_Queue_Entity");
 					renderingHelper->registerPass("bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
@@ -699,7 +698,6 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					const auto shadowmap_texture_entity{ shadowMapNode.data() };
 					auto& sm_resource_aspect{ shadowmap_texture_entity->aspectAccess(core::resourcesAspect::id) };
 					std::pair<size_t, Texture>* sm_texture_ptr{ &sm_resource_aspect.getComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture")->getPurpose() };
-
 
 					std::vector<helpers::ShadowSourceEntity> shadowSourceEntities;
 
@@ -875,7 +873,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 						renderingHelper->registerToPasses(m_entitygraph, shadowSourceEntity.entity, shadowSourceEntity.passesDescriptors);
 					}
 
-					// manage viewgroups
+					/////// IV : manage viewgroups
 
 					renderingQueueSystemInstance->createViewGroup("player_camera_2");
 					renderingQueueSystemInstance->setViewGroupMainView("player_camera_2", "camera_Entity");
