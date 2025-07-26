@@ -46,10 +46,16 @@ void SamplesOpenEnv::run(void)
 	// update all shadowmaps camera pos/direction
 
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-	const auto light_cartesian{ dataCloud->readDataValue<maths::Real4Vector>("std.light0.dir") };
+	const auto light_cartesian4{ dataCloud->readDataValue<maths::Real4Vector>("std.light0.dir") };
 
-	for (const auto& camera_joint_id : m_shadowmap_joints_list)
+	maths::Real3Vector light_cartesian3(light_cartesian4[0], light_cartesian4[1], light_cartesian4[2]);
+
+
+	for (const auto& e : m_shadowmap_joints_list)
 	{
-		mage::helpers::updateShadowMapDirection(m_entitygraph.node(camera_joint_id).data(), light_cartesian, core::maths::Real4Vector(0, skydomeInnerRadius + groundLevel, 0, 0), 400);
+		const auto& camera_joint_id{ e.first };
+		const auto& base_vector{ e.second };
+
+		mage::helpers::updateShadowMapDirection(m_entitygraph.node(camera_joint_id).data(), light_cartesian3, base_vector, 400);
 	}
 }

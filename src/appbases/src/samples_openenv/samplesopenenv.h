@@ -27,6 +27,9 @@
 
 #include <string>
 #include <vector>
+#include <utility>
+
+#include "maths_helpers.h"
 
 #include "samplesbase.h"
 
@@ -48,15 +51,19 @@ namespace mage
 
     protected:
 
-        mage::core::Entity*             m_groundEntity{ nullptr };
-        mage::core::Entity*             m_cloudsEntity{ nullptr };
-        mage::core::Entity*             m_treeEntity{ nullptr };
-        mage::core::Entity*             m_skydomeEntity{ nullptr };
-        mage::core::Entity*             m_sphereEntity{ nullptr };
-        mage::core::Entity*             m_wallEntity{ nullptr };
+        mage::core::Entity*                                             m_groundEntity{ nullptr };
+        mage::core::Entity*                                             m_cloudsEntity{ nullptr };
+        mage::core::Entity*                                             m_treeEntity{ nullptr };
+        mage::core::Entity*                                             m_skydomeEntity{ nullptr };
+        mage::core::Entity*                                             m_sphereEntity{ nullptr };
+        mage::core::Entity*                                             m_wallEntity{ nullptr };
 
-        
-        std::vector<std::string>        m_shadowmap_joints_list;
+       
+        std::vector<std::pair<std::string, core::maths::Real3Vector>>   m_shadowmap_joints_list;
+
+        mage::core::maths::Matrix                                       m_perpective_projection;
+        mage::core::maths::Matrix                                       m_orthogonal_projection;
+
 
         static constexpr double         groundLevel{ -100 };
 
@@ -76,8 +83,6 @@ namespace mage
         static constexpr double         skydomeKr{ 0.0033 };
         static constexpr double         skydomeScaleDepth{ 0.25 };
 
-        mage::core::maths::Matrix       m_perpective_projection;
-        mage::core::maths::Matrix       m_orthogonal_projection;
 
 
         void                            d3d11_system_events_openenv();

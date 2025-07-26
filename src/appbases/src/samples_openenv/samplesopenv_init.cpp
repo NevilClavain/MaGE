@@ -673,7 +673,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 
 					helpers::plugCamera(m_entitygraph, m_orthogonal_projection, "shadowmap_lookatJoint_Entity", "shadowmap_camera_Entity");
 
-					m_shadowmap_joints_list.push_back("shadowmap_lookatJoint_Entity");
+					m_shadowmap_joints_list.push_back(std::make_pair("shadowmap_lookatJoint_Entity", core::maths::Real3Vector(0, skydomeInnerRadius + groundLevel, 0)));
 
 					/////// II : update rendering graph
 					helpers::install_shadows_renderer_queues(m_entitygraph,

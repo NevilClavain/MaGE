@@ -39,8 +39,8 @@
 
 
 void mage::helpers::updateShadowMapDirection(mage::core::Entity* p_shadowmap_lookatJoint_Entity, 
-											const mage::core::maths::Real4Vector& p_light_vector, 
-											const mage::core::maths::Real4Vector& p_base_vector, 
+											const mage::core::maths::Real3Vector& p_light_vector, 
+											const mage::core::maths::Real3Vector& p_base_vector, 
 											double p_vectorscale)
 {	
 	auto light_cartesian{ p_light_vector };
