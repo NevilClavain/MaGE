@@ -54,21 +54,26 @@ namespace mage
 
 		struct ShadowsRenderingParams
 		{
-			mage::core::maths::Matrix		orthogonal_projection;
+			mage::core::maths::Matrix					orthogonal_projection;
 
-			int								shadowmap_resol;
+			int											shadowmap_resol;
 
-			std::string						queue_to_move;
-			std::string						rootpass_queue;
-			std::string						combiner_entities_prefix;
-			std::string						shadows_scene_entity_id;
-			std::string						shadowmap_scene_entity_id;
-			std::string						shadowmap_target_entity_id;
-			std::string						shadowmap_lookatJoint_entity_id;
-			std::string						shadowmap_camera_entity_id;
+			std::string									queue_to_move;
+			std::string									rootpass_queue;
+			std::string									combiner_entities_prefix;
+			std::string									shadows_scene_entity_id;
+			std::string									shadowmap_scene_entity_id;
+			std::string									shadowmap_target_entity_id;
+			std::string									shadowmap_lookatJoint_entity_id;
+			std::string									shadowmap_camera_entity_id;
 			
-			mage::core::maths::Real3Vector	shadowmap_camerajoint_lookat_dest;
-			mage::core::maths::Real3Vector	shadowmap_camerajoint_lookat_localpos_base;
+			mage::core::maths::Real3Vector				shadowmap_camerajoint_lookat_dest;
+			mage::core::maths::Real3Vector				shadowmap_camerajoint_lookat_localpos_base;
+
+			std::string									shadows_viewgroup_name;
+			std::string									shadowmap_viewgroup_name;
+
+			std::vector<helpers::ShadowSourceEntity>	shadow_source_entites;
 		};
 
 		void updateShadowMapDirection(mage::core::Entity* p_shadowmap_lookatJoint_Entity, 
@@ -89,6 +94,7 @@ namespace mage
 										);
 
 		void install_shadows_rendering(mage::core::Entitygraph& p_entitygraph,
+										int p_renderingqueuesystem_slot,
 										int p_w_width, int p_w_height,
 										float p_characteristics_v_width, float p_characteristics_v_height,
 										const std::string p_appwindows_entityname,
