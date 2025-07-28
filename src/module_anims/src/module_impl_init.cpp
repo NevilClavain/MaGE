@@ -356,7 +356,8 @@ void ModuleImpl::d3d11_system_events()
 					}
 
 					// setup shadows rendering
-					complete_install_shadows_renderer_objects();
+					// DISABLE SHADOWS
+					//complete_install_shadows_renderer_objects();
 
 					m_appReady = true;
 				}

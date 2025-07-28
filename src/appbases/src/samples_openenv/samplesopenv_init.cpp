@@ -645,6 +645,8 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					});
 
 
+					// DISABLE SHADOWS
+					/*
 					///////////////////////////////////////////////////////////////////////////////////////
 					/////// setup shadows rendering
 
@@ -890,6 +892,8 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 					{
 						"bufferRendering_Scene_ShadowMapChannel_Queue_Entity"
 					});
+
+					*/
 					
 				}
 				break;
