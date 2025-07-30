@@ -77,6 +77,12 @@ namespace mage
 
         std::string                                                 m_appWindowsEntityName;
 
+        int                                                         m_w_width;
+        int                                                         m_w_height;
+
+        float                                                       m_characteristics_v_width;
+        float                                                       m_characteristics_v_height;
+
         mage::core::Entitygraph                                     m_entitygraph;
 
         mage::rendering::Queue*                                     m_windowRenderingQueue{ nullptr };

@@ -61,7 +61,7 @@ std::unordered_map<std::string, Entity*> RenderingPasses::registerToPasses(mage:
 
 	const std::string base_entity_id{ p_entity->getId() };
 
-	for (const auto& e : p_passesdescriptors.config)
+	for (const auto& e : p_passesdescriptors.configs)
 	{
 		std::string proxy_entity_name = base_entity_id + std::string("_") + e.first + std::string("_ProxyEntity");
 

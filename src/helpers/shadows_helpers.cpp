@@ -39,7 +39,7 @@
 #include "texture.h"
 
 #include "sysengine.h"
-#include "renderingqueuesystem.h"
+
 
 void mage::helpers::updateShadowMapDirection(mage::core::Entity* p_shadowmap_lookatJoint_Entity, 
 											const mage::core::maths::Real3Vector& p_light_vector, 
@@ -59,7 +59,7 @@ void mage::helpers::updateShadowMapDirection(mage::core::Entity* p_shadowmap_loo
 	lookat_localpos[2] = -light_cartesian[2] + p_base_vector[2];
 }
 
-void mage::helpers::install_shadows_renderer_queues(mage::core::Entitygraph& p_entitygraph, 
+void mage::helpers::installShadowsRendererQueues(mage::core::Entitygraph& p_entitygraph,
 													int p_w_width, int p_w_height,
 													float p_characteristics_v_width, float p_characteristics_v_height,
 													int p_shadowmap_resol,
@@ -141,13 +141,12 @@ void mage::helpers::install_shadows_renderer_queues(mage::core::Entitygraph& p_e
 	mage::helpers::plugRenderingQueue(p_entitygraph, shadowMapChannelRenderingQueueDef, p_shadowmap_target_entity_id, p_shadowmap_scene_entity_id);
 }
 
-void mage::helpers::install_shadows_rendering(mage::core::Entitygraph& p_entitygraph,
-												int p_renderingqueuesystem_slot,
+void mage::helpers::installShadowsRendering(mage::core::Entitygraph& p_entitygraph,												
 												int p_w_width, int p_w_height,
 												float p_characteristics_v_width, float p_characteristics_v_height,
-												const std::string p_appwindows_entityname,
+												const std::string& p_appwindows_entityname,
 												std::vector<std::pair<std::string, core::maths::Real3Vector>>& p_shadowmap_joints_list,
-												const ShadowsRenderingParams& p_shadows_rendering_params)
+												ShadowsRenderingParams& p_shadows_rendering_params)
 {
 	////// step I : create shadow map camera
 
@@ -179,7 +178,7 @@ void mage::helpers::install_shadows_rendering(mage::core::Entitygraph& p_entityg
 
 	/////// II : update rendering graph
 
-	install_shadows_renderer_queues(p_entitygraph,
+	installShadowsRendererQueues(p_entitygraph,
 		p_w_width, p_w_height,
 		p_characteristics_v_width, p_characteristics_v_height,
 		p_shadows_rendering_params.shadowmap_resol,
@@ -193,11 +192,8 @@ void mage::helpers::install_shadows_rendering(mage::core::Entitygraph& p_entityg
 
 	/////// III : entities in rendering graph
 
+
 	const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
-
-	renderingHelper->registerPass(p_shadows_rendering_params.shadowmap_scene_entity_id);
-	renderingHelper->registerPass(p_shadows_rendering_params.shadowmap_target_entity_id);
-
 
 	auto& shadowMapNode{ p_entitygraph.node(p_shadows_rendering_params.shadowmap_target_entity_id) };
 	const auto shadowmap_texture_entity{ shadowMapNode.data() };
@@ -205,29 +201,13 @@ void mage::helpers::install_shadows_rendering(mage::core::Entitygraph& p_entityg
 	std::pair<size_t, Texture>* sm_texture_ptr{ &sm_resource_aspect.getComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture")->getPurpose() };
 
 
-	for (const auto& shadowSourceEntity : p_shadows_rendering_params.shadow_source_entites)
+	for (auto& shadowSourceEntity : p_shadows_rendering_params.shadow_source_entites)
 	{
+		for (auto& config : shadowSourceEntity.passesDescriptors.configs)
+		{
+			config.second.textures_ptr_list.push_back(sm_texture_ptr);
+		}
+
 		renderingHelper->registerToPasses(p_entitygraph, shadowSourceEntity.entity, shadowSourceEntity.passesDescriptors);
 	}
-
-	/////// IV : manage viewgroups
-
-	auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(core::SystemEngine::getInstance()->getSystem(p_renderingqueuesystem_slot)) };
-
-	renderingQueueSystemInstance->createViewGroup(p_shadows_rendering_params.shadows_viewgroup_name);
-
-	//renderingQueueSystemInstance->setViewGroupMainView("player_camera_2", "camera_Entity"); // do it outside
-
-	renderingQueueSystemInstance->setViewGroupSecondaryView(p_shadows_rendering_params.shadows_viewgroup_name, p_shadows_rendering_params.shadowmap_camera_entity_id);
-	renderingQueueSystemInstance->addQueuesToViewGroup(p_shadows_rendering_params.shadows_viewgroup_name,
-		{
-			p_shadows_rendering_params.shadowmap_scene_entity_id
-		});
-
-	renderingQueueSystemInstance->createViewGroup(p_shadows_rendering_params.shadowmap_viewgroup_name);
-	renderingQueueSystemInstance->setViewGroupMainView(p_shadows_rendering_params.shadowmap_viewgroup_name, p_shadows_rendering_params.shadowmap_camera_entity_id);
-	renderingQueueSystemInstance->addQueuesToViewGroup(p_shadows_rendering_params.shadowmap_viewgroup_name,
-		{
-			p_shadows_rendering_params.shadowmap_target_entity_id
-		});
 }

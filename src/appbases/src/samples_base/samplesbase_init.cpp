@@ -123,6 +123,8 @@ void SamplesBase::d3d11_system_events_base()
 					const float characteristics_v_width{ mainwindows_rendering_aspect.getComponent<float>("eg.std.viewportWidth")->getPurpose()};
 					const float characteristics_v_height{ mainwindows_rendering_aspect.getComponent<float>("eg.std.viewportHeight")->getPurpose()};
 
+					m_characteristics_v_width = characteristics_v_width;
+					m_characteristics_v_height = characteristics_v_height;
 
 					const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 
@@ -130,6 +132,10 @@ void SamplesBase::d3d11_system_events_base()
 
 					const int w_width{ window_dims.x() };
 					const int w_height{ window_dims.y() };
+
+					m_w_width = w_width;
+					m_w_height = w_height;
+
 
 					const auto rendering_quad_textures_channnelA{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
 

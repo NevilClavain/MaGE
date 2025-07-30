@@ -68,7 +68,7 @@ namespace mage
 
 		struct PassesDescriptors
 		{
-			std::unordered_map< std::string, PassConfig>										config;
+			std::unordered_map< std::string, PassConfig>										configs;
 			std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>	vertex_shaders_params;
 			std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>	pixel_shaders_params;
 		};

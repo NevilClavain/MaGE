@@ -355,9 +355,8 @@ void ModuleImpl::d3d11_system_events()
 						renderingHelper->registerToPasses(m_entitygraph, m_raptorEntity, passesDescriptors);
 					}
 
-					// setup shadows rendering
-					// DISABLE SHADOWS
-					//complete_install_shadows_renderer_objects();
+					// SETUP SHADOWS
+					complete_install_shadows_renderer_objects();
 
 					m_appReady = true;
 				}

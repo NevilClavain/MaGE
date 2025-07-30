@@ -63,6 +63,7 @@ namespace mage
 			std::string									combiner_entities_prefix;
 			std::string									shadows_scene_entity_id;
 			std::string									shadowmap_scene_entity_id;
+
 			std::string									shadowmap_target_entity_id;
 			std::string									shadowmap_lookatJoint_entity_id;
 			std::string									shadowmap_camera_entity_id;
@@ -81,7 +82,7 @@ namespace mage
 										const mage::core::maths::Real3Vector& p_base_vector, 
 										double p_vectorscale);
 
-		void install_shadows_renderer_queues(mage::core::Entitygraph& p_entitygraph,
+		void installShadowsRendererQueues(mage::core::Entitygraph& p_entitygraph,
 										int p_w_width, int p_w_height,
 										float p_characteristics_v_width, float p_characteristics_v_height,
 										int p_shadowmap_resol,
@@ -93,13 +94,12 @@ namespace mage
 										const std::string& p_shadowmap_target_entity_id
 										);
 
-		void install_shadows_rendering(mage::core::Entitygraph& p_entitygraph,
-										int p_renderingqueuesystem_slot,
+		void installShadowsRendering(mage::core::Entitygraph& p_entitygraph,										
 										int p_w_width, int p_w_height,
 										float p_characteristics_v_width, float p_characteristics_v_height,
-										const std::string p_appwindows_entityname,
+										const std::string& p_appwindows_entityname,
 										std::vector<std::pair<std::string, core::maths::Real3Vector>>& p_shadowmap_joints_list,
-										const ShadowsRenderingParams& p_shadows_rendering_params
+										ShadowsRenderingParams& p_shadows_rendering_params
 										);
 	}
 }
