@@ -67,7 +67,7 @@
 #include "textures_service.h"
 
 #include "entitygraph_helpers.h"
-#include "rendering_helpers.h"
+#include "renderingpasses_helpers.h"
 
 using namespace mage;
 using namespace mage::core;
@@ -291,138 +291,74 @@ void ModuleImpl::d3d11_system_events()
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// RENDERGRAPH
-				
-					auto& shadowMapNode{ m_entitygraph.node("shadowMap_Texture_Entity") };
-					const auto shadowmap_texture_entity{ shadowMapNode.data() };
-					auto& sm_resource_aspect{ shadowmap_texture_entity->aspectAccess(core::resourcesAspect::id) };
-					std::pair<size_t, Texture>* sm_texture_ptr{ &sm_resource_aspect.getComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture")->getPurpose() };
 
-
-					const auto renderingHelper{ mage::helpers::Rendering::getInstance() };
+					const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
 
 					// raptor rendering
 					{
-						auto textures_channel_config{ renderingHelper->getPassConfig("TexturesChannel") };
+						auto textures_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_TexturesChannel_Queue_Entity") };
 						textures_channel_config.vshader = "scene_texture1stage_skinning_vs";
 						textures_channel_config.pshader = "scene_texture1stage_skinning_ps";
 						textures_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("raptorDif2.png", Texture())) };
 
 
-						auto zdepth_channel_config{ renderingHelper->getPassConfig("ZDepthChannel") };
+						auto zdepth_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
 						zdepth_channel_config.vshader = "scene_zdepth_skinning_vs";
 						zdepth_channel_config.pshader = "scene_zdepth_skinning_ps";
 
-						auto ambientlight_channel_config{ renderingHelper->getPassConfig("AmbientLightChannel") };
+						auto ambientlight_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_AmbientLightChannel_Queue_Entity") };
 						ambientlight_channel_config.vshader = "scene_flatcolor_skinning_vs";
 						ambientlight_channel_config.pshader = "scene_flatcolor_skinning_ps";
 
-						auto lit_channel_config{ renderingHelper->getPassConfig("LitChannel") };
+						auto lit_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_LitChannel_Queue_Entity") };
 						lit_channel_config.vshader = "scene_lit_skinning_vs";
 						lit_channel_config.pshader = "scene_lit_skinning_ps";
 
-						auto em_channel_config{ renderingHelper->getPassConfig("EmissiveChannel") };
+						auto em_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
 						em_channel_config.vshader = "scene_flatcolor_skinning_vs";
 						em_channel_config.pshader = "scene_flatcolor_skinning_ps";
 
-						auto shadows_channel_config{ renderingHelper->getPassConfig("ShadowsChannel") };
-						shadows_channel_config.vshader = "scene_shadowsmask_skinning_vs";
-						shadows_channel_config.pshader = "scene_shadowsmask_skinning_ps";
-						shadows_channel_config.textures_ptr_list = { sm_texture_ptr };
-
-						auto shadowmap_channel_config{ renderingHelper->getPassConfig("ShadowMapChannel") };
-						shadowmap_channel_config.vshader = "scene_zdepth_skinning_vs";
-						shadowmap_channel_config.pshader = "scene_zdepth_skinning_ps";
-						shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
-						shadowmap_channel_config.rs_list.at(0).setArg("ccw");
-
-						const std::unordered_map< std::string, helpers::PassConfig> config =
+						helpers::PassesDescriptors passesDescriptors =
 						{
-							{ "TexturesChannel", textures_channel_config },
-							{ "ZDepthChannel", zdepth_channel_config },
-							{ "AmbientLightChannel", ambientlight_channel_config },
-							{ "LitChannel", lit_channel_config },
-							{ "EmissiveChannel", em_channel_config },
-							{ "ShadowsChannel", shadows_channel_config },
-							{ "ShadowMapChannel", shadowmap_channel_config }
-						};
+							// config
+							{
+								{ "TexturesChannel", textures_channel_config },
+								{ "ZDepthChannel", zdepth_channel_config },
+								{ "AmbientLightChannel", ambientlight_channel_config },
+								{ "LitChannel", lit_channel_config },
+								{ "EmissiveChannel", em_channel_config }
+							},
+							// vertex shader params
+							{
+							},
 
-						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> vertex_shaders_params =
-						{
-						};
-
-						std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> pixel_shaders_params =
-						{
-							{ "AmbientLightChannel",
-								{
-									{ std::make_pair("std.ambientlight.color", "color") }
-								}
-							},
-							{ "LitChannel",
-								{
-									{ std::make_pair("std.light0.dir", "light_dir") }
-								}
-							},
-							{ "EmissiveChannel",
-								{
-									{ std::make_pair("std.black_color", "color") }
-								}
-							},
-							{ "ShadowsChannel",
-								{
-									{ std::make_pair("shadow_bias", "shadow_bias") },
-									{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
+							// pixel shader params
+							{
+								{ "AmbientLightChannel",
+									{
+										{ std::make_pair("std.ambientlight.color", "color") }
+									}
+								},
+								{ "LitChannel",
+									{
+										{ std::make_pair("std.light0.dir", "light_dir") }
+									}
+								},
+								{ "EmissiveChannel",
+									{
+										{ std::make_pair("std.black_color", "color") }
+									}
 								}
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_raptorEntity, config, vertex_shaders_params, pixel_shaders_params);
+						renderingHelper->registerToPasses(m_entitygraph, m_raptorEntity, passesDescriptors);
 					}
 
+					// SETUP SHADOWS
+					complete_install_shadows_renderer_objects();
 
-
-
-
-					///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-					{
-						///////Select camera
-
-						m_currentCamera = "camera_Entity";
-						
-
-						auto debugChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_Debug_Queue_Entity") };
-						debugChannelRenderingQueue->setMainView(m_currentCamera);
-						debugChannelRenderingQueue->setSecondaryView("shadowmap_camera_Entity");
-
-
-						auto texturesChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_TexturesChannel_Queue_Entity") };
-						texturesChannelRenderingQueue->setMainView(m_currentCamera);
-
-						auto ambientLightChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_AmbientLightChannel_Queue_Entity") };
-						ambientLightChannelRenderingQueue->setMainView(m_currentCamera);
-
-						auto emissiveChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
-						emissiveChannelRenderingQueue->setMainView(m_currentCamera);
-
-						auto shadowsChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
-						shadowsChannelRenderingQueue->setMainView(m_currentCamera);
-
-						shadowsChannelRenderingQueue->setSecondaryView("shadowmap_camera_Entity");
-						
-
-
-
-						auto litChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_LitChannel_Queue_Entity") };
-						litChannelRenderingQueue->setMainView(m_currentCamera);
-
-						auto zDepthChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
-						zDepthChannelRenderingQueue->setMainView(m_currentCamera);
-
-
-						auto shadowMapChannelRenderingQueue{ helpers::getRenderingQueue(m_entitygraph, "bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
-						shadowMapChannelRenderingQueue->setMainView("shadowmap_camera_Entity");
-
-					}
+					m_appReady = true;
 				}
 				break;
 			}
@@ -503,5 +439,57 @@ void ModuleImpl::complete_scenegraph(const std::string& p_mainWindowsEntityId)
 }
 
 
+void ModuleImpl::complete_install_shadows_renderer_objects()
+{
+	auto& shadowMapNode{ m_entitygraph.node("shadowMap_Texture_Entity") };
+	const auto shadowmap_texture_entity{ shadowMapNode.data() };
+	auto& sm_resource_aspect{ shadowmap_texture_entity->aspectAccess(core::resourcesAspect::id) };
+	std::pair<size_t, Texture>* sm_texture_ptr{ &sm_resource_aspect.getComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture")->getPurpose() };
 
+	const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
+
+	renderingHelper->registerPass("bufferRendering_Scene_ShadowsChannel_Queue_Entity");
+	renderingHelper->registerPass("bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
+
+	
+	// raptor shadows rendering
+	{
+		auto shadows_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
+		shadows_channel_config.vshader = "scene_shadowsmask_skinning_vs";
+		shadows_channel_config.pshader = "scene_shadowsmask_skinning_ps";
+		shadows_channel_config.textures_ptr_list = { sm_texture_ptr };
+
+		auto shadowmap_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
+		shadowmap_channel_config.vshader = "scene_zdepth_skinning_vs";
+		shadowmap_channel_config.pshader = "scene_zdepth_skinning_ps";
+		shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
+		shadowmap_channel_config.rs_list.at(0).setArg("ccw");
+
+		helpers::PassesDescriptors passesDescriptors =
+		{
+			// config
+			{
+				{ "bufferRendering_Scene_ShadowsChannel_Queue_Entity", shadows_channel_config},
+				{ "bufferRendering_Scene_ShadowMapChannel_Queue_Entity", shadowmap_channel_config }
+			},
+
+			// vertex shader params
+			{
+			},
+
+			// pixel shader params
+			{
+				{ "bufferRendering_Scene_ShadowsChannel_Queue_Entity",
+					{
+						{ std::make_pair("shadow_bias", "shadow_bias") },
+						{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
+					}
+				}
+			}
+		};
+
+		renderingHelper->registerToPasses(m_entitygraph, m_raptorEntity, passesDescriptors);
+	}
+	
+}
 

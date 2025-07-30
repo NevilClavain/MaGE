@@ -328,11 +328,11 @@ void DataPrintSystem::collectData()
 				}
 
 
-				if (rendering::Queue::State::ERROR_ORPHAN == renderingQueue.getState())
+				/*if (rendering::Queue::State::ERROR_ORPHAN == renderingQueue.getState())
 				{
 					infos += " - ERR ORPHAN";
 				}
-				else if (rendering::Queue::State::READY == renderingQueue.getState())
+				else*/ if (rendering::Queue::State::READY == renderingQueue.getState())
 				{
 					infos += " - READY";
 				}

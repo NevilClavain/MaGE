@@ -41,9 +41,14 @@ using namespace mage::core;
 
 void ModuleImpl::onKeyPress(long p_key)
 {
+	if (!m_appReady) return;
+
+	auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot)) };
+	auto& [mainView, secondaryView] { renderingQueueSystemInstance->getViewGroupCurrentViews("player_camera") };
+
 	if ('Q' == p_key)
 	{
-		if ("camera_Entity" == m_currentCamera)
+		if ("camera_Entity" == mainView)
 		{
 			auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
 			const auto gblJointEntity{ gblJointEntityNode.data() };
@@ -58,7 +63,7 @@ void ModuleImpl::onKeyPress(long p_key)
 	}
 	else if ('W' == p_key)
 	{
-		if ("camera_Entity" == m_currentCamera)
+		if ("camera_Entity" == mainView)
 		{
 			auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
 			const auto gblJointEntity{ gblJointEntityNode.data() };
@@ -78,7 +83,12 @@ void ModuleImpl::onKeyPress(long p_key)
 
 void ModuleImpl::onEndKeyPress(long p_key)
 {
+	if (!m_appReady) return;
+
 	auto& eventsLogger{ services::LoggerSharing::getInstance()->getLogger("Events") };
+
+	auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot)) };
+	auto& [mainView, secondaryView] { renderingQueueSystemInstance->getViewGroupCurrentViews("player_camera") };
 
 
 	if (VK_ESCAPE == p_key)
@@ -189,19 +199,12 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 	else if (VK_F8 == p_key)
 	{
-		// switch camera projection type
-		/*
-		if (m_is_perspective)
-		{
-			mage::helpers::updateCameraProjection(m_entitygraph, "camera_Entity", m_orthogonal_projection);
-			m_is_perspective = false;
-		}
-		else
-		{
-			mage::helpers::updateCameraProjection(m_entitygraph, "camera_Entity", m_perpective_projection);
-			m_is_perspective = true;
-		}
-		*/
+		//enable_shadows();
+
+		auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
+		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
+
+		renderingQueueSystemInstance->requestRenderingqueueLogging("bufferRendering_Scene_LitChannel_Queue_Entity");
 	}
 
 	else if (VK_F9 == p_key)
@@ -211,7 +214,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 	else if ('Q' == p_key)
 	{
-		if ("camera_Entity" == m_currentCamera)
+		if ("camera_Entity" == mainView)
 		{
 			auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
 			const auto gblJointEntity{ gblJointEntityNode.data() };
@@ -226,7 +229,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 	else if ('W' == p_key)
 	{
-		if ("camera_Entity" == m_currentCamera)
+		if ("camera_Entity" == mainView)
 		{
 			auto& gblJointEntityNode{ m_entitygraph.node("gblJoint_Entity") };
 			const auto gblJointEntity{ gblJointEntityNode.data() };

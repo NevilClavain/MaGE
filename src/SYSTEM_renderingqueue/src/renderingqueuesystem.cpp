@@ -122,8 +122,8 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 	const std::map<rendering::Queue::State, std::string> state_translate
 	{
 		{ rendering::Queue::State::WAIT_INIT, "WAIT_INIT" },
-		{ rendering::Queue::State::READY, "READY" },
-		{ rendering::Queue::State::ERROR_ORPHAN, "ERROR_ORPHAN" },
+		{ rendering::Queue::State::READY, "READY" }/*,
+		{ rendering::Queue::State::ERROR_ORPHAN, "ERROR_ORPHAN" },*/
 	};
 	_MAGE_DEBUG(m_localLogger, "state : " + state_translate.at(p_renderingQueue.getState()))
 
@@ -336,7 +336,7 @@ static rendering::Queue* searchRenderingQueueInAncestors(core::Entity* p_entity)
 
 void RenderingQueueSystem::manageRenderingQueue()
 {
-	////////Queue states//////////////////////////////////////
+	////////Manage Queues states//////////////////////////////////////
 	{
 		const auto forEachRenderingAspect
 		{
@@ -352,7 +352,53 @@ void RenderingQueueSystem::manageRenderingQueue()
 		};
 		mage::helpers::extractAspectsDownTop<mage::core::renderingAspect>(m_entitygraph, forEachRenderingAspect);
 	}
-	////////Queue build/updates/log//////////////////////////////////////
+
+	////////Manage Queues main and secondary views//////////////////////////////////////
+	{
+		for (auto it = m_entitygraph.preBegin(); it != m_entitygraph.preEnd(); ++it)
+		{
+			const auto current_entity{ it->data() };
+			const auto currEntityId{ current_entity->getId() };
+
+			if (current_entity->hasAspect(mage::core::renderingAspect::id))
+			{
+				const auto& rendering_aspect{ current_entity->aspectAccess(mage::core::renderingAspect::id) };
+
+				const auto rendering_queues_list{ rendering_aspect.getComponentsByType<rendering::Queue>() };
+				if (rendering_queues_list.size() > 0)
+				{
+					auto& renderingQueue{ rendering_queues_list.at(0)->getPurpose() };
+					for (const auto& vp : m_cameraViewGroups)
+					{
+						for (const std::string& queue_id : vp.second.queues_id_list)
+						{
+							if (queue_id == currEntityId)
+							{
+								if (vp.second.main_view != renderingQueue.getMainView())
+								{
+									renderingQueue.setMainView(vp.second.main_view);
+									for (const auto& call : m_callbacks)
+									{
+										call(RenderingQueueSystemEvent::MAINVIEW_QUEUE_UPDATED, queue_id + ", " + vp.second.main_view);
+									}
+								}
+								if (vp.second.secondary_view != renderingQueue.getSecondaryView())
+								{
+									renderingQueue.setSecondaryView(vp.second.secondary_view);
+									for (const auto& call : m_callbacks)
+									{
+										call(RenderingQueueSystemEvent::SECONDARYVIEW_QUEUE_UPDATED, queue_id + ", " + vp.second.secondary_view);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	////////Manage Queues build/updates/log//////////////////////////////////////
 	{
 		for (auto it = m_entitygraph.preBegin(); it != m_entitygraph.preEnd(); ++it)
 		{
@@ -440,9 +486,10 @@ void RenderingQueueSystem::handleRenderingQueuesState(Entity* p_entity, renderin
 
 				if (nullptr == parent_entity)
 				{
-					p_renderingQueue.setState(rendering::Queue::State::ERROR_ORPHAN);
+					//p_renderingQueue.setState(rendering::Queue::State::ERROR_ORPHAN);
+					_EXCEPTION("Rendering queue set to ERROR_ORPHAN : no parent");
 					// log it (WARN)
-					_MAGE_WARN(m_localLogger, "Rendering queue set to ERROR_ORPHAN : no parent")
+					//_MAGE_WARN(m_localLogger, "Rendering queue set to ERROR_ORPHAN : no parent")
 				}
 				else
 				{
@@ -499,7 +546,7 @@ void RenderingQueueSystem::handleRenderingQueuesState(Entity* p_entity, renderin
 						else
 						{
 							// parent rendering aspect has no renderingTarget component !
-							p_renderingQueue.setState(rendering::Queue::State::ERROR_ORPHAN);
+							//p_renderingQueue.setState(rendering::Queue::State::ERROR_ORPHAN);
 
 							_EXCEPTION("Rendering queue set to ERROR_ORPHAN : parent rendering aspect has no renderingTarget component : " + p_renderingQueue.getName() + ", parent is " + parent_entity->getId());
 							// log it (WARN)
@@ -509,7 +556,7 @@ void RenderingQueueSystem::handleRenderingQueuesState(Entity* p_entity, renderin
 					else
 					{
 						// parent has no rendering aspect 
-						p_renderingQueue.setState(rendering::Queue::State::ERROR_ORPHAN);
+						//p_renderingQueue.setState(rendering::Queue::State::ERROR_ORPHAN);
 
 						_EXCEPTION("Rendering queue set to ERROR_ORPHAN : parent has no rendering aspect : " + p_renderingQueue.getName() + ", parent is " + parent_entity->getId());
 
@@ -1752,4 +1799,67 @@ void RenderingQueueSystem::removeFromRenderingQueue(const std::string& p_entity_
 	}
 
 	p_renderingQueue.setQueueNodes(queueNodes);
+}
+
+void RenderingQueueSystem::createViewGroup(const std::string& p_viewGroupId)
+{
+	if (!m_cameraViewGroups.count(p_viewGroupId))
+	{
+		m_cameraViewGroups[p_viewGroupId] = {};
+	}
+	else
+	{
+		_EXCEPTION("ViewGroupId already exists ! -> " + p_viewGroupId);
+	}
+}
+
+void RenderingQueueSystem::setViewGroupMainView(const std::string& p_viewGroupId, const std::string& p_mainview)
+{
+	if (m_cameraViewGroups.count(p_viewGroupId))
+	{
+		m_cameraViewGroups.at(p_viewGroupId).main_view = p_mainview;
+	}
+	else
+	{
+		_EXCEPTION("Unknow viewGroupId : " + p_viewGroupId);
+	}
+}
+
+void RenderingQueueSystem::setViewGroupSecondaryView(const std::string& p_viewGroupId, const std::string& p_secondaryview)
+{
+	if (m_cameraViewGroups.count(p_viewGroupId))
+	{
+		m_cameraViewGroups.at(p_viewGroupId).secondary_view = p_secondaryview;
+	}
+	else
+	{
+		_EXCEPTION("Unknow viewGroupId : " + p_viewGroupId);
+	}
+}
+
+std::pair<std::string, std::string> RenderingQueueSystem::getViewGroupCurrentViews(const std::string& p_viewGroupId) const
+{
+	if (m_cameraViewGroups.count(p_viewGroupId))
+	{
+		return { m_cameraViewGroups.at(p_viewGroupId).main_view, m_cameraViewGroups.at(p_viewGroupId).secondary_view };
+	}
+	else
+	{
+		_EXCEPTION("Unknow viewGroupId : " + p_viewGroupId);
+	}
+}
+
+void RenderingQueueSystem::addQueuesToViewGroup(const std::string& p_viewGroupId, const std::unordered_set<std::string>& p_queues_id_list)
+{
+	if (m_cameraViewGroups.count(p_viewGroupId))
+	{		
+		for (const std::string& queue_id : p_queues_id_list)
+		{
+			m_cameraViewGroups.at(p_viewGroupId).queues_id_list.insert(queue_id);
+		}
+	}
+	else
+	{
+		_EXCEPTION("Unknow viewGroupId : " + p_viewGroupId);
+	}
 }

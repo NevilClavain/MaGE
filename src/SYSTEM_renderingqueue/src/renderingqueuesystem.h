@@ -25,7 +25,10 @@
 
 #pragma once
 
+#include <string>
+#include <unordered_map>
 #include <unordered_set>
+#include <utility>
 #include "system.h"
 #include "logsink.h"
 #include "logconf.h"
@@ -44,7 +47,19 @@ namespace mage
         LINEDRAWING_ADDED,
         LINEDRAWING_REMOVED,
         TRIANGLEDRAWING_ADDED,
-        TRIANGLEDRAWING_REMOVED
+        TRIANGLEDRAWING_REMOVED,
+        MAINVIEW_QUEUE_UPDATED,
+        SECONDARYVIEW_QUEUE_UPDATED,
+    };
+
+    struct ViewGroup
+    {
+        ViewGroup() = default;
+
+        std::string                         main_view;
+        std::string                         secondary_view;
+
+        std::unordered_set<std::string>     queues_id_list;
     };
 
     class RenderingQueueSystem : public core::System, public mage::property::EventSource<RenderingQueueSystemEvent, const std::string&>
@@ -55,15 +70,24 @@ namespace mage
         RenderingQueueSystem(core::Entitygraph& p_entitygraph);
         ~RenderingQueueSystem() = default;
 
-        void run();
+        void        run();
+        void        requestRenderingqueueLogging(const std::string& p_entityid);
 
-        void requestRenderingqueueLogging(const std::string& p_entityid);
+        void        createViewGroup(const std::string& p_viewGroupId);
+
+        void        setViewGroupMainView(const std::string& p_viewGroupId, const std::string& p_mainview);
+        void        setViewGroupSecondaryView(const std::string& p_viewGroupId, const std::string& p_secondaryview);
+
+        void        addQueuesToViewGroup(const std::string& p_viewGroupId, const std::unordered_set<std::string>& p_queues_id_list);
+
+        std::pair<std::string, std::string> getViewGroupCurrentViews(const std::string& p_viewGroupId) const;
 
     private:
 
-        mutable mage::core::logger::Sink        m_localLogger;
+        mutable mage::core::logger::Sink                    m_localLogger;
+        std::unordered_set<std::string>                     m_queuesToLog;
 
-        std::unordered_set<std::string>             m_queuesToLog;
+        std::unordered_map<std::string, ViewGroup>          m_cameraViewGroups;
 
         void manageRenderingQueue();
         void handleRenderingQueuesState(core::Entity* p_entity, rendering::Queue& p_renderingQueue);

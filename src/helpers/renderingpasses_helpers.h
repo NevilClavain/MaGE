@@ -37,8 +37,6 @@
 namespace mage
 {
 	//fwd decl
-
-	// fwd decl
 	namespace core
 	{
 		class Entitygraph;
@@ -68,25 +66,32 @@ namespace mage
 			std::string pshader;
 		};
 
+		struct PassesDescriptors
+		{
+			std::unordered_map< std::string, PassConfig>										configs;
+			std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>	vertex_shaders_params;
+			std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>	pixel_shaders_params;
+		};
+
 		// rendering passes helper struct
-		struct Rendering : public property::Singleton<Rendering>
+		struct RenderingPasses : public property::Singleton<RenderingPasses>
 		{
 		public:
-			Rendering() = default;
-			~Rendering() = default;
+			RenderingPasses() = default;
+			~RenderingPasses() = default;
 
-			void registerPass(const std::string& p_id);
-			void registerPass(const std::string& p_id, const std::string& queue_entity_id);
+			void registerPass(const std::string& p_queue_entity_id);
 
-			void registerPass(const std::string& p_id, const PassConfig& p_config);
-
-			PassConfig getPassConfig(const std::string& p_id) const;
+			PassConfig getPassConfig(const std::string& p_queue_entity_id) const;
 
 			std::unordered_map<std::string, core::Entity*> registerToPasses(mage::core::Entitygraph& p_entitygraph,
 									mage::core::Entity* p_entity, 
+									const PassesDescriptors& p_passesdescriptors
+
+									/*
 									const std::unordered_map< std::string, PassConfig> p_config,
 									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_vertex_shaders_params,
-									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_pixel_shaders_params);
+									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_pixel_shaders_params*/);
 
 		private:
 

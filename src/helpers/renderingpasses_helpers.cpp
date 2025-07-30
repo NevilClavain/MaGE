@@ -23,7 +23,7 @@
 */
 /* -*-LIC_END-*- */
 
-#include "rendering_helpers.h"
+#include "renderingpasses_helpers.h"
 #include "entitygraph_helpers.h"
 
 #include "entitygraph.h"
@@ -35,40 +35,33 @@
 using namespace mage::core;
 using namespace mage::helpers;
 
-void Rendering::registerPass(const std::string& p_id)
-{
-	m_configs_table.emplace(p_id, PassConfig());
-}
 
-void Rendering::registerPass(const std::string& p_id, const std::string& queue_entity_id)
+void RenderingPasses::registerPass(const std::string& p_queue_entity_id)
 {
 	PassConfig pc;
-	pc.queue_entity_id = queue_entity_id;
+	pc.queue_entity_id = p_queue_entity_id;
 
-	m_configs_table.emplace(p_id, pc);
+	m_configs_table.emplace(p_queue_entity_id, pc);
 }
 
-void Rendering::registerPass(const std::string& p_id, const PassConfig& p_config)
+PassConfig RenderingPasses::getPassConfig(const std::string& p_queue_entity_id) const
 {
-	m_configs_table.emplace(p_id, p_config);
+	return m_configs_table.at(p_queue_entity_id);
 }
 
-PassConfig Rendering::getPassConfig(const std::string& p_id) const
-{
-	return m_configs_table.at(p_id);
-}
-
-std::unordered_map<std::string, Entity*> Rendering::registerToPasses(mage::core::Entitygraph& p_entitygraph,
-									mage::core::Entity* p_entity,
+std::unordered_map<std::string, Entity*> RenderingPasses::registerToPasses(mage::core::Entitygraph& p_entitygraph,
+									mage::core::Entity* p_entity,					
+									const PassesDescriptors& p_passesdescriptors
+									/*
 									const std::unordered_map<std::string, PassConfig> p_config,
 									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_vertex_shaders_params,
-									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_pixel_shaders_params)
+									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_pixel_shaders_params*/)
 {
 	std::unordered_map<std::string, core::Entity*> proxy_entities;
 
 	const std::string base_entity_id{ p_entity->getId() };
 
-	for (const auto& e : p_config)
+	for (const auto& e : p_passesdescriptors.configs)
 	{
 		std::string proxy_entity_name = base_entity_id + std::string("_") + e.first + std::string("_ProxyEntity");
 
@@ -122,7 +115,7 @@ std::unordered_map<std::string, Entity*> Rendering::registerToPasses(mage::core:
 
 	///// manage shader args
 
-	for (const auto& e : p_vertex_shaders_params)
+	for (const auto& e : p_passesdescriptors.vertex_shaders_params)
 	{
 		const std::string channel_id{ e.first };
 
@@ -143,7 +136,7 @@ std::unordered_map<std::string, Entity*> Rendering::registerToPasses(mage::core:
 		}
 	}
 
-	for (const auto& e : p_pixel_shaders_params)
+	for (const auto& e : p_passesdescriptors.pixel_shaders_params)
 	{
 		const std::string channel_id{ e.first };
 
