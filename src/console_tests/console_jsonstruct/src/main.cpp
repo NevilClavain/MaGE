@@ -25,6 +25,7 @@
 
 #include <iostream>
 #include <json_struct/json_struct.h>
+#include <vector>
 
 const char data_0[] = R"json(
 {
@@ -40,25 +41,68 @@ struct Data_0
     JS_OBJ(key, value);
 };
 
+
+struct Data_1
+{
+    std::string id;
+    std::vector<Data_0> keys;
+
+    JS_OBJ(id, keys);
+};
+
+
+const char data_1[] = R"json(
+{
+    "id" : "main",
+    "keys" : [
+    { "key" : 4, "value": 1.0 },
+    { "key" : 5, "value": 2.0 },
+    { "key" : 6, "value": 3.0 }
+    ]
+}
+)json";
+
+int json_err(const JS::ParseContext& p_pc)
+{
+    std::string errorStr = p_pc.makeErrorString();
+    std::cout << "Error parsing struct :" << errorStr.c_str() << "\n";
+    return -1;
+}
+
 int main( int argc, char* argv[] )
 {    
 	std::cout << "json_struct test !\n";
 
     //////////////////////////////////////////////////
-
     {
-
         Data_0 obj;
 
         JS::ParseContext parseContext(data_0);
         if (parseContext.parseTo(obj) != JS::Error::NoError)
         {
-            std::string errorStr = parseContext.makeErrorString();
-            std::cout << "Error parsing struct :" << errorStr.c_str() << "\n";
-            return -1;
+            return json_err(parseContext);
         }
 
         std::cout << obj.key << " " << obj.value << "\n";
+    }
+
+    //////////////////////////////////////////////////
+    {
+        Data_1 obj;
+
+        JS::ParseContext parseContext(data_1);
+        if (parseContext.parseTo(obj) != JS::Error::NoError)
+        {
+            return json_err(parseContext);
+        }
+
+        std::cout << obj.id << "\n";
+
+        for (const auto& e : obj.keys)
+        {
+            std::cout << e.key << " " << e.value << "\n";
+        }
+        
     }
 
     return 0;
