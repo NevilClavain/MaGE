@@ -38,6 +38,8 @@ set(lua_lib_dir ${CMAKE_SOURCE_DIR}/../thirdparts/lua-1.5/sdk/lib/x86)
 set(jsonjsmn_include_dir ${CMAKE_SOURCE_DIR}/../thirdparts/JSON-jsmn/sdk/include)
 set(jsonjsmn_lib_dir ${CMAKE_SOURCE_DIR}/../thirdparts/JSON-jsmn/sdk/lib/x86)
 
+set(jsonstruct_include_dir ${CMAKE_SOURCE_DIR}/../thirdparts/json_struct_1.0.1/sdk/include)
+
 set(fw1fontwrapper_include_dir ${CMAKE_SOURCE_DIR}/../thirdparts/FW1FontWrapper/sdk/include)
 set(fw1fontwrapper_lib_dir ${CMAKE_SOURCE_DIR}/../thirdparts/FW1FontWrapper/sdk/lib/x86)
 
@@ -99,6 +101,7 @@ add_subdirectory(rt)
 
 add_subdirectory(console_tests/console_helloworld)
 add_subdirectory(console_tests/console_jsonparser)
+add_subdirectory(console_tests/console_jsonstruct)
 add_subdirectory(console_tests/console_logger)
 add_subdirectory(console_tests/console_fileio)
 add_subdirectory(console_tests/console_callback)

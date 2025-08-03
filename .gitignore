@@ -102,6 +102,10 @@ ALL_BUILD.vcxproj*
 /src/console_tests/console_jsonparser/*.sln
 /src/console_tests/console_jsonparser/*.vcxproj*
 
+/src/console_tests/console_jsonstruct/CMakeFiles/
+/src/console_tests/console_jsonstruct/*.sln
+/src/console_tests/console_jsonstruct/*.vcxproj*
+
 /src/console_tests/console_logger/CMakeFiles/
 /src/console_tests/console_logger/*.sln
 /src/console_tests/console_logger/*.vcxproj*
