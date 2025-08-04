@@ -40,7 +40,7 @@ include_directories(${CMAKE_SOURCE_DIR}/TRANSFORM_control/src)
 
 include_directories(${st_tree_include_dir})
 include_directories(${jsonjsmn_include_dir})
-include_directories(${fw1fontwrapper_include_dir})
+# include_directories(${fw1fontwrapper_include_dir})
 include_directories(${md5_include_dir})
 include_directories(${dxtk_include_dir})
 

@@ -145,7 +145,7 @@ bool D3D11SystemImpl::init(mage::core::Entity* p_mainWindow)
 	// not accepted by D3D11CreateDeviceAndSwapChain (wtf ?)
 
 #ifdef _DEBUG
-	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+	//createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
 

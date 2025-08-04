@@ -40,12 +40,6 @@ set(jsonjsmn_lib_dir ${CMAKE_SOURCE_DIR}/../thirdparts/JSON-jsmn/sdk/lib/x86)
 
 set(jsonstruct_include_dir ${CMAKE_SOURCE_DIR}/../thirdparts/json_struct_1.0.1/sdk/include)
 
-set(fw1fontwrapper_include_dir ${CMAKE_SOURCE_DIR}/../thirdparts/FW1FontWrapper/sdk/include)
-set(fw1fontwrapper_lib_dir ${CMAKE_SOURCE_DIR}/../thirdparts/FW1FontWrapper/sdk/lib/x86)
-
-set(dx11sdk_include_dir ${CMAKE_SOURCE_DIR}/../thirdparts/dx11sdk/sdk/Include)
-set(dx11sdk_lib_dir ${CMAKE_SOURCE_DIR}/../thirdparts/dx11sdk/sdk/Lib/x86)
-
 set(dxtk_include_dir ${CMAKE_SOURCE_DIR}/../thirdparts/DirectXTK/sdk/include)
 set(dxtk_lib_dir ${CMAKE_SOURCE_DIR}/../thirdparts/DirectXTK/sdk/lib/x86)
 

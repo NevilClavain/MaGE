@@ -32,8 +32,8 @@
 
 int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow )
 {
-    try
-    {
+    //try
+    //{
         if (strcmp(lpCmdLine, ""))
         {
             mage::interfaces::ModuleRoot* module_root{ nullptr };
@@ -55,12 +55,12 @@ int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
         }
 
 
-    }
-    catch (const std::exception& e)
-    {
-        const auto what{ e.what() };
-        ::MessageBoxA(nullptr, what, "mage Exception", MB_OK | MB_ICONERROR);
-    }
+    //}
+    //catch (const std::exception& e)
+    //{
+    //    const auto what{ e.what() };
+    //    ::MessageBoxA(nullptr, what, "mage Exception", MB_OK | MB_ICONERROR);
+    //}
   
     return 0;
 }
