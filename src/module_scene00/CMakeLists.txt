@@ -20,7 +20,7 @@
 #
 # -*-LIC_END-*-
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 project(module_scene00)
 
 include_directories(${CMAKE_SOURCE_DIR}/commons)
