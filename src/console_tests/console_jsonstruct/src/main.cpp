@@ -33,6 +33,45 @@ const char data_0[] = R"json(
 }
 )json";
 
+
+const char data_1[] = R"json(
+{
+    "id" : "main",
+    "keys" : [
+        { "key" : 4, "value": 1.0 },
+        { "key" : 5, "value": 2.0 },
+        { "key" : 6, "value": 3.0 }
+    ]
+}
+)json";
+
+
+const char json_graph[] = R"json(
+{
+    "entity_name" : "root",
+
+
+    "children" : 
+    [
+        { 
+            "entity_name" : "pass1",
+            "children" : 
+            [
+                { 
+                    "entity_name" : "subpass1",
+                    "children" : []
+                }
+            ]
+        },
+        { "entity_name" : "pass2",
+            "children" : []
+        }
+    ]
+}
+)json";
+
+
+
 struct Data_0
 {
     std::string key;
@@ -40,7 +79,6 @@ struct Data_0
 
     JS_OBJ(key, value);
 };
-
 
 struct Data_1
 {
@@ -50,17 +88,15 @@ struct Data_1
     JS_OBJ(id, keys);
 };
 
-
-const char data_1[] = R"json(
+struct TestEntity
 {
-    "id" : "main",
-    "keys" : [
-    { "key" : 4, "value": 1.0 },
-    { "key" : 5, "value": 2.0 },
-    { "key" : 6, "value": 3.0 }
-    ]
-}
-)json";
+    std::string             entity_name;
+    std::vector<TestEntity> children;
+
+    JS_OBJ(entity_name, children);
+};
+
+
 
 int json_err(const JS::ParseContext& p_pc)
 {
@@ -104,6 +140,23 @@ int main( int argc, char* argv[] )
         }
         
     }
+
+    //////////////////////////////////////////////////
+
+    {
+        TestEntity graph;
+
+        JS::ParseContext parseContext(json_graph);
+        if (parseContext.parseTo(graph) != JS::Error::NoError)
+        {
+            return json_err(parseContext);
+        }
+
+        std::cout << graph.entity_name << "\n";
+        std::cout << "  " << graph.children.at(0).entity_name << "\n";
+        std::cout << "    " << graph.children.at(0).children.at(0).entity_name << "\n";
+    }
+
 
     return 0;
 }
