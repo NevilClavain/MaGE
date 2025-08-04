@@ -10,10 +10,10 @@
 
 # Build results
 libs/
-[Dd]ebug/
-[Rr]elease/
-[Rr]elWithDebInfo/
-[Mm]inSizeRel/
+src/**/[Dd]ebug/
+src/**/[Rr]elease/
+src/**/[Rr]elWithDebInfo/
+src/**/[Mm]inSizeRel/
 x64/
 build/
 [Bb]in/
