@@ -120,6 +120,14 @@ int main( int argc, char* argv[] )
         }
 
         std::cout << obj.key << " " << obj.value << "\n";
+
+        Data_0 obj2 = obj;
+
+        obj2.key = "clone";
+        obj2.value = 666;
+
+        std::cout << "json serialisation : \n";
+        std::cout << JS::serializeStruct(obj2) << "\n";
     }
 
     //////////////////////////////////////////////////
