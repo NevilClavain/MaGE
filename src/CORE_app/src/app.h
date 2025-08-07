@@ -25,14 +25,34 @@
 
 #pragma once
 
+#define NOMINMAX 1 // for json_struct
 #include <Windows.h>
+
+#include <json_struct/json_struct.h>
+
 #include <string>
+#include <vector>
+
 #include "singleton.h"
-#include "json.h"
 #include "module_root.h"
 
 namespace mage
 {
+
+    namespace json
+    {
+
+        struct WindowsSettings
+        {
+            bool                        fullscreen{ false };
+            long                        width{ 0 };
+            long                        height{ 0 };
+            std::vector<std::string>    fonts;
+
+            JS_OBJ(fullscreen, width, height, fonts);
+        };
+    }
+
     namespace core
     {
         class App : public property::Singleton<App>
@@ -74,15 +94,6 @@ namespace mage
             long                                    m_mouselclick_pos       { 0 };
             long                                    m_mouserclick_pos       { 0 };
 
-            Json<>::Callback	                    m_json_cb;
-
-            enum class JSONParsingMode
-            {
-                ON_ROOT,
-                ON_FONTS,
-            };
-
-            JSONParsingMode                         m_json_parsing_mode{ JSONParsingMode::ON_ROOT };
 
             interfaces::ModuleRoot::Callback	    m_module_events_cb;
 

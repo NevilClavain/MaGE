@@ -23,6 +23,7 @@
 */
 /* -*-LIC_END-*- */
 
+#define NOMINMAX 1 // for json_struct
 #include <Windows.h>
 
 #include "app.h"
@@ -32,8 +33,8 @@
 
 int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow )
 {
-    //try
-    //{
+    try
+    {
         if (strcmp(lpCmdLine, ""))
         {
             mage::interfaces::ModuleRoot* module_root{ nullptr };
@@ -46,21 +47,18 @@ int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
             const auto app{ mage::core::App::getInstance() };
             app->init(hInstance, "./rt_config/logrt.json", "./rt_config/windows_settings.json", module_root);
             app->loop();
-
         }
 
         else
         {
             _EXCEPTION("Usage : rt <module_name>");
         }
-
-
-    //}
-    //catch (const std::exception& e)
-    //{
-    //    const auto what{ e.what() };
-    //    ::MessageBoxA(nullptr, what, "mage Exception", MB_OK | MB_ICONERROR);
-    //}
+    }
+    catch (const std::exception& e)
+    {
+        const auto what{ e.what() };
+        ::MessageBoxA(nullptr, what, "mage Exception", MB_OK | MB_ICONERROR);
+    }
   
     return 0;
 }

@@ -48,59 +48,6 @@ static mage::core::logger::Sink localLogger("App", mage::core::logger::Configura
 
 App::App()
 {
-    m_json_cb = [&, this](JSONEvent p_event, const std::string& p_id, int p_index, const std::string& p_value, const std::optional<mage::core::DefaultUserData*>&)
-    {
-        switch (p_event)
-        {
-            case mage::core::JSONEvent::PRIMITIVE:
-
-                if (JSONParsingMode::ON_ROOT == m_json_parsing_mode)
-                {
-                    if ("fullscreen" == p_id)
-                    {
-                        this->m_w_fullscreen = ("true" == p_value ? true : false);
-                    }
-                    else if ("width" == p_id)
-                    {
-                        this->m_w_width = std::stoi(p_value);
-                    }
-                    else if ("height" == p_id)
-                    {
-                        this->m_w_height = std::stoi(p_value);
-                    }
-                }
-                break;
-
-            case mage::core::JSONEvent::STRING:
-
-                if (JSONParsingMode::ON_FONTS == m_json_parsing_mode)
-                {
-                    if ("name" == p_id)
-                    {
-                        this->m_fonts.push_back(p_value);
-                    }
-                }
-                break;
-
-            case mage::core::JSONEvent::ARRAY_BEGIN:
-
-                if ("fonts" == p_id)
-                {
-                    this->m_json_parsing_mode = JSONParsingMode::ON_FONTS;
-                    this->m_fonts.clear();
-                }                
-                break;
-
-            case mage::core::JSONEvent::ARRAY_END:
-
-                if ("fonts" == p_id)
-                {
-                    this->m_json_parsing_mode = JSONParsingMode::ON_ROOT;
-                }
-                break;
-        }
-    };
-
     m_module_events_cb = [&, this](interfaces::ModuleEvents p_event, int p_evt_value)
     {
         switch (p_event)
@@ -136,6 +83,7 @@ void App::init(HINSTANCE p_hInstance, const std::string& p_logconfig_path, const
         const auto dataSize{ logConfFileContent.getDataSize() };
         const std::string data(logConfFileContent.getData(), dataSize);
 
+        
         // set static to spare some space on stack // compiler message
         static mage::core::Json<> jsonParser;
         jsonParser.registerSubscriber(logger::Configuration::getInstance()->getCallback());
@@ -146,6 +94,7 @@ void App::init(HINSTANCE p_hInstance, const std::string& p_logconfig_path, const
         {
             _EXCEPTION("Cannot parse logging configuration")
         }
+        
     }
 
 
@@ -158,16 +107,18 @@ void App::init(HINSTANCE p_hInstance, const std::string& p_logconfig_path, const
         const auto dataSize{ rtConfFileContent.getDataSize() };
         const std::string data(rtConfFileContent.getData(), dataSize);
 
-        // set static to spare some space on stack // compiler message
-        static mage::core::Json<> jsonParser;
-        jsonParser.registerSubscriber(m_json_cb);
-
-        const auto rtParseStatus{ jsonParser.parse(data) };
-
-        if (rtParseStatus < 0)
+        JS::ParseContext parseContext(data);
+        json::WindowsSettings windows_settings;
+        if (parseContext.parseTo(windows_settings) != JS::Error::NoError)
         {
             _EXCEPTION("Cannot parse windows settings configuration")
         }
+
+        m_fonts = windows_settings.fonts;
+        m_w_fullscreen = windows_settings.fullscreen;
+        m_w_width = windows_settings.width;
+        m_w_height = windows_settings.height;
+
     }
 
 
