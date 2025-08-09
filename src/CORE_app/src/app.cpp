@@ -83,7 +83,9 @@ void App::init(HINSTANCE p_hInstance, const std::string& p_logconfig_path, const
         const auto dataSize{ logConfFileContent.getDataSize() };
         const std::string data(logConfFileContent.getData(), dataSize);
 
-        
+        logger::Configuration::getInstance()->applyConfiguration(data);
+
+        /*
         // set static to spare some space on stack // compiler message
         static mage::core::Json<> jsonParser;
         jsonParser.registerSubscriber(logger::Configuration::getInstance()->getCallback());
@@ -94,7 +96,7 @@ void App::init(HINSTANCE p_hInstance, const std::string& p_logconfig_path, const
         {
             _EXCEPTION("Cannot parse logging configuration")
         }
-        
+        */
     }
 
 

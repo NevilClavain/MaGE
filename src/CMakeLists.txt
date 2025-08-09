@@ -30,6 +30,10 @@ set(CMAKE_SUPPRESS_REGENERATION true)
 
 add_definitions(-D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS)
 
+#for json_struct
+add_definitions(-DNOMINMAX=1)
+
+
 # 3rd-parts localisations
 
 set(lua_include_dir ${CMAKE_SOURCE_DIR}/../thirdparts/lua-1.5/sdk/include)

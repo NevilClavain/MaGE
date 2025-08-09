@@ -29,6 +29,7 @@ include_directories(${CMAKE_SOURCE_DIR}/CORE_buffer/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_logger/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_json/src)
 
+include_directories(${jsonstruct_include_dir})
 include_directories(${jsonjsmn_include_dir})
 
 file(

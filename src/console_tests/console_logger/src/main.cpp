@@ -47,13 +47,8 @@ int main( int argc, char* argv[] )
 		const auto dataSize{ fc.getDataSize() };
 		const std::string data(fc.getData(), dataSize);
 
-		mage::core::Json jsonParser;
-
 		// init logger
-
-		jsonParser.registerSubscriber(mage::core::logger::Configuration::getInstance()->getCallback());
-		const auto parseStatus{ jsonParser.parse(data) };
-		std::cout << "Parser status = " << (parseStatus > -1 ? "OK" : "KO") << "\n";
+		mage::core::logger::Configuration::getInstance()->applyConfiguration(data);
 
 		_MAGE_DEBUG(appLogger, "hello from logger test !");
 		_MAGE_TRACE(appLogger, "trace log with a value : " + std::to_string(666));

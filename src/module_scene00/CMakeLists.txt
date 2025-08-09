@@ -49,6 +49,7 @@ include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_dataprint/src)
 include_directories(${CMAKE_SOURCE_DIR}/helpers)
 
 include_directories(${st_tree_include_dir})
+include_directories(${jsonstruct_include_dir})
 include_directories(${jsonjsmn_include_dir})
 
 link_directories(${jsonjsmn_lib_dir})

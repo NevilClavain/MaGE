@@ -25,7 +25,6 @@
 
 #pragma once
 
-#define NOMINMAX 1 // for json_struct
 #include <Windows.h>
 
 #include <json_struct/json_struct.h>
@@ -41,7 +40,6 @@ namespace mage
 
     namespace json
     {
-
         struct WindowsSettings
         {
             bool                        fullscreen{ false };

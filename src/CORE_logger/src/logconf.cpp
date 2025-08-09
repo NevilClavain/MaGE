@@ -35,6 +35,7 @@ logger::Configuration::Configuration( void )
 {
     m_baseTick = ::GetTickCount();
 
+    /*
     m_cb = [&, this](JSONEvent p_event, const std::string& p_id, int p_index, const std::string& p_value, const std::optional<mage::core::DefaultUserData*>&)
     {
         switch (p_event)
@@ -92,16 +93,6 @@ logger::Configuration::Configuration( void )
                 }
                 break;
 
-                /* not ussed
-                case mage::core::json::Event::ARRAY_BEGIN:
-
-                    break;
-
-                case mage::core::json::Event::ARRAY_END:
-
-                    break;
-                */
-
             case mage::core::JSONEvent::STRING:
 
                 if (ParsingState::RECORD_CONFIG == this->m_parsing_state)
@@ -155,14 +146,9 @@ logger::Configuration::Configuration( void )
                 }
                 break;
 
-                /* not used
-                    case mage::core::json::Event::PRIMITIVE:
-                        break;
-                */
         }
-
-
     };
+    */
 }
 
 
@@ -186,7 +172,71 @@ void logger::Configuration::registerSink( Sink* p_sink )
 
 LONGLONG logger::Configuration::getLastTick( void ) const
 {
-
-
     return ::GetTickCount() - m_baseTick;
+}
+
+void logger::Configuration::applyConfiguration(const std::string& p_jsondata)
+{
+    json::Logconf logconf;
+    JS::ParseContext parseContext(p_jsondata);
+
+    const auto parse_status{ parseContext.parseTo(logconf) };
+
+    if (parse_status != JS::Error::NoError)
+    {
+        _EXCEPTION("Cannot parse logging configuration")
+    }
+
+    for (const auto& output : logconf.outputs)
+    {
+        if ("file" == output.type)
+        {
+            m_outputs[output.id] = std::make_unique<OutputFile>(output.path);
+            const auto& of{ m_outputs.at(output.id) };
+            of.get()->setFlushPeriod(0);
+        }
+        // no other type of output for now
+    }
+
+    for (const auto& logger : logconf.loggers)
+    {
+        const auto output{ m_outputs.at(logger.output).get() };
+
+        static const std::unordered_map<std::string, Sink::Level> levelTranslation
+        {
+            { "FATAL", Sink::Level::LEVEL_FATAL},
+            { "ERROR", Sink::Level::LEVEL_ERROR},
+            { "WARN", Sink::Level::LEVEL_WARN},
+            { "DEBUG", Sink::Level::LEVEL_DEBUG},
+            { "TRACE", Sink::Level::LEVEL_TRACE},
+        };
+        const auto logger_level = levelTranslation.at(logger.level);
+
+        static const std::unordered_map<std::string, bool> stateTranslation
+        {
+            { "on", true},
+            { "off", false},
+        };
+
+        const auto logger_state = stateTranslation.at(logger.state);
+
+        if (m_sinks_infos.count(logger.source))
+        {
+            auto& sink_info{ m_sinks_infos.at(logger.source) };
+
+            const auto sink{ std::get<0>(sink_info) };
+
+            sink->setCurrentLevel(logger_level);
+            sink->setState(logger_state);
+            sink->registerOutput(output);
+
+            std::get<1>(sink_info) = logger_state;
+            std::get<2>(sink_info) = logger_level;
+            std::get<3>(sink_info) = output;
+        }
+        else
+        {
+            m_sinks_infos[logger.source] = std::make_tuple(nullptr, logger_state, logger_level, output);
+        }
+    }
 }

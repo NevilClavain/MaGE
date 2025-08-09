@@ -23,7 +23,7 @@
 */
 /* -*-LIC_END-*- */
 
-#define NOMINMAX 1 // for json_struct
+
 #include <Windows.h>
 
 #include "app.h"
