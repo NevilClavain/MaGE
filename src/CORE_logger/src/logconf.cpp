@@ -36,8 +36,6 @@ logger::Configuration::Configuration( void )
     m_baseTick = ::GetTickCount();
 }
 
-
-
 void logger::Configuration::registerSink( Sink* p_sink )
 {
     const auto name{ p_sink->getName() };
