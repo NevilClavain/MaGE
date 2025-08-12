@@ -1,20 +1,18 @@
-{
-  "inputs": [
+{  
+  "real4vector_inputs":
+  [
     {
-      "type": "Real4Vector",
-      "body": {
-        "argument_id": "fog_color",
-        "register": 56,
-        "description": "fog color value"
-      }
+      "argument_id": "fog_color",
+      "register_index": 56,
+      "description": "fog color value"
     },
     {
-      "type": "Real4Vector",
-      "body": {
-        "argument_id": "fog_density",
-        "register": 57,
-        "description": "fog density value on .x"
-      }
+      "argument_id": "fog_density",
+      "register_index": 57,
+      "description": "fog density value on .x"
     }
-  ]
+  ],
+
+  "real4vectorsarray_inputs":
+  []
 }

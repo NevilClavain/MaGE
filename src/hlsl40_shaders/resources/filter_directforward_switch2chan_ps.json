@@ -1,12 +1,13 @@
 {
-  "inputs": [
+  "real4vector_inputs":
+  [
     {
-      "type": "Real4Vector",
-      "body": {
-        "argument_id": "input_channel",
-        "register": 56,
-        "description": "input channel selection"
-      }
+      "argument_id": "input_channel",
+      "register_index": 56,
+      "description": "input channel selection"
     }
-  ]
+  ],
+
+  "real4vectorsarray_inputs":
+  []
 }

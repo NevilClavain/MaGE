@@ -23,6 +23,8 @@
 */
 /* -*-LIC_END-*- */
 
+#include <json_struct/json_struct.h>
+
 #include "resourcesystem.h"
 
 #include "logger_service.h"
@@ -255,14 +257,37 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 				const auto metadataSize{ shadermetadata_src_content.getDataSize() };
 				const std::string metadata(shadermetadata_src_content.getData(), metadataSize);
 
+				json::ShaderMetadata shader_metadata;
+
 				// json parser seem to be not thread-safe -> enter critical section
 				m_jsonparser_mutex.lock();
-				mage::core::Json<Shader> jsonParser;
-				jsonParser.registerSubscriber(m_jsonparser_cb);
-				const auto logParseStatus{ jsonParser.parse(metadata, &p_shaderInfos) };
-				m_jsonparser_mutex.unlock();
 
-				if (logParseStatus < 0)
+				JS::ParseContext parseContext(metadata);
+
+				const auto metadataParseStatus{ parseContext.parseTo(shader_metadata) };
+
+				thread_local Shader::GenericArgument generic_argument;
+				for (const auto& e : shader_metadata.real4vector_inputs)
+				{
+					generic_argument.argument_type = "Real4Vector";
+					generic_argument.argument_id = e.argument_id;
+					generic_argument.shader_register = e.register_index;
+
+					p_shaderInfos.addGenericArgument(generic_argument);
+				}
+
+				thread_local Shader::VectorArrayArgument vector_array_argument;
+				for (const auto& e : shader_metadata.real4vectorsarray_inputs)
+				{
+					vector_array_argument.start_shader_register = e.register_index;
+					vector_array_argument.array.resize(e.length);
+
+					p_shaderInfos.addVectorArrayArgument(vector_array_argument);
+				}
+
+				m_jsonparser_mutex.unlock();
+				
+				if (metadataParseStatus != JS::Error::NoError)
 				{
 					_EXCEPTION("JSON parse error on " + shader_metadata_path);
 				}

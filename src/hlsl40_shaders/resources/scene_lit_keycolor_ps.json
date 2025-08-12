@@ -1,20 +1,18 @@
-{
-  "inputs": [
+{  
+  "real4vector_inputs":
+  [
     {
-      "type": "Real4Vector",
-      "body": {
-        "argument_id": "light_dir",
-        "register": 56,
-        "description": "light direction"
-      }
+      "argument_id": "light_dir",
+      "register_index": 56,
+      "description": "light direction"
     },
     {
-      "type": "Real4Vector",
-      "body": {
-        "argument_id": "key_color",
-        "register": 57,
-        "description": "key color value for pixels to clip"
-      }
+      "argument_id": "key_color",
+      "register_index": 57,
+      "description": "key color value for pixels to clip"
     }
-  ]
+  ],
+
+  "real4vectorsarray_inputs":
+  [] 
 }

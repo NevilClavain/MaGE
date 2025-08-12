@@ -28,6 +28,9 @@
 #include <mutex>
 #include <map>
 #include <string>
+#include <vector>
+
+#include <json_struct/json_struct.h>
 
 
 #include "logsink.h"
@@ -70,6 +73,35 @@ namespace mage
 
     };
 
+    namespace json
+    {
+        struct ShadersReal4VectorInput
+        {
+            std::string argument_id;
+            int         register_index;
+            std::string description;
+
+            JS_OBJ(argument_id, register_index, description);
+        };
+
+        struct ShadersReal4VectorsArrayInput
+        {
+            int         length;
+            int         register_index;
+            std::string description;
+
+            JS_OBJ(length, register_index, description);
+        };
+
+        struct ShaderMetadata
+        { 
+            std::vector<ShadersReal4VectorInput>        real4vector_inputs;
+            std::vector< ShadersReal4VectorsArrayInput> real4vectorsarray_inputs;
+
+            JS_OBJ(real4vector_inputs, real4vectorsarray_inputs);
+        };
+    }
+
     class ResourceSystem : public core::System, public mage::property::EventSource<ResourceSystemEvent, const std::string&>
     {
     public:
@@ -91,7 +123,7 @@ namespace mage
         const std::string                                   m_meshesBasePath{ "./meshes" };
         const std::string                                   m_shadersCachePath{ "./bc_cache" };
 
-        mage::core::Json<Shader>::Callback	                m_jsonparser_cb;
+        //mage::core::Json<Shader>::Callback	                m_jsonparser_cb;
         std::mutex                                          m_jsonparser_mutex;
 
         static constexpr unsigned int                       nbRunners{ 2 };
