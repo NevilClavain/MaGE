@@ -29,7 +29,6 @@ include_directories(${CMAKE_SOURCE_DIR}/CORE_allocator/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_logger/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_filesystem/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_buffer/src)
-include_directories(${CMAKE_SOURCE_DIR}/CORE_json/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_maths/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_time/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_threads/src)
@@ -53,9 +52,7 @@ include_directories(${CMAKE_SOURCE_DIR}/appbases/src/samples_openenv)
 
 include_directories(${st_tree_include_dir})
 include_directories(${jsonstruct_include_dir})
-include_directories(${jsonjsmn_include_dir})
 
-link_directories(${jsonjsmn_lib_dir})
 link_directories(${fw1fontwrapper_lib_dir})
 link_directories(${dxtk_lib_dir})
 link_directories(${assimp_lib_dir})
@@ -76,8 +73,7 @@ target_link_libraries(module_anims
 										CORE_file 
 										CORE_filesystem 
 										CORE_buffer 
-										CORE_logger 
-										CORE_json 
+										CORE_logger  
 										CORE_module 
 										CORE_ecs 
 										CORE_allocator 
@@ -95,8 +91,7 @@ target_link_libraries(module_anims
 										SYSTEM_renderingqueue 
 										SYSTEM_world 
 										SYSTEM_dataprint 
-										SYSTEM_animations
-										jsmn 
+										SYSTEM_animations 
 										d3d11 
 										d3dcompiler 
 										DirectXTK)

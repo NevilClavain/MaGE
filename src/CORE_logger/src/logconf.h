@@ -34,7 +34,6 @@
 
 #include "singleton.h"
 #include "logsink.h"
-#include "json.h"
 
 namespace mage
 {

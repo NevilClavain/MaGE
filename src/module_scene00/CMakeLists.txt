@@ -29,7 +29,6 @@ include_directories(${CMAKE_SOURCE_DIR}/CORE_allocator/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_logger/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_filesystem/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_buffer/src)
-include_directories(${CMAKE_SOURCE_DIR}/CORE_json/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_maths/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_time/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_threads/src)
@@ -50,9 +49,7 @@ include_directories(${CMAKE_SOURCE_DIR}/helpers)
 
 include_directories(${st_tree_include_dir})
 include_directories(${jsonstruct_include_dir})
-include_directories(${jsonjsmn_include_dir})
 
-link_directories(${jsonjsmn_lib_dir})
 link_directories(${fw1fontwrapper_lib_dir})
 link_directories(${dxtk_lib_dir})
 link_directories(${assimp_lib_dir})
@@ -68,7 +65,7 @@ file(
 
 add_library(module_scene00 SHARED ${source_files})
 
-target_link_libraries(module_scene00 assimp-vc140-mt CORE_file CORE_filesystem CORE_buffer CORE_logger CORE_json CORE_module CORE_ecs CORE_allocator CORE_time CORE_threads CORE_services CORE_maths helpers RENDERING_control TRANSFORM_control SYSTEM_d3d11 SYSTEM_time SYSTEM_resource SYSTEM_renderingqueue SYSTEM_world SYSTEM_dataprint jsmn d3d11 d3dcompiler DirectXTK)
+target_link_libraries(module_scene00 assimp-vc140-mt CORE_file CORE_filesystem CORE_buffer CORE_logger CORE_module CORE_ecs CORE_allocator CORE_time CORE_threads CORE_services CORE_maths helpers RENDERING_control TRANSFORM_control SYSTEM_d3d11 SYSTEM_time SYSTEM_resource SYSTEM_renderingqueue SYSTEM_world SYSTEM_dataprint d3d11 d3dcompiler DirectXTK)
 
 install(TARGETS module_scene00 CONFIGURATIONS Debug RUNTIME DESTINATION ${CMAKE_SOURCE_DIR}/apps/Debug)
 install(TARGETS module_scene00 CONFIGURATIONS Release RUNTIME DESTINATION ${CMAKE_SOURCE_DIR}/apps/Release)

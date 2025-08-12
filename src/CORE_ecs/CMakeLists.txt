@@ -25,7 +25,6 @@ project(CORE_ecs)
 
 include_directories(${CMAKE_SOURCE_DIR}/commons)
 
-include_directories(${jsonjsmn_include_dir})
 include_directories(${st_tree_include_dir})
 
 file(

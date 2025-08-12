@@ -40,7 +40,7 @@ file(
 )
 
 add_executable(console_datacloud ${source_files})
-target_link_libraries(console_datacloud CORE_ecs CORE_logger CORE_allocator CORE_file CORE_logger CORE_json CORE_services CORE_maths RENDERING_control)
+target_link_libraries(console_datacloud CORE_ecs CORE_logger CORE_allocator CORE_file CORE_logger CORE_services CORE_maths RENDERING_control)
 
 
 install(TARGETS console_datacloud CONFIGURATIONS Debug RUNTIME DESTINATION ${CMAKE_SOURCE_DIR}/apps/Debug)

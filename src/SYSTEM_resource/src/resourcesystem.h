@@ -42,7 +42,6 @@
 #include "runner.h"
 #include "eventsource.h"
 #include "buffer.h"
-#include "json.h"
 #include "matrix.h"
 #include "component.h"
 

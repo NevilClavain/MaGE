@@ -29,7 +29,6 @@ include_directories(${CMAKE_SOURCE_DIR}/CORE_allocator/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_logger/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_filesystem/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_buffer/src)
-include_directories(${CMAKE_SOURCE_DIR}/CORE_json/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_maths/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_time/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_threads/src)
@@ -54,7 +53,6 @@ include_directories(${CMAKE_SOURCE_DIR}/appbases/src/samples_openenv)
 
 include_directories(${st_tree_include_dir})
 include_directories(${jsonstruct_include_dir})
-include_directories(${jsonjsmn_include_dir})
 
 
 file(GLOB_RECURSE SAMPLES_BASE "${CMAKE_SOURCE_DIR}/appbases/src/samples_base/*.*")
