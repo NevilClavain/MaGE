@@ -23,6 +23,7 @@
 */
 /* -*-LIC_END-*- */
 
+
 #include <Windows.h>
 
 #include "app.h"
@@ -46,15 +47,12 @@ int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
             const auto app{ mage::core::App::getInstance() };
             app->init(hInstance, "./rt_config/logrt.json", "./rt_config/windows_settings.json", module_root);
             app->loop();
-
         }
 
         else
         {
             _EXCEPTION("Usage : rt <module_name>");
         }
-
-
     }
     catch (const std::exception& e)
     {

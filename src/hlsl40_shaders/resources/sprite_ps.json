@@ -1,3 +1,6 @@
 {
-  "inputs": []
+  "real4vector_inputs":
+  [],
+  "real4vectorsarray_inputs":
+  []
 }

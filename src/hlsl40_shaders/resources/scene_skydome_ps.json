@@ -1,60 +1,43 @@
-{
-  "inputs": [
+{  
+  "real4vector_inputs":
+  [
     {
-      "type": "Real4Vector",
-      "body": {
-        "argument_id": "light0_dir",
-        "register": 56,
-        "description": "light0 dir"
-      }
+      "argument_id": "light0_dir",
+      "register_index": 56,
+      "description": "light0 dir"
     },
     {
-      "type": "Real4Vector",
-      "body": {
-        "argument_id": "atmo_scattering_flag_0",
-        "register": 57,
-        "description": "atmo_scattering_flag_0"
-      }
+      "argument_id": "atmo_scattering_flag_0",
+      "register_index": 57,
+      "description": "atmo_scattering_flag_0"
     },
     {
-      "type": "Real4Vector",
-      "body": {
-        "argument_id": "atmo_scattering_flag_1",
-        "register": 58,
-        "description": "atmo_scattering_flag_1"
-      }
+      "argument_id": "atmo_scattering_flag_1",
+      "register_index": 58,
+      "description": "atmo_scattering_flag_1"
     },
     {
-      "type": "Real4Vector",
-      "body": {
-        "argument_id": "atmo_scattering_flag_2",
-        "register": 59,
-        "description": "atmo_scattering_flag_2"
-      }
+      "argument_id": "atmo_scattering_flag_2",
+      "register_index": 59,
+      "description": "atmo_scattering_flag_2"
     },
     {
-      "type": "Real4Vector",
-      "body": {
-        "argument_id": "atmo_scattering_flag_3",
-        "register": 60,
-        "description": "atmo_scattering_flag_3"
-      }
+      "argument_id": "atmo_scattering_flag_3",
+      "register_index": 60,
+      "description": "atmo_scattering_flag_3"
     },
     {
-      "type": "Real4Vector",
-      "body": {
-        "argument_id": "atmo_scattering_flag_4",
-        "register": 61,
-        "description": "atmo_scattering_flag_4"
-      }
+      "argument_id": "atmo_scattering_flag_4",
+      "register_index": 61,
+      "description": "atmo_scattering_flag_4"
     },
     {
-      "type": "Real4Vector",
-      "body": {
-        "argument_id": "atmo_scattering_flag_5",
-        "register": 62,
-        "description": "atmo_scattering_flag_5"
-      }
-    },
-  ]
+      "argument_id": "atmo_scattering_flag_5",
+      "register_index": 62,
+      "description": "atmo_scattering_flag_5"
+    }
+  ],
+
+  "real4vectorsarray_inputs":
+  []
 }

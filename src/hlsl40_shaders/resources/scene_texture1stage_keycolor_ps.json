@@ -1,12 +1,13 @@
 {
-  "inputs": [
+  "real4vector_inputs":
+  [
     {
-      "type": "Real4Vector",
-      "body": {
-        "argument_id": "key_color",
-        "register": 56,
-        "description": "key color value for pixels to clip"
-      }
+      "argument_id": "key_color",
+      "register_index": 56,
+      "description": "key color value for pixels to clip"
     }
-  ]
+  ],
+
+  "real4vectorsarray_inputs":
+  []
 }

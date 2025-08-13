@@ -20,14 +20,13 @@
 #
 # -*-LIC_END-*-
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 project(SYSTEM_renderingqueue)
 
 include_directories(${CMAKE_SOURCE_DIR}/commons)
 
 include_directories(${CMAKE_SOURCE_DIR}/CORE_ecs/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_logger/src)
-include_directories(${CMAKE_SOURCE_DIR}/CORE_json/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_maths/src)
 include_directories(${CMAKE_SOURCE_DIR}/RENDERING_control/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_buffer/src)
@@ -36,7 +35,7 @@ include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_resource/src)
 include_directories(${CMAKE_SOURCE_DIR}/TRANSFORM_control/src)
 
 include_directories(${st_tree_include_dir})
-include_directories(${jsonjsmn_include_dir})
+include_directories(${jsonstruct_include_dir})
 
 
 file(

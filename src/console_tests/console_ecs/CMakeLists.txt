@@ -20,7 +20,7 @@
 #
 # -*-LIC_END-*-
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 project(console_ecs)
 
 include_directories(${CMAKE_SOURCE_DIR}/commons)
@@ -37,7 +37,7 @@ file(
 )
 
 add_executable(console_ecs ${source_files})
-target_link_libraries(console_ecs CORE_ecs CORE_logger CORE_allocator CORE_file CORE_logger CORE_json CORE_services)
+target_link_libraries(console_ecs CORE_ecs CORE_logger CORE_allocator CORE_file CORE_logger CORE_services)
 
 
 install(TARGETS console_ecs CONFIGURATIONS Debug RUNTIME DESTINATION ${CMAKE_SOURCE_DIR}/apps/Debug)

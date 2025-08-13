@@ -90,8 +90,10 @@ bool D3D11SystemImpl::init(mage::core::Entity* p_mainWindow)
 		characteristics_v_height = characteristics_v_width * characteristics_height_resol / characteristics_width_resol;
 
 		swap_chain.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		swap_chain.BufferDesc.RefreshRate.Numerator = 60;
-		swap_chain.BufferDesc.RefreshRate.Denominator = 1;
+		//swap_chain.BufferDesc.RefreshRate.Numerator = 60;
+		swap_chain.BufferDesc.RefreshRate.Numerator = 0;
+		//swap_chain.BufferDesc.RefreshRate.Denominator = 1;
+		swap_chain.BufferDesc.RefreshRate.Denominator = 0;
 
 		swap_chain.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 		swap_chain.Windowed = TRUE;
@@ -145,7 +147,7 @@ bool D3D11SystemImpl::init(mage::core::Entity* p_mainWindow)
 	// not accepted by D3D11CreateDeviceAndSwapChain (wtf ?)
 
 #ifdef _DEBUG
-	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+	//createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
 

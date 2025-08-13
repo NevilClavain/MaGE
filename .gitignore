@@ -10,10 +10,10 @@
 
 # Build results
 libs/
-[Dd]ebug/
-[Rr]elease/
-[Rr]elWithDebInfo/
-[Mm]inSizeRel/
+src/**/[Dd]ebug/
+src/**/[Rr]elease/
+src/**/[Rr]elWithDebInfo/
+src/**/[Mm]inSizeRel/
 x64/
 build/
 [Bb]in/
@@ -101,6 +101,10 @@ ALL_BUILD.vcxproj*
 /src/console_tests/console_jsonparser/CMakeFiles/
 /src/console_tests/console_jsonparser/*.sln
 /src/console_tests/console_jsonparser/*.vcxproj*
+
+/src/console_tests/console_jsonstruct/CMakeFiles/
+/src/console_tests/console_jsonstruct/*.sln
+/src/console_tests/console_jsonstruct/*.vcxproj*
 
 /src/console_tests/console_logger/CMakeFiles/
 /src/console_tests/console_logger/*.sln

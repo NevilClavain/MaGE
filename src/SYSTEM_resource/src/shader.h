@@ -32,10 +32,7 @@
 
 #include "buffer.h"
 
-#include "matrix.h"
 #include "tvector.h"
-
-
 
 namespace mage
 {
@@ -53,14 +50,10 @@ namespace mage
         struct GenericArgument
         {
             std::string                 argument_id;
-            
             std::string                 argument_type;
-            core::maths::Matrix         matrix;
-            core::maths::Real4Vector    real4vector;
 
             int                         shader_register{ -1 };
         };
-
 
         struct VectorArrayArgument
         {

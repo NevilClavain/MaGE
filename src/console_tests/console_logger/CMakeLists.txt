@@ -20,17 +20,15 @@
 #
 # -*-LIC_END-*-
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 project(console_logger)
 
 include_directories(${CMAKE_SOURCE_DIR}/commons)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_filesystem/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_buffer/src)
-include_directories(${CMAKE_SOURCE_DIR}/CORE_json/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_logger/src)
-include_directories(${jsonjsmn_include_dir})
+include_directories(${jsonstruct_include_dir})
 
-link_directories(${jsonjsmn_lib_dir})
 
 file(
         GLOB_RECURSE
@@ -41,7 +39,7 @@ file(
 
 add_executable(console_logger ${source_files})
 
-target_link_libraries(console_logger CORE_filesystem CORE_file CORE_json CORE_logger jsmn)
+target_link_libraries(console_logger CORE_filesystem CORE_file CORE_logger)
 
 install(TARGETS console_logger CONFIGURATIONS Debug RUNTIME DESTINATION ${CMAKE_SOURCE_DIR}/apps/Debug)
 install(TARGETS console_logger CONFIGURATIONS Release RUNTIME DESTINATION ${CMAKE_SOURCE_DIR}/apps/Release)

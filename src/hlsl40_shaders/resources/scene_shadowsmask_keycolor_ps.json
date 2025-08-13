@@ -1,28 +1,23 @@
-{
-  "inputs": [
+{  
+  "real4vector_inputs":
+  [
     {
-      "type": "Real4Vector",
-      "body": {
-        "argument_id": "shadow_bias",
-        "register": 56,
-        "description": "bias for shadows computation"
-      }
+      "argument_id": "shadow_bias",
+      "register_index": 56,
+      "description": "bias for shadows computation"
     },
     {
-      "type": "Real4Vector",
-      "body": {
-        "argument_id": "shadowmap_resol",
-        "register": 57,
-        "description": "shadow map width"
-      }
+      "argument_id": "shadowmap_resol",
+      "register_index": 57,
+      "description": "shadow map width"
     },
-    {
-      "type": "Real4Vector",
-      "body": {
-        "argument_id": "key_color",
-        "register": 58,
-        "description": "key color value for pixels to clip"
-      }
+	{
+      "argument_id": "key_color",
+      "register_index": 58,
+      "description": "key color value for pixels to clip"
     }
-  ]
+  ],
+
+  "real4vectorsarray_inputs":
+  []
 }

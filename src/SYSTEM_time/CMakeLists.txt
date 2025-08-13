@@ -20,7 +20,7 @@
 #
 # -*-LIC_END-*-
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 project(SYSTEM_time)
 
 include_directories(${CMAKE_SOURCE_DIR}/commons)
@@ -29,7 +29,6 @@ include_directories(${CMAKE_SOURCE_DIR}/CORE_ecs/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_time/src)
 
 include_directories(${st_tree_include_dir})
-include_directories(${jsonjsmn_include_dir})
 
 
 file(

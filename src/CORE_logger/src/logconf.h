@@ -25,13 +25,15 @@
 #pragma once
 
 #include <windows.h>
+#include <json_struct/json_struct.h>
+
 #include <string>
 #include <unordered_map>
 #include <tuple>
+#include <vector>
 
 #include "singleton.h"
 #include "logsink.h"
-#include "json.h"
 
 namespace mage
 {
@@ -39,6 +41,37 @@ namespace mage
     {
         namespace logger
         {
+            namespace json
+            {
+                struct Output
+                {
+                    std::string type;
+                    std::string id;
+                    std::string path;
+
+                    JS_OBJ(type, id, path);
+                };
+
+                struct Logger
+                { 
+                    std::string source;
+                    std::string level;
+                    std::string state;
+                    std::string output;
+
+                    JS_OBJ(source, level, state, output);
+                };
+
+                struct Logconf
+                {
+                    std::vector<Output> outputs;
+                    std::vector<Logger> loggers;
+
+                    JS_OBJ(outputs, loggers);
+                };
+            }
+
+
             // fwd decl
             class Output;
 
@@ -51,15 +84,18 @@ namespace mage
                 void                    registerSink(Sink* p_sink);
                 LONGLONG                getLastTick(void) const;
 
-
+                /*
                 Json<>::Callback getCallback() const
                 {
                     return m_cb;
                 }
+                */
+
+                void applyConfiguration(const std::string& p_jsondata);
 
             private:
 
-                Json<>::Callback	                                                m_cb;
+                //Json<>::Callback	                                                m_cb;
 
                 std::unordered_map<std::string, std::unique_ptr<Output>>        m_outputs;
 
@@ -77,16 +113,16 @@ namespace mage
                     RECORD_LOGGER
                 };
 
-                ParsingState                                        m_parsing_state{ ParsingState::IDLE };
+                //ParsingState                                        m_parsing_state{ ParsingState::IDLE };
 
-                std::string                                         m_mem_output_type;
-                std::string                                         m_mem_output_id;
-                std::string                                         m_mem_output_path;
+                //std::string                                         m_mem_output_type;
+                //std::string                                         m_mem_output_id;
+                //std::string                                         m_mem_output_path;
 
-                std::string                                         m_mem_logger_source;
-                Sink::Level                                         m_mem_logger_level;
-                bool                                                m_mem_logger_state;
-                std::string                                         m_mem_logger_output;
+                //std::string                                         m_mem_logger_source;
+                //Sink::Level                                         m_mem_logger_level;
+                //bool                                                m_mem_logger_state;
+                //std::string                                         m_mem_logger_output;
             };
         }
     }

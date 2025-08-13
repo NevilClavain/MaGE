@@ -1,12 +1,13 @@
 {
-  "inputs": [
+  "real4vector_inputs":
+  [
     {
-      "type": "Real4Vector",
-      "body": {
-        "argument_id": "light_dir",
-        "register": 56,
-        "description": "light direction"
-      }
+      "argument_id": "light_dir",
+      "register_index": 56,
+      "description": "light direction"
     }
-  ]
+  ],
+
+  "real4vectorsarray_inputs":
+  []
 }

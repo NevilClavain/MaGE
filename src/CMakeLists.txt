@@ -20,7 +20,7 @@
 #
 # -*-LIC_END-*-
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 project(mage)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -30,19 +30,16 @@ set(CMAKE_SUPPRESS_REGENERATION true)
 
 add_definitions(-D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS)
 
+#for json_struct
+add_definitions(-DNOMINMAX=1)
+
+
 # 3rd-parts localisations
 
 set(lua_include_dir ${CMAKE_SOURCE_DIR}/../thirdparts/lua-1.5/sdk/include)
 set(lua_lib_dir ${CMAKE_SOURCE_DIR}/../thirdparts/lua-1.5/sdk/lib/x86)
 
-set(jsonjsmn_include_dir ${CMAKE_SOURCE_DIR}/../thirdparts/JSON-jsmn/sdk/include)
-set(jsonjsmn_lib_dir ${CMAKE_SOURCE_DIR}/../thirdparts/JSON-jsmn/sdk/lib/x86)
-
-set(fw1fontwrapper_include_dir ${CMAKE_SOURCE_DIR}/../thirdparts/FW1FontWrapper/sdk/include)
-set(fw1fontwrapper_lib_dir ${CMAKE_SOURCE_DIR}/../thirdparts/FW1FontWrapper/sdk/lib/x86)
-
-set(dx11sdk_include_dir ${CMAKE_SOURCE_DIR}/../thirdparts/dx11sdk/sdk/Include)
-set(dx11sdk_lib_dir ${CMAKE_SOURCE_DIR}/../thirdparts/dx11sdk/sdk/Lib/x86)
+set(jsonstruct_include_dir ${CMAKE_SOURCE_DIR}/../thirdparts/json_struct_1.0.1/sdk/include)
 
 set(dxtk_include_dir ${CMAKE_SOURCE_DIR}/../thirdparts/DirectXTK/sdk/include)
 set(dxtk_lib_dir ${CMAKE_SOURCE_DIR}/../thirdparts/DirectXTK/sdk/lib/x86)
@@ -67,7 +64,6 @@ add_subdirectory(CORE_logger)
 add_subdirectory(CORE_file)
 add_subdirectory(CORE_filesystem)
 add_subdirectory(CORE_buffer)
-add_subdirectory(CORE_json)
 add_subdirectory(CORE_threads)
 add_subdirectory(CORE_app)
 add_subdirectory(CORE_ecs)
@@ -98,7 +94,7 @@ add_subdirectory(appbases)
 add_subdirectory(rt)
 
 add_subdirectory(console_tests/console_helloworld)
-add_subdirectory(console_tests/console_jsonparser)
+add_subdirectory(console_tests/console_jsonstruct)
 add_subdirectory(console_tests/console_logger)
 add_subdirectory(console_tests/console_fileio)
 add_subdirectory(console_tests/console_callback)

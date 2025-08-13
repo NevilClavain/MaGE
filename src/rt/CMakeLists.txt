@@ -20,17 +20,14 @@
 #
 # -*-LIC_END-*-
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 project(rt)
 
 include_directories(${CMAKE_SOURCE_DIR}/commons)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_app/src)
-include_directories(${CMAKE_SOURCE_DIR}/CORE_json/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_module/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_buffer/src)
-include_directories(${jsonjsmn_include_dir})
-
-link_directories(${jsonjsmn_lib_dir})
+include_directories(${jsonstruct_include_dir})
 
 
 
@@ -44,7 +41,7 @@ file(
 
 add_executable(rt WIN32 ${source_files})
 
-target_link_libraries(rt CORE_module CORE_filesystem CORE_app CORE_allocator CORE_ecs CORE_json CORE_logger CORE_file CORE_services jsmn)
+target_link_libraries(rt CORE_module CORE_filesystem CORE_app CORE_allocator CORE_ecs CORE_logger CORE_file CORE_services)
 
 
 install(TARGETS rt CONFIGURATIONS Debug RUNTIME DESTINATION ${CMAKE_SOURCE_DIR}/apps/Debug)
