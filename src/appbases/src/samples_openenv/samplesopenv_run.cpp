@@ -39,7 +39,7 @@ using namespace mage::rendering;
 
 void SamplesOpenEnv::run(void)
 {
-	SamplesBase::run();
+	Base::run();
 
 	/////////////////////////////////////////////////////
 

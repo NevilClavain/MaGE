@@ -31,11 +31,11 @@
 
 #include "maths_helpers.h"
 
-#include "samplesbase.h"
+#include "base.h"
 
 namespace mage
 {
-    class SamplesOpenEnv : public SamplesBase
+    class SamplesOpenEnv : public Base
     {
     public:
 

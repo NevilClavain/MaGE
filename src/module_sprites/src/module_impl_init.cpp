@@ -70,7 +70,7 @@ using namespace mage::rendering;
 
 void ModuleImpl::init(const std::string p_appWindowsEntityName)
 {
-	SamplesBase::init(p_appWindowsEntityName);
+	Base::init(p_appWindowsEntityName);
 
 	/////////// logging conf
 

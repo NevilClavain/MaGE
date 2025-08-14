@@ -39,15 +39,15 @@
 
 namespace mage
 {
-    class SamplesBase : public mage::interfaces::ModuleRoot
+    class Base : public mage::interfaces::ModuleRoot
     {
     public:
-        SamplesBase();
-        ~SamplesBase() = default;
+        Base();
+        ~Base() = default;
 
-        SamplesBase(const SamplesBase&) = delete;
-        SamplesBase(SamplesBase&&) = delete;
-        SamplesBase& operator=(const SamplesBase& t) = delete;
+        Base(const Base&) = delete;
+        Base(Base&&) = delete;
+        Base& operator=(const Base& t) = delete;
 
 
         mage::core::Entitygraph*        entitygraph();

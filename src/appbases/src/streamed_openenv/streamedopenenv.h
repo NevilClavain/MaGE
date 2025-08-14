@@ -31,11 +31,11 @@
 
 #include "maths_helpers.h"
 
-#include "samplesbase.h"
+#include "base.h"
 
 namespace mage
 {
-    class StreamedOpenEnv : public SamplesBase
+    class StreamedOpenEnv : public Base
     {
     public:
 

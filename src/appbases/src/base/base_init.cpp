@@ -23,7 +23,7 @@
 */
 /* -*-LIC_END-*- */
 
-#include "samplesbase.h"
+#include "base.h"
 
 #include <string>
 #include <vector>
@@ -74,7 +74,7 @@ using namespace mage;
 using namespace mage::core;
 using namespace mage::rendering;
 
-void SamplesBase::init(const std::string p_appWindowsEntityName)
+void Base::init(const std::string p_appWindowsEntityName)
 {
 	/////////// systems
 
@@ -102,7 +102,7 @@ void SamplesBase::init(const std::string p_appWindowsEntityName)
 }
 
 
-void SamplesBase::d3d11_system_events_base()
+void Base::d3d11_system_events_base()
 {
 	const auto sysEngine{ SystemEngine::getInstance() };
 	const auto d3d11System{ sysEngine->getSystem<mage::D3D11System>(d3d11SystemSlot) };

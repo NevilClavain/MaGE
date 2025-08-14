@@ -22,7 +22,7 @@
 */
 /* -*-LIC_END-*- */
 
-#include "samplesbase.h"
+#include "base.h"
 
 #include "aspects.h"
 #include "sysengine.h"
@@ -59,20 +59,20 @@ using namespace mage::core;
 using namespace mage::rendering;
 
 
-SamplesBase::SamplesBase()
+Base::Base()
 {
 	/////////// create common specific logger for events
 	services::LoggerSharing::getInstance()->createLogger("Events");
 }
 
 
-mage::core::Entitygraph* SamplesBase::entitygraph()
+mage::core::Entitygraph* Base::entitygraph()
 {
 	return &m_entitygraph;
 }
 
 
-void SamplesBase::registerSubscriber(const Callback& p_callback)
+void Base::registerSubscriber(const Callback& p_callback)
 {
 	mage::property::EventSource<mage::interfaces::ModuleEvents, int>::registerSubscriber(p_callback);
 

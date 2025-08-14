@@ -48,7 +48,7 @@ include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_world/src)
 include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_dataprint/src)
 
 include_directories(${CMAKE_SOURCE_DIR}/helpers)
-include_directories(${CMAKE_SOURCE_DIR}/appbases/src/samples_base)
+include_directories(${CMAKE_SOURCE_DIR}/appbases/src/base)
 
 include_directories(${st_tree_include_dir})
 include_directories(${jsonstruct_include_dir})

@@ -23,7 +23,7 @@
 */
 /* -*-LIC_END-*- */
 
-#include "samplesbase.h"
+#include "base.h"
 #include <string>
 
 #include "maths_helpers.h"
@@ -41,7 +41,7 @@ using namespace mage;
 using namespace mage::core;
 using namespace mage::rendering;
 
-void SamplesBase::run(void)
+void Base::run(void)
 {
 	/////////////////////////////////////////////////////
 

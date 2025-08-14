@@ -79,7 +79,7 @@ using namespace mage::rendering;
 
 void StreamedOpenEnv::init(const std::string p_appWindowsEntityName)
 {
-	SamplesBase::init(p_appWindowsEntityName);
+	Base::init(p_appWindowsEntityName);
 	d3d11_system_events_openenv();
 }
 
