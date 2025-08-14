@@ -35,16 +35,16 @@
 
 namespace mage
 {
-    class SamplesOpenEnv : public Base
+    class OpenEnv : public Base
     {
     public:
 
-        SamplesOpenEnv() = default;
-        ~SamplesOpenEnv() = default;
+        OpenEnv() = default;
+        ~OpenEnv() = default;
 
-        SamplesOpenEnv(const SamplesOpenEnv&) = delete;
-        SamplesOpenEnv(SamplesOpenEnv&&) = delete;
-        SamplesOpenEnv& operator=(const SamplesOpenEnv& t) = delete;
+        OpenEnv(const OpenEnv&) = delete;
+        OpenEnv(OpenEnv&&) = delete;
+        OpenEnv& operator=(const OpenEnv& t) = delete;
 
         void                            init(const std::string p_appWindowsEntityName);
         void                            run(void);

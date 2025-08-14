@@ -40,10 +40,8 @@ using namespace mage::rendering;
 
 void ModuleImpl::run(void)
 {
-	SamplesOpenEnv::run();
+	OpenEnv::run();
 
-	
-	
 	auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 	
 	/////////////////////////////////////////////////////

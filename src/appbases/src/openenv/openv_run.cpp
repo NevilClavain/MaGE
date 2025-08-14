@@ -23,7 +23,7 @@
 */
 /* -*-LIC_END-*- */
 
-#include "samplesopenenv.h"
+#include "openenv.h"
 #include <string>
 
 #include "maths_helpers.h"
@@ -37,7 +37,7 @@ using namespace mage;
 using namespace mage::core;
 using namespace mage::rendering;
 
-void SamplesOpenEnv::run(void)
+void OpenEnv::run(void)
 {
 	Base::run();
 

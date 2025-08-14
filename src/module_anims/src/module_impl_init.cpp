@@ -75,7 +75,7 @@ using namespace mage::rendering;
 
 void ModuleImpl::init(const std::string p_appWindowsEntityName)
 {
-	SamplesOpenEnv::init(p_appWindowsEntityName);
+	OpenEnv::init(p_appWindowsEntityName);
 
 	/////////// logging conf
 

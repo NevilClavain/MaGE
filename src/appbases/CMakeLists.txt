@@ -49,7 +49,7 @@ include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_animations/src)
 include_directories(${CMAKE_SOURCE_DIR}/helpers)
 
 include_directories(${CMAKE_SOURCE_DIR}/appbases/src/base)
-include_directories(${CMAKE_SOURCE_DIR}/appbases/src/samples_openenv)
+include_directories(${CMAKE_SOURCE_DIR}/appbases/src/openenv)
 include_directories(${CMAKE_SOURCE_DIR}/appbases/src/streamed_openenv)
 
 include_directories(${st_tree_include_dir})
@@ -57,15 +57,15 @@ include_directories(${jsonstruct_include_dir})
 
 
 file(GLOB_RECURSE BASE "${CMAKE_SOURCE_DIR}/appbases/src/base/*.*")
-file(GLOB_RECURSE SAMPLES_OPENENV "${CMAKE_SOURCE_DIR}/appbases/src/samples_openenv/*.*")
+file(GLOB_RECURSE OPENENV "${CMAKE_SOURCE_DIR}/appbases/src/openenv/*.*")
 file(GLOB_RECURSE STREAMED_OPENENV "${CMAKE_SOURCE_DIR}/appbases/src/streamed_openenv/*.*")
 
 source_group("base" FILES ${BASE})
-source_group("samples_openenv" FILES ${SAMPLES_OPENENV})
+source_group("openenv" FILES ${OPENENV})
 source_group("streamed_openenv" FILES ${STREAMED_OPENENV})
 
 add_definitions( -D_FROMCMAKE )
 
-add_library(appbases ${BASE} ${SAMPLES_OPENENV} ${STREAMED_OPENENV})
+add_library(appbases ${BASE} ${OPENENV} ${STREAMED_OPENENV})
 
 

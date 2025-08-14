@@ -23,7 +23,7 @@
 */
 /* -*-LIC_END-*- */
 
-#include "samplesopenenv.h"
+#include "openenv.h"
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -77,14 +77,14 @@ using namespace mage::core;
 using namespace mage::rendering;
 
 
-void SamplesOpenEnv::init(const std::string p_appWindowsEntityName)
+void OpenEnv::init(const std::string p_appWindowsEntityName)
 {
 	Base::init(p_appWindowsEntityName);
 	d3d11_system_events_openenv();
 }
 
 
-void SamplesOpenEnv::d3d11_system_events_openenv()
+void OpenEnv::d3d11_system_events_openenv()
 {
 	const auto sysEngine{ SystemEngine::getInstance() };
 	const auto d3d11System{ sysEngine->getSystem<mage::D3D11System>(d3d11SystemSlot) };
@@ -655,7 +655,7 @@ void SamplesOpenEnv::d3d11_system_events_openenv()
 }
 
 
-void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_parentEntityId)
+void OpenEnv::create_openenv_scenegraph(const std::string& p_parentEntityId)
 {
 	auto& appwindowNode{ m_entitygraph.node(p_parentEntityId) };
 	const auto appwindow{ appwindowNode.data() };
@@ -923,7 +923,7 @@ void SamplesOpenEnv::create_openenv_scenegraph(const std::string& p_parentEntity
 
 }
 
-void SamplesOpenEnv::create_openenv_rendergraph(const std::string& p_parentEntityId, int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height)
+void OpenEnv::create_openenv_rendergraph(const std::string& p_parentEntityId, int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height)
 {
 
 	const auto combiner_fog_input_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
@@ -1051,7 +1051,7 @@ void SamplesOpenEnv::create_openenv_rendergraph(const std::string& p_parentEntit
 	mage::helpers::plugRenderingQueue(m_entitygraph, litChannelRenderingQueue, "bufferRendering_Combiner_Accumulate_Quad_Entity", "bufferRendering_Scene_LitChannel_Queue_Entity");
 }
 
-void SamplesOpenEnv::enable_shadows()
+void OpenEnv::enable_shadows()
 {
 	///////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
