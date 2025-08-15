@@ -42,6 +42,7 @@
 #include "dataprintsystem.h"
 #include "renderingqueuesystem.h"
 #include "animationssystem.h"
+#include "scenestreamersystem.h"
 
 #include "sysengine.h"
 #include "filesystem.h"
@@ -87,6 +88,7 @@ void Base::init(const std::string p_appWindowsEntityName)
 	sysEngine->makeSystem<mage::RenderingQueueSystem>(renderingQueueSystemSlot, m_entitygraph);
 	sysEngine->makeSystem<mage::DataPrintSystem>(dataPrintSystemSlot, m_entitygraph);
 	sysEngine->makeSystem<mage::AnimationsSystem>(animationsSystemSlot, m_entitygraph);
+	sysEngine->makeSystem<mage::SceneStreamerSystem>(sceneStreamSystemSlot, m_entitygraph);
 
 	// D3D11 system provides compilation shader service : give access to this to resources sytem
 	const auto d3d11System{ sysEngine->getSystem<mage::D3D11System>(d3d11SystemSlot) };

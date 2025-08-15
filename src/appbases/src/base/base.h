@@ -71,6 +71,7 @@ namespace mage
         static constexpr int                                        renderingQueueSystemSlot{ 4 };
         static constexpr int                                        dataPrintSystemSlot{ 5 };
         static constexpr int                                        animationsSystemSlot{ 6 };
+        static constexpr int                                        sceneStreamSystemSlot{ 7 };
 
         bool                                                        m_show_mouse_cursor{ false };
         bool                                                        m_mouse_relative_mode{ true };

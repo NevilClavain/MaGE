@@ -92,6 +92,7 @@ target_link_libraries(module_anims
 										SYSTEM_world 
 										SYSTEM_dataprint 
 										SYSTEM_animations 
+										SYSTEM_scenestreamer
 										d3d11 
 										d3dcompiler 
 										DirectXTK)

@@ -45,6 +45,7 @@ include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_renderingqueue/src)
 include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_world/src)
 include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_dataprint/src)
 include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_animations/src)
+include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_scenestreamer/src)
 
 include_directories(${CMAKE_SOURCE_DIR}/helpers)
 include_directories(${CMAKE_SOURCE_DIR}/appbases/src/base)
@@ -92,6 +93,7 @@ target_link_libraries(module_streamed_anims
 										SYSTEM_world 
 										SYSTEM_dataprint 
 										SYSTEM_animations 
+										SYSTEM_scenestreamer
 										d3d11 
 										d3dcompiler 
 										DirectXTK)
