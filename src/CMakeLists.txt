@@ -107,6 +107,7 @@ add_subdirectory(console_tests/console_datacloud)
 add_subdirectory(module_scene00)
 add_subdirectory(module_sprites)
 add_subdirectory(module_anims)
+add_subdirectory(module_streamed_anims)
 
 
 

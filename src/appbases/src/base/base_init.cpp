@@ -156,6 +156,9 @@ void Base::d3d11_system_events_base()
 
 					)};
 
+
+					//screen_rendering_queue.enableTargetClearing(true);
+
 					Entity* screenRendering_Filter_DirectForward_Quad_Entity{ m_entitygraph.node("screenRendering_Filter_DirectForward_Quad_Entity").data() };
 
 					auto& screenRendering_Filter_DirectForward_Quad_Entity_rendering_aspect{ screenRendering_Filter_DirectForward_Quad_Entity->aspectAccess(core::renderingAspect::id) };

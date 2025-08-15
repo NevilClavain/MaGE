@@ -117,6 +117,66 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					//////////////////////////////////////////
 
 
+					//////////////////////////////////////////
+
+					/////////// commons shaders params
+
+					dataCloud->registerData<maths::Real4Vector>("texture_keycolor_ps.key_color");
+					dataCloud->updateDataValue<maths::Real4Vector>("texture_keycolor_ps.key_color", maths::Real4Vector(0, 0, 0, 1));
+
+
+					dataCloud->registerData<maths::Real4Vector>("std.ambientlight.color");
+					dataCloud->updateDataValue<maths::Real4Vector>("std.ambientlight.color", maths::Real4Vector(0.33, 0.33, 0.33, 1));
+
+
+
+					dataCloud->registerData<maths::Real4Vector>("skydome_emissive_color");
+					dataCloud->updateDataValue<maths::Real4Vector>("skydome_emissive_color", maths::Real4Vector(1.0, 1.0, 1.0, 1));
+
+
+					dataCloud->registerData<maths::Real4Vector>("std.black_color");
+					dataCloud->updateDataValue<maths::Real4Vector>("std.black_color", maths::Real4Vector(0.0, 0.0, 0.0, 1));
+
+					dataCloud->registerData<maths::Real4Vector>("white_color");
+					dataCloud->updateDataValue<maths::Real4Vector>("white_color", maths::Real4Vector(1.0, 1.0, 1.0, 1));
+
+
+					dataCloud->registerData<maths::Real4Vector>("std.light0.dir");
+					dataCloud->updateDataValue<maths::Real4Vector>("std.light0.dir", maths::Real4Vector(0.6, -0.18, 0.1, 1));
+
+					dataCloud->registerData<maths::Real4Vector>("std.fog.color");
+					dataCloud->updateDataValue<maths::Real4Vector>("std.fog.color", maths::Real4Vector(0.8, 0.9, 1, 1));
+
+					dataCloud->registerData<maths::Real4Vector>("std.fog.density");
+					dataCloud->updateDataValue<maths::Real4Vector>("std.fog.density", maths::Real4Vector(0.009, 0, 0, 0));
+
+
+					dataCloud->registerData<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_0");
+					dataCloud->updateDataValue<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_0", maths::Real4Vector(skydomeOuterRadius, skydomeInnerRadius, skydomeOuterRadius * skydomeOuterRadius, skydomeInnerRadius * skydomeInnerRadius));
+
+					dataCloud->registerData<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_1");
+					dataCloud->updateDataValue<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_1", maths::Real4Vector(skydomeScaleDepth, 1.0 / skydomeScaleDepth, 1.0 / (skydomeOuterRadius - skydomeInnerRadius), (1.0 / (skydomeOuterRadius - skydomeInnerRadius)) / skydomeScaleDepth));
+
+					dataCloud->registerData<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_2");
+					dataCloud->updateDataValue<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_2", maths::Real4Vector(1.0 / std::pow(skydomeWaveLength_x, 4.0), 1.0 / std::pow(skydomeWaveLength_y, 4.0), 1.0 / std::pow(skydomeWaveLength_z, 4.0), 0));
+
+					dataCloud->registerData<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_3");
+					dataCloud->updateDataValue<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_3", maths::Real4Vector(skydomeKr, skydomeKm, 4.0 * skydomeKr * 3.1415927, 4.0 * skydomeKm * 3.1415927));
+
+					dataCloud->registerData<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_4");
+					dataCloud->updateDataValue<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_4", maths::Real4Vector(skydomeSkyfromspace_ESun, skydomeSkyfromatmo_ESun, skydomeGroundfromspace_ESun, skydomeGroundfromatmo_ESun));
+
+					dataCloud->registerData<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_5");
+					dataCloud->updateDataValue<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_5", maths::Real4Vector(0.0, 0.0, 0.0, 1));
+
+
+
+					dataCloud->registerData<maths::Real4Vector>("shadow_bias");
+					dataCloud->updateDataValue<maths::Real4Vector>("shadow_bias", maths::Real4Vector(0.005, 0, 0, 0));
+
+					dataCloud->registerData<maths::Real4Vector>("shadowmap_resol");
+					dataCloud->updateDataValue<maths::Real4Vector>("shadowmap_resol", maths::Real4Vector(2048, 0, 0, 0));
+
 				}
 				break;
 			}

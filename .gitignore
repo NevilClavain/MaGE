@@ -150,6 +150,9 @@ ALL_BUILD.vcxproj*
 /src/module_anims/*.sln
 /src/module_anims/*.vcxproj*
 
+/src/module_streamed_anims/CMakeFiles/
+/src/module_streamed_anims/*.sln
+/src/module_streamed_anims/*.vcxproj*
 
 /src/rt/CMakeFiles/
 /src/rt/*.sln
