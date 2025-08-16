@@ -37,40 +37,41 @@
 
 namespace mage
 {
+    namespace json
+    {
+        struct LogOutput
+        {
+            std::string type;
+            std::string id;
+            std::string path;
+
+            JS_OBJ(type, id, path);
+        };
+
+        struct Logger
+        {
+            std::string source;
+            std::string level;
+            std::string state;
+            std::string output;
+
+            JS_OBJ(source, level, state, output);
+        };
+
+        struct Logconf
+        {
+            std::vector<LogOutput>  outputs;
+            std::vector<Logger>     loggers;
+
+            JS_OBJ(outputs, loggers);
+        };
+    }
+
+
     namespace core
     {
         namespace logger
         {
-            namespace json
-            {
-                struct LogOutput
-                {
-                    std::string type;
-                    std::string id;
-                    std::string path;
-
-                    JS_OBJ(type, id, path);
-                };
-
-                struct Logger
-                { 
-                    std::string source;
-                    std::string level;
-                    std::string state;
-                    std::string output;
-
-                    JS_OBJ(source, level, state, output);
-                };
-
-                struct Logconf
-                {
-                    std::vector<LogOutput>  outputs;
-                    std::vector<Logger>     loggers;
-
-                    JS_OBJ(outputs, loggers);
-                };
-            }
-
 
             // fwd decl
             class Output;
