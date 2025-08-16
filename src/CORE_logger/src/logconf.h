@@ -43,7 +43,7 @@ namespace mage
         {
             namespace json
             {
-                struct Output
+                struct LogOutput
                 {
                     std::string type;
                     std::string id;
@@ -64,8 +64,8 @@ namespace mage
 
                 struct Logconf
                 {
-                    std::vector<Output> outputs;
-                    std::vector<Logger> loggers;
+                    std::vector<LogOutput>  outputs;
+                    std::vector<Logger>     loggers;
 
                     JS_OBJ(outputs, loggers);
                 };
@@ -81,17 +81,9 @@ namespace mage
                 Configuration(void);
                 ~Configuration(void) = default;
 
-                void                    registerSink(Sink* p_sink);
-                LONGLONG                getLastTick(void) const;
-
-                /*
-                Json<>::Callback getCallback() const
-                {
-                    return m_cb;
-                }
-                */
-
-                void applyConfiguration(const std::string& p_jsondata);
+                void        registerSink(Sink* p_sink);
+                LONGLONG    getLastTick(void) const;
+                void        applyConfiguration(const std::string& p_jsondata);
 
             private:
 
@@ -112,17 +104,6 @@ namespace mage
                     RECORD_CONFIG,
                     RECORD_LOGGER
                 };
-
-                //ParsingState                                        m_parsing_state{ ParsingState::IDLE };
-
-                //std::string                                         m_mem_output_type;
-                //std::string                                         m_mem_output_id;
-                //std::string                                         m_mem_output_path;
-
-                //std::string                                         m_mem_logger_source;
-                //Sink::Level                                         m_mem_logger_level;
-                //bool                                                m_mem_logger_state;
-                //std::string                                         m_mem_logger_output;
             };
         }
     }

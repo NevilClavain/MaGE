@@ -37,7 +37,6 @@
 
 namespace mage
 {
-
     namespace json
     {
         struct WindowsSettings
