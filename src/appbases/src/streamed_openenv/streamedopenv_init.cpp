@@ -40,6 +40,7 @@
 #include "worldsystem.h"
 #include "dataprintsystem.h"
 #include "renderingqueuesystem.h"
+#include "scenestreamersystem.h"
 
 
 #include "sysengine.h"
@@ -175,9 +176,40 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					dataCloud->registerData<maths::Real4Vector>("shadowmap_resol");
 					dataCloud->updateDataValue<maths::Real4Vector>("shadowmap_resol", maths::Real4Vector(2048, 0, 0, 0));
 
+					const char rendergraph_json[] = R"json(
+					{
+						"descr" : "Fog", 
+						"shaders":
+						[
+							"combiner_fog_vs",
+							"combiner_fog_ps"
+						],
+						"inputs":
+						[
+							{
+								"stage" : 0,
+								"buffer_texture" :
+								{
+									"format_descr" : "TEXTURE_RGB"
+								}
+							},
+							{
+								"stage" : 1,
+								"buffer_texture" :
+								{
+									"format_descr" : "TEXTURE_FLOAT32"
+								}
+							}
+						],
+						"target_stage": 0,
+						"subs":
+						[
+						]
+					}
+					)json";
 
-
-
+					auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot)) };
+					sceneStreamerSystemInstance->buildRendergraphPart(rendergraph_json, "screenRendering_Filter_DirectForward_Quad_Entity");
 
 				}
 				break;

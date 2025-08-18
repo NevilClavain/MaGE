@@ -27,7 +27,6 @@
 
 #include <vector>
 #include <string>
-#include <set>
 #include <json_struct/json_struct.h>
 
 #include "system.h"
@@ -36,35 +35,42 @@ namespace mage
 {
     namespace json
     {
+        static constexpr int fillWithWindowDims{ -1 };
+        static constexpr int fillWithViewportDims{ -1 };
+
         struct BufferTexture
         {
             std::string format_descr; // ex : "TEXTURE_RGB" for Texture::Format::TEXTURE_RGB, "TEXTURE_FLOAT32" for Texture(Texture::Format::TEXTURE_FLOAT32
-            int         width;
-            int         height;
+            int         width{ fillWithWindowDims };
+            int         height{ fillWithWindowDims };
 
             JS_OBJ(format_descr, width, height);
         };
 
         struct StagedBufferTexture
         {
-            int             stage_num;
+            int             stage;
             BufferTexture   buffer_texture;
 
-            JS_OBJ(stage_num, buffer_texture);
+            JS_OBJ(stage, buffer_texture);
         };
 
         struct RenderingTarget
         {
-            std::string                         id;
+            std::string                         descr;
+
+            int                                 width{ fillWithViewportDims };
+            int                                 height{ fillWithViewportDims };
+
             std::vector<std::string>            shaders;
             std::vector<StagedBufferTexture>    inputs;
-            int                                 target_stage_num;
+            int                                 target_stage;
 
-            std::vector<RenderingTarget>        sub_rendering_targets;
+            std::vector<RenderingTarget>        subs;
             
             // also : sub scenes rendering vector
 
-            JS_OBJ(id, shaders, inputs, target_stage_num);
+            JS_OBJ(descr, width, height, shaders, inputs, target_stage, subs);
         };
     }
 
@@ -81,6 +87,7 @@ namespace mage
 
         void run();
 
+        void buildRendergraphPart(const std::string& p_jsonsource, const std::string p_parentEntityId);
 
     private:
 

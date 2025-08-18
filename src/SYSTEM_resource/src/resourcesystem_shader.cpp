@@ -289,7 +289,8 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 				
 				if (metadataParseStatus != JS::Error::NoError)
 				{
-					_EXCEPTION("JSON parse error on " + shader_metadata_path);
+					const auto errorStr{ parseContext.makeErrorString() };
+					_EXCEPTION("JSON parse error on " + shader_metadata_path + " : "  + errorStr);
 				}
 
 				////////////////////////////////

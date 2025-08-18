@@ -100,7 +100,8 @@ void App::init(HINSTANCE p_hInstance, const std::string& p_logconfig_path, const
         json::WindowsSettings windows_settings;
         if (parseContext.parseTo(windows_settings) != JS::Error::NoError)
         {
-            _EXCEPTION("Cannot parse windows settings configuration")
+            const auto errorStr{ parseContext.makeErrorString() };
+            _EXCEPTION("Cannot parse windows settings configuration: " + errorStr)
         }
 
         m_fonts = windows_settings.fonts;

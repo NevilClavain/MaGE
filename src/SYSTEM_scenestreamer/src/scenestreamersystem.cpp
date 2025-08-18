@@ -25,12 +25,14 @@
 #include <string>
 #include <unordered_map>
 #include <sstream>  
+#include <json_struct/json_struct.h>
 
 #include "scenestreamersystem.h"
 #include "entity.h"
 #include "entitygraph.h"
 #include "aspects.h"
 #include "ecshelpers.h"
+#include "exceptions.h"
 
 
 
@@ -43,4 +45,18 @@ SceneStreamerSystem::SceneStreamerSystem(Entitygraph& p_entitygraph) : System(p_
 
 void SceneStreamerSystem::run()
 {
+}
+
+void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, const std::string p_parentEntityId)
+{
+    json::RenderingTarget rt;
+
+    JS::ParseContext parseContext(p_jsonsource);
+    if (parseContext.parseTo(rt) != JS::Error::NoError)
+    {
+        const auto errorStr{ parseContext.makeErrorString() };
+        _EXCEPTION("Cannot parse rendergraph: " + errorStr);
+    }
+
+    _asm nop
 }
