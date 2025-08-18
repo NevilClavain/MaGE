@@ -28,17 +28,47 @@
 #include <vector>
 #include <string>
 #include <set>
-#include "system.h"
+#include <json_struct/json_struct.h>
 
+#include "system.h"
 
 namespace mage
 {
-    //fwd decl
-    namespace rendering
+    namespace json
     {
-        struct Queue;
+        struct BufferTexture
+        {
+            std::string format_descr; // ex : "TEXTURE_RGB" for Texture::Format::TEXTURE_RGB, "TEXTURE_FLOAT32" for Texture(Texture::Format::TEXTURE_FLOAT32
+            int         width;
+            int         height;
+
+            JS_OBJ(format_descr, width, height);
+        };
+
+        struct StagedBufferTexture
+        {
+            int             stage_num;
+            BufferTexture   buffer_texture;
+
+            JS_OBJ(stage_num, buffer_texture);
+        };
+
+        struct RenderingTarget
+        {
+            std::string                         id;
+            std::vector<std::string>            shaders;
+            std::vector<StagedBufferTexture>    inputs;
+            int                                 target_stage_num;
+
+            std::vector<RenderingTarget>        sub_rendering_targets;
+            
+            // also : sub scenes rendering vector
+
+            JS_OBJ(id, shaders, inputs, target_stage_num);
+        };
     }
 
+    //fwd decl
     namespace core { class Entity; }
     namespace core { class Entitygraph; }
    
