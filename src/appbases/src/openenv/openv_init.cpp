@@ -929,7 +929,7 @@ void OpenEnv::create_openenv_rendergraph(const std::string& p_parentEntityId, in
 	const auto combiner_fog_input_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
 	const auto combiner_fog_zdepths_channnel{ Texture(Texture::Format::TEXTURE_FLOAT32, p_w_width, p_w_height) };
 
-	mage::helpers::plugRenderingQuad(m_entitygraph,
+	mage::helpers::plugRenderingTarget(m_entitygraph,
 		"fog_queue",
 		p_characteristics_v_width, p_characteristics_v_height,
 		p_parentEntityId,
@@ -967,7 +967,7 @@ void OpenEnv::create_openenv_rendergraph(const std::string& p_parentEntityId, in
 	const auto combiner_modulate_inputA_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
 	const auto combiner_modulate_inputB_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
 
-	mage::helpers::plugRenderingQuad(m_entitygraph,
+	mage::helpers::plugRenderingTarget(m_entitygraph,
 		"modulate_queue",
 		p_characteristics_v_width, p_characteristics_v_height,
 		"bufferRendering_Combiner_Fog_Quad_Entity",
@@ -1002,7 +1002,7 @@ void OpenEnv::create_openenv_rendergraph(const std::string& p_parentEntityId, in
 	const auto combiner_accumulate_inputC_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
 
 
-	mage::helpers::plugRenderingQuad(m_entitygraph,
+	mage::helpers::plugRenderingTarget(m_entitygraph,
 		"acc_lit_queue",
 		p_characteristics_v_width, p_characteristics_v_height,
 		"bufferRendering_Combiner_Modulate_Quad_Entity",

@@ -217,7 +217,7 @@ void ModuleImpl::d3d11_system_events()
 					const auto rendering_quad_textures_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
 
 
-					mage::helpers::plugRenderingQuad(m_entitygraph,
+					mage::helpers::plugRenderingTarget(m_entitygraph,
 						"fog_queue",
 						characteristics_v_width, characteristics_v_height,
 						"screenRendering_Filter_DirectForward_Quad_Entity",

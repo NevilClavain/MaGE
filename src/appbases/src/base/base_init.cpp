@@ -141,7 +141,7 @@ void Base::d3d11_system_events_base()
 
 					const auto rendering_quad_textures_channnelA{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
 
-					auto& screen_rendering_queue{ mage::helpers::plugRenderingQuad(m_entitygraph,
+					auto& screen_rendering_queue{ mage::helpers::plugRenderingTarget(m_entitygraph,
 						"screen_queue",
 						characteristics_v_width, characteristics_v_height,
 						p_id,

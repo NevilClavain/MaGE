@@ -82,7 +82,7 @@ namespace mage
 												const rendering::Queue& p_renderingqueue,
 												const std::string& p_parentid, const std::string& p_entityid);
 
-		rendering::Queue& plugRenderingQuad( mage::core::Entitygraph& p_entitygraph,
+		rendering::Queue& plugRenderingTarget( mage::core::Entitygraph& p_entitygraph,
 										const std::string& p_queue_debug_name,
 										float p_characteristics_v_width, float p_characteristics_v_height, 
 										const std::string& p_parentid,

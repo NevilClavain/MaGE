@@ -81,7 +81,7 @@ void mage::helpers::installShadowsRendererQueues(mage::core::Entitygraph& p_enti
 	const auto combiner_modulatelitshadows_inputA_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
 	const auto combiner_modulatelitshadows_inputB_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
 
-	mage::helpers::plugRenderingQuad(p_entitygraph,
+	mage::helpers::plugRenderingTarget(p_entitygraph,
 		"mod_lit_shadows_queue",
 		p_characteristics_v_width, p_characteristics_v_height,
 		p_rootpass_queue,
