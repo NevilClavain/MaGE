@@ -100,8 +100,8 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
         entity_queue_name,
         entity_target_name,
         entity_view_name,
-        rt.shaders.at(0),
-        rt.shaders.at(1),
+        rt.shaders.at(0).name,
+        rt.shaders.at(1).name,
         inputs,
         rt.target_stage);
 

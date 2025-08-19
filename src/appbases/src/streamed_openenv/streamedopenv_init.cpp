@@ -181,8 +181,26 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 						"descr" : "Fog", 
 						"shaders":
 						[
-							"combiner_fog_vs",
-							"combiner_fog_ps"
+							{ 
+								"name" : "combiner_fog_vs",
+								"args": 
+								[
+								]
+							},
+							{
+								"name" : "combiner_fog_ps",
+								"args":	
+								[
+									{ 
+										"source" : "std.fog.color",
+										"destination" : "fog_color"
+									},
+									{ 
+										"source" : "std.fog.density",
+										"destination" : "fog_density"
+									}
+								]
+							}
 						],
 						"inputs":
 						[

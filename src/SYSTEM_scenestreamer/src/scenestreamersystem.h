@@ -27,6 +27,7 @@
 
 #include <vector>
 #include <string>
+
 #include <json_struct/json_struct.h>
 
 #include "system.h"
@@ -55,6 +56,22 @@ namespace mage
             JS_OBJ(stage, buffer_texture);
         };
 
+        struct ShaderArg
+        {
+            std::string source;
+            std::string destination;
+
+            JS_OBJ(source, destination);
+        };
+
+        struct ShaderWithArgs
+        {
+            std::string name;
+            std::vector<ShaderArg> args;
+
+            JS_OBJ(name, args);
+        };
+
         struct RenderingTarget
         {
             std::string                         descr;
@@ -62,7 +79,11 @@ namespace mage
             int                                 width{ fillWithViewportDims };
             int                                 height{ fillWithViewportDims };
 
-            std::vector<std::string>            shaders;
+            //std::vector<std::string>            shaders;
+
+            std::vector<ShaderWithArgs>         shaders;
+
+
             std::vector<StagedBufferTexture>    inputs;
             int                                 target_stage;
 
