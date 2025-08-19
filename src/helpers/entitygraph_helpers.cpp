@@ -358,7 +358,7 @@ namespace mage
 											const std::string& p_viewEntityid,
 											const std::string& p_vshader,
 											const std::string& p_pshader,
-											const std::vector<std::pair<size_t, Texture>>& p_renderTargets,
+											const std::vector<std::pair<size_t, Texture>>& p_inputs,
 											size_t p_target_stage)
 		{
 
@@ -436,9 +436,9 @@ namespace mage
 
 			const std::string texture_name_base{ "renderingquad_texture_" };
 
-			for (size_t i = 0; i < p_renderTargets.size(); i++)
+			for (size_t i = 0; i < p_inputs.size(); i++)
 			{
-				quad_resource_aspect.addComponent<std::pair<size_t, Texture>>(texture_name_base + std::to_string(p_renderTargets.at(i).first), p_renderTargets.at(i));
+				quad_resource_aspect.addComponent<std::pair<size_t, Texture>>(texture_name_base + std::to_string(p_inputs.at(i).first), p_inputs.at(i));
 			}
 
 			/////////// Add renderstate

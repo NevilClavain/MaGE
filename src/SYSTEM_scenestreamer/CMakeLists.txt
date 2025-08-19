@@ -26,6 +26,15 @@ project(SYSTEM_scenestreamer)
 include_directories(${CMAKE_SOURCE_DIR}/commons)
 
 include_directories(${CMAKE_SOURCE_DIR}/CORE_ecs/src)
+include_directories(${CMAKE_SOURCE_DIR}/CORE_maths/src)
+include_directories(${CMAKE_SOURCE_DIR}/CORE_buffer/src)
+include_directories(${CMAKE_SOURCE_DIR}/CORE_services/src)
+
+include_directories(${CMAKE_SOURCE_DIR}/RENDERING_control/src)
+include_directories(${CMAKE_SOURCE_DIR}/TRANSFORM_control/src)
+
+include_directories(${CMAKE_SOURCE_DIR}/helpers)
+include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_resource/src)
 
 include_directories(${jsonstruct_include_dir})
 include_directories(${st_tree_include_dir})

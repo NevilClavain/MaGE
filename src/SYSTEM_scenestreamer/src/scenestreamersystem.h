@@ -33,11 +33,11 @@
 
 namespace mage
 {
+    static constexpr int fillWithWindowDims{ -1 };
+    static constexpr int fillWithViewportDims{ -1 };
+
     namespace json
     {
-        static constexpr int fillWithWindowDims{ -1 };
-        static constexpr int fillWithViewportDims{ -1 };
-
         struct BufferTexture
         {
             std::string format_descr; // ex : "TEXTURE_RGB" for Texture::Format::TEXTURE_RGB, "TEXTURE_FLOAT32" for Texture(Texture::Format::TEXTURE_FLOAT32
@@ -87,7 +87,8 @@ namespace mage
 
         void run();
 
-        void buildRendergraphPart(const std::string& p_jsonsource, const std::string p_parentEntityId);
+        void buildRendergraphPart(const std::string& p_jsonsource, const std::string p_parentEntityId,
+                                    int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
 
     private:
 

@@ -78,7 +78,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\CORE_maths\src;C:\dev\MaGE\src\CORE_buffer\src;C:\dev\MaGE\src\CORE_services\src;C:\dev\MaGE\src\RENDERING_control\src;C:\dev\MaGE\src\TRANSFORM_control\src;C:\dev\MaGE\src\helpers;C:\dev\MaGE\src\SYSTEM_resource\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -99,10 +99,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX=1;_FROMCMAKE;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\CORE_maths\src;C:\dev\MaGE\src\CORE_buffer\src;C:\dev\MaGE\src\CORE_services\src;C:\dev\MaGE\src\RENDERING_control\src;C:\dev\MaGE\src\TRANSFORM_control\src;C:\dev\MaGE\src\helpers;C:\dev\MaGE\src\SYSTEM_resource\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\CORE_maths\src;C:\dev\MaGE\src\CORE_buffer\src;C:\dev\MaGE\src\CORE_services\src;C:\dev\MaGE\src\RENDERING_control\src;C:\dev\MaGE\src\TRANSFORM_control\src;C:\dev\MaGE\src\helpers;C:\dev\MaGE\src\SYSTEM_resource\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -115,7 +115,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\CORE_maths\src;C:\dev\MaGE\src\CORE_buffer\src;C:\dev\MaGE\src\CORE_services\src;C:\dev\MaGE\src\RENDERING_control\src;C:\dev\MaGE\src\TRANSFORM_control\src;C:\dev\MaGE\src\helpers;C:\dev\MaGE\src\SYSTEM_resource\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -137,10 +137,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX=1;_FROMCMAKE;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\CORE_maths\src;C:\dev\MaGE\src\CORE_buffer\src;C:\dev\MaGE\src\CORE_services\src;C:\dev\MaGE\src\RENDERING_control\src;C:\dev\MaGE\src\TRANSFORM_control\src;C:\dev\MaGE\src\helpers;C:\dev\MaGE\src\SYSTEM_resource\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\CORE_maths\src;C:\dev\MaGE\src\CORE_buffer\src;C:\dev\MaGE\src\CORE_services\src;C:\dev\MaGE\src\RENDERING_control\src;C:\dev\MaGE\src\TRANSFORM_control\src;C:\dev\MaGE\src\helpers;C:\dev\MaGE\src\SYSTEM_resource\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -153,7 +153,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\CORE_maths\src;C:\dev\MaGE\src\CORE_buffer\src;C:\dev\MaGE\src\CORE_services\src;C:\dev\MaGE\src\RENDERING_control\src;C:\dev\MaGE\src\TRANSFORM_control\src;C:\dev\MaGE\src\helpers;C:\dev\MaGE\src\SYSTEM_resource\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -175,10 +175,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX=1;_FROMCMAKE;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\CORE_maths\src;C:\dev\MaGE\src\CORE_buffer\src;C:\dev\MaGE\src\CORE_services\src;C:\dev\MaGE\src\RENDERING_control\src;C:\dev\MaGE\src\TRANSFORM_control\src;C:\dev\MaGE\src\helpers;C:\dev\MaGE\src\SYSTEM_resource\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\CORE_maths\src;C:\dev\MaGE\src\CORE_buffer\src;C:\dev\MaGE\src\CORE_services\src;C:\dev\MaGE\src\RENDERING_control\src;C:\dev\MaGE\src\TRANSFORM_control\src;C:\dev\MaGE\src\helpers;C:\dev\MaGE\src\SYSTEM_resource\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -191,7 +191,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\CORE_maths\src;C:\dev\MaGE\src\CORE_buffer\src;C:\dev\MaGE\src\CORE_services\src;C:\dev\MaGE\src\RENDERING_control\src;C:\dev\MaGE\src\TRANSFORM_control\src;C:\dev\MaGE\src\helpers;C:\dev\MaGE\src\SYSTEM_resource\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -212,10 +212,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX=1;_FROMCMAKE;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\CORE_maths\src;C:\dev\MaGE\src\CORE_buffer\src;C:\dev\MaGE\src\CORE_services\src;C:\dev\MaGE\src\RENDERING_control\src;C:\dev\MaGE\src\TRANSFORM_control\src;C:\dev\MaGE\src\helpers;C:\dev\MaGE\src\SYSTEM_resource\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\MaGE\src\commons;C:\dev\MaGE\src\CORE_ecs\src;C:\dev\MaGE\src\CORE_maths\src;C:\dev\MaGE\src\CORE_buffer\src;C:\dev\MaGE\src\CORE_services\src;C:\dev\MaGE\src\RENDERING_control\src;C:\dev\MaGE\src\TRANSFORM_control\src;C:\dev\MaGE\src\helpers;C:\dev\MaGE\src\SYSTEM_resource\src;C:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;C:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
