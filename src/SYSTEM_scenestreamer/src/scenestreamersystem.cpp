@@ -105,4 +105,23 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
         inputs,
         rt.target_stage);
 
+
+    // plug shaders args
+
+    Entity* quad_ent{ m_entitygraph.node(entity_target_name).data() };
+    auto& rendering_aspect{ quad_ent->aspectAccess(core::renderingAspect::id) };
+
+    rendering::DrawingControl& dc{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+
+    const auto& vshader{ rt.shaders.at(0) };
+    for (const auto& arg : vshader.args)
+    {
+        dc.vshaders_map.push_back(std::make_pair(arg.source,arg.destination));
+    }
+
+    const auto& pshader{ rt.shaders.at(1) };
+    for (const auto& arg : pshader.args)
+    {
+        dc.vshaders_map.push_back(std::make_pair(arg.source, arg.destination));
+    }
 }

@@ -79,10 +79,7 @@ namespace mage
             int                                 width{ fillWithViewportDims };
             int                                 height{ fillWithViewportDims };
 
-            //std::vector<std::string>            shaders;
-
             std::vector<ShaderWithArgs>         shaders;
-
 
             std::vector<StagedBufferTexture>    inputs;
             int                                 target_stage;
