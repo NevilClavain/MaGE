@@ -57,7 +57,7 @@ void DataPrintSystem::run()
 	// positioning sync vars print bloc at bottomo of the window : compute y position
 	const int y_pos = window_dims[1] - (svNbRows * svRowHeight);
 
-	if(m_display_synchronizedvar) print(m_sv_strings, 0, y_pos, svNbCols, svNbRows, svColWidth, svRowHeight);
+	if(m_display_synchronizedvars) print(m_sv_strings, 0, y_pos, svNbCols, svNbRows, svColWidth, svRowHeight);
 
 	// positioning rendering queues list & infos on the right : compute x position
 
@@ -391,5 +391,5 @@ void DataPrintSystem::showRenderingQueues(bool p_show)
 
 void DataPrintSystem::showSyncVars(bool p_show)
 {
-	m_display_synchronizedvar = p_show;
+	m_display_synchronizedvars = p_show;
 }
