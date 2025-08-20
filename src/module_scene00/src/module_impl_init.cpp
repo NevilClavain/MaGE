@@ -275,14 +275,17 @@ void ModuleImpl::d3d11_system_events()
 						gbl_world_aspect.addComponent<double>("gbl_theta", 0);
 						gbl_world_aspect.addComponent<double>("gbl_phi", 0);
 						gbl_world_aspect.addComponent<double>("gbl_speed", 0);
-						gbl_world_aspect.addComponent<maths::Real3Vector>("gbl_pos", maths::Real3Vector(12.0, -4.0, 7.0));
+
+						static core::maths::Matrix positionmat;
+						positionmat.translation(maths::Real3Vector(12.0, -4.0, 7.0, 1.0));
+						gbl_world_aspect.addComponent<core::maths::Matrix>("gbl_basepos", positionmat);
 
 						gbl_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
 							{
 								// input-output/components keys id mapping
 								{"gimbalLockJointAnim.theta", "gbl_theta"},
 								{"gimbalLockJointAnim.phi", "gbl_phi"},
-								{"gimbalLockJointAnim.position", "gbl_pos"},
+								{"gimbalLockJointAnim.base", "gbl_basepos"},
 								{"gimbalLockJointAnim.speed", "gbl_speed"},
 								{"gimbalLockJointAnim.output", "gbl_output"}
 

@@ -96,12 +96,10 @@ namespace mage
 				{
 
 					const double theta{ p_world_aspect.getComponent<double>(p_keys.at("gimbalLockJointAnim.theta"))->getPurpose() };
-					const double phi{ p_world_aspect.getComponent<double>(p_keys.at("gimbalLockJointAnim.phi"))->getPurpose() }; // to be continued...
+					const double phi{ p_world_aspect.getComponent<double>(p_keys.at("gimbalLockJointAnim.phi"))->getPurpose() }; 
 						
 
-					auto& pos{ p_world_aspect.getComponent<core::maths::Real3Vector>(p_keys.at("gimbalLockJointAnim.position"))->getPurpose() };
-					core::maths::Matrix positionmat;
-					positionmat.translation(pos);
+					auto& base_positionning{ p_world_aspect.getComponent<core::maths::Matrix>(p_keys.at("gimbalLockJointAnim.base"))->getPurpose() };
 				
 					core::maths::Quaternion		    qyaw;
 					core::maths::Quaternion		    qpitch;
@@ -116,7 +114,7 @@ namespace mage
 
 					// store result
 					transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>(p_keys.at("gimbalLockJointAnim.output"))->getPurpose() };
-					wp.local_pos = wp.local_pos * orientation * positionmat;
+					wp.local_pos = wp.local_pos * orientation * base_positionning; // positionmat;
 
 					// update pos with speed
 					const double fps_speed{ p_world_aspect.getComponent<double>(p_keys.at("gimbalLockJointAnim.speed"))->getPurpose() };
@@ -132,10 +130,15 @@ namespace mage
 						core::maths::Real4Vector global_speed;
 
 						orientation.transform(&local_speed, &global_speed);
-
+						
 						core::maths::Real3Vector global_speed3(global_speed[0], global_speed[1], global_speed[2]);
 						
-						pos = pos + global_speed3;
+						core::maths::Matrix global_speed_mat;
+						global_speed_mat.translation(global_speed3);
+
+						// update gimbal lock position
+						const auto base_positionning_temp = base_positionning * global_speed_mat;
+						base_positionning = base_positionning_temp;
 					}
 				}
 			};
