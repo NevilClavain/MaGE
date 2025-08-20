@@ -95,8 +95,17 @@ namespace mage
 
         ///////////////////////////////////////////////////////////////////
 
+        struct MatrixBuilder
+        {
+            std::string type;
 
+            std::string data_cloud;
 
+            double x;
+            double y;
+            double z;
+            double w;
+        };
 
 
 
