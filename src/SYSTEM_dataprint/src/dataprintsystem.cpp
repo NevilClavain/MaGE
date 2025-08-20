@@ -41,8 +41,6 @@ using namespace mage::core;
 
 DataPrintSystem::DataPrintSystem(Entitygraph& p_entitygraph) : System(p_entitygraph)
 {
-	//by default, enable std data display
-	m_display_filters.insert("std");
 }
 
 void DataPrintSystem::run()
@@ -59,13 +57,13 @@ void DataPrintSystem::run()
 	// positioning sync vars print bloc at bottomo of the window : compute y position
 	const int y_pos = window_dims[1] - (svNbRows * svRowHeight);
 
-	print(m_sv_strings, 0, y_pos, svNbCols, svNbRows, svColWidth, svRowHeight);
+	if(m_display_synchronizedvar) print(m_sv_strings, 0, y_pos, svNbCols, svNbRows, svColWidth, svRowHeight);
 
 	// positioning rendering queues list & infos on the right : compute x position
 
 	const int x_pos = window_dims[0] - (rqNbCols * rqColWidth);
 
-	print(m_rq_strings, x_pos, 0, rqNbCols, rqNbRows, rqColWidth, rqRowHeight);
+	if(m_display_renderingqueues) print(m_rq_strings, x_pos, 0, rqNbCols, rqNbRows, rqColWidth, rqRowHeight);
 
 }
 
@@ -384,4 +382,14 @@ void DataPrintSystem::print(const std::vector<std::string>& p_list, int p_x_base
 void DataPrintSystem::addDatacloudFilter(const std::string& p_filter)
 {
 	m_display_filters.insert(p_filter);
+}
+
+void DataPrintSystem::showRenderingQueues(bool p_show)
+{
+	m_display_renderingqueues = p_show;
+}
+
+void DataPrintSystem::showSyncVars(bool p_show)
+{
+	m_display_synchronizedvar = p_show;
 }

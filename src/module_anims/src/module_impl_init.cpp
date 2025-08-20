@@ -110,6 +110,7 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	dataPrintSystem->addDatacloudFilter("resources_event");
 	dataPrintSystem->addDatacloudFilter("current_animation");
 	dataPrintSystem->addDatacloudFilter("debug");
+	dataPrintSystem->addDatacloudFilter("std");
 
 	///////////////////////////
 

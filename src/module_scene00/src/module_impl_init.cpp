@@ -111,6 +111,8 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	// dataprint system filters
 	const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
 	dataPrintSystem->addDatacloudFilter("resources_event");
+	dataPrintSystem->addDatacloudFilter("std");
+
 
 
 	d3d11_system_events();
