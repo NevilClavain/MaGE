@@ -226,11 +226,18 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					}
 					)json";
 
+
+					const char scenegraph_json[] = R"json(
+					{
+					}
+					)json";
+
 					auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot)) };
 
 					sceneStreamerSystemInstance->buildRendergraphPart(rendergraph_json, "screenRendering_Filter_DirectForward_Quad_Entity",
 																		w_width, w_height, characteristics_v_width, characteristics_v_height);
 
+					sceneStreamerSystemInstance->buildScenegraphPart(scenegraph_json, "app_Entity");
 
 
 				}

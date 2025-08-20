@@ -54,7 +54,7 @@ void SceneStreamerSystem::run()
 void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, const std::string p_parentEntityId,
                                                 int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height)
 {
-    json::RenderingTarget rt;
+    json::RenderingTargetNode rt;
 
     JS::ParseContext parseContext(p_jsonsource);
     if (parseContext.parseTo(rt) != JS::Error::NoError)
@@ -124,4 +124,11 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
     {
         dc.vshaders_map.push_back(std::make_pair(arg.source, arg.destination));
     }
+}
+
+void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, const std::string p_parentEntityId)
+{
+
+
+
 }

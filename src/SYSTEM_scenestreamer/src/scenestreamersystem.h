@@ -39,6 +39,8 @@ namespace mage
 
     namespace json
     {
+        // JSON struct for rendergraph nodes
+
         struct BufferTexture
         {
             std::string format_descr; // ex : "TEXTURE_RGB" for Texture::Format::TEXTURE_RGB, "TEXTURE_FLOAT32" for Texture(Texture::Format::TEXTURE_FLOAT32
@@ -66,13 +68,13 @@ namespace mage
 
         struct ShaderWithArgs
         {
-            std::string name;
-            std::vector<ShaderArg> args;
+            std::string             name;
+            std::vector<ShaderArg>  args;
 
             JS_OBJ(name, args);
         };
 
-        struct RenderingTarget
+        struct RenderingTargetNode
         {
             std::string                         descr;
 
@@ -84,19 +86,27 @@ namespace mage
             std::vector<StagedBufferTexture>    inputs;
             int                                 target_stage;
 
-            std::vector<RenderingTarget>        subs;
+            std::vector<RenderingTargetNode>    subs;
             
             // also : sub scenes rendering vector
 
             JS_OBJ(descr, width, height, shaders, inputs, target_stage, subs);
         };
+
+        ///////////////////////////////////////////////////////////////////
+
+
+
+
+
+
     }
 
     //fwd decl
     namespace core { class Entity; }
     namespace core { class Entitygraph; }
    
-    class SceneStreamerSystem : public core::System
+    class SceneStreamerSystem : public mage::core::System
     {
     public:
         SceneStreamerSystem() = delete;
@@ -107,6 +117,9 @@ namespace mage
 
         void buildRendergraphPart(const std::string& p_jsonsource, const std::string p_parentEntityId,
                                     int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
+
+
+        void buildScenegraphPart(const std::string& p_jsonsource, const std::string p_parentEntityId);
 
     private:
 
