@@ -62,9 +62,9 @@ file(
         source_files
 		${CMAKE_SOURCE_DIR}/module_anims/src/*.h
         ${CMAKE_SOURCE_DIR}/module_anims/src/*.cpp
+		${CMAKE_SOURCE_DIR}/module_anims/json/*.json
 		
 )
-
 
 add_library(module_anims SHARED ${source_files})
 
@@ -102,6 +102,8 @@ install(TARGETS module_anims CONFIGURATIONS Release RUNTIME DESTINATION ${CMAKE_
 install(TARGETS module_anims CONFIGURATIONS RelWithDebInfo RUNTIME DESTINATION ${CMAKE_SOURCE_DIR}/apps/RelWithDebInfo)
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/config_deployment/module_anims_config DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>)
+
+install(FILES ${CMAKE_SOURCE_DIR}/module_anims/json/datacloud.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_anims_config)
 
 
 
