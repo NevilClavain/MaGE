@@ -1,5 +1,22 @@
 {
-  "speech":  "blablabla"
+
+  "vars": [
+    {
+      "name": "std.foo0",
+      "type": "integer",
+      "integer": 666
+    },
+    {
+      "name": "std.foo1",
+      "type": "string",
+      "str": "hello"
+    },
+    {
+      "name": "std.foo2",
+      "type": "vec",
+      "vec": [ 1.2, 2.4, 4.6, 6.9 ]
+    }
+  ]
 }
 
 

@@ -28,6 +28,7 @@
 #include <unordered_map>
 #include <random>
 #include <string>
+#include <vector>
 
 #include <json_struct/json_struct.h>
 
@@ -53,6 +54,13 @@ namespace mage
             std::string     str;
             
             JS_OBJ(name, type, integer, vec, str);
+        };
+
+        struct DataCloud
+        {
+            std::vector<DataCloudVar> vars;
+
+            JS_OBJ(vars);
         };
     }
 

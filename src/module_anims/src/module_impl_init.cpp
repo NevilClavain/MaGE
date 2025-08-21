@@ -29,8 +29,9 @@
 #include <unordered_map>
 #include <utility>
 #include <list>
-
 #include <chrono>
+
+#include <json_struct/json_struct.h>
 
 #include "aspects.h"
 
@@ -69,6 +70,8 @@
 #include "entitygraph_helpers.h"
 #include "renderingpasses_helpers.h"
 
+#include "exceptions.h"
+
 using namespace mage;
 using namespace mage::core;
 using namespace mage::rendering;
@@ -101,7 +104,43 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	dataCloud->registerData<double>("current_animation.ticks_duration");
 	dataCloud->registerData<double>("current_animation.seconds_duration");
 
+	// complete datacloud from json
 
+	mage::core::FileContent<char> dataCloudFileContent("./module_anims_config/datacloud.json");
+	dataCloudFileContent.load();
+
+	JS::ParseContext parseContext(dataCloudFileContent.getData());
+	mage::json::DataCloud dataCloudFromFile;
+
+	const auto parse_status{ parseContext.parseTo(dataCloudFromFile) };
+
+	if (parse_status != JS::Error::NoError)
+	{
+		const auto errorStr{ parseContext.makeErrorString() };
+		_EXCEPTION("JSON parse error on datacloud.json : " + errorStr);
+	}
+
+	for (const auto& dcvar : dataCloudFromFile.vars)
+	{
+		if ("integer" == dcvar.type)
+		{
+			dataCloud->registerData<long>(dcvar.name);
+			dataCloud->updateDataValue<long>(dcvar.name, dcvar.integer);
+		}
+		else if ("string" == dcvar.type)
+		{
+			dataCloud->registerData<std::string>(dcvar.name);
+			dataCloud->updateDataValue<std::string>(dcvar.name, dcvar.str);
+		}
+		else if ("vec" == dcvar.type)
+		{
+			dataCloud->registerData<maths::Real4Vector>(dcvar.name);
+			maths::Real4Vector v(dcvar.vec[0], dcvar.vec[1], dcvar.vec[2], dcvar.vec[3]);
+			dataCloud->updateDataValue<maths::Real4Vector>(dcvar.name, v);
+		}
+	}
+
+	//
 
 	auto sysEngine{ SystemEngine::getInstance() };
 
