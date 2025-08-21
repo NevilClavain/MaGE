@@ -29,6 +29,8 @@
 #include <random>
 #include <string>
 
+#include <json_struct/json_struct.h>
+
 #include "module_root.h"
 
 #include "entity.h"
@@ -39,6 +41,21 @@
 
 namespace mage
 {
+    namespace json
+    {
+        struct DataCloudVar
+        {
+            std::string     name;
+            std::string     type;
+
+            long            integer;
+            double          vec[4];
+            std::string     str;
+            
+            JS_OBJ(name, type, integer, vec, str);
+        };
+    }
+
     class Base : public mage::interfaces::ModuleRoot
     {
     public:
@@ -60,36 +77,34 @@ namespace mage
 
         //override
         void                            registerSubscriber(const Callback& p_callback);
-
-
         void                            d3d11_system_events_base();
 
-        static constexpr int                                        timeSystemSlot{ 0 };
-        static constexpr int                                        d3d11SystemSlot{ 1 };
-        static constexpr int                                        resourceSystemSlot{ 2 };
-        static constexpr int                                        worldSystemSlot{ 3 };
-        static constexpr int                                        renderingQueueSystemSlot{ 4 };
-        static constexpr int                                        dataPrintSystemSlot{ 5 };
-        static constexpr int                                        animationsSystemSlot{ 6 };
-        static constexpr int                                        sceneStreamSystemSlot{ 7 };
+        static constexpr int            timeSystemSlot{ 0 };
+        static constexpr int            d3d11SystemSlot{ 1 };
+        static constexpr int            resourceSystemSlot{ 2 };
+        static constexpr int            worldSystemSlot{ 3 };
+        static constexpr int            renderingQueueSystemSlot{ 4 };
+        static constexpr int            dataPrintSystemSlot{ 5 };
+        static constexpr int            animationsSystemSlot{ 6 };
+        static constexpr int            sceneStreamSystemSlot{ 7 };
 
-        bool                                                        m_show_mouse_cursor{ false };
-        bool                                                        m_mouse_relative_mode{ true };
+        bool                            m_show_mouse_cursor{ false };
+        bool                            m_mouse_relative_mode{ true };
 
-        std::string                                                 m_appWindowsEntityName;
+        std::string                     m_appWindowsEntityName;
 
-        int                                                         m_w_width;
-        int                                                         m_w_height;
+        int                             m_w_width;
+        int                             m_w_height;
 
-        float                                                       m_characteristics_v_width;
-        float                                                       m_characteristics_v_height;
+        float                           m_characteristics_v_width;
+        float                           m_characteristics_v_height;
 
-        mage::core::Entitygraph                                     m_entitygraph;
+        mage::core::Entitygraph         m_entitygraph;
 
-        mage::rendering::Queue*                                     m_windowRenderingQueue{ nullptr };
+        mage::rendering::Queue*         m_windowRenderingQueue{ nullptr };
 
-        mage::core::Entity*                                         m_loading_gear{ nullptr };
-        mage::core::Entity*                                         m_logo{ nullptr };
+        mage::core::Entity*             m_loading_gear{ nullptr };
+        mage::core::Entity*             m_logo{ nullptr };
 
     };
 }
