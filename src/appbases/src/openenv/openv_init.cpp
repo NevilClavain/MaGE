@@ -151,6 +151,11 @@ void OpenEnv::d3d11_system_events_openenv()
 					const auto skydomeOuterRadius{ dataCloud->readDataValue<double>("app.skydomeOuterRadius")};
 					const auto skydomeInnerRadius{ dataCloud->readDataValue<double>("app.skydomeInnerRadius")};
 
+					const auto skydomeSkyfromspace_ESun{ dataCloud->readDataValue<double>("app.skydomeSkyfromspace_ESun") };
+					const auto skydomeSkyfromatmo_ESun{ dataCloud->readDataValue<double>("app.skydomeSkyfromatmo_ESun") };
+					const auto skydomeGroundfromspace_ESun{ dataCloud->readDataValue<double>("app.skydomeGroundfromspace_ESun") };
+					const auto skydomeGroundfromatmo_ESun{ dataCloud->readDataValue<double>("app.skydomeGroundfromatmo_ESun") };
+
 					dataCloud->registerData<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_0");
 					dataCloud->updateDataValue<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_0", maths::Real4Vector(skydomeOuterRadius, skydomeInnerRadius, skydomeOuterRadius * skydomeOuterRadius, skydomeInnerRadius * skydomeInnerRadius));
 

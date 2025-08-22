@@ -65,10 +65,7 @@ namespace mage
         mage::core::maths::Matrix                                       m_orthogonal_projection;
 
 
-        static constexpr double         skydomeSkyfromspace_ESun{ 8.7 };
-        static constexpr double         skydomeSkyfromatmo_ESun{ 70.0 };
-        static constexpr double         skydomeGroundfromspace_ESun{ 24.0 };
-        static constexpr double         skydomeGroundfromatmo_ESun{ 12.0 };
+
 
 
 
