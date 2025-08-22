@@ -1,21 +1,23 @@
 {
 
   "vars": [
+
     {
-      "name": "std.foo0",
+      "name": "app.groundLevel",
       "type": "real",
-      "real": 666.666
+      "real": 0
     },
     {
-      "name": "std.foo1",
-      "type": "string",
-      "str": "hello"
+      "name": "app.skydomeOuterRadius",
+      "type": "real",
+      "real": 70000.0
     },
     {
-      "name": "std.foo2",
-      "type": "vec",
-      "vec": [ 1.2, 2.4, 4.6, 6.9 ]
+      "name": "app.skydomeInnerRadius",
+      "type": "real",
+      "real": 68000.0
     }
+
   ]
 }
 

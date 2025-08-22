@@ -148,6 +148,9 @@ void OpenEnv::d3d11_system_events_openenv()
 					dataCloud->updateDataValue<maths::Real4Vector>("std.fog.density", maths::Real4Vector(0.009, 0, 0, 0));
 
 
+					const auto skydomeOuterRadius{ dataCloud->readDataValue<double>("app.skydomeOuterRadius")};
+					const auto skydomeInnerRadius{ dataCloud->readDataValue<double>("app.skydomeInnerRadius")};
+
 					dataCloud->registerData<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_0");
 					dataCloud->updateDataValue<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_0", maths::Real4Vector(skydomeOuterRadius, skydomeInnerRadius, skydomeOuterRadius * skydomeOuterRadius, skydomeInnerRadius * skydomeInnerRadius));
 
@@ -665,6 +668,11 @@ void OpenEnv::create_openenv_scenegraph(const std::string& p_parentEntityId)
 	const float characteristics_v_width{ mainwindows_rendering_aspect.getComponent<float>("eg.std.viewportWidth")->getPurpose() };
 	const float characteristics_v_height{ mainwindows_rendering_aspect.getComponent<float>("eg.std.viewportHeight")->getPurpose() };
 
+
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	const auto groundLevel{ dataCloud->readDataValue<double>("app.groundLevel") };
+	const auto skydomeInnerRadius{ dataCloud->readDataValue<double>("app.skydomeInnerRadius") };
+	const auto skydomeOuterRadius{ dataCloud->readDataValue<double>("app.skydomeOuterRadius") };
 
 	{
 		auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "ground_Entity") };
@@ -1237,6 +1245,9 @@ void OpenEnv::enable_shadows()
 
 		shadowSourceEntities.push_back({ m_treeEntity, passesDescriptors });
 	}
+
+	const auto groundLevel{ dataCloud->readDataValue<double>("app.groundLevel") };
+	const auto skydomeInnerRadius{ dataCloud->readDataValue<double>("app.skydomeInnerRadius") };
 
 	helpers::ShadowsRenderingParams shadowsRenderingParams =
 	{

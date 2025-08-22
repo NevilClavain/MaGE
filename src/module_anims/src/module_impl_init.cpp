@@ -372,6 +372,11 @@ void ModuleImpl::complete_scenegraph(const std::string& p_mainWindowsEntityId)
 
 	const float characteristics_v_width{ mainwindows_rendering_aspect.getComponent<float>("eg.std.viewportWidth")->getPurpose() };
 	const float characteristics_v_height{ mainwindows_rendering_aspect.getComponent<float>("eg.std.viewportHeight")->getPurpose() };
+
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	const auto groundLevel{ dataCloud->readDataValue<double>("app.groundLevel") };
+	const auto skydomeInnerRadius{ dataCloud->readDataValue<double>("app.skydomeInnerRadius") };
+
 	
 	{
 		auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "raptor_Entity") };
