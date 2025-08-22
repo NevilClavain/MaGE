@@ -64,20 +64,6 @@ namespace mage
         mage::core::maths::Matrix                                       m_perpective_projection;
         mage::core::maths::Matrix                                       m_orthogonal_projection;
 
-
-
-
-
-
-        static constexpr double         skydomeWaveLength_x{ 0.650 };
-        static constexpr double         skydomeWaveLength_y{ 0.570 };
-        static constexpr double         skydomeWaveLength_z{ 0.475 };
-        static constexpr double         skydomeKm{ 0.0010 };
-        static constexpr double         skydomeKr{ 0.0033 };
-        static constexpr double         skydomeScaleDepth{ 0.25 };
-
-
-
         void                            d3d11_system_events_openenv();
 
         void                            create_openenv_scenegraph(const std::string& p_parentEntityId);

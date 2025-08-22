@@ -36,8 +36,37 @@
       "name": "app.skydomeGroundfromatmo_ESun",
       "type": "real",
       "real": 12.0
+    },
+    {
+      "name": "app.skydomeWaveLength_x",
+      "type": "real",
+      "real": 0.650
+    },
+    {
+      "name": "app.skydomeWaveLength_y",
+      "type": "real",
+      "real": 0.570
+    },
+    {
+      "name": "app.skydomeWaveLength_z",
+      "type": "real",
+      "real": 0.475
+    },
+    {
+      "name": "app.skydomeKm",
+      "type": "real",
+      "real": 0.0010
+    },
+    {
+      "name": "app.skydomeKr",
+      "type": "real",
+      "real": 0.0033
+    },
+    {
+      "name": "app.skydomeScaleDepth",
+      "type": "real",
+      "real": 0.25
     }
-
   ]
 }
 
