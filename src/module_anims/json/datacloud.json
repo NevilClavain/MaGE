@@ -3,8 +3,8 @@
   "vars": [
     {
       "name": "std.foo0",
-      "type": "integer",
-      "integer": 666
+      "type": "real",
+      "real": 666.666
     },
     {
       "name": "std.foo1",

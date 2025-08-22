@@ -50,10 +50,11 @@ namespace mage
             std::string     type;
 
             long            integer;
+            double          real;
             double          vec[4];
             std::string     str;
             
-            JS_OBJ(name, type, integer, vec, str);
+            JS_OBJ(name, type, integer, real, vec, str);
         };
 
         struct DataCloud

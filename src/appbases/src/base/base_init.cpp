@@ -126,6 +126,11 @@ void Base::init(const std::string p_appWindowsEntityName)
 			dataCloud->registerData<long>(dcvar.name);
 			dataCloud->updateDataValue<long>(dcvar.name, dcvar.integer);
 		}
+		else if ("real" == dcvar.type)
+		{
+			dataCloud->registerData<double>(dcvar.name);
+			dataCloud->updateDataValue<double>(dcvar.name, dcvar.real);
+		}
 		else if ("string" == dcvar.type)
 		{
 			dataCloud->registerData<std::string>(dcvar.name);
