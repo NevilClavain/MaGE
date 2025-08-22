@@ -151,6 +151,22 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					dataCloud->registerData<maths::Real4Vector>("std.fog.density");
 					dataCloud->updateDataValue<maths::Real4Vector>("std.fog.density", maths::Real4Vector(0.009, 0, 0, 0));
 
+					const auto skydomeOuterRadius{ dataCloud->readDataValue<double>("app.skydomeOuterRadius") };
+					const auto skydomeInnerRadius{ dataCloud->readDataValue<double>("app.skydomeInnerRadius") };
+
+					const auto skydomeSkyfromspace_ESun{ dataCloud->readDataValue<double>("app.skydomeSkyfromspace_ESun") };
+					const auto skydomeSkyfromatmo_ESun{ dataCloud->readDataValue<double>("app.skydomeSkyfromatmo_ESun") };
+					const auto skydomeGroundfromspace_ESun{ dataCloud->readDataValue<double>("app.skydomeGroundfromspace_ESun") };
+					const auto skydomeGroundfromatmo_ESun{ dataCloud->readDataValue<double>("app.skydomeGroundfromatmo_ESun") };
+
+					const auto skydomeWaveLength_x{ dataCloud->readDataValue<double>("app.skydomeWaveLength_x") };
+					const auto skydomeWaveLength_y{ dataCloud->readDataValue<double>("app.skydomeWaveLength_y") };
+					const auto skydomeWaveLength_z{ dataCloud->readDataValue<double>("app.skydomeWaveLength_z") };
+
+					const auto skydomeKm{ dataCloud->readDataValue<double>("app.skydomeKm") };
+					const auto skydomeKr{ dataCloud->readDataValue<double>("app.skydomeKr") };
+					const auto skydomeScaleDepth{ dataCloud->readDataValue<double>("app.skydomeScaleDepth") };
+
 
 					dataCloud->registerData<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_0");
 					dataCloud->updateDataValue<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_0", maths::Real4Vector(skydomeOuterRadius, skydomeInnerRadius, skydomeOuterRadius * skydomeOuterRadius, skydomeInnerRadius * skydomeInnerRadius));
