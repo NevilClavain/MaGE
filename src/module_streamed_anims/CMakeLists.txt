@@ -63,7 +63,7 @@ file(
         source_files
 		${CMAKE_SOURCE_DIR}/module_streamed_anims/src/*.h
         ${CMAKE_SOURCE_DIR}/module_streamed_anims/src/*.cpp
-		
+		${CMAKE_SOURCE_DIR}/module_streamed_anims/json/*.json
 )
 
 
@@ -103,6 +103,8 @@ install(TARGETS module_streamed_anims CONFIGURATIONS Release RUNTIME DESTINATION
 install(TARGETS module_streamed_anims CONFIGURATIONS RelWithDebInfo RUNTIME DESTINATION ${CMAKE_SOURCE_DIR}/apps/RelWithDebInfo)
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/config_deployment/module_streamed_anims_config DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>)
+
+install(FILES ${CMAKE_SOURCE_DIR}/module_streamed_anims/json/datacloud.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 
 
 
