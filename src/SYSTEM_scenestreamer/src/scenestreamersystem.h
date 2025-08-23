@@ -93,10 +93,9 @@ namespace mage
             JS_OBJ(descr, width, height, shaders, inputs, target_stage, subs);
         };
 
-        struct RenderingTargetNodeCollection
+        struct RenderingTargetNodesCollection
         {
             std::vector<RenderingTargetNode>     subs;
-
             JS_OBJ(subs);
         };
 
@@ -134,21 +133,20 @@ namespace mage
             JS_OBJ(animator_type, matrix_chain);
         };
 
-        struct EntityNode
+        struct ScenegraphNode
         {
             std::string                 descr;
 
             WorldAspect                 world_aspect;
 
-            std::vector<EntityNode>     subs;
+            std::vector<ScenegraphNode> subs;
 
             JS_OBJ(descr, world_aspect, subs);
         };
 
-        struct EntityNodesCollection
+        struct ScenegraphNodesCollection
         {
-            std::vector<EntityNode>     subs;
-
+            std::vector<ScenegraphNode>     subs;
             JS_OBJ(subs);
         };
     }

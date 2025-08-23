@@ -54,16 +54,7 @@ void SceneStreamerSystem::run()
 void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, const std::string p_parentEntityId,
                                                 int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height)
 {
-    //json::RenderingTargetNode rt;
-
-    //JS::ParseContext parseContext(p_jsonsource);
-    //if (parseContext.parseTo(rt) != JS::Error::NoError)
-    //{
-    //    const auto errorStr{ parseContext.makeErrorString() };
-    //    _EXCEPTION("Cannot parse rendergraph: " + errorStr);
-    //}
-
-    json::RenderingTargetNodeCollection rtc;
+    json::RenderingTargetNodesCollection rtc;
 
     JS::ParseContext parseContext(p_jsonsource);
     if (parseContext.parseTo(rtc) != JS::Error::NoError)
@@ -136,12 +127,21 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
         {
             dc.vshaders_map.push_back(std::make_pair(arg.source, arg.destination));
         }
+
+        // TODO : RECURSIVE CALL ON "subs"
     }
 }
 
 void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, const std::string p_parentEntityId)
 {
+    json::ScenegraphNodesCollection sgc;
 
+    JS::ParseContext parseContext(p_jsonsource);
+    if (parseContext.parseTo(sgc) != JS::Error::NoError)
+    {
+        const auto errorStr{ parseContext.makeErrorString() };
+        _EXCEPTION("Cannot parse scenegraph: " + errorStr);
+    }
 
-
+    _asm nop
 }
