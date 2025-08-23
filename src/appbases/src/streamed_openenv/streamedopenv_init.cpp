@@ -257,7 +257,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 								"world_aspect" : 
 								{
-									"animator_type": "gimbalLockJoin",
+									"type": "gimbalLockJoin",
 									"matrix_chain":
 									[
 										{

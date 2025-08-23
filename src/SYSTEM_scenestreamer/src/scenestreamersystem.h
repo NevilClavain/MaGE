@@ -126,11 +126,11 @@ namespace mage
 
         struct WorldAspect
         {
-            std::string                 animator_type;
+            std::string                 type;
 
             std::vector<MatrixBuilder>  matrix_chain;
 
-            JS_OBJ(animator_type, matrix_chain);
+            JS_OBJ(type, matrix_chain);
         };
 
         struct ScenegraphNode
