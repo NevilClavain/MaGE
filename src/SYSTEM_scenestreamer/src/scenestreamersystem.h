@@ -99,16 +99,50 @@ namespace mage
         {
             std::string type;
 
-            std::string data_cloud;
+            std::string datacloud_xyz;
 
+            std::string datacloud_x;
             double x;
+            
+            std::string datacloud_y;
             double y;
+            
+            std::string datacloud_z;
             double z;
+            
+            std::string datacloud_w;
             double w;
+
+            JS_OBJ(type, datacloud_xyz, datacloud_x, x, datacloud_y, y, datacloud_z, z, datacloud_w, w);
         };
 
 
+        struct WorldAspect
+        {
+            std::string                 animator_type;
 
+            std::vector<MatrixBuilder>  matrix_chain;
+
+            JS_OBJ(animator_type, matrix_chain);
+        };
+
+        struct EntityNode
+        {
+            std::string                 descr;
+
+            WorldAspect                 world_aspect;
+
+            std::vector<EntityNode>     subs;
+
+            JS_OBJ(descr, world_aspect, subs);
+        };
+
+        struct EntityNodesCollection
+        {
+            std::vector<EntityNode>     subs;
+
+            JS_OBJ(subs);
+        };
     }
 
     //fwd decl
