@@ -93,6 +93,14 @@ namespace mage
             JS_OBJ(descr, width, height, shaders, inputs, target_stage, subs);
         };
 
+        struct RenderingTargetNodeCollection
+        {
+            std::vector<RenderingTargetNode>     subs;
+
+            JS_OBJ(subs);
+        };
+
+
         ///////////////////////////////////////////////////////////////////
 
         struct MatrixBuilder

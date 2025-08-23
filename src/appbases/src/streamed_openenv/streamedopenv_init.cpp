@@ -194,50 +194,55 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 					const char rendergraph_json[] = R"json(
 					{
-						"descr" : "Fog", 
-						"shaders":
-						[
-							{ 
-								"name" : "combiner_fog_vs",
-								"args": 
-								[
-								]
-							},
-							{
-								"name" : "combiner_fog_ps",
-								"args":	
-								[
-									{ 
-										"source" : "std.fog.color",
-										"destination" : "fog_color"
-									},
-									{ 
-										"source" : "std.fog.density",
-										"destination" : "fog_density"
-									}
-								]
-							}
-						],
-						"inputs":
-						[
-							{
-								"stage" : 0,
-								"buffer_texture" :
-								{
-									"format_descr" : "TEXTURE_RGB"
-								}
-							},
-							{
-								"stage" : 1,
-								"buffer_texture" :
-								{
-									"format_descr" : "TEXTURE_FLOAT32"
-								}
-							}
-						],
-						"target_stage": 0,
 						"subs":
 						[
+							{
+								"descr" : "Fog", 
+								"shaders":
+								[
+									{ 
+										"name" : "combiner_fog_vs",
+										"args": 
+										[
+										]
+									},
+									{
+										"name" : "combiner_fog_ps",
+										"args":	
+										[
+											{ 
+												"source" : "std.fog.color",
+												"destination" : "fog_color"
+											},
+											{ 
+												"source" : "std.fog.density",
+												"destination" : "fog_density"
+											}
+										]
+									}
+								],
+								"inputs":
+								[
+									{
+										"stage" : 0,
+										"buffer_texture" :
+										{
+											"format_descr" : "TEXTURE_RGB"
+										}
+									},
+									{
+										"stage" : 1,
+										"buffer_texture" :
+										{
+											"format_descr" : "TEXTURE_FLOAT32"
+										}
+									}
+								],
+								"target_stage": 0,
+								"subs":
+								[
+								]
+							}
 						]
 					}
 					)json";
