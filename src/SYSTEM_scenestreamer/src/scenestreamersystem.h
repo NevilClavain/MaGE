@@ -123,14 +123,21 @@ namespace mage
             JS_OBJ(type, datacloud_xyz, datacloud_x, x, datacloud_y, y, datacloud_z, z, datacloud_w, w);
         };
 
-
-        struct WorldAspect
+        struct Animator
         {
             std::string                 type;
-
             std::vector<MatrixBuilder>  matrix_chain;
 
             JS_OBJ(type, matrix_chain);
+        };
+
+
+        struct WorldAspect
+        {
+            // world aspect can have N animators
+            std::vector<Animator>       animators;
+
+            JS_OBJ(animators);
         };
 
         struct ScenegraphNode

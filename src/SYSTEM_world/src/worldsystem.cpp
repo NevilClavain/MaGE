@@ -63,6 +63,8 @@ void WorldSystem::run()
 
 			auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose()};
 
+
+			// /!\ local_pos CLEARED HERE 
 			entity_worldposition.local_pos.identity();
 
 			// get parent entity if exists
