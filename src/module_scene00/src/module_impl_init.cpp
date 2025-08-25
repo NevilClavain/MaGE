@@ -70,18 +70,6 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	const auto dataSize{ logConfFileContent.getDataSize() };
 	const std::string data(logConfFileContent.getData(), dataSize);
 
-	/*
-	mage::core::Json<> jsonParser;
-	jsonParser.registerSubscriber(logger::Configuration::getInstance()->getCallback());
-
-	const auto logParseStatus{ jsonParser.parse(data) };
-
-	if (logParseStatus < 0)
-	{
-		_EXCEPTION("Cannot parse logging configuration")
-	}
-	*/
-
 	logger::Configuration::getInstance()->applyConfiguration(data);
 
 	///////////////////////////
