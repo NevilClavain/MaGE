@@ -49,34 +49,73 @@ void MatrixFactory::setWSource(IMatrixSource<double>* p_source)
 	m_w_source = p_source;
 }
 
+void MatrixFactory::setXYZWSource(IMatrixSource<core::maths::Real4Vector>* p_source)
+{
+	m_xyzw_source = p_source;
+}
+
+void MatrixFactory::setXYZSource(IMatrixSource<core::maths::Real3Vector>* p_source)
+{
+	m_xyz_source = p_source;
+}
+
+
 Matrix MatrixFactory::getResult()
 {
 	// collect and update current values
 
-	if (!m_x_source)
+	if (m_xyzw_source)
 	{
-		_EXCEPTION("Missing source fox x");
-	}
-	m_x = m_x_source->getValue();
+		const auto vec{ m_xyzw_source->getValue() };
 
-	if (!m_y_source)
+		m_x = vec[0];
+		m_y = vec[1];
+		m_z = vec[2];
+		m_w = vec[3];
+	}
+	else if (m_xyz_source)
 	{
-		_EXCEPTION("Missing source fox y");
-	}
-	m_y = m_y_source->getValue();
+		const auto vec{ m_xyz_source->getValue() };
 
-	if (!m_z_source)
+		m_x = vec[0];
+		m_y = vec[1];
+		m_z = vec[2];
+
+		if (!m_w_source)
+		{
+			_EXCEPTION("Missing source fox w");
+		}
+		m_w = m_w_source->getValue();
+
+	}
+	else
 	{
-		_EXCEPTION("Missing source fox z");
-	}
-	m_z = m_z_source->getValue();
+		if (!m_x_source)
+		{
+			_EXCEPTION("Missing source fox x");
+		}
+		m_x = m_x_source->getValue();
 
-	if (!m_w_source)
-	{
-		_EXCEPTION("Missing source fox w");
-	}
-	m_w = m_w_source->getValue();
+		if (!m_y_source)
+		{
+			_EXCEPTION("Missing source fox y");
+		}
+		m_y = m_y_source->getValue();
 
+		if (!m_z_source)
+		{
+			_EXCEPTION("Missing source fox z");
+		}
+		m_z = m_z_source->getValue();
+
+		if (!m_w_source)
+		{
+			_EXCEPTION("Missing source fox w");
+		}
+		m_w = m_w_source->getValue();
+	}
+
+	// build matrix and return
 
 	Matrix result;
 	return result;

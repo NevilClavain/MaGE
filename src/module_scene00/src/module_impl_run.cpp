@@ -167,9 +167,15 @@ void ModuleImpl::run(void)
 
 		mage::transform::DirectValueMatrixSource<double> doublesource(3.14);
 		mage::transform::DirectValueMatrixSource<core::maths::Real4Vector> r4vsource(core::maths::Real4Vector(0.0, 0.1, 0.2, 0.3));
-		mage::transform::DirectValueMatrixSource<core::maths::Real3Vector> r3vsource(core::maths::Real3Vector(0.0, 0.1, 0.2));
+		mage::transform::DirectValueMatrixSource<core::maths::Real3Vector> r3vsource(core::maths::Real3Vector(0.6, 0.5, 0.4));
 
-		//mage::transform::DirectValueMatrixSource<std::string> s2("aaa");
+		mage::transform::MatrixFactory mf;
+		
+		//mf.setXYZWSource(&r4vsource);
+		mf.setXYZSource(&r3vsource);
+		mf.setWSource(&doublesource);
+
+		mf.getResult();
 
 
 		world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator

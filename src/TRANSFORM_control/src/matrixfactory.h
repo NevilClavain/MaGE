@@ -85,21 +85,27 @@ namespace mage
 			void setZSource(IMatrixSource<double>* p_source);
 			void setWSource(IMatrixSource<double>* p_source);
 
+			void setXYZWSource(IMatrixSource<core::maths::Real4Vector>* p_source);
+			void setXYZSource(IMatrixSource<core::maths::Real3Vector>* p_source);
+
 			core::maths::Matrix getResult();
 
 		private:
 
-			double					m_x{ 0 };
-			IMatrixSource<double>*	m_x_source{ nullptr };
+			IMatrixSource<core::maths::Real3Vector>*	m_xyz_source{ nullptr };
+			IMatrixSource<core::maths::Real4Vector>*	m_xyzw_source{ nullptr };
 
-			double					m_y{ 0 };
-			IMatrixSource<double>*	m_y_source{ nullptr };
+			double										m_x{ 0 };
+			IMatrixSource<double>*						m_x_source{ nullptr };
 
-			double					m_z{ 0 };
-			IMatrixSource<double>*	m_z_source{ nullptr };
+			double										m_y{ 0 };
+			IMatrixSource<double>*						m_y_source{ nullptr };
 
-			double					m_w{ 0 };
-			IMatrixSource<double>*	m_w_source{ nullptr };
+			double										m_z{ 0 };
+			IMatrixSource<double>*						m_z_source{ nullptr };
+
+			double										m_w{ 0 };
+			IMatrixSource<double>*						m_w_source{ nullptr };
 		};
 	}
 }
