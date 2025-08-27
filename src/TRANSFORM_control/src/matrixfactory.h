@@ -73,7 +73,6 @@ namespace mage
 			return m_value;
 		}
 
-
 		struct SyncVarValueMatrixSource : public IMatrixSource<double>
 		{
 		public:
@@ -94,9 +93,6 @@ namespace mage
 		{
 			return m_syncvar->value;
 		}
-
-
-
 
 		template<typename T>
 		struct DatacloudValueMatrixSource : public IMatrixSource<T>
