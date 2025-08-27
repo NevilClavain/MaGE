@@ -29,6 +29,7 @@
 #include "matrix.h"
 #include "datacloud.h"
 #include "tvector.h"
+#include "syncvariable.h"
 
 namespace mage
 {
@@ -70,6 +71,58 @@ namespace mage
 		void DirectValueMatrixSource<T>::updateValue(T p_value)
 		{
 			return m_value;
+		}
+
+
+		struct SyncVarValueMatrixSource : public IMatrixSource<double>
+		{
+		public:
+			SyncVarValueMatrixSource(core::SyncVariable* p_syncvar) :
+			m_syncvar(p_syncvar)
+			{
+			}
+
+			inline double getValue() const;
+
+		private:
+	
+			core::SyncVariable* m_syncvar{ nullptr };
+
+		};
+
+		double SyncVarValueMatrixSource::getValue() const
+		{
+			return m_syncvar->value;
+		}
+
+
+
+
+		template<typename T>
+		struct DatacloudValueMatrixSource : public IMatrixSource<T>
+		{
+			static_assert(std::is_arithmetic<T>::value || mage::core::maths::is_tvector<T>::value, "Need an arithmetic or tvector type");
+
+		public:
+			DatacloudValueMatrixSource(const std::string& p_valueId) :
+			m_valueId(p_valueId)
+			{
+			}
+
+			inline T getValue() const;
+			
+
+		private:
+			std::string m_valueId;
+
+		};
+
+		template<typename T>
+		T DatacloudValueMatrixSource<T>::getValue() const
+		{
+			const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+
+			return dataCloud->readDataValue<T>(m_valueId);
 		}
 
 		// dynamically build matrix with values taken from : datacloud or sync var components or hardcoded vals 

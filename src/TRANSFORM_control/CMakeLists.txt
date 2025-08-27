@@ -24,6 +24,7 @@ cmake_minimum_required(VERSION 3.5)
 project(TRANSFORM_control)
 
 include_directories(${CMAKE_SOURCE_DIR}/commons)
+include_directories(${CMAKE_SOURCE_DIR}/CORE_time/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_maths/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_ecs/src)
 include_directories(${CMAKE_SOURCE_DIR}/RENDERING_control/src)
