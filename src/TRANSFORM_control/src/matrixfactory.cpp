@@ -29,6 +29,13 @@ using namespace mage;
 using namespace mage::transform;
 using namespace mage::core::maths;
 
+std::unordered_map <std::string, std::function<core::maths::Matrix(double p_x, double p_y, double p_z, double p_w)>> MatrixFactory::m_build_funcs;
+
+MatrixFactory::MatrixFactory(const std::string& p_build_type):
+m_build_type(p_build_type)
+{
+}
+
 void MatrixFactory::setXSource(IMatrixSource<double>* p_source)
 {
 	m_x_source = p_source;
@@ -81,43 +88,50 @@ Matrix MatrixFactory::getResult()
 		m_y = vec[1];
 		m_z = vec[2];
 
-		if (!m_w_source)
+		if (m_w_source)
 		{
-			_EXCEPTION("Missing source fox w");
+			m_w = m_w_source->getValue();
 		}
-		m_w = m_w_source->getValue();
-
 	}
 	else
 	{
-		if (!m_x_source)
+		if (m_x_source)
 		{
-			_EXCEPTION("Missing source fox x");
+			m_x = m_x_source->getValue();
 		}
-		m_x = m_x_source->getValue();
-
-		if (!m_y_source)
+		
+		if (m_y_source)
 		{
-			_EXCEPTION("Missing source fox y");
+			m_y = m_y_source->getValue();
 		}
-		m_y = m_y_source->getValue();
-
-		if (!m_z_source)
+		
+		if (m_z_source)
 		{
-			_EXCEPTION("Missing source fox z");
+			m_z = m_z_source->getValue();
 		}
-		m_z = m_z_source->getValue();
-
-		if (!m_w_source)
+		
+		if (m_w_source)
 		{
-			_EXCEPTION("Missing source fox w");
+			m_w = m_w_source->getValue();
 		}
-		m_w = m_w_source->getValue();
 	}
 
 	// build matrix and return
 
-	Matrix result;
+	if (0 == m_build_funcs.count(m_build_type))
+	{
+		_EXCEPTION("unknown matrix build type :" + m_build_type);
+	}
+
+	const Matrix result{ m_build_funcs.at(m_build_type)(m_x, m_y, m_z, m_w) };
 	return result;
 }
 
+void MatrixFactory::registerBuildFunc(const std::string& p_id, const buildFunc& p_func)
+{
+	const auto place{ m_build_funcs.emplace(p_id, p_func) };
+	if (!place.second) 
+	{
+		_EXCEPTION("build func already registered : " + p_id)
+	}
+}

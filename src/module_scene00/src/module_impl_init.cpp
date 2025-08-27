@@ -57,6 +57,9 @@
 
 #include "entitygraph_helpers.h"
 
+#include "matrix.h"
+#include "matrixfactory.h"
+
 using namespace mage;
 using namespace mage::core;
 
@@ -105,6 +108,45 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 
 	d3d11_system_events();
 	resource_system_events();
+
+
+	// setup Matrix factories lambdas
+
+	const std::function<core::maths::Matrix(double, double, double, double)> build_translation
+	{
+		[](double p_x, double p_y, double p_z, double p_w) -> core::maths::Matrix
+		{
+			core::maths::Matrix mat;
+			mat.translation(p_x, p_y, p_z);
+
+			return mat;
+		}
+	};
+	mage::transform::MatrixFactory::registerBuildFunc("translation", build_translation);
+
+	const std::function<core::maths::Matrix(double, double, double, double)> build_rotation
+	{
+		[](double p_x, double p_y, double p_z, double p_w) -> core::maths::Matrix
+		{
+			core::maths::Matrix mat;
+			mat.rotation(core::maths::Real3Vector(p_x, p_y, p_z), p_w);
+
+			return mat;
+		}
+	};
+	mage::transform::MatrixFactory::registerBuildFunc("rotation", build_rotation);
+
+	const std::function<core::maths::Matrix(double, double, double, double)> build_scaling
+	{
+		[](double p_x, double p_y, double p_z, double p_w) -> core::maths::Matrix
+		{
+			core::maths::Matrix mat;
+			mat.scale(core::maths::Real4Vector(p_x, p_y, p_z, p_w));
+
+			return mat;
+		}
+	};
+	mage::transform::MatrixFactory::registerBuildFunc("scaling", build_scaling);
 
 	//////////////////////////
 

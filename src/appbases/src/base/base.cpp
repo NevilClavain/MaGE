@@ -53,7 +53,6 @@
 #include "animatorfunc.h"
 #include "animators_helpers.h"
 
-
 using namespace mage;
 using namespace mage::core;
 using namespace mage::rendering;
@@ -62,7 +61,7 @@ using namespace mage::rendering;
 Base::Base()
 {
 	/////////// create common specific logger for events
-	services::LoggerSharing::getInstance()->createLogger("Events");
+	services::LoggerSharing::getInstance()->createLogger("Events");	
 }
 
 

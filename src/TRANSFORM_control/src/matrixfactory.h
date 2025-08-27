@@ -25,6 +25,8 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
+#include <functional>
 
 #include "matrix.h"
 #include "datacloud.h"
@@ -126,7 +128,9 @@ namespace mage
 		{
 		public:
 
-			MatrixFactory() = default;
+			using buildFunc = std::function <core::maths::Matrix(double p_x, double p_y, double p_z, double p_w)>;
+
+			MatrixFactory(const std::string& p_build_type);
 			~MatrixFactory() = default;
 
 			void setXSource(IMatrixSource<double>* p_source);
@@ -138,6 +142,8 @@ namespace mage
 			void setXYZSource(IMatrixSource<core::maths::Real3Vector>* p_source);
 
 			core::maths::Matrix getResult();
+
+			static void registerBuildFunc(const std::string& p_id, const buildFunc& p_func);
 
 		private:
 
@@ -155,6 +161,11 @@ namespace mage
 
 			double										m_w{ 0 };
 			IMatrixSource<double>*						m_w_source{ nullptr };
+
+			std::string									m_build_type;
+
+			static std::unordered_map 
+				<std::string, buildFunc>				m_build_funcs;
 		};
 	}
 }

@@ -169,13 +169,13 @@ void ModuleImpl::run(void)
 		mage::transform::DirectValueMatrixSource<core::maths::Real4Vector> r4vsource(core::maths::Real4Vector(0.0, 0.1, 0.2, 0.3));
 		mage::transform::DirectValueMatrixSource<core::maths::Real3Vector> r3vsource(core::maths::Real3Vector(0.6, 0.5, 0.4));
 
-		mage::transform::MatrixFactory mf;
+		mage::transform::MatrixFactory mf("translation");
 		
 		//mf.setXYZWSource(&r4vsource);
 		mf.setXYZSource(&r3vsource);
 		mf.setWSource(&doublesource);
 
-		mf.getResult();
+		const auto m{ mf.getResult() };
 
 
 		world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
