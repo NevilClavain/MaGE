@@ -241,6 +241,10 @@ ALL_BUILD.vcxproj*
 /src/SYSTEM_animations/*.sln
 /src/SYSTEM_animations/*.vcxproj*
 
+/src/SYSTEM_scenestreamer/CMakeFiles/
+/src/SYSTEM_scenestreamer/*.sln
+/src/SYSTEM_scenestreamer/*.vcxproj*
+
 
 /src/helpers/CMakeFiles/
 /src/helpers/*.sln
