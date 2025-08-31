@@ -155,14 +155,6 @@ void ModuleImpl::run(void)
 		auto& world_aspect{ quadEntity->makeAspect(core::worldAspect::id) };
 		world_aspect.addComponent<transform::WorldPosition>("output");
 
-		//world_aspect.addComponent<transform::Animator>("animator_roty", transform::Animator(
-		//	{
-		//		{"yRotJointAnim.angle", "y_rotation_angle"},
-		//		{"yRotJointAnim.output", "output"}
-		//	},
-		//	helpers::makeYRotationJointAnimator()
-		//));
-
 		// connect sync var component to sync var matrix source
 		world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>("y_rotation_matrix_source", &quad_time_aspect.getComponent<SyncVariable>("y_rotation_angle")->getPurpose());
 
