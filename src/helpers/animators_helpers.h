@@ -38,27 +38,6 @@ namespace mage
 {
 	namespace helpers
 	{
-		auto makeYRotationJointAnimator()
-		{
-			const auto animator
-			{
-				[](const core::ComponentContainer& p_world_aspect,
-					const core::ComponentContainer& p_time_aspect,
-					const transform::WorldPosition& p_parent_pos,
-					const std::unordered_map<std::string, std::string>& p_keys)
-				{
-					const auto& y_rotation_angle{ p_time_aspect.getComponent<core::SyncVariable>(p_keys.at("yRotJointAnim.angle"))->getPurpose()};
-
-					core::maths::Matrix rotation_mat;
-					rotation_mat.rotation(core::maths::Real3Vector(0.0, 1.0, 0.0), y_rotation_angle.value);
-
-					transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>(p_keys.at("yRotJointAnim.output"))->getPurpose() };
-					wp.local_pos = wp.local_pos * rotation_mat;
-				}
-			};
-
-			return animator;
-		}
 
 		auto makeXYZSliderJointAnimator()
 		{

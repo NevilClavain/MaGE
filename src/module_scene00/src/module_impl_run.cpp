@@ -153,7 +153,6 @@ void ModuleImpl::run(void)
 		/////////// World position
 
 		auto& world_aspect{ quadEntity->makeAspect(core::worldAspect::id) };
-
 		world_aspect.addComponent<transform::WorldPosition>("output");
 
 		//world_aspect.addComponent<transform::Animator>("animator_roty", transform::Animator(
@@ -164,19 +163,41 @@ void ModuleImpl::run(void)
 		//	helpers::makeYRotationJointAnimator()
 		//));
 
+		// connect sync var component to sync var matrix source
+		world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>("y_rotation_matrix_source", &quad_time_aspect.getComponent<SyncVariable>("y_rotation_angle")->getPurpose());
 
-		mage::transform::DirectValueMatrixSource<double> doublesource(3.14);
-		mage::transform::DirectValueMatrixSource<core::maths::Real4Vector> r4vsource(core::maths::Real4Vector(0.0, 0.1, 0.2, 0.3));
-		mage::transform::DirectValueMatrixSource<core::maths::Real3Vector> r3vsource(core::maths::Real3Vector(0.6, 0.5, 0.4));
+		// define rotation axis
+		world_aspect.addComponent<mage::transform::DirectValueMatrixSource<core::maths::Real3Vector>>("rotation_axis", core::maths::Real3Vector(0.0, 0.0, 1.0));
 
-		mage::transform::MatrixFactory mf("translation");
+		mage::transform::MatrixFactory y_rotation_matrix("rotation");
+
+		// connect rotation axis to matrix factory
+		y_rotation_matrix.setXYZSource(&world_aspect.getComponent<mage::transform::DirectValueMatrixSource<core::maths::Real3Vector>>("rotation_axis")->getPurpose());
+
+		// connect sync var matrix source to matrix factory
+		y_rotation_matrix.setWSource(&world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>("y_rotation_matrix_source")->getPurpose());
 		
-		//mf.setXYZWSource(&r4vsource);
-		mf.setXYZSource(&r3vsource);
-		mf.setWSource(&doublesource);
+		//add matrix factory component
 
-		const auto m{ mf.getResult() };
+		world_aspect.addComponent<mage::transform::MatrixFactory>("y_rotation_matrix", y_rotation_matrix);
 
+
+		world_aspect.addComponent<transform::Animator>("animator_roty", transform::Animator
+		(
+			{},
+			[=](const core::ComponentContainer& p_world_aspect,
+				const core::ComponentContainer& p_time_aspect,
+				const transform::WorldPosition&,
+				const std::unordered_map<std::string, std::string>&)
+			{
+				auto& mf{ p_world_aspect.getComponent<mage::transform::MatrixFactory>("y_rotation_matrix")->getPurpose()};
+
+				const auto rotation_mat{ mf.getResult() };
+
+				transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("output")->getPurpose() };
+				wp.local_pos = wp.local_pos * rotation_mat;		
+			}
+		));
 
 		world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
 		(
