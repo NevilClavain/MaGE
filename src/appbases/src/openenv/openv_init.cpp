@@ -926,19 +926,38 @@ void OpenEnv::create_openenv_scenegraph(const std::string& p_parentEntityId)
 	gbl_world_aspect.addComponent<double>("gbl_speed", 0);
 
 	core::maths::Matrix positionmat;
-	positionmat.translation(maths::Real3Vector(-50.0, skydomeInnerRadius + groundLevel + 5, 1.0));
-	gbl_world_aspect.addComponent<core::maths::Matrix>("gbl_basepos", positionmat);
+
+	positionmat.translation(maths::Real3Vector(0.0, 0.0, 0.0));
+	gbl_world_aspect.addComponent<core::maths::Matrix>("gbl_pos", positionmat);
 
 	gbl_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
 		{
 			// input-output/components keys id mapping
 			{"gimbalLockJointAnim.theta", "gbl_theta"},
 			{"gimbalLockJointAnim.phi", "gbl_phi"},
-			{"gimbalLockJointAnim.base", "gbl_basepos"},
+			{"gimbalLockJointAnim.pos", "gbl_pos"},
 			{"gimbalLockJointAnim.speed", "gbl_speed"},
 			{"gimbalLockJointAnim.output", "gbl_output"}
 
-		}, helpers::makeGimbalLockJointAnimator()));
+		}, helpers::makeGimbalLockJointAnimator())
+	);
+
+	gbl_world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
+	(
+		{},
+		[=](const core::ComponentContainer& p_world_aspect,
+			const core::ComponentContainer& p_time_aspect,
+			const transform::WorldPosition&,
+			const std::unordered_map<std::string, std::string>&)
+		{
+
+			maths::Matrix positionmat;
+			positionmat.translation(maths::Real3Vector(-50.0, skydomeInnerRadius + groundLevel + 5, 1.0));
+
+			transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("gbl_output")->getPurpose() };
+			wp.local_pos = wp.local_pos * positionmat;
+		}
+	));
 
 
 	// add camera
