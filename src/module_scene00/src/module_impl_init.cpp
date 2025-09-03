@@ -373,13 +373,15 @@ void ModuleImpl::d3d11_system_events()
 						fullgbl_world_aspect.addComponent<maths::Real3Vector>("rot_axis_y", maths::YAxisVector);
 						fullgbl_world_aspect.addComponent<maths::Real3Vector>("rot_axis_z", maths::ZAxisVector);
 
-						fullgbl_world_aspect.addComponent<maths::Real3Vector>("fullgbl_pos", maths::Real3Vector(0.0, -1.0, 9.0));
+						//fullgbl_world_aspect.addComponent<maths::Real3Vector>("fullgbl_pos", maths::Real3Vector(0.0, -1.0, 9.0));
+						fullgbl_world_aspect.addComponent<maths::Real3Vector>("fullgbl_pos", maths::Real3Vector(0.0, 0.0, 0.0));
+
 						fullgbl_world_aspect.addComponent<maths::Quaternion>("fullgbl_quat");
 
 						fullgbl_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
 							{
 								// input-output/components keys id mapping
-								{"fullGimbalJointAnim.position", "fullgbl_pos"},
+								{"fullGimbalJointAnim.pos", "fullgbl_pos"},
 								{"fullGimbalJointAnim.quat", "fullgbl_quat"},
 								{"fullGimbalJointAnim.speed", "fullgbl_speed"},
 								{"fullGimbalJointAnim.rot_axis_x", "rot_axis_x"},
@@ -390,7 +392,26 @@ void ModuleImpl::d3d11_system_events()
 								{"fullGimbalJointAnim.rot_speed_z", "rspeed_z"},
 								{"fullGimbalJointAnim.output", "fullgbl_output"}
 
-							}, helpers::makeFullGimbalJointAnimator()));
+							}, helpers::makeFreeGimbalJointAnimator())
+						);
+
+						fullgbl_world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
+						(
+							{},
+							[=](const core::ComponentContainer& p_world_aspect,
+								const core::ComponentContainer& p_time_aspect,
+								const transform::WorldPosition&,
+								const std::unordered_map<std::string, std::string>&)
+							{
+
+								maths::Matrix positionmat;
+								positionmat.translation(maths::Real3Vector(0.0, -1.0, 19.0));
+
+								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("fullgbl_output")->getPurpose() };
+								wp.local_pos = wp.local_pos * positionmat;
+							}
+						));
+
 
 						// add camera to scene
 						maths::Matrix projection;
@@ -473,8 +494,8 @@ void ModuleImpl::d3d11_system_events()
 					m_bufferRenderingQueue = &renderingAspect.getComponent<rendering::Queue>("renderingQueue")->getPurpose();
 
 					//m_bufferRenderingQueue->setMainView("Camera01Entity");
-					//m_bufferRenderingQueue->setMainView("Camera02Entity");
-					m_bufferRenderingQueue->setMainView("Camera03Entity");
+					m_bufferRenderingQueue->setMainView("Camera02Entity");
+					//m_bufferRenderingQueue->setMainView("Camera03Entity");
 
 
 					////////////////////////////////////////////////////////////////////////////////////

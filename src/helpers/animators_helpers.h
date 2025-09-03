@@ -125,7 +125,7 @@ namespace mage
 			return animator;								
 		}
 
-		auto makeFullGimbalJointAnimator()
+		auto makeFreeGimbalJointAnimator()
 		{
 			const auto animator
 			{
@@ -135,7 +135,7 @@ namespace mage
 					const std::unordered_map<std::string, std::string>& p_keys)
 				{
 						
-					auto& pos{ p_world_aspect.getComponent<core::maths::Real3Vector>(p_keys.at("fullGimbalJointAnim.position"))->getPurpose() };
+					auto& pos{ p_world_aspect.getComponent<core::maths::Real3Vector>(p_keys.at("fullGimbalJointAnim.pos"))->getPurpose() };
 					core::maths::Matrix positionmat;
 					positionmat.translation(pos);
 
