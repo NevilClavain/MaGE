@@ -102,33 +102,104 @@ namespace mage
 
         ///////////////////////////////////////////////////////////////////
 
-        struct MatrixBuilder
+        struct ScalarDirectValueMatrixSource
         {
-            std::string type;
+            std::string         descr;
+            double              value;
 
-            std::string datacloud_xyz;
-
-            std::string datacloud_x;
-            double x;
-            
-            std::string datacloud_y;
-            double y;
-            
-            std::string datacloud_z;
-            double z;
-            
-            std::string datacloud_w;
-            double w;
-
-            JS_OBJ(type, datacloud_xyz, datacloud_x, x, datacloud_y, y, datacloud_z, z, datacloud_w, w);
+            JS_OBJ(descr, value);
         };
+
+        struct Vector3DirectValueMatrixSource
+        {
+            std::string         descr;
+            double              x;
+            double              y;
+            double              z;
+
+            JS_OBJ(descr, x, y, z);
+        };
+
+        struct Vector4DirectValueMatrixSource
+        {
+            std::string         descr;
+
+            double              x;
+            double              y;
+            double              z;
+            double              w;
+
+            JS_OBJ(descr, x, y, z, w);
+        };
+
+        struct SyncVarValueMatrixSource
+        {
+            std::string         descr;
+            std::string         syncvar_name;
+
+            JS_OBJ(descr, syncvar_name);
+        };
+
+        struct ScalarDatacloudValueMatrixSource
+        {
+            std::string         descr;
+            std::string         var_name;
+
+            JS_OBJ(descr, var_name);
+        };
+
+        struct Vector3DatacloudValueMatrixSource
+        {
+            std::string         descr;
+            std::string         var_name;
+
+            JS_OBJ(descr, var_name);
+        };
+
+        struct Vector4DatacloudValueMatrixSource
+        {
+            std::string         descr;
+            std::string         var_name;
+
+            JS_OBJ(descr, var_name);
+        };
+
+        struct MatrixFactory
+        {
+            std::string                         type; //"translation", "rotation", "scaling"
+
+            SyncVarValueMatrixSource            x_syncvar_value;
+            SyncVarValueMatrixSource            y_syncvar_value;
+            SyncVarValueMatrixSource            z_syncvar_value;
+            SyncVarValueMatrixSource            w_syncvar_value;
+
+            Vector4DatacloudValueMatrixSource   xyzw_datacloud_value;
+            Vector3DatacloudValueMatrixSource   xyz_datacloud_value;
+            ScalarDatacloudValueMatrixSource    x_datacloud_value;
+            ScalarDatacloudValueMatrixSource    y_datacloud_value;
+            ScalarDatacloudValueMatrixSource    z_datacloud_value;
+            ScalarDatacloudValueMatrixSource    w_datacloud_value;
+
+            Vector4DirectValueMatrixSource      xyzw_direct_value;
+            Vector3DirectValueMatrixSource      xyz_direct_value;
+            ScalarDirectValueMatrixSource       x_direct_value;
+            ScalarDirectValueMatrixSource       y_direct_value;
+            ScalarDirectValueMatrixSource       z_direct_value;
+            ScalarDirectValueMatrixSource       w_direct_value;
+
+            JS_OBJ(type, x_syncvar_value, y_syncvar_value, z_syncvar_value, 
+                        xyzw_datacloud_value, xyz_datacloud_value, x_datacloud_value, y_datacloud_value, z_datacloud_value, w_datacloud_value,
+                        xyzw_direct_value, xyz_direct_value, x_direct_value, y_direct_value, w_direct_value);
+        };
+
 
         struct Animator
         {
-            std::string                 type;
-            std::vector<MatrixBuilder>  matrix_chain;
+            std::string                 helper;
 
-            JS_OBJ(type, matrix_chain);
+            MatrixFactory               matrix_factory; // remplacer par plusieurs MatrixFactory attributs nommés selon le animator helper
+
+            JS_OBJ(helper, matrix_factory);
         };
 
 

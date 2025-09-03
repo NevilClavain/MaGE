@@ -260,28 +260,12 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 									"animators":
 									[
 										{
-											"type": "gimbalLockJoin",
-											"matrix_chain":
-											[
-												{
-													"type": "translation",
-													"x": -50.0,
-													"y": 0.0,
-													"z": 1.0
-												},
-												{
-													"type": "translation",
-													"x": 0.0,
-													"datacloud_y": "app.skydomeInnerRadius",
-													"z": 0.0
-												},
-												{
-													"type": "translation",
-													"x": 0.0,
-													"datacloud_y": "app.groundLevel",
-													"z": 0.0
-												}
-											]
+											"helper": "gimbalLockJoin",
+
+											"matrix_factory":
+											{
+												"type": "translation"
+											}
 										}
 									]
 								},

@@ -143,5 +143,5 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
         _EXCEPTION("Cannot parse scenegraph: " + errorStr);
     }
 
-    _asm nop
+    
 }
