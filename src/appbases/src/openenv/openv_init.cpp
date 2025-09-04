@@ -927,8 +927,7 @@ void OpenEnv::create_openenv_scenegraph(const std::string& p_parentEntityId)
 
 	core::maths::Matrix positionmat;
 
-	positionmat.translation(maths::Real3Vector(0.0, 0.0, 0.0));
-	gbl_world_aspect.addComponent<core::maths::Matrix>("gbl_pos", positionmat);
+	gbl_world_aspect.addComponent<core::maths::Real3Vector>("gbl_pos", maths::Real3Vector(0.0, 0.0, 0.0));
 
 	gbl_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
 		{

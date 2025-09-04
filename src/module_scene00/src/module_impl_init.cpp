@@ -308,10 +308,7 @@ void ModuleImpl::d3d11_system_events()
 						gbl_world_aspect.addComponent<double>("gbl_phi", 0);
 						gbl_world_aspect.addComponent<double>("gbl_speed", 0);
 
-						static core::maths::Matrix positionmat;
-						//positionmat.translation(maths::Real3Vector(12.0, -4.0, 7.0, 1.0));
-						positionmat.translation(maths::Real3Vector(0.0, 0.0, 0.0, 1.0));
-						gbl_world_aspect.addComponent<core::maths::Matrix>("gbl_pos", positionmat);
+						gbl_world_aspect.addComponent<core::maths::Real3Vector>("gbl_pos", maths::Real3Vector(0.0, 0.0, 0.0));
 
 						gbl_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
 							{
@@ -335,7 +332,7 @@ void ModuleImpl::d3d11_system_events()
 							{
 
 								maths::Matrix positionmat;
-								positionmat.translation(maths::Real3Vector(12.0, -4.0, 7.0));
+								positionmat.translation(maths::Real3Vector(2.0, 4.0, 7.0));
 
 								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("gbl_output")->getPurpose() };
 								wp.local_pos = wp.local_pos * positionmat;
@@ -493,8 +490,8 @@ void ModuleImpl::d3d11_system_events()
 
 					m_bufferRenderingQueue = &renderingAspect.getComponent<rendering::Queue>("renderingQueue")->getPurpose();
 
-					//m_bufferRenderingQueue->setMainView("Camera01Entity");
-					m_bufferRenderingQueue->setMainView("Camera02Entity");
+					m_bufferRenderingQueue->setMainView("Camera01Entity");
+					//m_bufferRenderingQueue->setMainView("Camera02Entity");
 					//m_bufferRenderingQueue->setMainView("Camera03Entity");
 
 
