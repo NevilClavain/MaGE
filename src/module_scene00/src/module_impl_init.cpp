@@ -429,7 +429,7 @@ void ModuleImpl::d3d11_system_events()
 						auto& slider_world_aspect{ sliderJointEntity->makeAspect(core::worldAspect::id) };
 
 
-						slider_world_aspect.addComponent<transform::WorldPosition>("slider_output");
+						slider_world_aspect.addComponent<transform::WorldPosition>("output");
 
 						SyncVariable x_slide_pos(SyncVariable::Type::POSITION, 5.0, SyncVariable::Direction::INC, 0.0);
 						x_slide_pos.state = SyncVariable::State::OFF;
@@ -444,15 +444,35 @@ void ModuleImpl::d3d11_system_events()
 						slider_time_aspect.addComponent<SyncVariable>("y_slide_pos", y_slide_pos);
 						slider_time_aspect.addComponent<SyncVariable>("z_slide_pos", z_slide_pos);
 
-						slider_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
+						slider_world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>("x_slide_pos_matrix_source", &slider_time_aspect.getComponent<SyncVariable>("x_slide_pos")->getPurpose());
+						slider_world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>("y_slide_pos_matrix_source", &slider_time_aspect.getComponent<SyncVariable>("y_slide_pos")->getPurpose());
+						slider_world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>("z_slide_pos_matrix_source", &slider_time_aspect.getComponent<SyncVariable>("z_slide_pos")->getPurpose());
+
+
+						mage::transform::MatrixFactory slider_matrix_factory("translation");
+
+						slider_matrix_factory.setXSource(&slider_world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>("x_slide_pos_matrix_source")->getPurpose());
+						slider_matrix_factory.setYSource(&slider_world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>("y_slide_pos_matrix_source")->getPurpose());
+						slider_matrix_factory.setZSource(&slider_world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>("z_slide_pos_matrix_source")->getPurpose());
+
+						slider_world_aspect.addComponent<mage::transform::MatrixFactory>("slider_matrix_factory", slider_matrix_factory);
+
+						slider_world_aspect.addComponent<transform::Animator>("slider", transform::Animator
+						(
+							{},
+							[=](const core::ComponentContainer& p_world_aspect,
+								const core::ComponentContainer& p_time_aspect,
+								const transform::WorldPosition&,
+								const std::unordered_map<std::string, std::string>&)
 							{
-								{"xyzSliderJointAnim.x_pos", "x_slide_pos"},
-								{"xyzSliderJointAnim.y_pos", "y_slide_pos"},
-								{"xyzSliderJointAnim.z_pos", "z_slide_pos"},
-								{"xyzSliderJointAnim.output", "slider_output"}
+								auto& mf{ p_world_aspect.getComponent<mage::transform::MatrixFactory>("slider_matrix_factory")->getPurpose() };
 
-							}, helpers::makeXYZSliderJointAnimator()));
+								const auto rotation_mat{ mf.getResult() };
 
+								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("output")->getPurpose() };
+								wp.local_pos = wp.local_pos * rotation_mat;
+							}
+						));
 
 						auto& lookatJointEntityNode{ m_entitygraph.add(sliderJointEntityNode, "lookatJointEntity") };
 
@@ -490,9 +510,9 @@ void ModuleImpl::d3d11_system_events()
 
 					m_bufferRenderingQueue = &renderingAspect.getComponent<rendering::Queue>("renderingQueue")->getPurpose();
 
-					m_bufferRenderingQueue->setMainView("Camera01Entity");
+					//m_bufferRenderingQueue->setMainView("Camera01Entity");
 					//m_bufferRenderingQueue->setMainView("Camera02Entity");
-					//m_bufferRenderingQueue->setMainView("Camera03Entity");
+					m_bufferRenderingQueue->setMainView("Camera03Entity");
 
 
 					////////////////////////////////////////////////////////////////////////////////////

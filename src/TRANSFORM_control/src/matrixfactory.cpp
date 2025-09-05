@@ -31,7 +31,11 @@ using namespace mage::core::maths;
 
 std::unordered_map <std::string, std::function<core::maths::Matrix(double p_x, double p_y, double p_z, double p_w)>> MatrixFactory::m_build_funcs;
 
-MatrixFactory::MatrixFactory(const std::string& p_build_type):
+MatrixFactory::MatrixFactory(const std::string& p_build_type, double p_x, double p_y, double p_z, double p_w):
+m_x(p_x),
+m_y(p_y),
+m_z(p_z),
+m_w(p_z),
 m_build_type(p_build_type)
 {
 }

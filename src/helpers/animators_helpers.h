@@ -38,32 +38,6 @@ namespace mage
 {
 	namespace helpers
 	{
-
-		auto makeXYZSliderJointAnimator()
-		{
-			const auto animator
-			{
-				[](const core::ComponentContainer& p_world_aspect,
-					const core::ComponentContainer& p_time_aspect,
-					const transform::WorldPosition& p_parent_pos,
-					const std::unordered_map<std::string, std::string>& p_keys)
-				{
-					const auto& x_pos{ p_time_aspect.getComponent<core::SyncVariable>(p_keys.at("xyzSliderJointAnim.x_pos"))->getPurpose()};
-					const auto& y_pos{ p_time_aspect.getComponent<core::SyncVariable>(p_keys.at("xyzSliderJointAnim.y_pos"))->getPurpose()};
-					const auto& z_pos{ p_time_aspect.getComponent<core::SyncVariable>(p_keys.at("xyzSliderJointAnim.z_pos"))->getPurpose() };
-
-					core::maths::Matrix translation_mat;
-					translation_mat.translation(x_pos.value, y_pos.value, z_pos.value);
-
-					transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>(p_keys.at("xyzSliderJointAnim.output"))->getPurpose() };
-					wp.local_pos = wp.local_pos * translation_mat;
-				}
-			};
-
-			return animator;
-		}
-
-
 		auto makeGimbalLockJointAnimator()
 		{
 			const auto animator
@@ -310,6 +284,5 @@ namespace mage
 
 			return animator;
 		}
-
 	}
 }

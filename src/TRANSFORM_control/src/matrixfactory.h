@@ -130,7 +130,7 @@ namespace mage
 
 			using buildFunc = std::function <core::maths::Matrix(double p_x, double p_y, double p_z, double p_w)>;
 
-			MatrixFactory(const std::string& p_build_type);
+			MatrixFactory(const std::string& p_build_type, double p_x = 0.0, double p_y = 0.0, double p_z = 0.0, double p_w = 0.0);
 			~MatrixFactory() = default;
 
 			void setXSource(IMatrixSource<double>* p_source);
@@ -150,16 +150,16 @@ namespace mage
 			IMatrixSource<core::maths::Real3Vector>*	m_xyz_source{ nullptr };
 			IMatrixSource<core::maths::Real4Vector>*	m_xyzw_source{ nullptr };
 
-			double										m_x{ 0 };
+			double										m_x;
 			IMatrixSource<double>*						m_x_source{ nullptr };
 
-			double										m_y{ 0 };
+			double										m_y;
 			IMatrixSource<double>*						m_y_source{ nullptr };
 
-			double										m_z{ 0 };
+			double										m_z;
 			IMatrixSource<double>*						m_z_source{ nullptr };
 
-			double										m_w{ 0 };
+			double										m_w;
 			IMatrixSource<double>*						m_w_source{ nullptr };
 
 			std::string									m_build_type;
