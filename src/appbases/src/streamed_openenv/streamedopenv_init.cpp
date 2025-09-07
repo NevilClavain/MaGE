@@ -260,11 +260,56 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 									"animators":
 									[
 										{
-											"helper": "gimbalLockJoin",
-
+											"helper": "gimbalLockJoin"
+										},
+										{
+											"helper": "matrixFactory",
 											"matrix_factory":
 											{
-												"type": "translation"
+												"type": "translation",
+
+												"x_direct_value":
+												{
+													"descr" : "cameraGblJoint_Entity initial pos in x",
+													"value": -50
+												},
+
+												"y_datacloud_value":
+												{
+													"descr" : "cameraGblJoint_Entity initial pos in y",
+													"var_name": "app.skydomeInnerRadius"
+												},
+
+												"z_direct_value":
+												{
+													"descr" : "cameraGblJoint_Entity initial pos in z",
+													"value": 1.5
+												}
+											}
+										},
+										{
+											"helper": "matrixFactory",
+											"matrix_factory":
+											{
+												"type": "translation",
+
+												"x_direct_value":
+												{
+													"descr" : "cameraGblJoint_Entity initial pos in x",
+													"value": 0
+												},
+
+												"y_datacloud_value":
+												{
+													"descr" : "cameraGblJoint_Entity initial pos in y",
+													"var_name": "app.groundLevel"
+												},
+
+												"z_direct_value":
+												{
+													"descr" : "cameraGblJoint_Entity initial pos in z",
+													"value": 0
+												}
 											}
 										}
 									]
