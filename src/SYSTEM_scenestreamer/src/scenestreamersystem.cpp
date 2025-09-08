@@ -63,72 +63,84 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
         _EXCEPTION("Cannot parse rendergraph: " + errorStr);
     }
 
-
-    for (const auto& rt : rtc.subs)
+    const std::function<void(const json::RenderingTargetNode&, int)> browseHierarchy
     {
-        const std::unordered_map<std::string, mage::Texture::Format> texture_format_translation
+        [&](const json::RenderingTargetNode& p_node, int depth)
         {
-            { "TEXTURE_RGB", mage::Texture::Format::TEXTURE_RGB },
-            { "TEXTURE_FLOAT", mage::Texture::Format::TEXTURE_FLOAT },
-            { "TEXTURE_FLOAT32", mage::Texture::Format::TEXTURE_FLOAT32 },
-            { "TEXTURE_FLOATVECTOR", mage::Texture::Format::TEXTURE_FLOATVECTOR },
-            { "TEXTURE_FLOATVECTOR32", mage::Texture::Format::TEXTURE_FLOATVECTOR32 },
-        };
 
-        std::vector<std::pair<size_t, Texture>> inputs;
+            const std::unordered_map<std::string, mage::Texture::Format> texture_format_translation
+            {
+                { "TEXTURE_RGB", mage::Texture::Format::TEXTURE_RGB },
+                { "TEXTURE_FLOAT", mage::Texture::Format::TEXTURE_FLOAT },
+                { "TEXTURE_FLOAT32", mage::Texture::Format::TEXTURE_FLOAT32 },
+                { "TEXTURE_FLOATVECTOR", mage::Texture::Format::TEXTURE_FLOATVECTOR },
+                { "TEXTURE_FLOATVECTOR32", mage::Texture::Format::TEXTURE_FLOATVECTOR32 },
+            };
 
-        for (const auto& input : rt.inputs)
-        {
-            int final_w_width = (fillWithWindowDims == input.buffer_texture.width ? p_w_width : input.buffer_texture.width);
-            int final_h_width = (fillWithWindowDims == input.buffer_texture.height ? p_w_height : input.buffer_texture.height);
+            std::vector<std::pair<size_t, Texture>> inputs;
 
-            const auto input_channnel{ Texture(texture_format_translation.at(input.buffer_texture.format_descr), final_w_width, final_h_width) };
+            for (const auto& input : p_node.inputs)
+            {
+                int final_w_width = (fillWithWindowDims == input.buffer_texture.width ? p_w_width : input.buffer_texture.width);
+                int final_h_width = (fillWithWindowDims == input.buffer_texture.height ? p_w_height : input.buffer_texture.height);
 
-            inputs.push_back(std::make_pair(input.stage, input_channnel));
+                const auto input_channnel{ Texture(texture_format_translation.at(input.buffer_texture.format_descr), final_w_width, final_h_width) };
+
+                inputs.push_back(std::make_pair(input.stage, input_channnel));
+            }
+
+            int final_v_width = (fillWithViewportDims == p_node.width ? p_w_width : p_characteristics_v_width);
+            int final_v_height = (fillWithViewportDims == p_node.height ? p_w_height : p_characteristics_v_height);
+
+            const std::string queue_name{ p_node.descr + "_queue" };
+
+            const std::string entity_queue_name{ p_node.descr + "Buffer_queue" };
+            const std::string entity_target_name{ p_node.descr + "Buffer_targetquad" };
+            const std::string entity_view_name{ p_node.descr + "Buffer_view" };
+
+            mage::helpers::plugRenderingTarget(m_entitygraph,
+                queue_name,
+                final_v_width, final_v_height,
+                p_parentEntityId,
+                entity_queue_name,
+                entity_target_name,
+                entity_view_name,
+                p_node.shaders.at(0).name,
+                p_node.shaders.at(1).name,
+                inputs,
+                p_node.target_stage);
+
+
+            // plug shaders args
+
+            Entity* quad_ent{ m_entitygraph.node(entity_target_name).data() };
+            auto& rendering_aspect{ quad_ent->aspectAccess(core::renderingAspect::id) };
+
+            rendering::DrawingControl& dc{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+
+            const auto& vshader{ p_node.shaders.at(0) };
+            for (const auto& arg : vshader.args)
+            {
+                dc.vshaders_map.push_back(std::make_pair(arg.source, arg.destination));
+            }
+
+            const auto& pshader{ p_node.shaders.at(1) };
+            for (const auto& arg : pshader.args)
+            {
+                dc.vshaders_map.push_back(std::make_pair(arg.source, arg.destination));
+            }
+
+            // recursive call
+            for (auto& e : p_node.subs)
+            {
+                browseHierarchy(e, depth + 1);
+            }
         }
+    };
 
-        int final_v_width = (fillWithViewportDims == rt.width ? p_w_width : p_characteristics_v_width);
-        int final_v_height = (fillWithViewportDims == rt.height ? p_w_height : p_characteristics_v_height);
-
-        const std::string queue_name{ rt.descr + "_queue" };
-
-        const std::string entity_queue_name{ rt.descr + "Buffer_queue" };
-        const std::string entity_target_name{ rt.descr + "Buffer_targetquad" };
-        const std::string entity_view_name{ rt.descr + "Buffer_view" };
-
-        mage::helpers::plugRenderingTarget(m_entitygraph,
-            queue_name,
-            final_v_width, final_v_height,
-            p_parentEntityId,
-            entity_queue_name,
-            entity_target_name,
-            entity_view_name,
-            rt.shaders.at(0).name,
-            rt.shaders.at(1).name,
-            inputs,
-            rt.target_stage);
-
-
-        // plug shaders args
-
-        Entity* quad_ent{ m_entitygraph.node(entity_target_name).data() };
-        auto& rendering_aspect{ quad_ent->aspectAccess(core::renderingAspect::id) };
-
-        rendering::DrawingControl& dc{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
-
-        const auto& vshader{ rt.shaders.at(0) };
-        for (const auto& arg : vshader.args)
-        {
-            dc.vshaders_map.push_back(std::make_pair(arg.source, arg.destination));
-        }
-
-        const auto& pshader{ rt.shaders.at(1) };
-        for (const auto& arg : pshader.args)
-        {
-            dc.vshaders_map.push_back(std::make_pair(arg.source, arg.destination));
-        }
-
-        // TODO : RECURSIVE CALL ON "subs"
+    for (const auto& e : rtc.subs)
+    {
+        browseHierarchy(e, 0);
     }
 }
 
