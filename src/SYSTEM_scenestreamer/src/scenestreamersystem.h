@@ -217,9 +217,11 @@ namespace mage
 
             WorldAspect                 world_aspect;
 
+            std::string                 helper;
+
             std::vector<ScenegraphNode> subs;
 
-            JS_OBJ(descr, world_aspect, subs);
+            JS_OBJ(descr, world_aspect, helper, subs);
         };
 
         struct ScenegraphNodesCollection

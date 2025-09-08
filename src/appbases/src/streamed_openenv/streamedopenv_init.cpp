@@ -317,6 +317,10 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 								"subs":
 								[
+									{
+										"descr": "camera_Entity",
+										"helper": "plugCamera"
+									}
 								]
 							}
 						]

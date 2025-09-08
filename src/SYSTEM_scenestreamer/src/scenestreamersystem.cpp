@@ -143,5 +143,21 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
         _EXCEPTION("Cannot parse scenegraph: " + errorStr);
     }
 
-    
+    const std::function<void(const json::ScenegraphNode&, int)> browseHierarchy
+    {
+        [&](const json::ScenegraphNode& p_node, int depth)
+        {
+
+            // recursive call
+            for (auto& e : p_node.subs)
+            {
+                browseHierarchy(e, depth + 1);
+            }
+        }
+    };
+
+    for (const auto& e : sgc.subs)
+    {
+        browseHierarchy(e, 0);
+    }
 }
