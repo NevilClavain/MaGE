@@ -51,7 +51,7 @@ void SceneStreamerSystem::run()
 {
 }
 
-void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, const std::string p_parentEntityId,
+void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId,
                                                 int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height)
 {
     json::RenderingTargetNodesCollection rtc;
@@ -63,11 +63,10 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
         _EXCEPTION("Cannot parse rendergraph: " + errorStr);
     }
 
-    const std::function<void(const json::RenderingTargetNode&, int)> browseHierarchy
+    const std::function<void(const json::RenderingTargetNode&, const std::string&, int)> browseHierarchy
     {
-        [&](const json::RenderingTargetNode& p_node, int depth)
+        [&](const json::RenderingTargetNode& p_node, const std::string& p_parent_id, int depth)
         {
-
             const std::unordered_map<std::string, mage::Texture::Format> texture_format_translation
             {
                 { "TEXTURE_RGB", mage::Texture::Format::TEXTURE_RGB },
@@ -101,7 +100,7 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
             mage::helpers::plugRenderingTarget(m_entitygraph,
                 queue_name,
                 final_v_width, final_v_height,
-                p_parentEntityId,
+                p_parent_id,
                 entity_queue_name,
                 entity_target_name,
                 entity_view_name,
@@ -133,18 +132,18 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
             // recursive call
             for (auto& e : p_node.subs)
             {
-                browseHierarchy(e, depth + 1);
+                browseHierarchy(e, entity_target_name, depth + 1);
             }
         }
     };
 
     for (const auto& e : rtc.subs)
     {
-        browseHierarchy(e, 0);
+        browseHierarchy(e, p_parentEntityId, 0);
     }
 }
 
-void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, const std::string p_parentEntityId)
+void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId)
 {
     json::ScenegraphNodesCollection sgc;
 
@@ -155,21 +154,31 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
         _EXCEPTION("Cannot parse scenegraph: " + errorStr);
     }
 
-    const std::function<void(const json::ScenegraphNode&, int)> browseHierarchy
+    const std::function<void(const json::ScenegraphNode&, const std::string&, int)> browseHierarchy
     {
-        [&](const json::ScenegraphNode& p_node, int depth)
+        [&](const json::ScenegraphNode& p_node, const std::string& p_parent_id, int depth)
         {
+            // ICI
+
+            if ("" != p_node.helper)
+            {
+
+            }
+            else
+            {
+
+            }
 
             // recursive call
             for (auto& e : p_node.subs)
             {
-                browseHierarchy(e, depth + 1);
+                browseHierarchy(e, p_node.descr, depth + 1);
             }
         }
     };
 
     for (const auto& e : sgc.subs)
     {
-        browseHierarchy(e, 0);
+        browseHierarchy(e, p_parentEntityId, 0);
     }
 }
