@@ -31,6 +31,7 @@
 #include <json_struct/json_struct.h>
 
 #include "system.h"
+#include "matrix.h"
 
 namespace mage
 {
@@ -248,10 +249,9 @@ namespace mage
                                     int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
 
 
-        void buildScenegraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId);
+        void buildScenegraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId, 
+                                    const mage::core::maths::Matrix p_perspective_projection);
 
-    private:
-
-    
+    private:    
     };
 }

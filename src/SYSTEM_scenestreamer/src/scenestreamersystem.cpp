@@ -143,7 +143,7 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
     }
 }
 
-void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId)
+void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId, const mage::core::maths::Matrix p_perspective_projection)
 {
     json::ScenegraphNodesCollection sgc;
 
@@ -162,11 +162,22 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
 
             if ("" != p_node.helper)
             {
-
+                if ("plugCamera" == p_node.helper)
+                {
+                    helpers::plugCamera(m_entitygraph, p_perspective_projection, p_parent_id, p_node.descr);
+                }
             }
             else
             {
+                if (p_node.world_aspect.animators.size() > 0)
+                {
+                    auto& entityNode{ m_entitygraph.add(m_entitygraph.node(p_parentEntityId), p_node.descr) };
+                    const auto entity{ entityNode.data() };
 
+                    entity->makeAspect(core::timeAspect::id);
+
+                    auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
+                }
             }
 
             // recursive call

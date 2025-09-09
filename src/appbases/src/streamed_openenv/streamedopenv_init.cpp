@@ -115,6 +115,11 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					const int w_height{ window_dims.y() };
 
 
+					m_perpective_projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
+					m_orthogonal_projection.orthogonal(characteristics_v_width * 400, characteristics_v_height * 400, 1.0, 100000.00000000000);
+
+
+
 					//////////////////////////////////////////
 
 
@@ -332,7 +337,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					sceneStreamerSystemInstance->buildRendergraphPart(rendergraph_json, "screenRendering_Filter_DirectForward_Quad_Entity",
 																		w_width, w_height, characteristics_v_width, characteristics_v_height);
 
-					sceneStreamerSystemInstance->buildScenegraphPart(scenegraph_json, "app_Entity");
+					sceneStreamerSystemInstance->buildScenegraphPart(scenegraph_json, "app_Entity", m_perpective_projection);
 
 
 				}
