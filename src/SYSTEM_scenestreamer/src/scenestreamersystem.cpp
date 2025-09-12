@@ -38,6 +38,8 @@
 #include "exceptions.h"
 #include "texture.h"
 #include "entitygraph_helpers.h"
+#include "animators_helpers.h"
+#include "matrixfactory.h"
 
 
 using namespace mage;
@@ -158,8 +160,6 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
     {
         [&](const json::ScenegraphNode& p_node, const std::string& p_parent_id, int depth)
         {
-            // ICI
-
             if ("" != p_node.helper)
             {
                 if ("plugCamera" == p_node.helper)
@@ -177,6 +177,163 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                     entity->makeAspect(core::timeAspect::id);
 
                     auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
+
+                    for (const auto& animator : p_node.world_aspect.animators)
+                    {
+                        if ("gimbalLockJoin" == animator.helper)
+                        {
+                            world_aspect.addComponent<transform::WorldPosition>("gbl_output");
+
+                            world_aspect.addComponent<double>("gbl_theta", 0);
+                            world_aspect.addComponent<double>("gbl_phi", 0);
+                            world_aspect.addComponent<double>("gbl_speed", 0);
+
+                            core::maths::Matrix positionmat;
+                            world_aspect.addComponent<core::maths::Real3Vector>("gbl_pos", maths::Real3Vector(0.0, 0.0, 0.0));
+
+                            world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
+                                {
+                                    // input-output/components keys id mapping
+                                    {"gimbalLockJointAnim.theta", "gbl_theta"},
+                                    {"gimbalLockJointAnim.phi", "gbl_phi"},
+                                    {"gimbalLockJointAnim.pos", "gbl_pos"},
+                                    {"gimbalLockJointAnim.speed", "gbl_speed"},
+                                    {"gimbalLockJointAnim.output", "gbl_output"}
+
+                                }, helpers::makeGimbalLockJointAnimator())
+                            );
+                        }
+                        else if ("matrixFactory" == animator.helper)
+                        {
+                            mage::transform::MatrixFactory matrix_factory(animator.matrix_factory.type);
+
+                            if ("" != animator.matrix_factory.xyzw_datacloud_value.descr)
+                            {
+                                world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<core::maths::Real4Vector>>(animator.matrix_factory.xyzw_datacloud_value.descr,
+                                                                                                                                    animator.matrix_factory.xyzw_datacloud_value.var_name);
+                                                            
+                                matrix_factory.setXYZWSource(&world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<core::maths::Real4Vector>>(animator.matrix_factory.xyzw_datacloud_value.descr)->getPurpose());
+                            }
+                            else if("" != animator.matrix_factory.xyzw_direct_value.descr)
+                            {
+                                world_aspect.addComponent<mage::transform::DirectValueMatrixSource<core::maths::Real4Vector>>(animator.matrix_factory.xyzw_direct_value.descr,
+                                                                                                                               core::maths::Real4Vector(animator.matrix_factory.xyzw_direct_value.x,
+                                                                                                                                                        animator.matrix_factory.xyzw_direct_value.y,
+                                                                                                                                                        animator.matrix_factory.xyzw_direct_value.z,
+                                                                                                                                                        animator.matrix_factory.xyzw_direct_value.w));
+
+                                matrix_factory.setXYZWSource(&world_aspect.getComponent<mage::transform::DirectValueMatrixSource<core::maths::Real4Vector>>(animator.matrix_factory.xyzw_direct_value.descr)->getPurpose());
+                            }
+                            else
+                            {
+                                if ("" != animator.matrix_factory.xyz_datacloud_value.descr)
+                                {
+                                    world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<core::maths::Real3Vector>>(animator.matrix_factory.xyz_datacloud_value.descr,
+                                                                                                                                        animator.matrix_factory.xyz_datacloud_value.var_name);
+
+                                    matrix_factory.setXYZSource(&world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<core::maths::Real3Vector>>(animator.matrix_factory.xyz_datacloud_value.descr)->getPurpose());
+
+                                    // W
+                                    if ("" != animator.matrix_factory.w_datacloud_value.descr)
+                                    {
+                                        // TODO
+                                    }
+                                    else if ("" != animator.matrix_factory.w_syncvar_value.descr)
+                                    {
+                                        // TODO
+                                    }
+                                    else if ("" != animator.matrix_factory.w_direct_value.descr)
+                                    {
+                                        // TODO
+                                    }
+                                }
+                                else if ("" != animator.matrix_factory.xyz_direct_value.descr)
+                                {
+                                    world_aspect.addComponent<mage::transform::DirectValueMatrixSource<core::maths::Real3Vector>>(animator.matrix_factory.xyz_direct_value.descr,
+                                                                                                                                    core::maths::Real3Vector(animator.matrix_factory.xyzw_direct_value.x,
+                                                                                                                                                                animator.matrix_factory.xyzw_direct_value.y,
+                                                                                                                                                                animator.matrix_factory.xyzw_direct_value.z));
+
+                                    matrix_factory.setXYZSource(&world_aspect.getComponent<mage::transform::DirectValueMatrixSource<core::maths::Real3Vector>>(animator.matrix_factory.xyz_datacloud_value.descr)->getPurpose());
+
+
+                                    // W
+                                    if ("" != animator.matrix_factory.w_datacloud_value.descr)
+                                    {
+                                        // TODO
+                                    }
+                                    else if ("" != animator.matrix_factory.w_syncvar_value.descr)
+                                    {
+                                        // TODO
+                                    }
+                                    else if ("" != animator.matrix_factory.w_direct_value.descr)
+                                    {
+                                        // TODO
+                                    }
+                                }
+                                else
+                                {
+                                    // X
+                                    if ("" != animator.matrix_factory.x_datacloud_value.descr)
+                                    {
+                                        // TODO
+                                    }
+                                    else if ("" != animator.matrix_factory.x_syncvar_value.descr)
+                                    {
+                                        // TODO
+                                    }
+                                    else if ("" != animator.matrix_factory.x_direct_value.descr)
+                                    {
+                                        // TODO
+                                    }
+
+                                    // Y
+                                    if ("" != animator.matrix_factory.y_datacloud_value.descr)
+                                    {
+                                        // TODO
+                                    }
+                                    else if ("" != animator.matrix_factory.y_syncvar_value.descr)
+                                    {
+                                        // TODO
+                                    }
+                                    else if ("" != animator.matrix_factory.y_direct_value.descr)
+                                    {
+                                        // TODO
+                                    }
+
+                                    // Z
+                                    if ("" != animator.matrix_factory.z_datacloud_value.descr)
+                                    {
+                                        // TODO
+                                    }
+                                    else if ("" != animator.matrix_factory.z_syncvar_value.descr)
+                                    {
+                                        // TODO
+                                    }
+                                    else if ("" != animator.matrix_factory.z_direct_value.descr)
+                                    {
+                                        // TODO
+                                    }
+
+                                    // W
+                                    if ("" != animator.matrix_factory.w_datacloud_value.descr)
+                                    {
+                                        // TODO
+                                    }
+                                    else if ("" != animator.matrix_factory.w_syncvar_value.descr)
+                                    {
+                                        // TODO
+                                    }
+                                    else if ("" != animator.matrix_factory.w_direct_value.descr)
+                                    {
+                                        // TODO
+                                    }
+                                }
+                            }
+
+                            world_aspect.addComponent<mage::transform::MatrixFactory>(animator.matrix_factory.descr, matrix_factory);
+                        }
+                    }
                 }
             }
 

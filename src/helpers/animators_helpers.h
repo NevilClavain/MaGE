@@ -33,6 +33,8 @@
 #include "quaternion.h"
 #include "syncvariable.h"
 #include "timecontrol.h"
+#include "animatorfunc.h"
+
 
 namespace mage
 {

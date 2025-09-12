@@ -271,23 +271,24 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 											"helper": "matrixFactory",
 											"matrix_factory":
 											{
-												"type": "translation",
+												"type": "translation",	
+												"descr": "cameraGblJoint_Entity initial pos (part I)",
 
 												"x_direct_value":
 												{
-													"descr" : "cameraGblJoint_Entity initial pos in x",
+													"descr" : "cameraGblJoint_Entity initial pos in x (part I)",
 													"value": -50
 												},
 
 												"y_datacloud_value":
 												{
-													"descr" : "cameraGblJoint_Entity initial pos in y",
+													"descr" : "cameraGblJoint_Entity initial pos in y (part I)",
 													"var_name": "app.skydomeInnerRadius"
 												},
 
 												"z_direct_value":
 												{
-													"descr" : "cameraGblJoint_Entity initial pos in z",
+													"descr" : "cameraGblJoint_Entity initial pos in z (part I)",
 													"value": 1.5
 												}
 											}
@@ -297,22 +298,23 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 											"matrix_factory":
 											{
 												"type": "translation",
+												"descr": "cameraGblJoint_Entity initial pos (part II)",
 
 												"x_direct_value":
 												{
-													"descr" : "cameraGblJoint_Entity initial pos in x",
+													"descr" : "cameraGblJoint_Entity initial pos in x (part II)",
 													"value": 0
 												},
 
 												"y_datacloud_value":
 												{
-													"descr" : "cameraGblJoint_Entity initial pos in y",
+													"descr" : "cameraGblJoint_Entity initial pos in y (part II)",
 													"var_name": "app.groundLevel"
 												},
 
 												"z_direct_value":
 												{
-													"descr" : "cameraGblJoint_Entity initial pos in z",
+													"descr" : "cameraGblJoint_Entity initial pos in z (part II)",
 													"value": 0
 												}
 											}

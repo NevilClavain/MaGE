@@ -103,6 +103,20 @@ namespace mage
 
         ///////////////////////////////////////////////////////////////////
 
+        struct SyncVar
+        {
+            std::string type;
+            double      step;
+            std::string direction;
+            double      initial_value;
+            double      min;
+            double      max;
+            std::string management;
+
+            JS_OBJ(type, step, direction, initial_value, min, max, management);
+        };
+
+
         struct ScalarDirectValueMatrixSource
         {
             std::string         descr;
@@ -136,9 +150,9 @@ namespace mage
         struct SyncVarValueMatrixSource
         {
             std::string         descr;
-            std::string         syncvar_name;
+            SyncVar             sync_var;
 
-            JS_OBJ(descr, syncvar_name);
+            JS_OBJ(descr, sync_var);
         };
 
         struct ScalarDatacloudValueMatrixSource
@@ -169,6 +183,8 @@ namespace mage
         {
             std::string                         type; //"translation", "rotation", "scaling"
 
+            std::string                         descr;
+
             SyncVarValueMatrixSource            x_syncvar_value;
             SyncVarValueMatrixSource            y_syncvar_value;
             SyncVarValueMatrixSource            z_syncvar_value;
@@ -188,7 +204,8 @@ namespace mage
             ScalarDirectValueMatrixSource       z_direct_value;
             ScalarDirectValueMatrixSource       w_direct_value;
 
-            JS_OBJ(type, x_syncvar_value, y_syncvar_value, z_syncvar_value, 
+            JS_OBJ(type, descr, 
+                        x_syncvar_value, y_syncvar_value, z_syncvar_value, 
                         xyzw_datacloud_value, xyz_datacloud_value, x_datacloud_value, y_datacloud_value, z_datacloud_value, w_datacloud_value,
                         xyzw_direct_value, xyz_direct_value, x_direct_value, y_direct_value, z_direct_value, w_direct_value);
         };

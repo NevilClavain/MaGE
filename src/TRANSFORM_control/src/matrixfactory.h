@@ -107,9 +107,7 @@ namespace mage
 			{
 			}
 
-			inline T getValue() const;
-			
-
+			inline T getValue() const;		
 		private:
 			std::string m_valueId;
 
