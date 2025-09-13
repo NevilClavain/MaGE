@@ -242,9 +242,12 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                                     else if ("" != animator.matrix_factory.w_syncvar_value.descr)
                                     {
                                         const auto sync_var{ buildSyncVariableFromJson(animator.matrix_factory.w_syncvar_value.sync_var) };
-                                        time_aspect.addComponent<SyncVariable>(animator.matrix_factory.w_syncvar_value.descr + " sync_var", sync_var);
 
-                                        // TO BE CONTINUED....                                     
+                                        const std::string sync_var_name{ animator.matrix_factory.w_syncvar_value.descr + " sync_var" };
+                                        time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
+
+                                        world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.w_syncvar_value.descr, &time_aspect.getComponent<SyncVariable>(sync_var_name)->getPurpose());
+                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.w_syncvar_value.descr)->getPurpose());
                                     }
                                     else if ("" != animator.matrix_factory.w_direct_value.descr)
                                     {
@@ -269,7 +272,13 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                                     }
                                     else if ("" != animator.matrix_factory.w_syncvar_value.descr)
                                     {
-                                        // TODO
+                                        const auto sync_var{ buildSyncVariableFromJson(animator.matrix_factory.w_syncvar_value.sync_var) };
+
+                                        const std::string sync_var_name{ animator.matrix_factory.w_syncvar_value.descr + " sync_var" };
+                                        time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
+
+                                        world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.w_syncvar_value.descr, &time_aspect.getComponent<SyncVariable>(sync_var_name)->getPurpose());
+                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.w_syncvar_value.descr)->getPurpose());
                                     }
                                     else if ("" != animator.matrix_factory.w_direct_value.descr)
                                     {
@@ -287,7 +296,14 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                                     }
                                     else if ("" != animator.matrix_factory.x_syncvar_value.descr)
                                     {
-                                        // TODO
+                                        const auto sync_var{ buildSyncVariableFromJson(animator.matrix_factory.x_syncvar_value.sync_var) };
+
+                                        const std::string sync_var_name{ animator.matrix_factory.x_syncvar_value.descr + " sync_var" };
+                                        time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
+
+                                        world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.x_syncvar_value.descr, &time_aspect.getComponent<SyncVariable>(sync_var_name)->getPurpose());
+                                        matrix_factory.setXSource(&world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.x_syncvar_value.descr)->getPurpose());
+
                                     }
                                     else if ("" != animator.matrix_factory.x_direct_value.descr)
                                     {
@@ -303,7 +319,13 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                                     }
                                     else if ("" != animator.matrix_factory.y_syncvar_value.descr)
                                     {
-                                        // TODO
+                                        const auto sync_var{ buildSyncVariableFromJson(animator.matrix_factory.y_syncvar_value.sync_var) };
+
+                                        const std::string sync_var_name{ animator.matrix_factory.y_syncvar_value.descr + " sync_var" };
+                                        time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
+
+                                        world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.y_syncvar_value.descr, &time_aspect.getComponent<SyncVariable>(sync_var_name)->getPurpose());
+                                        matrix_factory.setYSource(&world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.y_syncvar_value.descr)->getPurpose());
                                     }
                                     else if ("" != animator.matrix_factory.y_direct_value.descr)
                                     {
@@ -319,7 +341,13 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                                     }
                                     else if ("" != animator.matrix_factory.z_syncvar_value.descr)
                                     {
-                                        // TODO
+                                        const auto sync_var{ buildSyncVariableFromJson(animator.matrix_factory.z_syncvar_value.sync_var) };
+
+                                        const std::string sync_var_name{ animator.matrix_factory.z_syncvar_value.descr + " sync_var" };
+                                        time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
+
+                                        world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.z_syncvar_value.descr, &time_aspect.getComponent<SyncVariable>(sync_var_name)->getPurpose());
+                                        matrix_factory.setZSource(&world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.z_syncvar_value.descr)->getPurpose());
                                     }
                                     else if ("" != animator.matrix_factory.z_direct_value.descr)
                                     {
@@ -335,7 +363,13 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                                     }
                                     else if ("" != animator.matrix_factory.w_syncvar_value.descr)
                                     {
-                                        // TODO
+                                        const auto sync_var{ buildSyncVariableFromJson(animator.matrix_factory.w_syncvar_value.sync_var) };
+
+                                        const std::string sync_var_name{ animator.matrix_factory.w_syncvar_value.descr + " sync_var" };
+                                        time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
+
+                                        world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.w_syncvar_value.descr, &time_aspect.getComponent<SyncVariable>(sync_var_name)->getPurpose());
+                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.w_syncvar_value.descr)->getPurpose());
                                     }
                                     else if ("" != animator.matrix_factory.w_direct_value.descr)
                                     {
