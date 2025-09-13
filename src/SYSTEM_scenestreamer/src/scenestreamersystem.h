@@ -55,7 +55,7 @@ namespace mage
 
         struct StagedBufferTexture
         {
-            int             stage;
+            int             stage{ 0 };
             BufferTexture   buffer_texture;
 
             JS_OBJ(stage, buffer_texture);
@@ -87,7 +87,7 @@ namespace mage
             std::vector<ShaderWithArgs>         shaders;
 
             std::vector<StagedBufferTexture>    inputs;
-            int                                 target_stage;
+            int                                 target_stage{ -1 };
 
             std::vector<RenderingTargetNode>    subs;
             
@@ -99,9 +99,9 @@ namespace mage
         struct RenderingTargetNodesCollection
         {
             std::vector<RenderingTargetNode>     subs;
+
             JS_OBJ(subs);
         };
-
 
         ///////////////////////////////////////////////////////////////////
 
@@ -118,7 +118,6 @@ namespace mage
 
             JS_OBJ(type, step, direction, initial_value, min, max, management, initial_state);
         };
-
 
         struct ScalarDirectValueMatrixSource
         {
@@ -216,7 +215,6 @@ namespace mage
         struct Animator
         {
             std::string                 helper;
-
             MatrixFactory               matrix_factory; // remplacer par plusieurs MatrixFactory attributs nommés selon le animator helper
 
             JS_OBJ(helper, matrix_factory);
@@ -233,11 +231,8 @@ namespace mage
         struct ScenegraphNode
         {
             std::string                 descr;
-
             WorldAspect                 world_aspect;
-
             std::string                 helper;
-
             std::vector<ScenegraphNode> subs;
 
             JS_OBJ(descr, world_aspect, helper, subs);
@@ -246,6 +241,7 @@ namespace mage
         struct ScenegraphNodesCollection
         {
             std::vector<ScenegraphNode>     subs;
+
             JS_OBJ(subs);
         };
     }
