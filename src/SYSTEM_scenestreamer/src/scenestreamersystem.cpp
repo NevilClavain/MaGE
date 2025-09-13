@@ -174,7 +174,7 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                     auto& entityNode{ m_entitygraph.add(m_entitygraph.node(p_parentEntityId), p_node.descr) };
                     const auto entity{ entityNode.data() };
 
-                    entity->makeAspect(core::timeAspect::id);
+                    auto& time_aspect{ entity->makeAspect(core::timeAspect::id) };
 
                     auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
 
@@ -236,15 +236,20 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                                     // W
                                     if ("" != animator.matrix_factory.w_datacloud_value.descr)
                                     {
-                                        // TODO
+                                        world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.w_datacloud_value.descr, animator.matrix_factory.w_datacloud_value.var_name);
+                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.w_datacloud_value.descr)->getPurpose());
                                     }
                                     else if ("" != animator.matrix_factory.w_syncvar_value.descr)
                                     {
-                                        // TODO
+                                        const auto sync_var{ buildSyncVariableFromJson(animator.matrix_factory.w_syncvar_value.sync_var) };
+                                        time_aspect.addComponent<SyncVariable>(animator.matrix_factory.w_syncvar_value.descr + " sync_var", sync_var);
+
+                                        // TO BE CONTINUED....                                     
                                     }
                                     else if ("" != animator.matrix_factory.w_direct_value.descr)
                                     {
-                                        // TODO
+                                        world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.w_direct_value.descr, animator.matrix_factory.w_direct_value.value);
+                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.w_direct_value.descr)->getPurpose());
                                     }
                                 }
                                 else if ("" != animator.matrix_factory.xyz_direct_value.descr)
@@ -256,11 +261,11 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
 
                                     matrix_factory.setXYZSource(&world_aspect.getComponent<mage::transform::DirectValueMatrixSource<core::maths::Real3Vector>>(animator.matrix_factory.xyz_datacloud_value.descr)->getPurpose());
 
-
                                     // W
                                     if ("" != animator.matrix_factory.w_datacloud_value.descr)
                                     {
-                                        // TODO
+                                        world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.w_datacloud_value.descr, animator.matrix_factory.w_datacloud_value.var_name);
+                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.w_datacloud_value.descr)->getPurpose());
                                     }
                                     else if ("" != animator.matrix_factory.w_syncvar_value.descr)
                                     {
@@ -268,7 +273,8 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                                     }
                                     else if ("" != animator.matrix_factory.w_direct_value.descr)
                                     {
-                                        // TODO
+                                        world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.w_direct_value.descr, animator.matrix_factory.w_direct_value.value);
+                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.w_direct_value.descr)->getPurpose());
                                     }
                                 }
                                 else
@@ -276,7 +282,8 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                                     // X
                                     if ("" != animator.matrix_factory.x_datacloud_value.descr)
                                     {
-                                        // TODO
+                                        world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.x_datacloud_value.descr, animator.matrix_factory.x_datacloud_value.var_name);
+                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.x_datacloud_value.descr)->getPurpose());
                                     }
                                     else if ("" != animator.matrix_factory.x_syncvar_value.descr)
                                     {
@@ -284,13 +291,15 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                                     }
                                     else if ("" != animator.matrix_factory.x_direct_value.descr)
                                     {
-                                        // TODO
+                                        world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.x_direct_value.descr, animator.matrix_factory.x_direct_value.value);
+                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.x_direct_value.descr)->getPurpose());
                                     }
 
                                     // Y
                                     if ("" != animator.matrix_factory.y_datacloud_value.descr)
                                     {
-                                        // TODO
+                                        world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.y_datacloud_value.descr, animator.matrix_factory.y_datacloud_value.var_name);
+                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.y_datacloud_value.descr)->getPurpose());
                                     }
                                     else if ("" != animator.matrix_factory.y_syncvar_value.descr)
                                     {
@@ -298,13 +307,15 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                                     }
                                     else if ("" != animator.matrix_factory.y_direct_value.descr)
                                     {
-                                        // TODO
+                                        world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.y_direct_value.descr, animator.matrix_factory.y_direct_value.value);
+                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.y_direct_value.descr)->getPurpose());
                                     }
 
                                     // Z
                                     if ("" != animator.matrix_factory.z_datacloud_value.descr)
                                     {
-                                        // TODO
+                                        world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.z_datacloud_value.descr, animator.matrix_factory.z_datacloud_value.var_name);
+                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.z_datacloud_value.descr)->getPurpose());
                                     }
                                     else if ("" != animator.matrix_factory.z_syncvar_value.descr)
                                     {
@@ -312,13 +323,15 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                                     }
                                     else if ("" != animator.matrix_factory.z_direct_value.descr)
                                     {
-                                        // TODO
+                                        world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.z_direct_value.descr, animator.matrix_factory.z_direct_value.value);
+                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.z_direct_value.descr)->getPurpose());
                                     }
 
                                     // W
                                     if ("" != animator.matrix_factory.w_datacloud_value.descr)
                                     {
-                                        // TODO
+                                        world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.w_datacloud_value.descr, animator.matrix_factory.w_datacloud_value.var_name);
+                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.w_datacloud_value.descr)->getPurpose());
                                     }
                                     else if ("" != animator.matrix_factory.w_syncvar_value.descr)
                                     {
@@ -326,7 +339,8 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                                     }
                                     else if ("" != animator.matrix_factory.w_direct_value.descr)
                                     {
-                                        // TODO
+                                        world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.w_direct_value.descr, animator.matrix_factory.w_direct_value.value);
+                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.w_direct_value.descr)->getPurpose());
                                     }
                                 }
                             }
@@ -349,4 +363,41 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
     {
         browseHierarchy(e, p_parentEntityId, 0);
     }
+}
+
+core::SyncVariable SceneStreamerSystem::buildSyncVariableFromJson(const json::SyncVariable& p_syncvar)
+{
+    std::unordered_map<std::string, core::SyncVariable::State> aig_state
+    {
+        {"OFF", core::SyncVariable::State::OFF },
+        {"ON", core::SyncVariable::State::ON }
+    };
+
+    std::unordered_map<std::string, core::SyncVariable::Type> aig_type
+    {
+        {"ANGLE", core::SyncVariable::Type::ANGLE },
+        {"POSITION", core::SyncVariable::Type::POSITION }
+    };
+
+    std::unordered_map<std::string, core::SyncVariable::Direction> aig_direction
+    {
+        {"INC", core::SyncVariable::Direction::INC },
+        {"DEC", core::SyncVariable::Direction::DEC },
+        {"ZERO", core::SyncVariable::Direction::ZERO }
+    };
+
+    std::unordered_map<std::string, core::SyncVariable::BoundariesManagement> aig_management
+    {
+        {"MIRROR", core::SyncVariable::BoundariesManagement::MIRROR },
+        {"STOP", core::SyncVariable::BoundariesManagement::STOP },
+        {"WRAP", core::SyncVariable::BoundariesManagement::WRAP },
+    };
+
+    core::SyncVariable sync_variable(aig_type.at(p_syncvar.type), p_syncvar.step, aig_direction.at(p_syncvar.direction),
+                                        p_syncvar.initial_value, core::SyncVariable::Boundaries{ p_syncvar.min, p_syncvar.max },
+                                        aig_management.at(p_syncvar.management));
+
+    sync_variable.state = aig_state.at(p_syncvar.initial_state);
+
+    return sync_variable;
 }

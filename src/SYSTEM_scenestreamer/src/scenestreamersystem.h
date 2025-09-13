@@ -33,6 +33,8 @@
 #include "system.h"
 #include "matrix.h"
 
+#include "syncvariable.h"
+
 namespace mage
 {
     static constexpr int fillWithWindowDims{ -1 };
@@ -103,7 +105,7 @@ namespace mage
 
         ///////////////////////////////////////////////////////////////////
 
-        struct SyncVar
+        struct SyncVariable
         {
             std::string type;
             double      step;
@@ -112,8 +114,9 @@ namespace mage
             double      min;
             double      max;
             std::string management;
+            std::string initial_state;
 
-            JS_OBJ(type, step, direction, initial_value, min, max, management);
+            JS_OBJ(type, step, direction, initial_value, min, max, management, initial_state);
         };
 
 
@@ -150,7 +153,7 @@ namespace mage
         struct SyncVarValueMatrixSource
         {
             std::string         descr;
-            SyncVar             sync_var;
+            SyncVariable        sync_var;
 
             JS_OBJ(descr, sync_var);
         };
@@ -270,5 +273,9 @@ namespace mage
                                     const mage::core::maths::Matrix p_perspective_projection);
 
     private:    
+
+        core::SyncVariable buildSyncVariableFromJson(const json::SyncVariable& p_syncvar);
+
+
     };
 }
