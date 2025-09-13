@@ -213,7 +213,6 @@ namespace mage
                         xyzw_direct_value, xyz_direct_value, x_direct_value, y_direct_value, z_direct_value, w_direct_value);
         };
 
-
         struct Animator
         {
             std::string                 helper;
@@ -222,7 +221,6 @@ namespace mage
 
             JS_OBJ(helper, matrix_factory);
         };
-
 
         struct WorldAspect
         {
@@ -275,7 +273,5 @@ namespace mage
     private:    
 
         core::SyncVariable buildSyncVariableFromJson(const json::SyncVariable& p_syncvar);
-
-
     };
 }
