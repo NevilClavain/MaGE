@@ -258,6 +258,68 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 						"subs":
 						[
 							{
+								"descr": "ground_Entity",
+
+								"world_aspect" : 
+								{
+									"animators":
+									[
+										{
+											"helper": "matrixFactory",
+											"matrix_factory":
+											{
+												"type": "translation",	
+												"descr": "ground_Entity pos (part I)",
+
+												"x_direct_value":
+												{
+													"descr" : "ground_Entity pos in x (part I)",
+													"value": 0
+												},
+
+												"y_datacloud_value":
+												{
+													"descr" : "ground_Entity pos in y (part I)",
+													"var_name": "app.skydomeInnerRadius"
+												},
+
+												"z_direct_value":
+												{
+													"descr" : "ground_Entity pos in z (part I)",
+													"value": 0
+												}
+											}
+										},
+										{
+											"helper": "matrixFactory",
+											"matrix_factory":
+											{
+												"type": "translation",
+												"descr": "ground_Entity pos (part II)",
+
+												"x_direct_value":
+												{
+													"descr" : "ground_Entity pos in x (part II)",
+													"value": 0
+												},
+
+												"y_datacloud_value":
+												{
+													"descr" : "ground_Entity pos in y (part II)",
+													"var_name": "app.groundLevel"
+												},
+
+												"z_direct_value":
+												{
+													"descr" : "ground_Entity pos in z (part II)",
+													"value": 0
+												}
+											}
+										}
+									]
+								}
+							},
+							{
 								"descr": "cameraGblJoint_Entity",
 
 								"world_aspect" : 
