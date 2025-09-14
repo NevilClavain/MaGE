@@ -265,6 +265,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 									"animators":
 									[
 										{
+											"descr": "ground_Entity pos animator (part I)",
 											"helper": "matrixFactory",
 											"matrix_factory":
 											{
@@ -291,6 +292,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 											}
 										},
 										{
+											"descr": "ground_Entity pos animator (part II)",
 											"helper": "matrixFactory",
 											"matrix_factory":
 											{
@@ -327,9 +329,11 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 									"animators":
 									[
 										{
+											"descr": "camera gimbalLock Joint animator",
 											"helper": "gimbalLockJoin"
 										},
 										{
+											"descr": "cameraGblJoint_Entity initial pos animator (part I)",
 											"helper": "matrixFactory",
 											"matrix_factory":
 											{
@@ -356,9 +360,10 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 											}
 										},
 										{
+											"descr": "cameraGblJoint_Entity initial pos animator (part II)",
 											"helper": "matrixFactory",
 											"matrix_factory":
-											{
+											{												
 												"type": "translation",
 												"descr": "cameraGblJoint_Entity initial pos (part II)",
 

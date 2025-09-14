@@ -236,10 +236,11 @@ namespace mage
         struct Animator
         {
             JSON_SERIALIZER
+            std::string                 descr;
             std::string                 helper;
             MatrixFactory               matrix_factory; // remplacer par plusieurs MatrixFactory attributs nommés selon le animator helper
 
-            JS_OBJ(helper, matrix_factory);
+            JS_OBJ(descr, helper, matrix_factory);
         };
 
         struct WorldAspect

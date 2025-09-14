@@ -205,7 +205,30 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                         }
                         else if ("matrixFactory" == animator.helper)
                         {
+                            world_aspect.addComponent<transform::WorldPosition>(animator.descr + "_output");
+
                             processMatrixFactoryFromJson(animator.matrix_factory, world_aspect, time_aspect);
+
+                            // TODO : ANIMATOR MISSING
+
+                            // add matrix factory animator
+
+                            world_aspect.addComponent<transform::Animator>(animator.descr, transform::Animator
+                            (
+                                {},
+                                [=](const core::ComponentContainer& p_world_aspect,
+                                    const core::ComponentContainer& p_time_aspect,
+                                    const transform::WorldPosition&,
+                                    const std::unordered_map<std::string, std::string>&)
+                                {
+                                    auto& mf{ p_world_aspect.getComponent<mage::transform::MatrixFactory>(animator.matrix_factory.descr)->getPurpose() };
+
+                                    const auto result_mat{ mf.getResult() };
+
+                                    transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>(animator.descr + "_output")->getPurpose() };
+                                    wp.local_pos = wp.local_pos * result_mat;
+                                }
+                            ));
                         }
                     }
                 }
@@ -351,7 +374,7 @@ void SceneStreamerSystem::processMatrixFactoryFromJson(const json::MatrixFactory
             if ("" != p_json_matrix_factory.x_datacloud_value.descr)
             {
                 p_world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<double>>(p_json_matrix_factory.x_datacloud_value.descr, p_json_matrix_factory.x_datacloud_value.var_name);
-                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(p_json_matrix_factory.x_datacloud_value.descr)->getPurpose());
+                matrix_factory.setXSource(&p_world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(p_json_matrix_factory.x_datacloud_value.descr)->getPurpose());
             }
             else if ("" != p_json_matrix_factory.x_syncvar_value.descr)
             {
@@ -367,14 +390,14 @@ void SceneStreamerSystem::processMatrixFactoryFromJson(const json::MatrixFactory
             else if ("" != p_json_matrix_factory.x_direct_value.descr)
             {
                 p_world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.x_direct_value.descr, p_json_matrix_factory.x_direct_value.value);
-                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.x_direct_value.descr)->getPurpose());
+                matrix_factory.setXSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.x_direct_value.descr)->getPurpose());
             }
 
             // Y
             if ("" != p_json_matrix_factory.y_datacloud_value.descr)
             {
                 p_world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<double>>(p_json_matrix_factory.y_datacloud_value.descr, p_json_matrix_factory.y_datacloud_value.var_name);
-                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(p_json_matrix_factory.y_datacloud_value.descr)->getPurpose());
+                matrix_factory.setYSource(&p_world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(p_json_matrix_factory.y_datacloud_value.descr)->getPurpose());
             }
             else if ("" != p_json_matrix_factory.y_syncvar_value.descr)
             {
@@ -389,14 +412,14 @@ void SceneStreamerSystem::processMatrixFactoryFromJson(const json::MatrixFactory
             else if ("" != p_json_matrix_factory.y_direct_value.descr)
             {
                 p_world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.y_direct_value.descr, p_json_matrix_factory.y_direct_value.value);
-                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.y_direct_value.descr)->getPurpose());
+                matrix_factory.setYSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.y_direct_value.descr)->getPurpose());
             }
 
             // Z
             if ("" != p_json_matrix_factory.z_datacloud_value.descr)
             {
                 p_world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<double>>(p_json_matrix_factory.z_datacloud_value.descr, p_json_matrix_factory.z_datacloud_value.var_name);
-                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(p_json_matrix_factory.z_datacloud_value.descr)->getPurpose());
+                matrix_factory.setZSource(&p_world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(p_json_matrix_factory.z_datacloud_value.descr)->getPurpose());
             }
             else if ("" != p_json_matrix_factory.z_syncvar_value.descr)
             {
@@ -411,7 +434,7 @@ void SceneStreamerSystem::processMatrixFactoryFromJson(const json::MatrixFactory
             else if ("" != p_json_matrix_factory.z_direct_value.descr)
             {
                 p_world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.z_direct_value.descr, p_json_matrix_factory.z_direct_value.value);
-                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.z_direct_value.descr)->getPurpose());
+                matrix_factory.setZSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.z_direct_value.descr)->getPurpose());
             }
 
             // W
