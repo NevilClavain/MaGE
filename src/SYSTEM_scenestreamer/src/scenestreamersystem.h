@@ -45,6 +45,7 @@ namespace mage
     //fwd decl
     namespace core { class Entity; }
     namespace core { class Entitygraph; }
+    namespace core { class ComponentContainer; }
 
     static constexpr int fillWithWindowDims{ -1 };
     static constexpr int fillWithViewportDims{ -1 };
@@ -287,5 +288,7 @@ namespace mage
     private:    
 
         core::SyncVariable buildSyncVariableFromJson(const json::SyncVariable& p_syncvar);
+
+        void processMatrixFactoryFromJson(const json::MatrixFactory& p_json_matrix_factory, mage::core::ComponentContainer& p_world_aspect, mage::core::ComponentContainer& p_time_aspect);
     };
 }

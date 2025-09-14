@@ -205,181 +205,7 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                         }
                         else if ("matrixFactory" == animator.helper)
                         {
-                            mage::transform::MatrixFactory matrix_factory(animator.matrix_factory.type);
-
-                            if ("" != animator.matrix_factory.xyzw_datacloud_value.descr)
-                            {
-                                world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<core::maths::Real4Vector>>(animator.matrix_factory.xyzw_datacloud_value.descr,
-                                                                                                                                    animator.matrix_factory.xyzw_datacloud_value.var_name);
-                                                            
-                                matrix_factory.setXYZWSource(&world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<core::maths::Real4Vector>>(animator.matrix_factory.xyzw_datacloud_value.descr)->getPurpose());
-                            }
-                            else if("" != animator.matrix_factory.xyzw_direct_value.descr)
-                            {
-                                world_aspect.addComponent<mage::transform::DirectValueMatrixSource<core::maths::Real4Vector>>(animator.matrix_factory.xyzw_direct_value.descr,
-                                                                                                                               core::maths::Real4Vector(animator.matrix_factory.xyzw_direct_value.x,
-                                                                                                                                                        animator.matrix_factory.xyzw_direct_value.y,
-                                                                                                                                                        animator.matrix_factory.xyzw_direct_value.z,
-                                                                                                                                                        animator.matrix_factory.xyzw_direct_value.w));
-
-                                matrix_factory.setXYZWSource(&world_aspect.getComponent<mage::transform::DirectValueMatrixSource<core::maths::Real4Vector>>(animator.matrix_factory.xyzw_direct_value.descr)->getPurpose());
-                            }
-                            else
-                            {
-                                if ("" != animator.matrix_factory.xyz_datacloud_value.descr)
-                                {
-                                    world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<core::maths::Real3Vector>>(animator.matrix_factory.xyz_datacloud_value.descr,
-                                                                                                                                        animator.matrix_factory.xyz_datacloud_value.var_name);
-
-                                    matrix_factory.setXYZSource(&world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<core::maths::Real3Vector>>(animator.matrix_factory.xyz_datacloud_value.descr)->getPurpose());
-
-                                    // W
-                                    if ("" != animator.matrix_factory.w_datacloud_value.descr)
-                                    {
-                                        world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.w_datacloud_value.descr, animator.matrix_factory.w_datacloud_value.var_name);
-                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.w_datacloud_value.descr)->getPurpose());
-                                    }
-                                    else if ("" != animator.matrix_factory.w_syncvar_value.descr)
-                                    {
-                                        const auto sync_var{ buildSyncVariableFromJson(animator.matrix_factory.w_syncvar_value.sync_var) };
-
-                                        const std::string sync_var_name{ animator.matrix_factory.w_syncvar_value.descr + " sync_var" };
-                                        time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
-
-                                        world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.w_syncvar_value.descr, &time_aspect.getComponent<SyncVariable>(sync_var_name)->getPurpose());
-                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.w_syncvar_value.descr)->getPurpose());
-                                    }
-                                    else if ("" != animator.matrix_factory.w_direct_value.descr)
-                                    {
-                                        world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.w_direct_value.descr, animator.matrix_factory.w_direct_value.value);
-                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.w_direct_value.descr)->getPurpose());
-                                    }
-                                }
-                                else if ("" != animator.matrix_factory.xyz_direct_value.descr)
-                                {
-                                    world_aspect.addComponent<mage::transform::DirectValueMatrixSource<core::maths::Real3Vector>>(animator.matrix_factory.xyz_direct_value.descr,
-                                                                                                                                    core::maths::Real3Vector(animator.matrix_factory.xyzw_direct_value.x,
-                                                                                                                                                                animator.matrix_factory.xyzw_direct_value.y,
-                                                                                                                                                                animator.matrix_factory.xyzw_direct_value.z));
-
-                                    matrix_factory.setXYZSource(&world_aspect.getComponent<mage::transform::DirectValueMatrixSource<core::maths::Real3Vector>>(animator.matrix_factory.xyz_datacloud_value.descr)->getPurpose());
-
-                                    // W
-                                    if ("" != animator.matrix_factory.w_datacloud_value.descr)
-                                    {
-                                        world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.w_datacloud_value.descr, animator.matrix_factory.w_datacloud_value.var_name);
-                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.w_datacloud_value.descr)->getPurpose());
-                                    }
-                                    else if ("" != animator.matrix_factory.w_syncvar_value.descr)
-                                    {
-                                        const auto sync_var{ buildSyncVariableFromJson(animator.matrix_factory.w_syncvar_value.sync_var) };
-
-                                        const std::string sync_var_name{ animator.matrix_factory.w_syncvar_value.descr + " sync_var" };
-                                        time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
-
-                                        world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.w_syncvar_value.descr, &time_aspect.getComponent<SyncVariable>(sync_var_name)->getPurpose());
-                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.w_syncvar_value.descr)->getPurpose());
-                                    }
-                                    else if ("" != animator.matrix_factory.w_direct_value.descr)
-                                    {
-                                        world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.w_direct_value.descr, animator.matrix_factory.w_direct_value.value);
-                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.w_direct_value.descr)->getPurpose());
-                                    }
-                                }
-                                else
-                                {
-                                    // X
-                                    if ("" != animator.matrix_factory.x_datacloud_value.descr)
-                                    {
-                                        world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.x_datacloud_value.descr, animator.matrix_factory.x_datacloud_value.var_name);
-                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.x_datacloud_value.descr)->getPurpose());
-                                    }
-                                    else if ("" != animator.matrix_factory.x_syncvar_value.descr)
-                                    {
-                                        const auto sync_var{ buildSyncVariableFromJson(animator.matrix_factory.x_syncvar_value.sync_var) };
-
-                                        const std::string sync_var_name{ animator.matrix_factory.x_syncvar_value.descr + " sync_var" };
-                                        time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
-
-                                        world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.x_syncvar_value.descr, &time_aspect.getComponent<SyncVariable>(sync_var_name)->getPurpose());
-                                        matrix_factory.setXSource(&world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.x_syncvar_value.descr)->getPurpose());
-
-                                    }
-                                    else if ("" != animator.matrix_factory.x_direct_value.descr)
-                                    {
-                                        world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.x_direct_value.descr, animator.matrix_factory.x_direct_value.value);
-                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.x_direct_value.descr)->getPurpose());
-                                    }
-
-                                    // Y
-                                    if ("" != animator.matrix_factory.y_datacloud_value.descr)
-                                    {
-                                        world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.y_datacloud_value.descr, animator.matrix_factory.y_datacloud_value.var_name);
-                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.y_datacloud_value.descr)->getPurpose());
-                                    }
-                                    else if ("" != animator.matrix_factory.y_syncvar_value.descr)
-                                    {
-                                        const auto sync_var{ buildSyncVariableFromJson(animator.matrix_factory.y_syncvar_value.sync_var) };
-
-                                        const std::string sync_var_name{ animator.matrix_factory.y_syncvar_value.descr + " sync_var" };
-                                        time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
-
-                                        world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.y_syncvar_value.descr, &time_aspect.getComponent<SyncVariable>(sync_var_name)->getPurpose());
-                                        matrix_factory.setYSource(&world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.y_syncvar_value.descr)->getPurpose());
-                                    }
-                                    else if ("" != animator.matrix_factory.y_direct_value.descr)
-                                    {
-                                        world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.y_direct_value.descr, animator.matrix_factory.y_direct_value.value);
-                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.y_direct_value.descr)->getPurpose());
-                                    }
-
-                                    // Z
-                                    if ("" != animator.matrix_factory.z_datacloud_value.descr)
-                                    {
-                                        world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.z_datacloud_value.descr, animator.matrix_factory.z_datacloud_value.var_name);
-                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.z_datacloud_value.descr)->getPurpose());
-                                    }
-                                    else if ("" != animator.matrix_factory.z_syncvar_value.descr)
-                                    {
-                                        const auto sync_var{ buildSyncVariableFromJson(animator.matrix_factory.z_syncvar_value.sync_var) };
-
-                                        const std::string sync_var_name{ animator.matrix_factory.z_syncvar_value.descr + " sync_var" };
-                                        time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
-
-                                        world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.z_syncvar_value.descr, &time_aspect.getComponent<SyncVariable>(sync_var_name)->getPurpose());
-                                        matrix_factory.setZSource(&world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.z_syncvar_value.descr)->getPurpose());
-                                    }
-                                    else if ("" != animator.matrix_factory.z_direct_value.descr)
-                                    {
-                                        world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.z_direct_value.descr, animator.matrix_factory.z_direct_value.value);
-                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.z_direct_value.descr)->getPurpose());
-                                    }
-
-                                    // W
-                                    if ("" != animator.matrix_factory.w_datacloud_value.descr)
-                                    {
-                                        world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.w_datacloud_value.descr, animator.matrix_factory.w_datacloud_value.var_name);
-                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(animator.matrix_factory.w_datacloud_value.descr)->getPurpose());
-                                    }
-                                    else if ("" != animator.matrix_factory.w_syncvar_value.descr)
-                                    {
-                                        const auto sync_var{ buildSyncVariableFromJson(animator.matrix_factory.w_syncvar_value.sync_var) };
-
-                                        const std::string sync_var_name{ animator.matrix_factory.w_syncvar_value.descr + " sync_var" };
-                                        time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
-
-                                        world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.w_syncvar_value.descr, &time_aspect.getComponent<SyncVariable>(sync_var_name)->getPurpose());
-                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>(animator.matrix_factory.w_syncvar_value.descr)->getPurpose());
-                                    }
-                                    else if ("" != animator.matrix_factory.w_direct_value.descr)
-                                    {
-                                        world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.w_direct_value.descr, animator.matrix_factory.w_direct_value.value);
-                                        matrix_factory.setWSource(&world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(animator.matrix_factory.w_direct_value.descr)->getPurpose());
-                                    }
-                                }
-                            }
-
-                            world_aspect.addComponent<mage::transform::MatrixFactory>(animator.matrix_factory.descr, matrix_factory);
+                            processMatrixFactoryFromJson(animator.matrix_factory, world_aspect, time_aspect);
                         }
                     }
                 }
@@ -434,4 +260,183 @@ core::SyncVariable SceneStreamerSystem::buildSyncVariableFromJson(const json::Sy
     sync_variable.state = aig_state.at(p_syncvar.initial_state);
 
     return sync_variable;
+}
+
+void SceneStreamerSystem::processMatrixFactoryFromJson(const json::MatrixFactory& p_json_matrix_factory, mage::core::ComponentContainer& p_world_aspect, mage::core::ComponentContainer& p_time_aspect)
+{
+    mage::transform::MatrixFactory matrix_factory(p_json_matrix_factory.type);
+
+    if ("" != p_json_matrix_factory.xyzw_datacloud_value.descr)
+    {
+        p_world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<core::maths::Real4Vector>>(p_json_matrix_factory.xyzw_datacloud_value.descr,
+            p_json_matrix_factory.xyzw_datacloud_value.var_name);
+
+        matrix_factory.setXYZWSource(&p_world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<core::maths::Real4Vector>>(p_json_matrix_factory.xyzw_datacloud_value.descr)->getPurpose());
+    }
+    else if ("" != p_json_matrix_factory.xyzw_direct_value.descr)
+    {
+        p_world_aspect.addComponent<mage::transform::DirectValueMatrixSource<core::maths::Real4Vector>>(p_json_matrix_factory.xyzw_direct_value.descr,
+            core::maths::Real4Vector(p_json_matrix_factory.xyzw_direct_value.x,
+                p_json_matrix_factory.xyzw_direct_value.y,
+                p_json_matrix_factory.xyzw_direct_value.z,
+                p_json_matrix_factory.xyzw_direct_value.w));
+
+        matrix_factory.setXYZWSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<core::maths::Real4Vector>>(p_json_matrix_factory.xyzw_direct_value.descr)->getPurpose());
+    }
+    else
+    {
+        if ("" != p_json_matrix_factory.xyz_datacloud_value.descr)
+        {
+            p_world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<core::maths::Real3Vector>>(p_json_matrix_factory.xyz_datacloud_value.descr,
+                p_json_matrix_factory.xyz_datacloud_value.var_name);
+
+            matrix_factory.setXYZSource(&p_world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<core::maths::Real3Vector>>(p_json_matrix_factory.xyz_datacloud_value.descr)->getPurpose());
+
+            // W
+            if ("" != p_json_matrix_factory.w_datacloud_value.descr)
+            {
+                p_world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<double>>(p_json_matrix_factory.w_datacloud_value.descr, p_json_matrix_factory.w_datacloud_value.var_name);
+                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(p_json_matrix_factory.w_datacloud_value.descr)->getPurpose());
+            }
+            else if ("" != p_json_matrix_factory.w_syncvar_value.descr)
+            {
+                const auto sync_var{ buildSyncVariableFromJson(p_json_matrix_factory.w_syncvar_value.sync_var) };
+
+                const std::string sync_var_name{ p_json_matrix_factory.w_syncvar_value.descr + " sync_var" };
+                p_time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
+
+                p_world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>(p_json_matrix_factory.w_syncvar_value.descr, &p_time_aspect.getComponent<SyncVariable>(sync_var_name)->getPurpose());
+                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>(p_json_matrix_factory.w_syncvar_value.descr)->getPurpose());
+            }
+            else if ("" != p_json_matrix_factory.w_direct_value.descr)
+            {
+                p_world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.w_direct_value.descr, p_json_matrix_factory.w_direct_value.value);
+                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.w_direct_value.descr)->getPurpose());
+            }
+        }
+        else if ("" != p_json_matrix_factory.xyz_direct_value.descr)
+        {
+            p_world_aspect.addComponent<mage::transform::DirectValueMatrixSource<core::maths::Real3Vector>>(p_json_matrix_factory.xyz_direct_value.descr,
+                core::maths::Real3Vector(p_json_matrix_factory.xyzw_direct_value.x,
+                    p_json_matrix_factory.xyzw_direct_value.y,
+                    p_json_matrix_factory.xyzw_direct_value.z));
+
+            matrix_factory.setXYZSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<core::maths::Real3Vector>>(p_json_matrix_factory.xyz_datacloud_value.descr)->getPurpose());
+
+            // W
+            if ("" != p_json_matrix_factory.w_datacloud_value.descr)
+            {
+                p_world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<double>>(p_json_matrix_factory.w_datacloud_value.descr, p_json_matrix_factory.w_datacloud_value.var_name);
+                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(p_json_matrix_factory.w_datacloud_value.descr)->getPurpose());
+            }
+            else if ("" != p_json_matrix_factory.w_syncvar_value.descr)
+            {
+                const auto sync_var{ buildSyncVariableFromJson(p_json_matrix_factory.w_syncvar_value.sync_var) };
+
+                const std::string sync_var_name{ p_json_matrix_factory.w_syncvar_value.descr + " sync_var" };
+                p_time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
+
+                p_world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>(p_json_matrix_factory.w_syncvar_value.descr, &p_time_aspect.getComponent<SyncVariable>(sync_var_name)->getPurpose());
+                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>(p_json_matrix_factory.w_syncvar_value.descr)->getPurpose());
+            }
+            else if ("" != p_json_matrix_factory.w_direct_value.descr)
+            {
+                p_world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.w_direct_value.descr, p_json_matrix_factory.w_direct_value.value);
+                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.w_direct_value.descr)->getPurpose());
+            }
+        }
+        else
+        {
+            // X
+            if ("" != p_json_matrix_factory.x_datacloud_value.descr)
+            {
+                p_world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<double>>(p_json_matrix_factory.x_datacloud_value.descr, p_json_matrix_factory.x_datacloud_value.var_name);
+                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(p_json_matrix_factory.x_datacloud_value.descr)->getPurpose());
+            }
+            else if ("" != p_json_matrix_factory.x_syncvar_value.descr)
+            {
+                const auto sync_var{ buildSyncVariableFromJson(p_json_matrix_factory.x_syncvar_value.sync_var) };
+
+                const std::string sync_var_name{ p_json_matrix_factory.x_syncvar_value.descr + " sync_var" };
+                p_time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
+
+                p_world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>(p_json_matrix_factory.x_syncvar_value.descr, &p_time_aspect.getComponent<SyncVariable>(sync_var_name)->getPurpose());
+                matrix_factory.setXSource(&p_world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>(p_json_matrix_factory.x_syncvar_value.descr)->getPurpose());
+
+            }
+            else if ("" != p_json_matrix_factory.x_direct_value.descr)
+            {
+                p_world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.x_direct_value.descr, p_json_matrix_factory.x_direct_value.value);
+                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.x_direct_value.descr)->getPurpose());
+            }
+
+            // Y
+            if ("" != p_json_matrix_factory.y_datacloud_value.descr)
+            {
+                p_world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<double>>(p_json_matrix_factory.y_datacloud_value.descr, p_json_matrix_factory.y_datacloud_value.var_name);
+                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(p_json_matrix_factory.y_datacloud_value.descr)->getPurpose());
+            }
+            else if ("" != p_json_matrix_factory.y_syncvar_value.descr)
+            {
+                const auto sync_var{ buildSyncVariableFromJson(p_json_matrix_factory.y_syncvar_value.sync_var) };
+
+                const std::string sync_var_name{ p_json_matrix_factory.y_syncvar_value.descr + " sync_var" };
+                p_time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
+
+                p_world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>(p_json_matrix_factory.y_syncvar_value.descr, &p_time_aspect.getComponent<SyncVariable>(sync_var_name)->getPurpose());
+                matrix_factory.setYSource(&p_world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>(p_json_matrix_factory.y_syncvar_value.descr)->getPurpose());
+            }
+            else if ("" != p_json_matrix_factory.y_direct_value.descr)
+            {
+                p_world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.y_direct_value.descr, p_json_matrix_factory.y_direct_value.value);
+                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.y_direct_value.descr)->getPurpose());
+            }
+
+            // Z
+            if ("" != p_json_matrix_factory.z_datacloud_value.descr)
+            {
+                p_world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<double>>(p_json_matrix_factory.z_datacloud_value.descr, p_json_matrix_factory.z_datacloud_value.var_name);
+                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(p_json_matrix_factory.z_datacloud_value.descr)->getPurpose());
+            }
+            else if ("" != p_json_matrix_factory.z_syncvar_value.descr)
+            {
+                const auto sync_var{ buildSyncVariableFromJson(p_json_matrix_factory.z_syncvar_value.sync_var) };
+
+                const std::string sync_var_name{ p_json_matrix_factory.z_syncvar_value.descr + " sync_var" };
+                p_time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
+
+                p_world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>(p_json_matrix_factory.z_syncvar_value.descr, &p_time_aspect.getComponent<SyncVariable>(sync_var_name)->getPurpose());
+                matrix_factory.setZSource(&p_world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>(p_json_matrix_factory.z_syncvar_value.descr)->getPurpose());
+            }
+            else if ("" != p_json_matrix_factory.z_direct_value.descr)
+            {
+                p_world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.z_direct_value.descr, p_json_matrix_factory.z_direct_value.value);
+                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.z_direct_value.descr)->getPurpose());
+            }
+
+            // W
+            if ("" != p_json_matrix_factory.w_datacloud_value.descr)
+            {
+                p_world_aspect.addComponent<mage::transform::DatacloudValueMatrixSource<double>>(p_json_matrix_factory.w_datacloud_value.descr, p_json_matrix_factory.w_datacloud_value.var_name);
+                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::DatacloudValueMatrixSource<double>>(p_json_matrix_factory.w_datacloud_value.descr)->getPurpose());
+            }
+            else if ("" != p_json_matrix_factory.w_syncvar_value.descr)
+            {
+                const auto sync_var{ buildSyncVariableFromJson(p_json_matrix_factory.w_syncvar_value.sync_var) };
+
+                const std::string sync_var_name{ p_json_matrix_factory.w_syncvar_value.descr + " sync_var" };
+                p_time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
+
+                p_world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>(p_json_matrix_factory.w_syncvar_value.descr, &p_time_aspect.getComponent<SyncVariable>(sync_var_name)->getPurpose());
+                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>(p_json_matrix_factory.w_syncvar_value.descr)->getPurpose());
+            }
+            else if ("" != p_json_matrix_factory.w_direct_value.descr)
+            {
+                p_world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.w_direct_value.descr, p_json_matrix_factory.w_direct_value.value);
+                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.w_direct_value.descr)->getPurpose());
+            }
+        }
+    }
+
+    p_world_aspect.addComponent<mage::transform::MatrixFactory>(p_json_matrix_factory.descr, matrix_factory);
 }
