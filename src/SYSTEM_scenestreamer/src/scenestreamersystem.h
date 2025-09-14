@@ -52,7 +52,7 @@ namespace mage
 
     namespace json
     {
-        // JSON struct for rendergraph nodes
+        // JSON struct for rendergraph part
 
         struct BufferTexture
         {
@@ -114,6 +114,8 @@ namespace mage
         };
 
         ///////////////////////////////////////////////////////////////////
+
+        // JSON struct for scenegraph part
 
         struct SyncVariable
         {
