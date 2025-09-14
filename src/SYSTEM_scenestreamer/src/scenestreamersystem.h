@@ -35,8 +35,17 @@
 
 #include "syncvariable.h"
 
+#define JSON_SERIALIZER std::string serialize() const \
+{ \
+    return JS::serializeStruct(*this); \
+}
+
 namespace mage
 {
+    //fwd decl
+    namespace core { class Entity; }
+    namespace core { class Entitygraph; }
+
     static constexpr int fillWithWindowDims{ -1 };
     static constexpr int fillWithViewportDims{ -1 };
 
@@ -107,6 +116,7 @@ namespace mage
 
         struct SyncVariable
         {
+            JSON_SERIALIZER
             std::string type;
             double      step;
             std::string direction;
@@ -116,11 +126,12 @@ namespace mage
             std::string management;
             std::string initial_state;
 
-            JS_OBJ(type, step, direction, initial_value, min, max, management, initial_state);
+            JS_OBJ(type, step, direction, initial_value, min, max, management, initial_state);         
         };
 
         struct ScalarDirectValueMatrixSource
         {
+            JSON_SERIALIZER
             std::string         descr;
             double              value;
 
@@ -129,6 +140,7 @@ namespace mage
 
         struct Vector3DirectValueMatrixSource
         {
+            JSON_SERIALIZER
             std::string         descr;
             double              x;
             double              y;
@@ -139,6 +151,7 @@ namespace mage
 
         struct Vector4DirectValueMatrixSource
         {
+            JSON_SERIALIZER
             std::string         descr;
 
             double              x;
@@ -151,6 +164,7 @@ namespace mage
 
         struct SyncVarValueMatrixSource
         {
+            JSON_SERIALIZER
             std::string         descr;
             SyncVariable        sync_var;
 
@@ -159,6 +173,7 @@ namespace mage
 
         struct ScalarDatacloudValueMatrixSource
         {
+            JSON_SERIALIZER
             std::string         descr;
             std::string         var_name;
 
@@ -167,6 +182,7 @@ namespace mage
 
         struct Vector3DatacloudValueMatrixSource
         {
+            JSON_SERIALIZER
             std::string         descr;
             std::string         var_name;
 
@@ -175,6 +191,7 @@ namespace mage
 
         struct Vector4DatacloudValueMatrixSource
         {
+            JSON_SERIALIZER
             std::string         descr;
             std::string         var_name;
 
@@ -183,6 +200,7 @@ namespace mage
 
         struct MatrixFactory
         {
+            JSON_SERIALIZER
             std::string                         type; //"translation", "rotation", "scaling"
 
             std::string                         descr;
@@ -214,6 +232,7 @@ namespace mage
 
         struct Animator
         {
+            JSON_SERIALIZER
             std::string                 helper;
             MatrixFactory               matrix_factory; // remplacer par plusieurs MatrixFactory attributs nommés selon le animator helper
 
@@ -222,6 +241,7 @@ namespace mage
 
         struct WorldAspect
         {
+            JSON_SERIALIZER
             // world aspect can have N animators
             std::vector<Animator>       animators;
 
@@ -230,6 +250,7 @@ namespace mage
 
         struct ScenegraphNode
         {
+            JSON_SERIALIZER
             std::string                 descr;
             WorldAspect                 world_aspect;
             std::string                 helper;
@@ -240,15 +261,12 @@ namespace mage
 
         struct ScenegraphNodesCollection
         {
+            JSON_SERIALIZER
             std::vector<ScenegraphNode>     subs;
 
             JS_OBJ(subs);
         };
     }
-
-    //fwd decl
-    namespace core { class Entity; }
-    namespace core { class Entitygraph; }
    
     class SceneStreamerSystem : public mage::core::System
     {
