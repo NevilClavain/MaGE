@@ -252,15 +252,34 @@ namespace mage
             JS_OBJ(animators);
         };
 
+        struct Meshe
+        {
+            JSON_SERIALIZER
+            std::string                         descr;
+            std::string                         filename;
+            std::string                         meshe_id;
+
+            JS_OBJ(descr, filename, meshe_id);
+        };
+
+        struct ResourceAspect
+        {
+            JSON_SERIALIZER
+            Meshe meshe;
+
+            JS_OBJ(meshe);
+        };
+
         struct ScenegraphNode
         {
             JSON_SERIALIZER
             std::string                 descr;
             WorldAspect                 world_aspect;
+            ResourceAspect              resource_aspect;
             std::string                 helper;
             std::vector<ScenegraphNode> subs;
 
-            JS_OBJ(descr, world_aspect, helper, subs);
+            JS_OBJ(descr, world_aspect, resource_aspect, helper, subs);
         };
 
         struct ScenegraphNodesCollection

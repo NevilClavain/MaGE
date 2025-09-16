@@ -260,6 +260,16 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 							{
 								"descr": "ground_Entity",
 
+								"resource_aspect" :
+								{
+									"meshe":
+									{
+										"descr": "ground_Entity_meshe",
+										"filename": "ground.ac",
+										"meshe_id": "rect"
+									}
+								},
+
 								"world_aspect" : 
 								{
 									"animators":

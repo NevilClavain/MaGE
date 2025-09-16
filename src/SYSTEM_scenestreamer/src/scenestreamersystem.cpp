@@ -40,7 +40,7 @@
 #include "entitygraph_helpers.h"
 #include "animators_helpers.h"
 #include "matrixfactory.h"
-
+#include "trianglemeshe.h"
 
 using namespace mage;
 using namespace mage::core;
@@ -169,15 +169,18 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
             }
             else
             {
+                auto& entityNode{ m_entitygraph.add(m_entitygraph.node(p_parentEntityId), p_node.descr) };
+                const auto entity{ entityNode.data() };
+
+                // create aspects
+                auto& time_aspect{ entity->makeAspect(core::timeAspect::id) };
+                auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
+                auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
+
+                // World Aspect
+
                 if (p_node.world_aspect.animators.size() > 0)
                 {
-                    auto& entityNode{ m_entitygraph.add(m_entitygraph.node(p_parentEntityId), p_node.descr) };
-                    const auto entity{ entityNode.data() };
-
-                    auto& time_aspect{ entity->makeAspect(core::timeAspect::id) };
-
-                    auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
-
                     for (const auto& animator : p_node.world_aspect.animators)
                     {
                         if ("gimbalLockJoin" == animator.helper)
@@ -210,8 +213,6 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
 
                             processMatrixFactoryFromJson(animator.matrix_factory, world_aspect, time_aspect);
 
-                            // TODO : ANIMATOR MISSING
-
                             // add matrix factory animator
 
                             world_aspect.addComponent<transform::Animator>(animator.descr, transform::Animator
@@ -232,6 +233,14 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                             ));
                         }
                     }
+                }
+
+                // Resource Aspect
+
+                // meshe resource ?
+                if ("" != p_node.resource_aspect.meshe.descr)
+                {
+                    resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair(p_node.resource_aspect.meshe.meshe_id, p_node.resource_aspect.meshe.filename ), TriangleMeshe()));
                 }
             }
 
