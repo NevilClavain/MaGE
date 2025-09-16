@@ -238,7 +238,7 @@ namespace mage
             JSON_SERIALIZER
             std::string                 descr;
             std::string                 helper;
-            MatrixFactory               matrix_factory; // remplacer par plusieurs MatrixFactory attributs nommés selon le animator helper
+            MatrixFactory               matrix_factory; // parsé par défaut si helper est vide ("")
 
             JS_OBJ(descr, helper, matrix_factory);
         };

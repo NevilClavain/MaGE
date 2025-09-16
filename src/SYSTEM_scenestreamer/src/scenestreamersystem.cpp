@@ -203,7 +203,8 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                                 }, helpers::makeGimbalLockJointAnimator())
                             );
                         }
-                        else if ("matrixFactory" == animator.helper)
+                        // if no helper, decode matrix_factory
+                        else if ("" == animator.helper)
                         {
                             world_aspect.addComponent<transform::WorldPosition>(animator.descr + "_output");
 
