@@ -243,9 +243,11 @@ void OpenEnv::d3d11_system_events_openenv()
 								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity", em_channel_config }
 							},
 
+							// vertex shaders param
 							{
 							},
 
+							// pixel shaders param
 							{
 
 								{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity",
