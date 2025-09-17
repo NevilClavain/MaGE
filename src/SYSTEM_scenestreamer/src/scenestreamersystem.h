@@ -87,7 +87,10 @@ namespace mage
             JS_OBJ(name, args);
         };
 
-        struct RendergraphNode
+        // fwd decl
+        struct RendergraphNode;
+
+        struct Target
         {
             std::string                         descr;
 
@@ -97,13 +100,26 @@ namespace mage
             std::vector<ShaderWithArgs>         shaders;
 
             std::vector<StagedBufferTexture>    inputs;
-            int                                 target_stage{ -1 };
+            int                                 destination_stage{ -1 };
 
-            std::vector<RendergraphNode>    subs;
-            
-            // also : sub scenes rendering vector
+            std::vector<RendergraphNode>        subs;
 
-            JS_OBJ(descr, width, height, shaders, inputs, target_stage, subs);
+            JS_OBJ(descr, width, height, shaders, inputs, destination_stage, subs);
+        };
+
+        struct Queue
+        {
+            std::string                         descr;
+
+            JS_OBJ(descr);
+        };
+
+        struct RendergraphNode
+        {
+            Target target;
+            Queue  queue;
+
+            JS_OBJ(target, queue);
         };
 
         struct RendergraphNodesCollection
