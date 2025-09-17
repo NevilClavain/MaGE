@@ -95,9 +95,9 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
 
             const std::string queue_name{ p_node.descr + "_queue" };
 
-            const std::string entity_queue_name{ p_node.descr + "Buffer_queue" };
-            const std::string entity_target_name{ p_node.descr + "Buffer_targetquad" };
-            const std::string entity_view_name{ p_node.descr + "Buffer_view" };
+            const std::string entity_queue_name{ p_node.descr + "Target_queue" };
+            const std::string entity_target_name{ p_node.descr + "Target_quad" };
+            const std::string entity_view_name{ p_node.descr + "Target_view" };
 
             mage::helpers::plugRenderingTarget(m_entitygraph,
                 queue_name,
