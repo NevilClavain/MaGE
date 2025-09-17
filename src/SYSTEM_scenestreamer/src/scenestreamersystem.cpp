@@ -56,7 +56,7 @@ void SceneStreamerSystem::run()
 void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId,
                                                 int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height)
 {
-    json::RenderingTargetNodesCollection rtc;
+    json::RendergraphNodesCollection rtc;
 
     JS::ParseContext parseContext(p_jsonsource);
     if (parseContext.parseTo(rtc) != JS::Error::NoError)
@@ -65,9 +65,9 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
         _EXCEPTION("Cannot parse rendergraph: " + errorStr);
     }
 
-    const std::function<void(const json::RenderingTargetNode&, const std::string&, int)> browseHierarchy
+    const std::function<void(const json::RendergraphNode&, const std::string&, int)> browseHierarchy
     {
-        [&](const json::RenderingTargetNode& p_node, const std::string& p_parent_id, int depth)
+        [&](const json::RendergraphNode& p_node, const std::string& p_parent_id, int depth)
         {
             const std::unordered_map<std::string, mage::Texture::Format> texture_format_translation
             {
