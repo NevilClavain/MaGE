@@ -87,6 +87,16 @@ namespace mage
             JS_OBJ(name, args);
         };
 
+        struct RGBA8
+        {
+            int r;
+            int g;
+            int b;
+            int a;
+
+            JS_OBJ(r, g, b, a);
+        };
+
         // fwd decl
         struct RendergraphNode;
 
@@ -111,7 +121,12 @@ namespace mage
         {
             std::string                         descr;
 
-            JS_OBJ(descr);
+            bool                                target_clear;
+            RGBA8                               target_clear_color;            
+            bool                                target_depth_clear;
+            int                                 target_stage{ -1 };
+
+            JS_OBJ(descr, target_clear, target_clear_color, target_depth_clear, target_stage);
         };
 
         struct RendergraphNode
@@ -289,13 +304,13 @@ namespace mage
         struct ScenegraphNode
         {
             JSON_SERIALIZER
-            std::string                 descr;
+            std::string                 id;
             WorldAspect                 world_aspect;
             ResourceAspect              resource_aspect;
             std::string                 helper;
             std::vector<ScenegraphNode> subs;
 
-            JS_OBJ(descr, world_aspect, resource_aspect, helper, subs);
+            JS_OBJ(id, world_aspect, resource_aspect, helper, subs);
         };
 
         struct ScenegraphNodesCollection

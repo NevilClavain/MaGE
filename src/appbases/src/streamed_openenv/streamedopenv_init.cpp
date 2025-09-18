@@ -248,6 +248,36 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 									"destination_stage": 0,
 									"subs":
 									[
+										{
+											"queue":
+											{
+												"descr": "TextureChannel",
+												"target_clear": true,
+												"target_clear_color": 
+												{
+													"r": 0,
+													"g": 0,
+													"b": 0,
+													"a": 255
+												},
+												"target_stage": 0
+											}
+										},
+										{
+											"queue":
+											{
+												"descr": "ZdepthChannel",
+												"target_clear": true,
+												"target_clear_color": 
+												{
+													"r": 0,
+													"g": 0,
+													"b": 0,
+													"a": 255
+												},
+												"target_stage": 1
+											}
+										}
 									]
 								}
 							}
@@ -261,7 +291,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 						"subs":
 						[
 							{
-								"descr": "ground_Entity",
+								"id": "ground_Entity",
 
 								"resource_aspect" :
 								{
@@ -333,7 +363,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 								}
 							},
 							{
-								"descr": "cameraGblJoint_Entity",
+								"id": "cameraGblJoint_Entity",
 
 								"world_aspect" : 
 								{
@@ -401,7 +431,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 								"subs":
 								[
 									{
-										"descr": "camera_Entity",
+										"id": "camera_Entity",
 										"helper": "plugCamera"
 									}
 								]

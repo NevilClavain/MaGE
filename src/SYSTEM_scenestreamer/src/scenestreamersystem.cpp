@@ -99,9 +99,9 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
 
                 const std::string queue_name{ p_node.target.descr + "_queue" };
 
-                const std::string entity_queue_name{ p_node.target.descr + "Target_queue" };
-                const std::string entity_target_name{ p_node.target.descr + "Target_quad" };
-                const std::string entity_view_name{ p_node.target.descr + "Target_view" };
+                const std::string entity_queue_name{ p_node.target.descr + "Target_queue_Entity" };
+                const std::string entity_target_name{ p_node.target.descr + "Target_quad_Entity" };
+                const std::string entity_view_name{ p_node.target.descr + "Target_view_Entity" };
 
                 mage::helpers::plugRenderingTarget(m_entitygraph,
                     queue_name,
@@ -145,8 +145,19 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
             if ("" != p_node.queue.descr)
             {
                 // add rendering queue
-                // TODO
 
+                rendering::Queue renderingQueue(p_node.queue.descr + "_queue");
+
+                renderingQueue.setTargetClearColor({ p_node.queue.target_clear_color.r, 
+                                                    p_node.queue.target_clear_color.g, 
+                                                    p_node.queue.target_clear_color.b, 
+                                                    p_node.queue.target_clear_color.a });
+
+                renderingQueue.enableTargetClearing(p_node.queue.target_clear);
+                renderingQueue.enableTargetDepthClearing(p_node.queue.target_depth_clear);
+                renderingQueue.setTargetStage(p_node.queue.target_stage);
+
+                //mage::helpers::plugRenderingQueue(m_entitygraph, renderingQueue, p_parent_id, p_node.queue.descr + "Scene");
             }
         }
     };
@@ -176,12 +187,12 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
             {
                 if ("plugCamera" == p_node.helper)
                 {
-                    helpers::plugCamera(m_entitygraph, p_perspective_projection, p_parent_id, p_node.descr);
+                    helpers::plugCamera(m_entitygraph, p_perspective_projection, p_parent_id, p_node.id);
                 }
             }
             else
             {
-                auto& entityNode{ m_entitygraph.add(m_entitygraph.node(p_parentEntityId), p_node.descr) };
+                auto& entityNode{ m_entitygraph.add(m_entitygraph.node(p_parentEntityId), p_node.id) };
                 const auto entity{ entityNode.data() };
 
                 // create aspects
@@ -259,7 +270,7 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
             // recursive call
             for (auto& e : p_node.subs)
             {
-                browseHierarchy(e, p_node.descr, depth + 1);
+                browseHierarchy(e, p_node.id, depth + 1);
             }
         }
     };
