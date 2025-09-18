@@ -26,11 +26,14 @@
 #include <unordered_map>
 #include <sstream>  
 #include <utility>
+#include <unordered_set>
 
 #include <json_struct/json_struct.h>
 
 #include "scenestreamersystem.h"
+#include "renderingqueuesystem.h"
 
+#include "sysengine.h"
 #include "entity.h"
 #include "entitygraph.h"
 #include "aspects.h"
@@ -142,11 +145,11 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
                 }
             }
 
-            if ("" != p_node.queue.descr)
+            if ("" != p_node.queue.id)
             {
                 // add rendering queue
 
-                rendering::Queue renderingQueue(p_node.queue.descr + "_queue");
+                rendering::Queue renderingQueue(p_node.queue.id);
 
                 renderingQueue.setTargetClearColor({ p_node.queue.target_clear_color.r, 
                                                     p_node.queue.target_clear_color.g, 
@@ -157,7 +160,7 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
                 renderingQueue.enableTargetDepthClearing(p_node.queue.target_depth_clear);
                 renderingQueue.setTargetStage(p_node.queue.target_stage);
 
-                //mage::helpers::plugRenderingQueue(m_entitygraph, renderingQueue, p_parent_id, p_node.queue.descr + "Scene");
+                mage::helpers::plugRenderingQueue(m_entitygraph, renderingQueue, p_parent_id, p_node.queue.id);
             }
         }
     };
@@ -279,6 +282,37 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
     {
         browseHierarchy(e, p_parentEntityId, 0);
     }
+}
+
+void SceneStreamerSystem::buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot)
+{
+    json::ViewGroup vg;
+
+    JS::ParseContext parseContext(p_jsonsource);
+    if (parseContext.parseTo(vg) != JS::Error::NoError)
+    {
+        const auto errorStr{ parseContext.makeErrorString() };
+        _EXCEPTION("Cannot parse scenegraph: " + errorStr);
+    }
+
+    auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(p_renderingQueueSystemSlot))}; // TODO
+
+    renderingQueueSystemInstance->createViewGroup(vg.name);
+    renderingQueueSystemInstance->setViewGroupMainView(vg.name, vg.mainview_camera_entity_id);
+
+    if ("" != vg.secondaryview_camera_entity_id)
+    {
+        renderingQueueSystemInstance->setViewGroupSecondaryView(vg.name, vg.secondaryview_camera_entity_id);
+    }
+
+    std::unordered_set<std::string> queues_id_list;
+    for (const auto& e : vg.queue_entities)
+    {
+        queues_id_list.insert(e);
+    }
+
+    renderingQueueSystemInstance->addQueuesToViewGroup(vg.name, queues_id_list);
+
 }
 
 core::SyncVariable SceneStreamerSystem::buildSyncVariableFromJson(const json::SyncVariable& p_syncvar)

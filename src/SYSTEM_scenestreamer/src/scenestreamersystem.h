@@ -119,14 +119,14 @@ namespace mage
 
         struct Queue
         {
-            std::string                         descr;
+            std::string                         id;
 
             bool                                target_clear;
             RGBA8                               target_clear_color;            
             bool                                target_depth_clear;
             int                                 target_stage{ -1 };
 
-            JS_OBJ(descr, target_clear, target_clear_color, target_depth_clear, target_stage);
+            JS_OBJ(id, target_clear, target_clear_color, target_depth_clear, target_stage);
         };
 
         struct RendergraphNode
@@ -142,6 +142,17 @@ namespace mage
             std::vector<RendergraphNode>     subs;
 
             JS_OBJ(subs);
+        };
+
+        struct ViewGroup
+        {
+            std::string name;
+            std::string mainview_camera_entity_id;
+            std::string secondaryview_camera_entity_id;
+
+            std::vector<std::string> queue_entities;
+
+            JS_OBJ(name, mainview_camera_entity_id, queue_entities);
         };
 
         ///////////////////////////////////////////////////////////////////
@@ -320,6 +331,8 @@ namespace mage
 
             JS_OBJ(subs);
         };
+
+
     }
    
     class SceneStreamerSystem : public mage::core::System
@@ -337,6 +350,8 @@ namespace mage
 
         void buildScenegraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId, 
                                     const mage::core::maths::Matrix p_perspective_projection);
+
+        void buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot);
 
     private:    
 

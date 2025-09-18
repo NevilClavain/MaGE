@@ -251,7 +251,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 										{
 											"queue":
 											{
-												"descr": "TextureChannel",
+												"id": "TextureChannelScene_Entity",
 												"target_clear": true,
 												"target_clear_color": 
 												{
@@ -266,7 +266,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 										{
 											"queue":
 											{
-												"descr": "ZdepthChannel",
+												"id": "ZdepthChannelScene_Entity",
 												"target_clear": true,
 												"target_clear_color": 
 												{
@@ -440,6 +440,19 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					}
 					)json";
 
+					const char viewgroup_json[] = R"json(
+					{
+						"name": "player_camera",
+						"mainview_camera_entity_id": "camera_Entity",
+
+						"queue_entities":
+						[
+							"TextureChannelScene_Entity",
+							"ZdepthChannelScene_Entity"
+						]
+					}
+					)json";
+
 					auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot)) };
 
 					sceneStreamerSystemInstance->buildRendergraphPart(rendergraph_json, "screenRendering_Filter_DirectForward_Quad_Entity",
@@ -447,7 +460,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 					sceneStreamerSystemInstance->buildScenegraphPart(scenegraph_json, "app_Entity", m_perpective_projection);
 
-
+					sceneStreamerSystemInstance->buildViewgroup(viewgroup_json, Base::renderingQueueSystemSlot);
 				}
 				break;
 			}
