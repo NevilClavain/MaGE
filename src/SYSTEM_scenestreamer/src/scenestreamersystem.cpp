@@ -41,6 +41,7 @@
 #include "exceptions.h"
 #include "texture.h"
 #include "entitygraph_helpers.h"
+#include "renderingpasses_helpers.h"
 #include "animators_helpers.h"
 #include "matrixfactory.h"
 #include "trianglemeshe.h"
@@ -161,6 +162,11 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
                 renderingQueue.setTargetStage(p_node.queue.target_stage);
 
                 mage::helpers::plugRenderingQueue(m_entitygraph, renderingQueue, p_parent_id, p_node.queue.id);
+
+
+                // register passe default configs
+                const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
+                renderingHelper->registerPass(p_node.queue.id);
             }
         }
     };

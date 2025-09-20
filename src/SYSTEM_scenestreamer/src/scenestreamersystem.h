@@ -35,11 +35,6 @@
 
 #include "syncvariable.h"
 
-#define JSON_SERIALIZER std::string serialize() const \
-{ \
-    return JS::serializeStruct(*this); \
-}
-
 namespace mage
 {
     //fwd decl
@@ -161,7 +156,6 @@ namespace mage
 
         struct SyncVariable
         {
-            JSON_SERIALIZER
             std::string type;
             double      step;
             std::string direction;
@@ -176,7 +170,6 @@ namespace mage
 
         struct ScalarDirectValueMatrixSource
         {
-            JSON_SERIALIZER
             std::string         descr;
             double              value;
 
@@ -185,7 +178,6 @@ namespace mage
 
         struct Vector3DirectValueMatrixSource
         {
-            JSON_SERIALIZER
             std::string         descr;
             double              x;
             double              y;
@@ -196,7 +188,6 @@ namespace mage
 
         struct Vector4DirectValueMatrixSource
         {
-            JSON_SERIALIZER
             std::string         descr;
 
             double              x;
@@ -209,7 +200,6 @@ namespace mage
 
         struct SyncVarValueMatrixSource
         {
-            JSON_SERIALIZER
             std::string         descr;
             SyncVariable        sync_var;
 
@@ -218,7 +208,6 @@ namespace mage
 
         struct ScalarDatacloudValueMatrixSource
         {
-            JSON_SERIALIZER
             std::string         descr;
             std::string         var_name;
 
@@ -226,8 +215,7 @@ namespace mage
         };
 
         struct Vector3DatacloudValueMatrixSource
-        {
-            JSON_SERIALIZER
+        {   
             std::string         descr;
             std::string         var_name;
 
@@ -235,8 +223,7 @@ namespace mage
         };
 
         struct Vector4DatacloudValueMatrixSource
-        {
-            JSON_SERIALIZER
+        {            
             std::string         descr;
             std::string         var_name;
 
@@ -245,7 +232,6 @@ namespace mage
 
         struct MatrixFactory
         {
-            JSON_SERIALIZER
             std::string                         type; //"translation", "rotation", "scaling"
 
             std::string                         descr;
@@ -276,8 +262,7 @@ namespace mage
         };
 
         struct Animator
-        {
-            JSON_SERIALIZER
+        {            
             std::string                 descr;
             std::string                 helper;
             MatrixFactory               matrix_factory; // parsé par défaut si helper est vide ("")
@@ -286,8 +271,7 @@ namespace mage
         };
 
         struct WorldAspect
-        {
-            JSON_SERIALIZER
+        {            
             // world aspect can have N animators
             std::vector<Animator>       animators;
 
@@ -295,8 +279,7 @@ namespace mage
         };
 
         struct Meshe
-        {
-            JSON_SERIALIZER
+        {            
             std::string                         descr;
             std::string                         filename;
             std::string                         meshe_id;
@@ -304,35 +287,88 @@ namespace mage
             JS_OBJ(descr, filename, meshe_id);
         };
 
-        struct ResourceAspect
+        struct TextureFile
         {
-            JSON_SERIALIZER
+            int             stage{ -1 };
+            std::string     filename;
+
+            JS_OBJ(stage, filename);
+        };
+
+        struct TexturePtr
+        {
+            int             stage{ -1 };
+            JS_OBJ(stage);
+        };
+
+        struct PassConfig
+        {           
+            std::string	                queue_entity_id;
+            std::vector<std::string>	rs_list;
+
+            int	                        rendering_order{ -1 };
+
+            std::vector<TextureFile>    textures_files_list;
+            std::vector<TexturePtr>		textures_ptr_list;
+
+            std::string                 vshader;
+            std::string                 pshader;
+
+            JS_OBJ(queue_entity_id, rs_list, rendering_order, textures_files_list, textures_ptr_list, vshader, pshader);
+        };
+
+        struct ShaderParam
+        {          
+            std::string datacloud_name;
+            std::string param_name;
+
+            JS_OBJ(datacloud_name, param_name);
+        };
+
+        struct PassShadersParams
+        {           
+            std::string	                queue_entity_id;
+            std::vector<ShaderParam>    shaders_params;
+
+            JS_OBJ(queue_entity_id, shaders_params);
+        };
+
+        struct Passes
+        {           
+            std::vector<PassConfig>         configs;
+
+            std::vector<PassShadersParams>  vertex_shaders_params;
+            std::vector<PassShadersParams>  pixel_shaders_params;
+
+            JS_OBJ(configs, vertex_shaders_params, pixel_shaders_params);
+        };
+
+        struct ResourceAspect
+        {            
             Meshe meshe;
 
             JS_OBJ(meshe);
         };
 
         struct ScenegraphNode
-        {
-            JSON_SERIALIZER
+        {            
             std::string                 id;
             WorldAspect                 world_aspect;
             ResourceAspect              resource_aspect;
             std::string                 helper;
-            std::vector<ScenegraphNode> subs;
+            Passes                      passes;
 
-            JS_OBJ(id, world_aspect, resource_aspect, helper, subs);
+            std::vector<ScenegraphNode> subs;
+            
+            JS_OBJ(id, world_aspect, resource_aspect, helper, passes, subs);
         };
 
         struct ScenegraphNodesCollection
-        {
-            JSON_SERIALIZER
+        {            
             std::vector<ScenegraphNode>     subs;
 
             JS_OBJ(subs);
         };
-
-
     }
    
     class SceneStreamerSystem : public mage::core::System
