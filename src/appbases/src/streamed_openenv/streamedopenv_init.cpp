@@ -360,6 +360,41 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 											}
 										}
 									]
+								},
+
+								"passes":
+								{
+									"configs":
+									[
+										{
+											"queue_entity_id": "TextureChannelScene_Entity",
+
+											"rs_list":
+											[
+												{ 
+													"operation": "SETTEXTUREFILTERTYPE",
+													"argument": "linear_uvwrap"
+												}
+											],
+
+											"textures_files_list":
+											[
+												{
+													"stage": 0,
+													"filename": "grass08.jpg"
+												}
+											],
+
+											"vshader": "scene_recursive_texture_vs",
+											"pshader": "scene_recursive_texture_ps"
+										},
+										{
+											"queue_entity_id": "ZdepthChannelScene_Entity",
+
+											"vshader": "scene_zdepth_vs",
+											"pshader": "scene_zdepth_ps"
+										}
+									]
 								}
 							},
 							{

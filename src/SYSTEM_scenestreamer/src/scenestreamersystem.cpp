@@ -196,7 +196,8 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
             {
                 if ("plugCamera" == p_node.helper)
                 {
-                    helpers::plugCamera(m_entitygraph, p_perspective_projection, p_parent_id, p_node.id);
+                    core::Entity* camera_entity{ helpers::plugCamera(m_entitygraph, p_perspective_projection, p_parent_id, p_node.id) };
+                    register_scene_entity(camera_entity);
                 }
             }
             else
@@ -210,7 +211,6 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                 auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
 
                 // World Aspect
-
                 if (p_node.world_aspect.animators.size() > 0)
                 {
                     for (const auto& animator : p_node.world_aspect.animators)
@@ -274,6 +274,17 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                 {
                     resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair(p_node.resource_aspect.meshe.meshe_id, p_node.resource_aspect.meshe.filename ), TriangleMeshe()));
                 }
+
+                register_scene_entity(entity);
+                
+                if (m_entity_passes.count(p_node.id) > 0)
+                {
+                    _EXCEPTION("Already registered " + p_node.id);
+                }
+                else
+                {
+                    m_entity_passes[p_node.id] = p_node.passes;
+                }
             }
 
             // recursive call
@@ -287,6 +298,20 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
     for (const auto& e : sgc.subs)
     {
         browseHierarchy(e, p_parentEntityId, 0);
+    }
+}
+
+void SceneStreamerSystem::register_scene_entity(mage::core::Entity* p_entity)
+{
+    const auto entity_id{ p_entity->getId() };
+
+    if (m_scene_entities.count(entity_id) > 0)
+    {
+        _EXCEPTION("Already registered " + entity_id);
+    }
+    else
+    {
+        m_scene_entities[entity_id] = p_entity;
     }
 }
 

@@ -51,11 +51,7 @@ PassConfig RenderingPasses::getPassConfig(const std::string& p_queue_entity_id) 
 
 std::unordered_map<std::string, Entity*> RenderingPasses::registerToPasses(mage::core::Entitygraph& p_entitygraph,
 									mage::core::Entity* p_entity,					
-									const PassesDescriptors& p_passesdescriptors
-									/*
-									const std::unordered_map<std::string, PassConfig> p_config,
-									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_vertex_shaders_params,
-									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_pixel_shaders_params*/)
+									const PassesDescriptors& p_passesdescriptors)
 {
 	std::unordered_map<std::string, core::Entity*> proxy_entities;
 

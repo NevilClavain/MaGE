@@ -26,6 +26,7 @@
 #pragma once
 
 #include <vector>
+#include<unordered_map>
 #include <string>
 
 #include <json_struct/json_struct.h>
@@ -301,10 +302,18 @@ namespace mage
             JS_OBJ(stage);
         };
 
+        struct RenderState
+        {
+            std::string operation;
+            std::string argument;
+
+            JS_OBJ(operation, argument);
+        };
+
         struct PassConfig
         {           
             std::string	                queue_entity_id;
-            std::vector<std::string>	rs_list;
+            std::vector<RenderState>	rs_list;
 
             int	                        rendering_order{ -1 };
 
@@ -389,10 +398,14 @@ namespace mage
 
         void buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot);
 
-    private:    
+    private:
+
+        std::unordered_map<std::string, mage::core::Entity*>    m_scene_entities;
+        std::unordered_map<std::string, json::Passes>           m_entity_passes;
+
+        void register_scene_entity(mage::core::Entity* p_entity);
 
         core::SyncVariable buildSyncVariableFromJson(const json::SyncVariable& p_syncvar);
-
         void processMatrixFactoryFromJson(const json::MatrixFactory& p_json_matrix_factory, mage::core::ComponentContainer& p_world_aspect, mage::core::ComponentContainer& p_time_aspect);
     };
 }

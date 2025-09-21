@@ -94,7 +94,7 @@ namespace mage
 										const std::vector<std::pair<size_t, Texture>>& p_inputs,
 										size_t p_target_stage);
 
-		void plugCamera(mage::core::Entitygraph& p_entitygraph,
+		core::Entity* plugCamera(mage::core::Entitygraph& p_entitygraph,
 						const core::maths::Matrix& p_projection,
 						const std::string& p_parentid, const std::string& p_entityid);
 

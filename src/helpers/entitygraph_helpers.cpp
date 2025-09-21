@@ -494,7 +494,7 @@ namespace mage
 
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		void plugCamera(mage::core::Entitygraph& p_entitygraph,
+		core::Entity* plugCamera(mage::core::Entitygraph& p_entitygraph,
 			const core::maths::Matrix& p_projection,
 			const std::string& p_parentid, const std::string& p_entityid)
 		{
@@ -508,6 +508,8 @@ namespace mage
 			auto& camera_world_aspect{ cameraEntity->makeAspect(core::worldAspect::id) };
 
 			camera_world_aspect.addComponent<transform::WorldPosition>("camera_position", transform::WorldPosition());
+
+			return cameraEntity;
 		}
 
 		void updateCameraProjection(mage::core::Entitygraph& p_entitygraph, const std::string& p_entityid, const core::maths::Matrix& p_projection)
