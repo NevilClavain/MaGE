@@ -379,6 +379,20 @@ namespace mage
             JS_OBJ(subs);
         };
     }
+
+    class EntityRendering
+    {
+    public:
+        EntityRendering() = default;
+        EntityRendering(const json::Passes& p_passes);
+
+    private:
+        json::Passes    m_passes;
+        bool            m_request_rendering         { false };
+        bool            m_rendered                  { false }; // if true, passes are actually mapped in rendergraph side and so entity is normally rendered
+
+        friend class SceneStreamerSystem;
+    };
    
     class SceneStreamerSystem : public mage::core::System
     {
@@ -398,10 +412,14 @@ namespace mage
 
         void buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot);
 
+        void requestEntityRendering(const std::string& p_entity_id);
+
     private:
 
+        void registerToPasses();
+
         std::unordered_map<std::string, mage::core::Entity*>    m_scene_entities;
-        std::unordered_map<std::string, json::Passes>           m_entity_passes;
+        std::unordered_map<std::string, EntityRendering>        m_entity_passes;
 
         void register_scene_entity(mage::core::Entity* p_entity);
 

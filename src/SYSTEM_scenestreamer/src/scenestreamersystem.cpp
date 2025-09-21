@@ -49,12 +49,26 @@
 using namespace mage;
 using namespace mage::core;
 
+EntityRendering::EntityRendering(const json::Passes& p_passes) : 
+m_passes(p_passes)
+{
+}
+
 SceneStreamerSystem::SceneStreamerSystem(Entitygraph& p_entitygraph) : System(p_entitygraph)
 {
 }
 
 void SceneStreamerSystem::run()
 {
+    // loop on entity rendering entries
+    for (auto& e : m_entity_passes)
+    {
+        if (e.second.m_request_rendering && !e.second.m_rendered)
+        {
+            registerToPasses();
+            e.second.m_rendered = true;
+        }
+    }
 }
 
 void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId,
@@ -283,7 +297,8 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                 }
                 else
                 {
-                    m_entity_passes[p_node.id] = p_node.passes;
+                    EntityRendering rendering_infos(p_node.passes);
+                    m_entity_passes[p_node.id] = rendering_infos;
                 }
             }
 
@@ -560,4 +575,21 @@ void SceneStreamerSystem::processMatrixFactoryFromJson(const json::MatrixFactory
     }
 
     p_world_aspect.addComponent<mage::transform::MatrixFactory>(p_json_matrix_factory.descr, matrix_factory);
+}
+
+void SceneStreamerSystem::requestEntityRendering(const std::string& p_entity_id)
+{
+    if (m_entity_passes.count(p_entity_id))
+    {
+        m_entity_passes.at(p_entity_id).m_request_rendering = true;
+    }
+    else
+    {
+        _EXCEPTION("Unknown entity id : " + p_entity_id);
+    }
+}
+
+void SceneStreamerSystem::registerToPasses()
+{
+    // TO BE CONTINUED
 }

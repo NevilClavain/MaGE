@@ -496,6 +496,9 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					sceneStreamerSystemInstance->buildScenegraphPart(scenegraph_json, "app_Entity", m_perpective_projection);
 
 					sceneStreamerSystemInstance->buildViewgroup(viewgroup_json, Base::renderingQueueSystemSlot);
+
+
+					sceneStreamerSystemInstance->requestEntityRendering("ground_Entity");
 				}
 				break;
 			}
