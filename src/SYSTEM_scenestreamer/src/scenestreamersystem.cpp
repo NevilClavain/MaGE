@@ -64,8 +64,8 @@ void SceneStreamerSystem::run()
     for (auto& e : m_entity_passes)
     {
         if (e.second.m_request_rendering && !e.second.m_rendered)
-        {
-            registerToPasses();
+        {            
+            registerToPasses(e.second.m_passes, m_scene_entities.at(e.first));
             e.second.m_rendered = true;
         }
     }
@@ -132,7 +132,6 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
                     p_node.target.shaders.at(1).name,
                     inputs,
                     p_node.target.destination_stage);
-
 
                 // plug shaders args
 
@@ -589,7 +588,96 @@ void SceneStreamerSystem::requestEntityRendering(const std::string& p_entity_id)
     }
 }
 
-void SceneStreamerSystem::registerToPasses()
+void SceneStreamerSystem::registerToPasses(const json::Passes& p_passes, mage::core::Entity* p_entity)
 {
-    // TO BE CONTINUED
+    const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
+
+    const std::unordered_map<std::string, rendering::RenderState::Operation> rs_op_aig
+    {
+        { "SETCULLING", rendering::RenderState::Operation::SETCULLING },
+        { "ENABLEZBUFFER", rendering::RenderState::Operation::ENABLEZBUFFER },
+        { "SETTEXTUREFILTERTYPE", rendering::RenderState::Operation::SETTEXTUREFILTERTYPE },
+        { "SETVERTEXTEXTUREFILTERTYPE", rendering::RenderState::Operation::SETVERTEXTEXTUREFILTERTYPE },
+        { "SETFILLMODE", rendering::RenderState::Operation::SETFILLMODE },
+        { "ALPHABLENDENABLE", rendering::RenderState::Operation::ALPHABLENDENABLE },
+        { "ALPHABLENDOP", rendering::RenderState::Operation::ALPHABLENDOP },
+        { "ALPHABLENDFUNC", rendering::RenderState::Operation::ALPHABLENDFUNC },
+        { "ALPHABLENDDEST", rendering::RenderState::Operation::ALPHABLENDDEST },
+        { "ALPHABLENDSRC", rendering::RenderState::Operation::ALPHABLENDSRC },
+    };
+
+    helpers::PassesDescriptors passesDescriptors;
+
+    for (const auto& config : p_passes.configs)
+    {
+        auto default_channel_config{ renderingHelper->getPassConfig(config.queue_entity_id) };
+
+        // manage shaders
+        default_channel_config.vshader = config.vshader;
+        default_channel_config.pshader = config.pshader;
+
+        // manage renderstates
+        // TODO : extended arguments management missing !!!!
+
+        for (const auto& rs_json : config.rs_list)
+        {
+            const rendering::RenderState::Operation rs_json_ope{ rs_op_aig.at(rs_json.operation) };
+
+            bool found_ope{ false };
+
+            for (auto& rs : default_channel_config.rs_list)
+            {
+                if (rs.getOperation() == rs_json_ope)
+                {
+                    found_ope = true;
+
+                    // if exists by default and arg is different, update it
+                    if (rs.getArg() != rs_json.argument)
+                    {
+                        rs.setArg(rs_json.argument);
+                    }
+                    break;
+                }
+            }
+
+            if (!found_ope)
+            {
+                // rs ope defined from json not found in default config, so add it
+                
+                rendering::RenderState rs;
+
+                rs.setOperation(rs_json_ope);
+                rs.setArg(rs_json.argument);
+
+                default_channel_config.rs_list.push_back(rs);
+            }
+        }
+
+        // manage textures files
+        for (const auto& texturefile_json : config.textures_files_list)
+        {
+            default_channel_config.textures_files_list.push_back(std::make_pair(texturefile_json.stage, std::make_pair(texturefile_json.filename, Texture())));
+        }
+
+        default_channel_config.queue_entity_id = config.queue_entity_id;
+        passesDescriptors.configs[config.queue_entity_id] = default_channel_config;
+    }
+   
+    for (const auto& pass_vshader_param : p_passes.vertex_shaders_params)
+    {
+        for (const auto vshader_param : pass_vshader_param.shaders_params)
+        {
+            passesDescriptors.vertex_shaders_params[pass_vshader_param.queue_entity_id].push_back( std::make_pair(vshader_param.datacloud_name, vshader_param.param_name) );
+        }
+    }
+
+    for (const auto& pass_pshader_param : p_passes.pixel_shaders_params)
+    {
+        for (const auto pshader_param : pass_pshader_param.shaders_params)
+        {
+            passesDescriptors.vertex_shaders_params[pass_pshader_param.queue_entity_id].push_back( std::make_pair(pshader_param.datacloud_name, pshader_param.param_name) );
+        }
+    }
+
+    renderingHelper->registerToPasses(m_entitygraph, p_entity, passesDescriptors);
 }

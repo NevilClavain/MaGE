@@ -296,11 +296,7 @@ namespace mage
             JS_OBJ(stage, filename);
         };
 
-        struct TexturePtr
-        {
-            int             stage{ -1 };
-            JS_OBJ(stage);
-        };
+
 
         struct RenderState
         {
@@ -318,12 +314,11 @@ namespace mage
             int	                        rendering_order{ -1 };
 
             std::vector<TextureFile>    textures_files_list;
-            std::vector<TexturePtr>		textures_ptr_list;
 
             std::string                 vshader;
             std::string                 pshader;
 
-            JS_OBJ(queue_entity_id, rs_list, rendering_order, textures_files_list, textures_ptr_list, vshader, pshader);
+            JS_OBJ(queue_entity_id, rs_list, rendering_order, textures_files_list, vshader, pshader);
         };
 
         struct ShaderParam
@@ -416,7 +411,7 @@ namespace mage
 
     private:
 
-        void registerToPasses();
+        void registerToPasses(const json::Passes& p_passes, mage::core::Entity* p_entity);
 
         std::unordered_map<std::string, mage::core::Entity*>    m_scene_entities;
         std::unordered_map<std::string, EntityRendering>        m_entity_passes;

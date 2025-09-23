@@ -498,7 +498,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					sceneStreamerSystemInstance->buildViewgroup(viewgroup_json, Base::renderingQueueSystemSlot);
 
 
-					sceneStreamerSystemInstance->requestEntityRendering("ground_Entity");
+					//sceneStreamerSystemInstance->requestEntityRendering("ground_Entity");
 				}
 				break;
 			}
