@@ -52,13 +52,6 @@ namespace mage
 	namespace rendering
 	{
 		class RenderState;
-
-		/*
-		struct Queue
-		{
-			struct Text;
-		};
-		*/
 	}
 
 	class Texture;
