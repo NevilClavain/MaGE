@@ -43,8 +43,8 @@
 #include "entitygraph_helpers.h"
 #include "renderingpasses_helpers.h"
 #include "animators_helpers.h"
-#include "matrixfactory.h"
 #include "trianglemeshe.h"
+#include "matrixchain.h"
 
 using namespace mage;
 using namespace mage::core;
@@ -215,7 +215,7 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
             }
             else
             {
-                auto& entityNode{ m_entitygraph.add(m_entitygraph.node(p_parentEntityId), p_node.id) };
+                auto& entityNode{ m_entitygraph.add(m_entitygraph.node(p_parent_id), p_node.id) };
                 const auto entity{ entityNode.data() };
 
                 // create aspects
@@ -224,62 +224,75 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                 auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
 
                 // World Aspect
-                if (p_node.world_aspect.animators.size() > 0)
+
+                if ("gimbalLockJoin" == p_node.world_aspect.animator.helper)
                 {
-                    for (const auto& animator : p_node.world_aspect.animators)
-                    {
-                        if ("gimbalLockJoin" == animator.helper)
+                    world_aspect.addComponent<transform::WorldPosition>("output");
+
+                    world_aspect.addComponent<double>("gbl_theta", 0);
+                    world_aspect.addComponent<double>("gbl_phi", 0);
+                    world_aspect.addComponent<double>("gbl_speed", 0);
+
+                    core::maths::Matrix positionmat;
+                    world_aspect.addComponent<core::maths::Real3Vector>("gbl_pos", maths::Real3Vector(0.0, 0.0, 0.0));
+
+                    world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
                         {
-                            world_aspect.addComponent<transform::WorldPosition>("gbl_output");
+                            // input-output/components keys id mapping
+                            {"gimbalLockJointAnim.theta", "gbl_theta"},
+                            {"gimbalLockJointAnim.phi", "gbl_phi"},
+                            {"gimbalLockJointAnim.pos", "gbl_pos"},
+                            {"gimbalLockJointAnim.speed", "gbl_speed"},
+                            {"gimbalLockJointAnim.output", "output"}
 
-                            world_aspect.addComponent<double>("gbl_theta", 0);
-                            world_aspect.addComponent<double>("gbl_phi", 0);
-                            world_aspect.addComponent<double>("gbl_speed", 0);
-
-                            core::maths::Matrix positionmat;
-                            world_aspect.addComponent<core::maths::Real3Vector>("gbl_pos", maths::Real3Vector(0.0, 0.0, 0.0));
-
-                            world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
-                                {
-                                    // input-output/components keys id mapping
-                                    {"gimbalLockJointAnim.theta", "gbl_theta"},
-                                    {"gimbalLockJointAnim.phi", "gbl_phi"},
-                                    {"gimbalLockJointAnim.pos", "gbl_pos"},
-                                    {"gimbalLockJointAnim.speed", "gbl_speed"},
-                                    {"gimbalLockJointAnim.output", "gbl_output"}
-
-                                }, helpers::makeGimbalLockJointAnimator())
-                            );
-                        }
-                        // if no helper, decode matrix_factory
-                        else if ("" == animator.helper)
-                        {
-                            world_aspect.addComponent<transform::WorldPosition>(animator.descr + "_output");
-
-                            processMatrixFactoryFromJson(animator.matrix_factory, world_aspect, time_aspect);
-
-                            // add matrix factory animator
-
-                            world_aspect.addComponent<transform::Animator>(animator.descr, transform::Animator
-                            (
-                                {},
-                                [=](const core::ComponentContainer& p_world_aspect,
-                                    const core::ComponentContainer& p_time_aspect,
-                                    const transform::WorldPosition&,
-                                    const std::unordered_map<std::string, std::string>&)
-                                {
-                                    auto& mf{ p_world_aspect.getComponent<mage::transform::MatrixFactory>(animator.matrix_factory.descr)->getPurpose() };
-
-                                    const auto result_mat{ mf.getResult() };
-
-                                    transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>(animator.descr + "_output")->getPurpose() };
-                                    wp.local_pos = wp.local_pos * result_mat;
-                                }
-                            ));
-                        }
-                    }
+                        }, helpers::makeGimbalLockJointAnimator())
+                    );
                 }
+                // if no helper, decode matrix_factory
+                else if ("" == p_node.world_aspect.animator.helper)
+                {
+                    world_aspect.addComponent<transform::WorldPosition>("output");
 
+                    std::vector<mage::transform::MatrixFactory> mf_stack;
+
+                    for (const auto& json_mf : p_node.world_aspect.animator.matrix_factory_chain)
+                    {
+                        const auto mf{ processMatrixFactoryFromJson(json_mf, world_aspect, time_aspect) };
+                        mf_stack.push_back(mf);
+                    }
+
+                    if (0 == mf_stack.size())
+                    {
+                        _EXCEPTION("need some matrix factory in animator");
+                    }
+
+                    world_aspect.addComponent<std::vector<mage::transform::MatrixFactory>>("mf_stack", mf_stack);
+
+                    world_aspect.addComponent<transform::Animator>(p_node.world_aspect.animator.descr, transform::Animator
+                    (
+                        {},
+                        [=](const core::ComponentContainer& p_world_aspect,
+                            const core::ComponentContainer& p_time_aspect,
+                            const transform::WorldPosition&,
+                            const std::unordered_map<std::string, std::string>&)
+                        {
+                            auto& mf_stack{ p_world_aspect.getComponent<std::vector<mage::transform::MatrixFactory>>("mf_stack")->getPurpose()};
+                            transform::MatrixChain mc;
+
+                            for (auto& mf : mf_stack)
+                            {
+                                const auto result_mat{ mf.getResult() };
+                                mc.pushMatrix(result_mat);
+                            }
+
+                            mc.buildResult();
+                            
+                            transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("output")->getPurpose() };
+                            wp.local_pos = wp.local_pos * mc.getResultTransform();
+                        }
+                    ));
+                }
+  
                 // Resource Aspect
 
                 // meshe resource ?
@@ -397,7 +410,7 @@ core::SyncVariable SceneStreamerSystem::buildSyncVariableFromJson(const json::Sy
     return sync_variable;
 }
 
-void SceneStreamerSystem::processMatrixFactoryFromJson(const json::MatrixFactory& p_json_matrix_factory, mage::core::ComponentContainer& p_world_aspect, mage::core::ComponentContainer& p_time_aspect)
+mage::transform::MatrixFactory SceneStreamerSystem::processMatrixFactoryFromJson(const json::MatrixFactory& p_json_matrix_factory, mage::core::ComponentContainer& p_world_aspect, mage::core::ComponentContainer& p_time_aspect)
 {
     mage::transform::MatrixFactory matrix_factory(p_json_matrix_factory.type);
 
@@ -573,7 +586,8 @@ void SceneStreamerSystem::processMatrixFactoryFromJson(const json::MatrixFactory
         }
     }
 
-    p_world_aspect.addComponent<mage::transform::MatrixFactory>(p_json_matrix_factory.descr, matrix_factory);
+    //p_world_aspect.addComponent<mage::transform::MatrixFactory>(p_json_matrix_factory.descr, matrix_factory);
+    return matrix_factory;
 }
 
 void SceneStreamerSystem::requestEntityRendering(const std::string& p_entity_id)

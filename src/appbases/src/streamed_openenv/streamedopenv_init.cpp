@@ -305,61 +305,58 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 								"world_aspect" : 
 								{
-									"animators":
-									[
-										{
-											"descr": "ground_Entity pos animator (part I)",
-											"matrix_factory":
+									"animator":
+									{
+										"descr": "ground_Entity pos animator",
+
+										"matrix_factory_chain":
+										[
 											{
-												"type": "translation",	
-												"descr": "ground_Entity pos (part I)",
+												"type": "translation",
 
 												"x_direct_value":
 												{
-													"descr" : "ground_Entity pos in x (part I)",
+													"descr" : "ground_Entity pos in x part I",
 													"value": 0
 												},
 
 												"y_datacloud_value":
 												{
-													"descr" : "ground_Entity pos in y (part I)",
+													"descr" : "ground_Entity pos in y part I",
 													"var_name": "app.skydomeInnerRadius"
 												},
 
 												"z_direct_value":
 												{
-													"descr" : "ground_Entity pos in z (part I)",
+													"descr" : "ground_Entity pos in z part I",
 													"value": 0
 												}
-											}
-										},
-										{
-											"descr": "ground_Entity pos animator (part II)",
-											"matrix_factory":
+											},
+
 											{
 												"type": "translation",
-												"descr": "ground_Entity pos (part II)",
 
 												"x_direct_value":
 												{
-													"descr" : "ground_Entity pos in x (part II)",
+													"descr" : "ground_Entity pos in x part II",
 													"value": 0
 												},
 
 												"y_datacloud_value":
 												{
-													"descr" : "ground_Entity pos in y (part II)",
+													"descr" : "ground_Entity pos in y part II",
 													"var_name": "app.groundLevel"
 												},
 
 												"z_direct_value":
 												{
-													"descr" : "ground_Entity pos in z (part II)",
+													"descr" : "ground_Entity pos in z part II",
 													"value": 0
 												}
 											}
-										}
-									]
+
+										]
+									}				
 								},
 
 								"passes":
@@ -398,76 +395,104 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 								}
 							},
 							{
-								"id": "cameraGblJoint_Entity",
+								"id": "cameraGblJointBasePos_Entity",
 
 								"world_aspect" : 
 								{
-									"animators":
-									[
-										{
-											"descr": "camera gimbalLock Joint animator",
-											"helper": "gimbalLockJoin"
-										},
-										{
-											"descr": "cameraGblJoint_Entity initial pos animator (part I)",
-											"matrix_factory":
+									"animator":
+									{
+										"descr": "camera_Entity pos animator",
+
+										"matrix_factory_chain":
+										[
 											{
-												"type": "translation",	
-												"descr": "cameraGblJoint_Entity initial pos (part I)",
+												"type": "translation",
 
 												"x_direct_value":
 												{
-													"descr" : "cameraGblJoint_Entity initial pos in x (part I)",
+													"descr" : "camera_Entity pos in x part I",
 													"value": -50
 												},
 
-												"y_datacloud_value":
+												"y_direct_value":
 												{
-													"descr" : "cameraGblJoint_Entity initial pos in y (part I)",
-													"var_name": "app.skydomeInnerRadius"
+													"descr" : "camera_Entity pos in y part I",
+													"var_name": 15
 												},
 
 												"z_direct_value":
 												{
-													"descr" : "cameraGblJoint_Entity initial pos in z (part I)",
+													"descr" : "camera_Entity pos in z part I",
 													"value": 1.5
 												}
-											}
-										},
-										{
-											"descr": "cameraGblJoint_Entity initial pos animator (part II)",
-											"matrix_factory":
-											{												
+											},
+
+											{
 												"type": "translation",
-												"descr": "cameraGblJoint_Entity initial pos (part II)",
 
 												"x_direct_value":
 												{
-													"descr" : "cameraGblJoint_Entity initial pos in x (part II)",
+													"descr" : "camera_Entity pos in x part II",
 													"value": 0
 												},
 
 												"y_datacloud_value":
 												{
-													"descr" : "cameraGblJoint_Entity initial pos in y (part II)",
+													"descr" : "camera_Entity pos in y part II",
 													"var_name": "app.groundLevel"
 												},
 
 												"z_direct_value":
 												{
-													"descr" : "cameraGblJoint_Entity initial pos in z (part II)",
+													"descr" : "camera_Entity pos in z part II",
+													"value": 0
+												}
+											},
+
+											{
+												"type": "translation",
+
+												"x_direct_value":
+												{
+													"descr" : "camera_Entity pos in x part III",
+													"value": 0
+												},
+
+												"y_datacloud_value":
+												{
+													"descr" : "camera_Entity pos in y part III",
+													"var_name": "app.skydomeInnerRadius"
+												},
+
+												"z_direct_value":
+												{
+													"descr" : "camera_Entity pos in z part III",
 													"value": 0
 												}
 											}
-										}
-									]
+										]
+									}
 								},
-
 								"subs":
 								[
 									{
-										"id": "camera_Entity",
-										"helper": "plugCamera"
+										"id": "cameraGblJoint_Entity",
+
+										"world_aspect" : 
+										{
+											"animator":
+											{
+												"descr": "camera gimbalLock Joint animator",
+												"helper": "gimbalLockJoin"
+											}
+										},
+										"subs":
+										[
+											{
+												"id": "camera_Entity",
+												"helper": "plugCamera"
+											}
+										]
 									}
 								]
 							}

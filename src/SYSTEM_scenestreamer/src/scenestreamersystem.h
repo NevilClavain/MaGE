@@ -36,6 +36,8 @@
 
 #include "syncvariable.h"
 
+#include "matrixfactory.h"
+
 namespace mage
 {
     //fwd decl
@@ -235,8 +237,6 @@ namespace mage
         {
             std::string                         type; //"translation", "rotation", "scaling"
 
-            std::string                         descr;
-
             SyncVarValueMatrixSource            x_syncvar_value;
             SyncVarValueMatrixSource            y_syncvar_value;
             SyncVarValueMatrixSource            z_syncvar_value;
@@ -256,7 +256,7 @@ namespace mage
             ScalarDirectValueMatrixSource       z_direct_value;
             ScalarDirectValueMatrixSource       w_direct_value;
 
-            JS_OBJ(type, descr, 
+            JS_OBJ(type, 
                         x_syncvar_value, y_syncvar_value, z_syncvar_value, 
                         xyzw_datacloud_value, xyz_datacloud_value, x_datacloud_value, y_datacloud_value, z_datacloud_value, w_datacloud_value,
                         xyzw_direct_value, xyz_direct_value, x_direct_value, y_direct_value, z_direct_value, w_direct_value);
@@ -266,17 +266,25 @@ namespace mage
         {            
             std::string                 descr;
             std::string                 helper;
-            MatrixFactory               matrix_factory; // parsé par défaut si helper est vide ("")
 
-            JS_OBJ(descr, helper, matrix_factory);
+            //MatrixFactory               matrix_factory; // parsé par défaut si helper est vide ("")
+
+            std::vector<MatrixFactory>  matrix_factory_chain;
+
+            //JS_OBJ(descr, helper, matrix_factory);
+            JS_OBJ(descr, helper, matrix_factory_chain);
         };
 
         struct WorldAspect
         {            
-            // world aspect can have N animators
-            std::vector<Animator>       animators;
+            //// world aspect can have N animators
+            //std::vector<Animator>       animators;
 
-            JS_OBJ(animators);
+            //JS_OBJ(animators);
+
+            // world aspect can have only 1 animator
+            Animator animator;
+            JS_OBJ(animator);
         };
 
         struct Meshe
@@ -419,6 +427,7 @@ namespace mage
         void register_scene_entity(mage::core::Entity* p_entity);
 
         core::SyncVariable buildSyncVariableFromJson(const json::SyncVariable& p_syncvar);
-        void processMatrixFactoryFromJson(const json::MatrixFactory& p_json_matrix_factory, mage::core::ComponentContainer& p_world_aspect, mage::core::ComponentContainer& p_time_aspect);
+
+        mage::transform::MatrixFactory processMatrixFactoryFromJson(const json::MatrixFactory& p_json_matrix_factory, mage::core::ComponentContainer& p_world_aspect, mage::core::ComponentContainer& p_time_aspect);
     };
 }
