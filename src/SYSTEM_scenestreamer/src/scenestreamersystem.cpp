@@ -227,7 +227,7 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
 
                 if ("gimbalLockJoin" == p_node.world_aspect.animator.helper)
                 {
-                    world_aspect.addComponent<transform::WorldPosition>("output");
+                    world_aspect.addComponent<transform::WorldPosition>("position");
 
                     world_aspect.addComponent<double>("gbl_theta", 0);
                     world_aspect.addComponent<double>("gbl_phi", 0);
@@ -243,7 +243,7 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                             {"gimbalLockJointAnim.phi", "gbl_phi"},
                             {"gimbalLockJointAnim.pos", "gbl_pos"},
                             {"gimbalLockJointAnim.speed", "gbl_speed"},
-                            {"gimbalLockJointAnim.output", "output"}
+                            {"gimbalLockJointAnim.output", "position"}
 
                         }, helpers::makeGimbalLockJointAnimator())
                     );
@@ -251,7 +251,7 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                 // if no helper, decode matrix_factory
                 else if ("" == p_node.world_aspect.animator.helper)
                 {
-                    world_aspect.addComponent<transform::WorldPosition>("output");
+                    world_aspect.addComponent<transform::WorldPosition>("position");
 
                     std::vector<mage::transform::MatrixFactory> mf_stack;
 
@@ -287,7 +287,7 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
 
                             mc.buildResult();
                             
-                            transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("output")->getPurpose() };
+                            transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
                             wp.local_pos = wp.local_pos * mc.getResultTransform();
                         }
                     ));
