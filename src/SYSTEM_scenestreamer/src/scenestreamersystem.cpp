@@ -149,7 +149,7 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
                 const auto& pshader{ p_node.target.shaders.at(1) };
                 for (const auto& arg : pshader.args)
                 {
-                    dc.vshaders_map.push_back(std::make_pair(arg.source, arg.destination));
+                    dc.pshaders_map.push_back(std::make_pair(arg.source, arg.destination));
                 }
 
                 // recursive call

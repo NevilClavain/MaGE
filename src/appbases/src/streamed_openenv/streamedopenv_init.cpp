@@ -252,6 +252,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 											"queue":
 											{
 												"id": "TextureChannelScene_Entity",
+												"target_depth_clear" : true,
 												"target_clear": true,
 												"target_clear_color": 
 												{
@@ -267,6 +268,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 											"queue":
 											{
 												"id": "ZdepthChannelScene_Entity",
+												"target_depth_clear" : true,
 												"target_clear": true,
 												"target_clear_color": 
 												{
@@ -411,13 +413,13 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 												"x_direct_value":
 												{
 													"descr" : "camera_Entity pos in x part I",
-													"value": -50
+													"value": -51
 												},
 
 												"y_direct_value":
 												{
 													"descr" : "camera_Entity pos in y part I",
-													"var_name": 15
+													"value": 15
 												},
 
 												"z_direct_value":
@@ -523,7 +525,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					sceneStreamerSystemInstance->buildViewgroup(viewgroup_json, Base::renderingQueueSystemSlot);
 
 
-					//sceneStreamerSystemInstance->requestEntityRendering("ground_Entity");
+					sceneStreamerSystemInstance->requestEntityRendering("ground_Entity");
 				}
 				break;
 			}
