@@ -51,7 +51,26 @@ void ModuleImpl::onMouseMove(long p_xm, long p_ym, long p_dx, long p_dy)
 	}
 	else
 	{
+		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot)) };
+		auto& [mainView, secondaryView] { renderingQueueSystemInstance->getViewGroupCurrentViews("player_camera") };
 
+		if ("camera_Entity" == mainView)
+		{
+			const auto tc{ TimeControl::getInstance() };
+			if (tc->isReady())
+			{
+				auto& gblJointEntityNode{ m_entitygraph.node("cameraGblJoint_Entity") };
+				const auto gblJointEntity{ gblJointEntityNode.data() };
+
+				auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
+
+				double& fps_theta{ world_aspect.getComponent<double>("gbl_theta")->getPurpose() };
+				double& fps_phi{ world_aspect.getComponent<double>("gbl_phi")->getPurpose() };
+
+				tc->angleSpeedInc(&fps_theta, -p_dx);
+				tc->angleSpeedInc(&fps_phi, -p_dy);
+			}
+		}
 	}
 }
 
