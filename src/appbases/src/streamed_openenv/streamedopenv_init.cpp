@@ -293,6 +293,102 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 						"subs":
 						[
 							{
+								"id": "wall_Entity",
+
+								"resource_aspect" :
+								{
+									"meshe":
+									{
+										"descr": "wall_Entity_meshe",
+										"filename": "wall.ac",
+										"meshe_id": "box"
+									}
+								},
+
+								"world_aspect" : 
+								{
+									"animator":
+									{
+										"descr": "wall_Entity pos animator",
+
+										"matrix_factory_chain":
+										[
+											{
+												"type": "translation",
+
+												"x_direct_value":
+												{
+													"descr" : "wall_Entity pos in x part I",
+													"value": 0
+												},
+
+												"y_datacloud_value":
+												{
+													"descr" : "wall_Entity pos in y part I",
+													"var_name": "app.skydomeInnerRadius"
+												},
+
+												"z_direct_value":
+												{
+													"descr" : "wall_Entity pos in z part I",
+													"value": 0
+												}
+											},
+
+											{
+												"type": "translation",
+
+												"x_direct_value":
+												{
+													"descr" : "wall_Entity pos in x part II",
+													"value": -25
+												},
+
+												"y_datacloud_value":
+												{
+													"descr" : "wall_Entity pos in y part II",
+													"var_name": "app.groundLevel"
+												},
+
+												"z_direct_value":
+												{
+													"descr" : "wall_Entity pos in z part II",
+													"value": -40
+												}
+											}
+
+										]
+									}
+								},
+
+								"passes":
+								{
+									"configs":
+									[
+										{
+											"queue_entity_id": "TextureChannelScene_Entity",
+											"textures_files_list":
+											[
+												{
+													"stage": 0,
+													"filename": "wall.jpg"
+												}
+											],
+
+											"vshader": "scene_texture1stage_keycolor_vs",
+											"pshader": "scene_texture1stage_keycolor_ps"
+										},
+										{
+											"queue_entity_id": "ZdepthChannelScene_Entity",
+
+											"vshader": "scene_zdepth_vs",
+											"pshader": "scene_zdepth_ps"
+										}
+									]
+								}
+							},
+
+							{
 								"id": "ground_Entity",
 
 								"resource_aspect" :
@@ -358,7 +454,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 											}
 
 										]
-									}				
+									}
 								},
 
 								"passes":
@@ -526,6 +622,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 
 					sceneStreamerSystemInstance->requestEntityRendering("ground_Entity");
+					sceneStreamerSystemInstance->requestEntityRendering("wall_Entity");
 				}
 				break;
 			}
