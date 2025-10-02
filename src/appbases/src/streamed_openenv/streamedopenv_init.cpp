@@ -355,8 +355,21 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 													"descr" : "wall_Entity pos in z part II",
 													"value": -40
 												}
-											}
+											},
 
+											{
+												"type": "rotation",
+
+												"xyzw_direct_value":
+												{
+													"descr" : "wall_Entity rot",
+
+													"x": 0,
+													"y": 1,
+													"z": 0,
+													"w": 1.57
+												}
+											}
 										]
 									}
 								},
