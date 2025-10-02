@@ -671,6 +671,12 @@ void SceneStreamerSystem::registerToPasses(const json::Passes& p_passes, mage::c
             default_channel_config.textures_files_list.push_back(std::make_pair(texturefile_json.stage, std::make_pair(texturefile_json.filename, Texture())));
         }
 
+        // manage rendering order
+        if (config.rendering_order != -1)
+        {
+            default_channel_config.rendering_order = config.rendering_order;
+        }
+
         default_channel_config.queue_entity_id = config.queue_entity_id;
         passesDescriptors.configs[config.queue_entity_id] = default_channel_config;
     }
@@ -687,7 +693,7 @@ void SceneStreamerSystem::registerToPasses(const json::Passes& p_passes, mage::c
     {
         for (const auto pshader_param : pass_pshader_param.shaders_params)
         {
-            passesDescriptors.vertex_shaders_params[pass_pshader_param.queue_entity_id].push_back( std::make_pair(pshader_param.datacloud_name, pshader_param.param_name) );
+            passesDescriptors.pixel_shaders_params[pass_pshader_param.queue_entity_id].push_back( std::make_pair(pshader_param.datacloud_name, pshader_param.param_name) );
         }
     }
 

@@ -293,6 +293,146 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 						"subs":
 						[
 							{
+								"id": "skydome_Entity",
+
+								"resource_aspect" :
+								{
+									"meshe":
+									{
+										"descr": "skydome_Entity_meshe",
+										"filename": "skydome.ac",
+										"meshe_id": "sphere"
+									}
+								},
+
+								"world_aspect" : 
+								{
+									"animator":
+									{
+										"descr": "skydome_Entity pos animator",
+
+										"matrix_factory_chain":
+										[
+											{
+												"type": "scaling",
+
+												"x_datacloud_value":
+												{
+													"descr" : "skydome x scaling",
+													"var_name": "app.skydomeOuterRadius"
+												},
+
+												"y_datacloud_value":
+												{
+													"descr" : "skydome y scaling",
+													"var_name": "app.skydomeOuterRadius"
+												},
+
+												"z_datacloud_value":
+												{
+													"descr" : "skydome z scaling",
+													"var_name": "app.skydomeOuterRadius"
+												}
+											}
+										]
+									}
+								},
+
+								"passes":
+								{
+									"configs":
+									[
+										{
+											"queue_entity_id": "TextureChannelScene_Entity",
+
+											"rs_list":
+											[
+												{ 
+													"operation": "SETCULLING",
+													"argument": "ccw"
+												},
+
+												{
+													"operation": "ENABLEZBUFFER",
+													"argument": "false"
+												},
+
+												{
+													"operation": "ALPHABLENDENABLE",
+													"argument": "true"
+												},
+
+												{
+													"operation": "ALPHABLENDOP",
+													"argument": "add"
+												},
+												{
+													"operation": "ALPHABLENDFUNC",
+													"argument": "always"
+												},
+												{
+													"operation": "ALPHABLENDDEST",
+													"argument": "invsrcalpha"
+												},
+												{
+													"operation": "ALPHABLENDSRC",
+													"argument": "srcalpha"
+												}
+											],
+
+											"vshader": "scene_skydome_vs",
+											"pshader": "scene_skydome_ps",
+											"rendering_order": 900
+										}
+									],
+
+									"pixel_shaders_params":
+									[
+										{
+											"queue_entity_id": "TextureChannelScene_Entity",
+											"shaders_params":
+											[
+												{ 
+													"datacloud_name" : "std.light0.dir", 
+													"param_name": "light0_dir" 
+												},
+
+												{ 
+													"datacloud_name" : "scene_skydome_ps.atmo_scattering_flag_0", 
+													"param_name": "atmo_scattering_flag_0" 
+												},
+
+												{ 
+													"datacloud_name" : "scene_skydome_ps.atmo_scattering_flag_1", 
+													"param_name": "atmo_scattering_flag_1" 
+												},
+
+												{ 
+													"datacloud_name" : "scene_skydome_ps.atmo_scattering_flag_2", 
+													"param_name": "atmo_scattering_flag_2" 
+												},
+
+												{ 
+													"datacloud_name" : "scene_skydome_ps.atmo_scattering_flag_3", 
+													"param_name": "atmo_scattering_flag_3" 
+												},
+
+												{ 
+													"datacloud_name" : "scene_skydome_ps.atmo_scattering_flag_4", 
+													"param_name": "atmo_scattering_flag_4" 
+												},
+
+												{ 
+													"datacloud_name" : "scene_skydome_ps.atmo_scattering_flag_5", 
+													"param_name": "atmo_scattering_flag_5" 
+												}
+											]
+										}
+									]
+								}
+							},
+
+							{
 								"id": "wall_Entity",
 
 								"resource_aspect" :
@@ -636,6 +776,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 					sceneStreamerSystemInstance->requestEntityRendering("ground_Entity");
 					sceneStreamerSystemInstance->requestEntityRendering("wall_Entity");
+					sceneStreamerSystemInstance->requestEntityRendering("skydome_Entity");
 				}
 				break;
 			}
