@@ -585,8 +585,6 @@ mage::transform::MatrixFactory SceneStreamerSystem::processMatrixFactoryFromJson
             }
         }
     }
-
-    //p_world_aspect.addComponent<mage::transform::MatrixFactory>(p_json_matrix_factory.descr, matrix_factory);
     return matrix_factory;
 }
 
