@@ -453,6 +453,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 										"matrix_factory_chain":
 										[
+
 											{
 												"type": "translation",
 
@@ -496,7 +497,6 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 													"value": -40
 												}
 											},
-
 											{
 												"type": "rotation",
 
@@ -507,7 +507,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 													"x": 0,
 													"y": 1,
 													"z": 0,
-													"w": 1.57
+													"w": 90
 												}
 											}
 										]
@@ -662,7 +662,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 												"x_direct_value":
 												{
 													"descr" : "camera_Entity pos in x part I",
-													"value": -51
+													"value": -25
 												},
 
 												"y_direct_value":
