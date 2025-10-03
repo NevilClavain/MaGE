@@ -498,7 +498,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 												}
 											},
 											{
-												"type": "rotation",
+												"type": "rotationDegrees",
 
 												"xyzw_direct_value":
 												{
@@ -662,7 +662,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 												"x_direct_value":
 												{
 													"descr" : "camera_Entity pos in x part I",
-													"value": -25
+													"value": -51
 												},
 
 												"y_direct_value":

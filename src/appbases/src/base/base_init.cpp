@@ -74,6 +74,8 @@
 #include "matrix.h"
 #include "matrixfactory.h"
 
+#include "maths_helpers.h"
+
 
 using namespace mage;
 using namespace mage::core;
@@ -176,6 +178,18 @@ void Base::init(const std::string p_appWindowsEntityName)
 		}
 	};
 	mage::transform::MatrixFactory::registerBuildFunc("rotation", build_rotation);
+
+	const std::function<core::maths::Matrix(double, double, double, double)> build_rotation_degrees
+	{
+		[](double p_x, double p_y, double p_z, double p_w) -> core::maths::Matrix
+		{
+			core::maths::Matrix mat;
+			mat.rotation(core::maths::Real3Vector(p_x, p_y, p_z), core::maths::degToRad(p_w));
+
+			return mat;
+		}
+	};
+	mage::transform::MatrixFactory::registerBuildFunc("rotationDegrees", build_rotation_degrees);
 
 	const std::function<core::maths::Matrix(double, double, double, double)> build_scaling
 	{
