@@ -1,0 +1,74 @@
+{
+  "subs": [
+    {
+      "target": {
+        "descr": "Fog",
+        "shaders": [
+          {
+            "name": "combiner_fog_vs",
+            "args": [
+            ]
+          },
+          {
+            "name": "combiner_fog_ps",
+            "args": [
+              {
+                "source": "std.fog.color",
+                "destination": "fog_color"
+              },
+              {
+                "source": "std.fog.density",
+                "destination": "fog_density"
+              }
+            ]
+          }
+        ],
+        "inputs": [
+          {
+            "stage": 0,
+            "buffer_texture": {
+              "format_descr": "TEXTURE_RGB"
+            }
+          },
+          {
+            "stage": 1,
+            "buffer_texture": {
+              "format_descr": "TEXTURE_FLOAT32"
+            }
+          }
+        ],
+        "destination_stage": 0,
+        "subs": [
+          {
+            "queue": {
+              "id": "TextureChannelScene_Entity",
+              "target_depth_clear": true,
+              "target_clear": true,
+              "target_clear_color": {
+                "r": 0,
+                "g": 0,
+                "b": 0,
+                "a": 255
+              },
+              "target_stage": 0
+            }
+          },
+          {
+            "queue": {
+              "id": "ZdepthChannelScene_Entity",
+              "target_depth_clear": true,
+              "target_clear": true,
+              "target_clear_color": {
+                "r": 0,
+                "g": 0,
+                "b": 0,
+                "a": 255
+              },
+              "target_stage": 1
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
