@@ -197,96 +197,9 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					dataCloud->registerData<maths::Real4Vector>("shadowmap_resol");
 					dataCloud->updateDataValue<maths::Real4Vector>("shadowmap_resol", maths::Real4Vector(2048, 0, 0, 0));
 
-					const char rendergraph_json[] = R"json(
-					{
-						"subs":
-						[
-							{
-								"target":
-								{
-									"descr" : "Fog", 
-									"shaders":
-									[
-										{ 
-											"name" : "combiner_fog_vs",
-											"args": 
-											[
-											]
-										},
-										{
-											"name" : "combiner_fog_ps",
-											"args":	
-											[
-												{ 
-													"source" : "std.fog.color",
-													"destination" : "fog_color"
-												},
-												{ 
-													"source" : "std.fog.density",
-													"destination" : "fog_density"
-												}
-											]
-										}
-									],
-									"inputs":
-									[
-										{
-											"stage" : 0,
-											"buffer_texture" :
-											{
-												"format_descr" : "TEXTURE_RGB"
-											}
-										},
-										{
-											"stage" : 1,
-											"buffer_texture" :
-											{
-												"format_descr" : "TEXTURE_FLOAT32"
-											}
-										}
-									],
-									"destination_stage": 0,
-									"subs":
-									[
-										{
-											"queue":
-											{
-												"id": "TextureChannelScene_Entity",
-												"target_depth_clear" : true,
-												"target_clear": true,
-												"target_clear_color": 
-												{
-													"r": 0,
-													"g": 0,
-													"b": 0,
-													"a": 255
-												},
-												"target_stage": 0
-											}
-										},
-										{
-											"queue":
-											{
-												"id": "ZdepthChannelScene_Entity",
-												"target_depth_clear" : true,
-												"target_clear": true,
-												"target_clear_color": 
-												{
-													"r": 0,
-													"g": 0,
-													"b": 0,
-													"a": 255
-												},
-												"target_stage": 1
-											}
-										}
-									]
-								}
-							}
-						]
-					}
-					)json";
 
+					mage::core::FileContent<char> rendergraphFileContent("./module_streamed_anims_config/open_env_rendergraph.json");
+					rendergraphFileContent.load();
 
 					const char scenegraph_json[] = R"json(
 					{
@@ -766,7 +679,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 					auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot)) };
 
-					sceneStreamerSystemInstance->buildRendergraphPart(rendergraph_json, "screenRendering_Filter_DirectForward_Quad_Entity",
+					sceneStreamerSystemInstance->buildRendergraphPart(rendergraphFileContent.getData(), "screenRendering_Filter_DirectForward_Quad_Entity",
 																		w_width, w_height, characteristics_v_width, characteristics_v_height);
 
 					sceneStreamerSystemInstance->buildScenegraphPart(scenegraph_json, "app_Entity", m_perpective_projection);
