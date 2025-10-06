@@ -455,110 +455,6 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 							},
 
 							{
-								"id": "ground_Entity",
-
-								"resource_aspect" :
-								{
-									"meshe":
-									{
-										"descr": "ground_Entity_meshe",
-										"filename": "ground.ac",
-										"meshe_id": "rect"
-									}
-								},
-
-								"world_aspect" : 
-								{
-									"animator":
-									{
-										"descr": "ground_Entity pos animator",
-
-										"matrix_factory_chain":
-										[
-											{
-												"type": "translation",
-
-												"x_direct_value":
-												{
-													"descr" : "ground_Entity pos in x part I",
-													"value": 0
-												},
-
-												"y_datacloud_value":
-												{
-													"descr" : "ground_Entity pos in y part I",
-													"var_name": "app.skydomeInnerRadius"
-												},
-
-												"z_direct_value":
-												{
-													"descr" : "ground_Entity pos in z part I",
-													"value": 0
-												}
-											},
-
-											{
-												"type": "translation",
-
-												"x_direct_value":
-												{
-													"descr" : "ground_Entity pos in x part II",
-													"value": 0
-												},
-
-												"y_datacloud_value":
-												{
-													"descr" : "ground_Entity pos in y part II",
-													"var_name": "app.groundLevel"
-												},
-
-												"z_direct_value":
-												{
-													"descr" : "ground_Entity pos in z part II",
-													"value": 0
-												}
-											}
-
-										]
-									}
-								},
-
-								"passes":
-								{
-									"configs":
-									[
-										{
-											"queue_entity_id": "TextureChannelScene_Entity",
-
-											"rs_list":
-											[
-												{ 
-													"operation": "SETTEXTUREFILTERTYPE",
-													"argument": "linear_uvwrap"
-												}
-											],
-
-											"textures_files_list":
-											[
-												{
-													"stage": 0,
-													"filename": "grass08.jpg"
-												}
-											],
-
-											"vshader": "scene_recursive_texture_vs",
-											"pshader": "scene_recursive_texture_ps"
-										},
-										{
-											"queue_entity_id": "ZdepthChannelScene_Entity",
-
-											"vshader": "scene_zdepth_vs",
-											"pshader": "scene_zdepth_ps"
-										}
-									]
-								}
-							},
-							{
 								"id": "cameraGblJointBasePos_Entity",
 
 								"world_aspect" : 
@@ -683,6 +579,12 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 																		w_width, w_height, characteristics_v_width, characteristics_v_height);
 
 					sceneStreamerSystemInstance->buildScenegraphPart(scenegraph_json, "app_Entity", m_perpective_projection);
+
+					mage::core::FileContent<char> groundEntityFileContent("./module_streamed_anims_config/ground_entity.json");
+					groundEntityFileContent.load();
+
+					sceneStreamerSystemInstance->buildScenegraphPart(groundEntityFileContent.getData(), "app_Entity", m_perpective_projection);
+
 
 					sceneStreamerSystemInstance->buildViewgroup(viewgroup_json, Base::renderingQueueSystemSlot);
 
