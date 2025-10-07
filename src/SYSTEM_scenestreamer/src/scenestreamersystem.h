@@ -267,21 +267,13 @@ namespace mage
             std::string                 descr;
             std::string                 helper;
 
-            //MatrixFactory               matrix_factory; // parsé par défaut si helper est vide ("")
-
             std::vector<MatrixFactory>  matrix_factory_chain;
 
-            //JS_OBJ(descr, helper, matrix_factory);
             JS_OBJ(descr, helper, matrix_factory_chain);
         };
 
         struct WorldAspect
         {            
-            //// world aspect can have N animators
-            //std::vector<Animator>       animators;
-
-            //JS_OBJ(animators);
-
             // world aspect can have only 1 animator
             Animator animator;
             JS_OBJ(animator);
