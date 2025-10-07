@@ -201,364 +201,34 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					mage::core::FileContent<char> rendergraphFileContent("./module_streamed_anims_config/open_env_rendergraph.json");
 					rendergraphFileContent.load();
 
-					const char scenegraph_json[] = R"json(
-					{
-						"subs":
-						[
-							{
-								"id": "skydome_Entity",
 
-								"resource_aspect" :
-								{
-									"meshe":
-									{
-										"descr": "skydome_Entity_meshe",
-										"filename": "skydome.ac",
-										"meshe_id": "sphere"
-									}
-								},
 
-								"world_aspect" : 
-								{
-									"animator":
-									{
-										"descr": "skydome_Entity pos animator",
 
-										"matrix_factory_chain":
-										[
-											{
-												"type": "scaling",
+					auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot)) };
 
-												"x_datacloud_value":
-												{
-													"descr" : "skydome x scaling",
-													"var_name": "app.skydomeOuterRadius"
-												},
+					sceneStreamerSystemInstance->buildRendergraphPart(rendergraphFileContent.getData(), "screenRendering_Filter_DirectForward_Quad_Entity",
+																		w_width, w_height, characteristics_v_width, characteristics_v_height);
 
-												"y_datacloud_value":
-												{
-													"descr" : "skydome y scaling",
-													"var_name": "app.skydomeOuterRadius"
-												},
 
-												"z_datacloud_value":
-												{
-													"descr" : "skydome z scaling",
-													"var_name": "app.skydomeOuterRadius"
-												}
-											}
-										]
-									}
-								},
 
-								"passes":
-								{
-									"configs":
-									[
-										{
-											"queue_entity_id": "TextureChannelScene_Entity",
 
-											"rs_list":
-											[
-												{ 
-													"operation": "SETCULLING",
-													"argument": "ccw"
-												},
 
-												{
-													"operation": "ENABLEZBUFFER",
-													"argument": "false"
-												},
+					mage::core::FileContent<char> groundEntityFileContent("./module_streamed_anims_config/ground_entity.json");
+					groundEntityFileContent.load();
+					sceneStreamerSystemInstance->buildScenegraphPart(groundEntityFileContent.getData(), "app_Entity", m_perpective_projection);
 
-												{
-													"operation": "ALPHABLENDENABLE",
-													"argument": "true"
-												},
+					mage::core::FileContent<char> skydomeEntityFileContent("./module_streamed_anims_config/skydome_entity.json");
+					skydomeEntityFileContent.load();
+					sceneStreamerSystemInstance->buildScenegraphPart(skydomeEntityFileContent.getData(), "app_Entity", m_perpective_projection);
 
-												{
-													"operation": "ALPHABLENDOP",
-													"argument": "add"
-												},
-												{
-													"operation": "ALPHABLENDFUNC",
-													"argument": "always"
-												},
-												{
-													"operation": "ALPHABLENDDEST",
-													"argument": "invsrcalpha"
-												},
-												{
-													"operation": "ALPHABLENDSRC",
-													"argument": "srcalpha"
-												}
-											],
+					mage::core::FileContent<char> wallEntityFileContent("./module_streamed_anims_config/wall_entity.json");
+					wallEntityFileContent.load();
+					sceneStreamerSystemInstance->buildScenegraphPart(wallEntityFileContent.getData(), "app_Entity", m_perpective_projection);
 
-											"vshader": "scene_skydome_vs",
-											"pshader": "scene_skydome_ps",
-											"rendering_order": 900
-										}
-									],
+					mage::core::FileContent<char> gblCameraEntityFileContent("./module_streamed_anims_config/gblcamera_entity.json");
+					gblCameraEntityFileContent.load();
+					sceneStreamerSystemInstance->buildScenegraphPart(gblCameraEntityFileContent.getData(), "app_Entity", m_perpective_projection);
 
-									"pixel_shaders_params":
-									[
-										{
-											"queue_entity_id": "TextureChannelScene_Entity",
-											"shaders_params":
-											[
-												{ 
-													"datacloud_name" : "std.light0.dir", 
-													"param_name": "light0_dir" 
-												},
-
-												{ 
-													"datacloud_name" : "scene_skydome_ps.atmo_scattering_flag_0", 
-													"param_name": "atmo_scattering_flag_0" 
-												},
-
-												{ 
-													"datacloud_name" : "scene_skydome_ps.atmo_scattering_flag_1", 
-													"param_name": "atmo_scattering_flag_1" 
-												},
-
-												{ 
-													"datacloud_name" : "scene_skydome_ps.atmo_scattering_flag_2", 
-													"param_name": "atmo_scattering_flag_2" 
-												},
-
-												{ 
-													"datacloud_name" : "scene_skydome_ps.atmo_scattering_flag_3", 
-													"param_name": "atmo_scattering_flag_3" 
-												},
-
-												{ 
-													"datacloud_name" : "scene_skydome_ps.atmo_scattering_flag_4", 
-													"param_name": "atmo_scattering_flag_4" 
-												},
-
-												{ 
-													"datacloud_name" : "scene_skydome_ps.atmo_scattering_flag_5", 
-													"param_name": "atmo_scattering_flag_5" 
-												}
-											]
-										}
-									]
-								}
-							},
-
-							{
-								"id": "wall_Entity",
-
-								"resource_aspect" :
-								{
-									"meshe":
-									{
-										"descr": "wall_Entity_meshe",
-										"filename": "wall.ac",
-										"meshe_id": "box"
-									}
-								},
-
-								"world_aspect" : 
-								{
-									"animator":
-									{
-										"descr": "wall_Entity pos animator",
-
-										"matrix_factory_chain":
-										[
-
-											{
-												"type": "translation",
-
-												"x_direct_value":
-												{
-													"descr" : "wall_Entity pos in x part I",
-													"value": 0
-												},
-
-												"y_datacloud_value":
-												{
-													"descr" : "wall_Entity pos in y part I",
-													"var_name": "app.skydomeInnerRadius"
-												},
-
-												"z_direct_value":
-												{
-													"descr" : "wall_Entity pos in z part I",
-													"value": 0
-												}
-											},
-
-											{
-												"type": "translation",
-
-												"x_direct_value":
-												{
-													"descr" : "wall_Entity pos in x part II",
-													"value": -25
-												},
-
-												"y_datacloud_value":
-												{
-													"descr" : "wall_Entity pos in y part II",
-													"var_name": "app.groundLevel"
-												},
-
-												"z_direct_value":
-												{
-													"descr" : "wall_Entity pos in z part II",
-													"value": -40
-												}
-											},
-											{
-												"type": "rotationDegrees",
-
-												"xyzw_direct_value":
-												{
-													"descr" : "wall_Entity rot",
-
-													"x": 0,
-													"y": 1,
-													"z": 0,
-													"w": 90
-												}
-											}
-										]
-									}
-								},
-
-								"passes":
-								{
-									"configs":
-									[
-										{
-											"queue_entity_id": "TextureChannelScene_Entity",
-											"textures_files_list":
-											[
-												{
-													"stage": 0,
-													"filename": "wall.jpg"
-												}
-											],
-
-											"vshader": "scene_texture1stage_keycolor_vs",
-											"pshader": "scene_texture1stage_keycolor_ps"
-										},
-										{
-											"queue_entity_id": "ZdepthChannelScene_Entity",
-
-											"vshader": "scene_zdepth_vs",
-											"pshader": "scene_zdepth_ps"
-										}
-									]
-								}
-							},
-
-							{
-								"id": "cameraGblJointBasePos_Entity",
-
-								"world_aspect" : 
-								{
-									"animator":
-									{
-										"descr": "camera_Entity pos animator",
-
-										"matrix_factory_chain":
-										[
-											{
-												"type": "translation",
-
-												"x_direct_value":
-												{
-													"descr" : "camera_Entity pos in x part I",
-													"value": -51
-												},
-
-												"y_direct_value":
-												{
-													"descr" : "camera_Entity pos in y part I",
-													"value": 15
-												},
-
-												"z_direct_value":
-												{
-													"descr" : "camera_Entity pos in z part I",
-													"value": 1.5
-												}
-											},
-
-											{
-												"type": "translation",
-
-												"x_direct_value":
-												{
-													"descr" : "camera_Entity pos in x part II",
-													"value": 0
-												},
-
-												"y_datacloud_value":
-												{
-													"descr" : "camera_Entity pos in y part II",
-													"var_name": "app.groundLevel"
-												},
-
-												"z_direct_value":
-												{
-													"descr" : "camera_Entity pos in z part II",
-													"value": 0
-												}
-											},
-
-											{
-												"type": "translation",
-
-												"x_direct_value":
-												{
-													"descr" : "camera_Entity pos in x part III",
-													"value": 0
-												},
-
-												"y_datacloud_value":
-												{
-													"descr" : "camera_Entity pos in y part III",
-													"var_name": "app.skydomeInnerRadius"
-												},
-
-												"z_direct_value":
-												{
-													"descr" : "camera_Entity pos in z part III",
-													"value": 0
-												}
-											}
-										]
-									}
-								},
-								"subs":
-								[
-									{
-										"id": "cameraGblJoint_Entity",
-
-										"world_aspect" : 
-										{
-											"animator":
-											{
-												"descr": "camera gimbalLock Joint animator",
-												"helper": "gimbalLockJoin"
-											}
-										},
-										"subs":
-										[
-											{
-												"id": "camera_Entity",
-												"helper": "plugCamera"
-											}
-										]
-									}
-								]
-							}
-						]
-					}
-					)json";
 
 					const char viewgroup_json[] = R"json(
 					{
@@ -572,19 +242,6 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 						]
 					}
 					)json";
-
-					auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot)) };
-
-					sceneStreamerSystemInstance->buildRendergraphPart(rendergraphFileContent.getData(), "screenRendering_Filter_DirectForward_Quad_Entity",
-																		w_width, w_height, characteristics_v_width, characteristics_v_height);
-
-					sceneStreamerSystemInstance->buildScenegraphPart(scenegraph_json, "app_Entity", m_perpective_projection);
-
-					mage::core::FileContent<char> groundEntityFileContent("./module_streamed_anims_config/ground_entity.json");
-					groundEntityFileContent.load();
-
-					sceneStreamerSystemInstance->buildScenegraphPart(groundEntityFileContent.getData(), "app_Entity", m_perpective_projection);
-
 
 					sceneStreamerSystemInstance->buildViewgroup(viewgroup_json, Base::renderingQueueSystemSlot);
 
