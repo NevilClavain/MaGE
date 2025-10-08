@@ -215,19 +215,19 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 					mage::core::FileContent<char> groundEntityFileContent("./module_streamed_anims_config/ground_entity.json");
 					groundEntityFileContent.load();
-					sceneStreamerSystemInstance->buildScenegraphPart(groundEntityFileContent.getData(), "app_Entity", m_perpective_projection);
+					sceneStreamerSystemInstance->buildScenegraphEntity(groundEntityFileContent.getData(), "app_Entity", m_perpective_projection);
 
 					mage::core::FileContent<char> skydomeEntityFileContent("./module_streamed_anims_config/skydome_entity.json");
 					skydomeEntityFileContent.load();
-					sceneStreamerSystemInstance->buildScenegraphPart(skydomeEntityFileContent.getData(), "app_Entity", m_perpective_projection);
+					sceneStreamerSystemInstance->buildScenegraphEntity(skydomeEntityFileContent.getData(), "app_Entity", m_perpective_projection);
 
 					mage::core::FileContent<char> wallEntityFileContent("./module_streamed_anims_config/wall_entity.json");
 					wallEntityFileContent.load();
-					sceneStreamerSystemInstance->buildScenegraphPart(wallEntityFileContent.getData(), "app_Entity", m_perpective_projection);
+					sceneStreamerSystemInstance->buildScenegraphEntity(wallEntityFileContent.getData(), "app_Entity", m_perpective_projection);
 
 					mage::core::FileContent<char> gblCameraEntityFileContent("./module_streamed_anims_config/gblcamera_entity.json");
 					gblCameraEntityFileContent.load();
-					sceneStreamerSystemInstance->buildScenegraphPart(gblCameraEntityFileContent.getData(), "app_Entity", m_perpective_projection);
+					sceneStreamerSystemInstance->buildScenegraphEntity(gblCameraEntityFileContent.getData(), "app_Entity", m_perpective_projection);
 
 
 					const char viewgroup_json[] = R"json(

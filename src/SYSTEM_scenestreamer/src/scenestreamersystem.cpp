@@ -190,9 +190,9 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
     }
 }
 
-void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId, const mage::core::maths::Matrix p_perspective_projection)
+void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource, const std::string& p_parentEntityId, const mage::core::maths::Matrix p_perspective_projection)
 {
-    json::ScenegraphNodesCollection sgc;
+    json::ScenegraphEntitiesCollection sgc;
 
     JS::ParseContext parseContext(p_jsonsource);
     if (parseContext.parseTo(sgc) != JS::Error::NoError)
@@ -201,9 +201,9 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
         _EXCEPTION("Cannot parse scenegraph: " + errorStr);
     }
 
-    const std::function<void(const json::ScenegraphNode&, const std::string&, int)> browseHierarchy
+    const std::function<void(const json::ScenegraphEntity&, const std::string&, int)> browseHierarchy
     {
-        [&](const json::ScenegraphNode& p_node, const std::string& p_parent_id, int depth)
+        [&](const json::ScenegraphEntity& p_node, const std::string& p_parent_id, int depth)
         {
             if ("" != p_node.helper)
             {

@@ -354,7 +354,7 @@ namespace mage
             JS_OBJ(meshe);
         };
 
-        struct ScenegraphNode
+        struct ScenegraphEntity
         {            
             std::string                 id;
             WorldAspect                 world_aspect;
@@ -362,17 +362,33 @@ namespace mage
             std::string                 helper;
             Passes                      passes;
 
-            std::vector<ScenegraphNode> subs;
+            std::vector<ScenegraphEntity> subs;
             
             JS_OBJ(id, world_aspect, resource_aspect, helper, passes, subs);
         };
 
-        struct ScenegraphNodesCollection
+        struct ScenegraphEntitiesCollection
         {            
-            std::vector<ScenegraphNode>     subs;
+            std::vector<ScenegraphEntity>     subs;
 
             JS_OBJ(subs);
         };
+
+        ///////////////////////////////////
+
+        struct ScenegraphNode
+        {
+            std::string     file;
+            Animator        animator;
+            JS_OBJ(file);
+        };
+
+        struct Scenegraph
+        {
+            std::vector<ScenegraphNode> entities;
+            JS_OBJ(entities);
+        };
+
     }
 
     class EntityRendering
@@ -402,7 +418,7 @@ namespace mage
                                     int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
 
 
-        void buildScenegraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId, 
+        void buildScenegraphEntity(const std::string& p_jsonsource, const std::string& p_parentEntityId, 
                                     const mage::core::maths::Matrix p_perspective_projection);
 
         void buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot);
