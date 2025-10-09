@@ -380,7 +380,7 @@ namespace mage
         {
             std::string     file;
             Animator        animator;
-            JS_OBJ(file);
+            JS_OBJ(file, animator);
         };
 
         struct Scenegraph
@@ -414,12 +414,22 @@ namespace mage
 
         void run();
 
+        
+
         void buildRendergraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId,
                                     int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
 
 
+        void buildScenegraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId, const mage::core::maths::Matrix p_perspective_projection);
+
+
         void buildScenegraphEntity(const std::string& p_jsonsource, const std::string& p_parentEntityId, 
                                     const mage::core::maths::Matrix p_perspective_projection);
+
+
+        void buildScenegraphEntity(const std::string& p_jsonsource, const json::Animator& p_animator, const std::string& p_parentEntityId,
+                                    const mage::core::maths::Matrix p_perspective_projection);
+
 
         void buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot);
 

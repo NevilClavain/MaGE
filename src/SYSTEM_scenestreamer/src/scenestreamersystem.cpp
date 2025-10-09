@@ -46,6 +46,8 @@
 #include "trianglemeshe.h"
 #include "matrixchain.h"
 
+#include "filesystem.h"
+
 using namespace mage;
 using namespace mage::core;
 
@@ -190,6 +192,166 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
     }
 }
 
+
+void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId, const mage::core::maths::Matrix p_perspective_projection)
+{
+    json::Scenegraph sg;
+
+    JS::ParseContext parseContext(p_jsonsource);
+    if (parseContext.parseTo(sg) != JS::Error::NoError)
+    {
+        const auto errorStr{ parseContext.makeErrorString() };
+        _EXCEPTION("Cannot parse scenegraph: " + errorStr);
+    }
+
+    for (const auto& e : sg.entities)
+    {
+        mage::core::FileContent<char> entityFileContent("./module_streamed_anims_config/" + e.file + ".json");
+        entityFileContent.load();
+
+        buildScenegraphEntity(entityFileContent.getData(), e.animator, p_parentEntityId, p_perspective_projection);
+    }
+}
+
+void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource, const json::Animator& p_animator, const std::string& p_parentEntityId, const mage::core::maths::Matrix p_perspective_projection)
+{
+    json::ScenegraphEntitiesCollection sgc;
+
+    JS::ParseContext parseContext(p_jsonsource);
+    if (parseContext.parseTo(sgc) != JS::Error::NoError)
+    {
+        const auto errorStr{ parseContext.makeErrorString() };
+        _EXCEPTION("Cannot parse scenegraph entity: " + errorStr);
+    }
+
+    const std::function<void(const json::ScenegraphEntity&, const std::string&, int)> browseHierarchy
+    {
+        [&](const json::ScenegraphEntity& p_node, const std::string& p_parent_id, int depth)
+        {
+            if ("" != p_node.helper)
+            {
+                if ("plugCamera" == p_node.helper)
+                {
+                    core::Entity* camera_entity{ helpers::plugCamera(m_entitygraph, p_perspective_projection, p_parent_id, p_node.id) };
+                    register_scene_entity(camera_entity);
+                }
+            }
+            else
+            {
+                auto& entityNode{ m_entitygraph.add(m_entitygraph.node(p_parent_id), p_node.id) };
+                const auto entity{ entityNode.data() };
+
+                // create aspects
+                auto& time_aspect{ entity->makeAspect(core::timeAspect::id) };
+                auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
+                auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
+
+                // World Aspect
+
+                if ("gimbalLockJoin" == p_animator.helper)
+                {
+                    world_aspect.addComponent<transform::WorldPosition>("position");
+
+                    world_aspect.addComponent<double>("gbl_theta", 0);
+                    world_aspect.addComponent<double>("gbl_phi", 0);
+                    world_aspect.addComponent<double>("gbl_speed", 0);
+
+                    core::maths::Matrix positionmat;
+                    world_aspect.addComponent<core::maths::Real3Vector>("gbl_pos", maths::Real3Vector(0.0, 0.0, 0.0));
+
+                    world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
+                        {
+                            // input-output/components keys id mapping
+                            {"gimbalLockJointAnim.theta", "gbl_theta"},
+                            {"gimbalLockJointAnim.phi", "gbl_phi"},
+                            {"gimbalLockJointAnim.pos", "gbl_pos"},
+                            {"gimbalLockJointAnim.speed", "gbl_speed"},
+                            {"gimbalLockJointAnim.output", "position"}
+
+                        }, helpers::makeGimbalLockJointAnimator())
+                    );
+                }
+                // if no helper, decode matrix_factory
+                else if ("" == p_animator.helper)
+                {
+                    world_aspect.addComponent<transform::WorldPosition>("position");
+
+                    std::vector<mage::transform::MatrixFactory> mf_stack;
+
+                    for (const auto& json_mf : p_animator.matrix_factory_chain)
+                    {
+                        const auto mf{ processMatrixFactoryFromJson(json_mf, world_aspect, time_aspect) };
+                        mf_stack.push_back(mf);
+                    }
+
+                    if (0 == mf_stack.size())
+                    {
+                        _EXCEPTION("need some matrix factory in animator");
+                    }
+
+                    world_aspect.addComponent<std::vector<mage::transform::MatrixFactory>>("mf_stack", mf_stack);
+
+                    world_aspect.addComponent<transform::Animator>(p_animator.descr, transform::Animator
+                    (
+                        {},
+                        [=](const core::ComponentContainer& p_world_aspect,
+                            const core::ComponentContainer& p_time_aspect,
+                            const transform::WorldPosition&,
+                            const std::unordered_map<std::string, std::string>&)
+                        {
+                            auto& mf_stack{ p_world_aspect.getComponent<std::vector<mage::transform::MatrixFactory>>("mf_stack")->getPurpose()};
+                            transform::MatrixChain mc;
+
+                            for (auto& mf : mf_stack)
+                            {
+                                const auto result_mat{ mf.getResult() };
+                                mc.pushMatrix(result_mat);
+                            }
+
+                            mc.buildResult();
+
+                            transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+                            wp.local_pos = wp.local_pos * mc.getResultTransform();
+                        }
+                    ));
+                }
+
+                // Resource Aspect
+
+                // meshe resource ?
+                if ("" != p_node.resource_aspect.meshe.descr)
+                {
+                    resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair(p_node.resource_aspect.meshe.meshe_id, p_node.resource_aspect.meshe.filename), TriangleMeshe()));
+                }
+
+                register_scene_entity(entity);
+
+                if (m_entity_passes.count(p_node.id) > 0)
+                {
+                    _EXCEPTION("Already registered " + p_node.id);
+                }
+                else
+                {
+                    EntityRendering rendering_infos(p_node.passes);
+                    m_entity_passes[p_node.id] = rendering_infos;
+                }
+            }
+
+            // recursive call
+            for (auto& e : p_node.subs)
+            {
+                browseHierarchy(e, p_node.id, depth + 1);
+            }
+        }
+    };
+
+    for (const auto& e : sgc.subs)
+    {
+        browseHierarchy(e, p_parentEntityId, 0);
+    }
+
+}
+
 void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource, const std::string& p_parentEntityId, const mage::core::maths::Matrix p_perspective_projection)
 {
     json::ScenegraphEntitiesCollection sgc;
@@ -198,7 +360,7 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
     if (parseContext.parseTo(sgc) != JS::Error::NoError)
     {
         const auto errorStr{ parseContext.makeErrorString() };
-        _EXCEPTION("Cannot parse scenegraph: " + errorStr);
+        _EXCEPTION("Cannot parse scenegraph entity: " + errorStr);
     }
 
     const std::function<void(const json::ScenegraphEntity&, const std::string&, int)> browseHierarchy
