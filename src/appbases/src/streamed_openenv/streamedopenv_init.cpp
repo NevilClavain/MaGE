@@ -232,9 +232,9 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					sceneStreamerSystemInstance->buildScenegraphPart(openEnvSceneFileContent.getData(), "app_Entity", m_perpective_projection);
 
 
-					mage::core::FileContent<char> gblCameraEntityFileContent("./module_streamed_anims_config/gblcamera_entity.json");
-					gblCameraEntityFileContent.load();
-					sceneStreamerSystemInstance->buildScenegraphEntity(gblCameraEntityFileContent.getData(), "app_Entity", m_perpective_projection);
+					//mage::core::FileContent<char> gblCameraEntityFileContent("./module_streamed_anims_config/gblcamera_entity.json");
+					//gblCameraEntityFileContent.load();
+					//sceneStreamerSystemInstance->buildScenegraphEntity(gblCameraEntityFileContent.getData(), "app_Entity", m_perpective_projection);
 					
 
 					const char viewgroup_json[] = R"json(

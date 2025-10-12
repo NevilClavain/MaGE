@@ -423,10 +423,6 @@ namespace mage
         void buildScenegraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId, const mage::core::maths::Matrix p_perspective_projection);
 
 
-        void buildScenegraphEntity(const std::string& p_jsonsource, const std::string& p_parentEntityId, 
-                                    const mage::core::maths::Matrix p_perspective_projection);
-
-
         void buildScenegraphEntity(const std::string& p_jsonsource, const json::Animator& p_animator, const std::string& p_parentEntityId,
                                     const mage::core::maths::Matrix p_perspective_projection);
 
