@@ -12,64 +12,6 @@
         }
       },
 
-      "world_aspect": {
-        "animator": {
-          "descr": "wall_Entity pos animator",
-
-          "matrix_factory_chain": [
-
-            {
-              "type": "translation",
-
-              "x_direct_value": {
-                "descr": "wall_Entity pos in x part I",
-                "value": 0
-              },
-
-              "y_datacloud_value": {
-                "descr": "wall_Entity pos in y part I",
-                "var_name": "app.skydomeInnerRadius"
-              },
-
-              "z_direct_value": {
-                "descr": "wall_Entity pos in z part I",
-                "value": 0
-              }
-            },
-
-            {
-              "type": "translation",
-
-              "x_direct_value": {
-                "descr": "wall_Entity pos in x part II",
-                "value": -25
-              },
-
-              "y_datacloud_value": {
-                "descr": "wall_Entity pos in y part II",
-                "var_name": "app.groundLevel"
-              },
-
-              "z_direct_value": {
-                "descr": "wall_Entity pos in z part II",
-                "value": -40
-              }
-            },
-            {
-              "type": "rotationDegrees",
-
-              "xyzw_direct_value": {
-                "descr": "wall_Entity rot",
-
-                "x": 0,
-                "y": 1,
-                "z": 0,
-                "w": 90
-              }
-            }
-          ]
-        }
-      },
 
       "passes": {
         "configs": [

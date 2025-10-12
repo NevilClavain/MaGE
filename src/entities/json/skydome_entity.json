@@ -12,33 +12,6 @@
         }
       },
 
-      "world_aspect": {
-        "animator": {
-          "descr": "skydome_Entity pos animator",
-
-          "matrix_factory_chain": [
-            {
-              "type": "scaling",
-
-              "x_datacloud_value": {
-                "descr": "skydome x scaling",
-                "var_name": "app.skydomeOuterRadius"
-              },
-
-              "y_datacloud_value": {
-                "descr": "skydome y scaling",
-                "var_name": "app.skydomeOuterRadius"
-              },
-
-              "z_datacloud_value": {
-                "descr": "skydome z scaling",
-                "var_name": "app.skydomeOuterRadius"
-              }
-            }
-          ]
-        }
-      },
-
       "passes": {
         "configs": [
           {

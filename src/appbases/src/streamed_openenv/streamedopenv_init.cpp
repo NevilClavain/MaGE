@@ -254,9 +254,8 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 					
 					sceneStreamerSystemInstance->requestEntityRendering("ground_Entity");
-					/*sceneStreamerSystemInstance->requestEntityRendering("wall_Entity");
 					sceneStreamerSystemInstance->requestEntityRendering("skydome_Entity");
-					*/
+					sceneStreamerSystemInstance->requestEntityRendering("wall_Entity");					
 				}
 				break;
 			}
