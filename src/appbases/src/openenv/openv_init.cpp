@@ -200,11 +200,11 @@ void OpenEnv::d3d11_system_events_openenv()
 
 					const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
 
-					renderingHelper->registerPass("bufferRendering_Scene_TexturesChannel_Queue_Entity");
-					renderingHelper->registerPass("bufferRendering_Scene_ZDepthChannel_Queue_Entity");
-					renderingHelper->registerPass("bufferRendering_Scene_AmbientLightChannel_Queue_Entity");
-					renderingHelper->registerPass("bufferRendering_Scene_LitChannel_Queue_Entity");
-					renderingHelper->registerPass("bufferRendering_Scene_EmissiveChannel_Queue_Entity");
+					renderingHelper->registerPass("bufferRendering_Scene_TexturesChannel_Queue_Entity", "texture");
+					renderingHelper->registerPass("bufferRendering_Scene_ZDepthChannel_Queue_Entity", "zdepth");
+					renderingHelper->registerPass("bufferRendering_Scene_AmbientLightChannel_Queue_Entity", "ambient_light");
+					renderingHelper->registerPass("bufferRendering_Scene_LitChannel_Queue_Entity", "lit");
+					renderingHelper->registerPass("bufferRendering_Scene_EmissiveChannel_Queue_Entity", "emissive");
 
 					
 					// ground rendering
@@ -1110,8 +1110,8 @@ void OpenEnv::enable_shadows()
 	
 	std::vector<helpers::ShadowSourceEntity> shadowSourceEntities;
 
-	renderingHelper->registerPass("bufferRendering_Scene_ShadowsChannel_Queue_Entity");
-	renderingHelper->registerPass("bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
+	renderingHelper->registerPass("bufferRendering_Scene_ShadowsChannel_Queue_Entity", "shadow_mask");
+	renderingHelper->registerPass("bufferRendering_Scene_ShadowMapChannel_Queue_Entity", "shadow_map");
 
 
 	// ground shadows rendering

@@ -13,8 +13,9 @@
 
       "passes": {
         "configs": [
+
           {
-            "queue_entity_id": "TextureChannelScene_Entity",
+            "rendering_channel_type": "texture",
 
             "rs_list": [
               {
@@ -33,8 +34,9 @@
             "vshader": "scene_recursive_texture_vs",
             "pshader": "scene_recursive_texture_ps"
           },
+
           {
-            "queue_entity_id": "ZdepthChannelScene_Entity",
+            "rendering_channel_type": "zdepth",
 
             "vshader": "scene_zdepth_vs",
             "pshader": "scene_zdepth_ps"

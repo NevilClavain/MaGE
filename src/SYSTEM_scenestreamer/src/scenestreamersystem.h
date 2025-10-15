@@ -119,12 +119,14 @@ namespace mage
         {
             std::string                         id;
 
+            std::string                         rendering_channel_type;
+
             bool                                target_clear;
             RGBA8                               target_clear_color;            
             bool                                target_depth_clear;
             int                                 target_stage{ -1 };
 
-            JS_OBJ(id, target_clear, target_clear_color, target_depth_clear, target_stage);
+            JS_OBJ(id, rendering_channel_type, target_clear, target_clear_color, target_depth_clear, target_stage);
         };
 
         struct RendergraphNode
@@ -141,6 +143,8 @@ namespace mage
 
             JS_OBJ(subs);
         };
+
+        ///////////////////////////////////////////////////////////////////
 
         struct ViewGroup
         {
@@ -308,7 +312,7 @@ namespace mage
 
         struct PassConfig
         {           
-            std::string	                queue_entity_id;
+            std::string	                rendering_channel_type;
             std::vector<RenderState>	rs_list;
 
             int	                        rendering_order{ -1 };
@@ -318,7 +322,7 @@ namespace mage
             std::string                 vshader;
             std::string                 pshader;
 
-            JS_OBJ(queue_entity_id, rs_list, rendering_order, textures_files_list, vshader, pshader);
+            JS_OBJ(rendering_channel_type, rs_list, rendering_order, textures_files_list, vshader, pshader);
         };
 
         struct ShaderParam
@@ -331,10 +335,10 @@ namespace mage
 
         struct PassShadersParams
         {           
-            std::string	                queue_entity_id;
+            std::string	                rendering_channel_type;
             std::vector<ShaderParam>    shaders_params;
 
-            JS_OBJ(queue_entity_id, shaders_params);
+            JS_OBJ(rendering_channel_type, shaders_params);
         };
 
         struct Passes

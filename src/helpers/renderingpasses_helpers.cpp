@@ -36,10 +36,11 @@ using namespace mage::core;
 using namespace mage::helpers;
 
 
-void RenderingPasses::registerPass(const std::string& p_queue_entity_id)
+void RenderingPasses::registerPass(const std::string& p_queue_entity_id, const std::string& p_rendering_channel_type)
 {
 	PassConfig pc;
 	pc.queue_entity_id = p_queue_entity_id;
+	pc.rendering_channel_type = p_rendering_channel_type;
 
 	m_configs_table.emplace(p_queue_entity_id, pc);
 }

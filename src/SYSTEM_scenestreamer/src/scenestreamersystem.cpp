@@ -181,7 +181,7 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
 
                 // register passe default configs
                 const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
-                renderingHelper->registerPass(p_node.queue.id);
+                renderingHelper->registerPass(p_node.queue.id, p_node.queue.rendering_channel_type);
             }
         }
     };
@@ -644,80 +644,102 @@ void SceneStreamerSystem::registerToPasses(const json::Passes& p_passes, mage::c
 
     helpers::PassesDescriptors passesDescriptors;
 
+    const auto& default_channel_configs_list{ renderingHelper->getPassConfigsList() };
+
     for (const auto& config : p_passes.configs)
     {
-        auto default_channel_config{ renderingHelper->getPassConfig(config.queue_entity_id) };
-
-        // manage shaders
-        default_channel_config.vshader = config.vshader;
-        default_channel_config.pshader = config.pshader;
-
-        // manage renderstates
-        // TODO : extended arguments management missing !!!!
-
-        for (const auto& rs_json : config.rs_list)
+       
+        for (const auto& e : default_channel_configs_list)
         {
-            const rendering::RenderState::Operation rs_json_ope{ rs_op_aig.at(rs_json.operation) };
-
-            bool found_ope{ false };
-
-            for (auto& rs : default_channel_config.rs_list)
+            if (e.second.rendering_channel_type == config.rendering_channel_type)
             {
-                if (rs.getOperation() == rs_json_ope)
+                auto default_channel_config{ renderingHelper->getPassConfig(e.second.queue_entity_id) };
+
+                // manage shaders
+                default_channel_config.vshader = config.vshader;
+                default_channel_config.pshader = config.pshader;
+
+                // manage renderstates
+                // TODO : extended arguments management missing !!!!
+
+                for (const auto& rs_json : config.rs_list)
                 {
-                    found_ope = true;
+                    const rendering::RenderState::Operation rs_json_ope{ rs_op_aig.at(rs_json.operation) };
 
-                    // if exists by default and arg is different, update it
-                    if (rs.getArg() != rs_json.argument)
+                    bool found_ope{ false };
+
+                    for (auto& rs : default_channel_config.rs_list)
                     {
-                        rs.setArg(rs_json.argument);
+                        if (rs.getOperation() == rs_json_ope)
+                        {
+                            found_ope = true;
+
+                            // if exists by default and arg is different, update it
+                            if (rs.getArg() != rs_json.argument)
+                            {
+                                rs.setArg(rs_json.argument);
+                            }
+                            break;
+                        }
                     }
-                    break;
+
+                    if (!found_ope)
+                    {
+                        // rs ope defined from json not found in default config, so add it
+
+                        rendering::RenderState rs;
+
+                        rs.setOperation(rs_json_ope);
+                        rs.setArg(rs_json.argument);
+
+                        default_channel_config.rs_list.push_back(rs);
+                    }
                 }
+
+                // manage textures files
+                for (const auto& texturefile_json : config.textures_files_list)
+                {
+                    default_channel_config.textures_files_list.push_back(std::make_pair(texturefile_json.stage, std::make_pair(texturefile_json.filename, Texture())));
+                }
+
+                // manage rendering order
+                if (config.rendering_order != -1)
+                {
+                    default_channel_config.rendering_order = config.rendering_order;
+                }
+
+                default_channel_config.queue_entity_id = e.second.queue_entity_id;
+                passesDescriptors.configs[e.second.queue_entity_id] = default_channel_config;
             }
-
-            if (!found_ope)
-            {
-                // rs ope defined from json not found in default config, so add it
-                
-                rendering::RenderState rs;
-
-                rs.setOperation(rs_json_ope);
-                rs.setArg(rs_json.argument);
-
-                default_channel_config.rs_list.push_back(rs);
-            }
         }
-
-        // manage textures files
-        for (const auto& texturefile_json : config.textures_files_list)
-        {
-            default_channel_config.textures_files_list.push_back(std::make_pair(texturefile_json.stage, std::make_pair(texturefile_json.filename, Texture())));
-        }
-
-        // manage rendering order
-        if (config.rendering_order != -1)
-        {
-            default_channel_config.rendering_order = config.rendering_order;
-        }
-
-        default_channel_config.queue_entity_id = config.queue_entity_id;
-        passesDescriptors.configs[config.queue_entity_id] = default_channel_config;
     }
    
     for (const auto& pass_vshader_param : p_passes.vertex_shaders_params)
     {
-        for (const auto vshader_param : pass_vshader_param.shaders_params)
+        for (const auto& e : default_channel_configs_list)
         {
-            passesDescriptors.vertex_shaders_params[pass_vshader_param.queue_entity_id].push_back( std::make_pair(vshader_param.datacloud_name, vshader_param.param_name) );
+            if (e.second.rendering_channel_type == pass_vshader_param.rendering_channel_type)
+            {
+                for (const auto vshader_param : pass_vshader_param.shaders_params)
+                {
+                    passesDescriptors.vertex_shaders_params[e.second.queue_entity_id].push_back(std::make_pair(vshader_param.datacloud_name, vshader_param.param_name));
+                }
+            }
         }
     }
 
     for (const auto& pass_pshader_param : p_passes.pixel_shaders_params)
     {
-        for (const auto pshader_param : pass_pshader_param.shaders_params)
+
+        for (const auto& e : default_channel_configs_list)
         {
-            passesDescriptors.pixel_shaders_params[pass_pshader_param.queue_entity_id].push_back( std::make_pair(pshader_param.datacloud_name, pshader_param.param_name) );
+            if (e.second.rendering_channel_type == pass_pshader_param.rendering_channel_type)
+            {
+                for (const auto pshader_param : pass_pshader_param.shaders_params)
+                {
+                    passesDescriptors.pixel_shaders_params[e.second.queue_entity_id].push_back(std::make_pair(pshader_param.datacloud_name, pshader_param.param_name));
+                }
+            }
         }
     }
 

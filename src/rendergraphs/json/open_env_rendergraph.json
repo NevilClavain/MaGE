@@ -42,6 +42,9 @@
           {
             "queue": {
               "id": "TextureChannelScene_Entity",
+
+              "rendering_channel_type" : "texture",
+
               "target_depth_clear": true,
               "target_clear": true,
               "target_clear_color": {
@@ -56,6 +59,9 @@
           {
             "queue": {
               "id": "ZdepthChannelScene_Entity",
+
+              "rendering_channel_type": "zdepth",
+
               "target_depth_clear": true,
               "target_clear": true,
               "target_clear_color": {

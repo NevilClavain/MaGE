@@ -48,6 +48,8 @@ namespace mage
 		struct PassConfig
 		{
 			std::string	queue_entity_id;
+			std::string rendering_channel_type;
+
 			std::vector<rendering::RenderState>	rs_list
 			{
 				{ rendering::RenderState::Operation::SETCULLING, "cw" },
@@ -80,9 +82,14 @@ namespace mage
 			RenderingPasses() = default;
 			~RenderingPasses() = default;
 
-			void registerPass(const std::string& p_queue_entity_id);
+			void registerPass(const std::string& p_queue_entity_id, const std::string& p_rendering_channel_type);
 
 			PassConfig getPassConfig(const std::string& p_queue_entity_id) const;
+
+			const std::unordered_map<std::string, PassConfig>& getPassConfigsList() const
+			{
+				return m_configs_table;
+			}
 
 			std::unordered_map<std::string, core::Entity*> registerToPasses(mage::core::Entitygraph& p_entitygraph,
 									mage::core::Entity* p_entity, 

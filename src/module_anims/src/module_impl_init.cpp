@@ -447,8 +447,8 @@ void ModuleImpl::complete_install_shadows_renderer_objects()
 
 	const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
 
-	renderingHelper->registerPass("bufferRendering_Scene_ShadowsChannel_Queue_Entity");
-	renderingHelper->registerPass("bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
+	renderingHelper->registerPass("bufferRendering_Scene_ShadowsChannel_Queue_Entity", "shadow_mask");
+	renderingHelper->registerPass("bufferRendering_Scene_ShadowMapChannel_Queue_Entity", "shadow_map");
 
 	
 	// raptor shadows rendering

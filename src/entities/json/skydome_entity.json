@@ -15,7 +15,7 @@
       "passes": {
         "configs": [
           {
-            "queue_entity_id": "TextureChannelScene_Entity",
+            "rendering_channel_type": "texture",
 
             "rs_list": [
               {
@@ -59,7 +59,7 @@
 
         "pixel_shaders_params": [
           {
-            "queue_entity_id": "TextureChannelScene_Entity",
+            "rendering_channel_type": "texture",
             "shaders_params": [
               {
                 "datacloud_name": "std.light0.dir",
