@@ -52,13 +52,13 @@ ChannelConfig RenderingChannels::getChannelConfig(const std::string& p_queue_ent
 
 std::unordered_map<std::string, Entity*> RenderingChannels::registerToPasses(mage::core::Entitygraph& p_entitygraph,
 									mage::core::Entity* p_entity,					
-									const PassesDescriptors& p_passesdescriptors)
+									const ChannelsRendering& p_channelsRendering)
 {
 	std::unordered_map<std::string, core::Entity*> proxy_entities;
 
 	const std::string base_entity_id{ p_entity->getId() };
 
-	for (const auto& e : p_passesdescriptors.configs)
+	for (const auto& e : p_channelsRendering.configs)
 	{
 		std::string proxy_entity_name = base_entity_id + std::string("_") + e.first + std::string("_ProxyEntity");
 
@@ -112,7 +112,7 @@ std::unordered_map<std::string, Entity*> RenderingChannels::registerToPasses(mag
 
 	///// manage shader args
 
-	for (const auto& e : p_passesdescriptors.vertex_shaders_params)
+	for (const auto& e : p_channelsRendering.vertex_shaders_params)
 	{
 		const std::string channel_id{ e.first };
 
@@ -133,7 +133,7 @@ std::unordered_map<std::string, Entity*> RenderingChannels::registerToPasses(mag
 		}
 	}
 
-	for (const auto& e : p_passesdescriptors.pixel_shaders_params)
+	for (const auto& e : p_channelsRendering.pixel_shaders_params)
 	{
 		const std::string channel_id{ e.first };
 

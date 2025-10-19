@@ -638,7 +638,7 @@ void SceneStreamerSystem::registerToPasses(const json::Channels& p_channels, mag
         { "ALPHABLENDSRC", rendering::RenderState::Operation::ALPHABLENDSRC },
     };
 
-    helpers::PassesDescriptors passesDescriptors;
+    helpers::ChannelsRendering channelsRendering;
 
     const auto& default_channel_configs_list{ renderingHelper->getPassConfigsList() };
 
@@ -705,7 +705,7 @@ void SceneStreamerSystem::registerToPasses(const json::Channels& p_channels, mag
                 }
 
                 default_channel_config.queue_entity_id = e.second.queue_entity_id;
-                passesDescriptors.configs[e.second.queue_entity_id] = default_channel_config;
+                channelsRendering.configs[e.second.queue_entity_id] = default_channel_config;
             }
         }
     }
@@ -718,7 +718,7 @@ void SceneStreamerSystem::registerToPasses(const json::Channels& p_channels, mag
             {
                 for (const auto vshader_param : pass_vshader_param.shaders_params)
                 {
-                    passesDescriptors.vertex_shaders_params[e.second.queue_entity_id].push_back(std::make_pair(vshader_param.datacloud_name, vshader_param.param_name));
+                    channelsRendering.vertex_shaders_params[e.second.queue_entity_id].push_back(std::make_pair(vshader_param.datacloud_name, vshader_param.param_name));
                 }
             }
         }
@@ -733,11 +733,11 @@ void SceneStreamerSystem::registerToPasses(const json::Channels& p_channels, mag
             {
                 for (const auto pshader_param : pass_pshader_param.shaders_params)
                 {
-                    passesDescriptors.pixel_shaders_params[e.second.queue_entity_id].push_back(std::make_pair(pshader_param.datacloud_name, pshader_param.param_name));
+                    channelsRendering.pixel_shaders_params[e.second.queue_entity_id].push_back(std::make_pair(pshader_param.datacloud_name, pshader_param.param_name));
                 }
             }
         }
     }
 
-    renderingHelper->registerToPasses(m_entitygraph, p_entity, passesDescriptors);
+    renderingHelper->registerToPasses(m_entitygraph, p_entity, channelsRendering);
 }

@@ -232,7 +232,7 @@ void OpenEnv::d3d11_system_events_openenv()
 						em_channel_config.vshader = "scene_flatcolor_vs";
 						em_channel_config.pshader = "scene_flatcolor_ps";
 
-						helpers::PassesDescriptors passesDescriptors =
+						helpers::ChannelsRendering channelsRendering =
 						{
 							// config
 							{
@@ -268,7 +268,7 @@ void OpenEnv::d3d11_system_events_openenv()
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_groundEntity, passesDescriptors);
+						renderingHelper->registerToPasses(m_entitygraph, m_groundEntity, channelsRendering);
 					}
 
 					// wall rendering
@@ -295,7 +295,7 @@ void OpenEnv::d3d11_system_events_openenv()
 						em_channel_config.pshader = "scene_flatcolor_ps";
 
 
-						helpers::PassesDescriptors passesDescriptors =
+						helpers::ChannelsRendering channelsRendering =
 						{
 							// config
 							{
@@ -331,7 +331,7 @@ void OpenEnv::d3d11_system_events_openenv()
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_wallEntity, passesDescriptors);
+						renderingHelper->registerToPasses(m_entitygraph, m_wallEntity, channelsRendering);
 					}
 
 
@@ -360,7 +360,7 @@ void OpenEnv::d3d11_system_events_openenv()
 						em_channel_config.pshader = "scene_flatcolor_ps";
 
 
-						helpers::PassesDescriptors passesDescriptors =
+						helpers::ChannelsRendering channelsRendering =
 						{
 							// config
 							{
@@ -396,7 +396,7 @@ void OpenEnv::d3d11_system_events_openenv()
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_sphereEntity, passesDescriptors);
+						renderingHelper->registerToPasses(m_entitygraph, m_sphereEntity, channelsRendering);
 					}
 
 
@@ -439,7 +439,7 @@ void OpenEnv::d3d11_system_events_openenv()
 						em_channel_config.rs_list.at(0).setArg("none");
 
 
-						helpers::PassesDescriptors passesDescriptors =
+						helpers::ChannelsRendering channelsRendering =
 						{
 							// config
 							{
@@ -487,7 +487,7 @@ void OpenEnv::d3d11_system_events_openenv()
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_treeEntity, passesDescriptors);
+						renderingHelper->registerToPasses(m_entitygraph, m_treeEntity, channelsRendering);
 					}
 
 
@@ -538,7 +538,7 @@ void OpenEnv::d3d11_system_events_openenv()
 						em_channel_config.rs_list.at(1).setArg("false");
 
 
-						helpers::PassesDescriptors passesDescriptors =
+						helpers::ChannelsRendering channelsRendering =
 						{
 							// config
 							{
@@ -561,7 +561,7 @@ void OpenEnv::d3d11_system_events_openenv()
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_cloudsEntity, passesDescriptors);
+						renderingHelper->registerToPasses(m_entitygraph, m_cloudsEntity, channelsRendering);
 					}
 
 
@@ -606,7 +606,7 @@ void OpenEnv::d3d11_system_events_openenv()
 						em_channel_config.rs_list.at(1).setArg("false");
 
 
-						helpers::PassesDescriptors passesDescriptors =
+						helpers::ChannelsRendering channelsRendering =
 						{
 							// config
 							{
@@ -640,7 +640,7 @@ void OpenEnv::d3d11_system_events_openenv()
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_skydomeEntity, passesDescriptors);
+						renderingHelper->registerToPasses(m_entitygraph, m_skydomeEntity, channelsRendering);
 					}
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1125,7 +1125,7 @@ void OpenEnv::enable_shadows()
 		shadowmap_channel_config.vshader = "scene_zdepth_vs";
 		shadowmap_channel_config.pshader = "scene_zdepth_ps";
 
-		helpers::PassesDescriptors passesDescriptors =
+		helpers::ChannelsRendering channelsRendering =
 		{
 			// config
 			{
@@ -1150,7 +1150,7 @@ void OpenEnv::enable_shadows()
 			}
 		};
 
-		shadowSourceEntities.push_back({ m_groundEntity, passesDescriptors });
+		shadowSourceEntities.push_back({ m_groundEntity, channelsRendering });
 	}
 
 	// wall shadows rendering
@@ -1163,7 +1163,7 @@ void OpenEnv::enable_shadows()
 		shadowmap_channel_config.vshader = "scene_zdepth_vs";
 		shadowmap_channel_config.pshader = "scene_zdepth_ps";
 
-		helpers::PassesDescriptors passesDescriptors =
+		helpers::ChannelsRendering channelsRendering =
 		{
 			// config
 			{
@@ -1186,7 +1186,7 @@ void OpenEnv::enable_shadows()
 			}
 		};
 
-		shadowSourceEntities.push_back({ m_wallEntity, passesDescriptors });
+		shadowSourceEntities.push_back({ m_wallEntity, channelsRendering });
 	}
 
 
@@ -1202,7 +1202,7 @@ void OpenEnv::enable_shadows()
 		shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
 		shadowmap_channel_config.rs_list.at(0).setArg("ccw");
 
-		helpers::PassesDescriptors passesDescriptors =
+		helpers::ChannelsRendering channelsRendering =
 		{
 			// config
 			{
@@ -1225,7 +1225,7 @@ void OpenEnv::enable_shadows()
 			}
 		};
 
-		shadowSourceEntities.push_back({ m_sphereEntity, passesDescriptors });
+		shadowSourceEntities.push_back({ m_sphereEntity, channelsRendering });
 	}
 
 
@@ -1247,7 +1247,7 @@ void OpenEnv::enable_shadows()
 		shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
 		shadowmap_channel_config.rs_list.at(0).setArg("none");
 
-		helpers::PassesDescriptors passesDescriptors =
+		helpers::ChannelsRendering channelsRendering =
 		{
 			// config
 			{
@@ -1276,7 +1276,7 @@ void OpenEnv::enable_shadows()
 			}
 		};
 
-		shadowSourceEntities.push_back({ m_treeEntity, passesDescriptors });
+		shadowSourceEntities.push_back({ m_treeEntity, channelsRendering });
 	}
 
 	const auto groundLevel{ dataCloud->readDataValue<double>("app.groundLevel") };

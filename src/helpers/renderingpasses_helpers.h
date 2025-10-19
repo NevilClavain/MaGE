@@ -68,7 +68,7 @@ namespace mage
 			std::string pshader;
 		};
 
-		struct PassesDescriptors
+		struct ChannelsRendering // all required channels rendering : combination of channels configs and shaders args for each channel
 		{
 			std::unordered_map< std::string, ChannelConfig>										configs;
 			std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>	vertex_shaders_params;
@@ -93,7 +93,7 @@ namespace mage
 
 			std::unordered_map<std::string, core::Entity*> registerToPasses(mage::core::Entitygraph& p_entitygraph,
 									mage::core::Entity* p_entity, 
-									const PassesDescriptors& p_passesdescriptors);
+									const ChannelsRendering& p_channelsRendering);
 
 		private:
 

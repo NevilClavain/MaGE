@@ -312,7 +312,7 @@ void ModuleImpl::d3d11_system_events()
 						em_channel_config.vshader = "scene_flatcolor_skinning_vs";
 						em_channel_config.pshader = "scene_flatcolor_skinning_ps";
 
-						helpers::PassesDescriptors passesDescriptors =
+						helpers::ChannelsRendering channelsRendering =
 						{
 							// config
 							{
@@ -346,7 +346,7 @@ void ModuleImpl::d3d11_system_events()
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_raptorEntity, passesDescriptors);
+						renderingHelper->registerToPasses(m_entitygraph, m_raptorEntity, channelsRendering);
 					}
 
 					// SETUP SHADOWS
@@ -464,7 +464,7 @@ void ModuleImpl::complete_install_shadows_renderer_objects()
 		shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
 		shadowmap_channel_config.rs_list.at(0).setArg("ccw");
 
-		helpers::PassesDescriptors passesDescriptors =
+		helpers::ChannelsRendering channelsRendering =
 		{
 			// config
 			{
@@ -487,7 +487,7 @@ void ModuleImpl::complete_install_shadows_renderer_objects()
 			}
 		};
 
-		renderingHelper->registerToPasses(m_entitygraph, m_raptorEntity, passesDescriptors);
+		renderingHelper->registerToPasses(m_entitygraph, m_raptorEntity, channelsRendering);
 	}
 	
 }

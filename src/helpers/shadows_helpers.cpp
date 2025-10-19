@@ -203,11 +203,11 @@ void mage::helpers::installShadowsRendering(mage::core::Entitygraph& p_entitygra
 
 	for (auto& shadowSourceEntity : p_shadows_rendering_params.shadow_source_entites)
 	{
-		for (auto& config : shadowSourceEntity.passesDescriptors.configs)
+		for (auto& config : shadowSourceEntity.channelsRendering.configs)
 		{
 			config.second.textures_ptr_list.push_back(sm_texture_ptr);
 		}
 
-		renderingHelper->registerToPasses(p_entitygraph, shadowSourceEntity.entity, shadowSourceEntity.passesDescriptors);
+		renderingHelper->registerToPasses(p_entitygraph, shadowSourceEntity.entity, shadowSourceEntity.channelsRendering);
 	}
 }
