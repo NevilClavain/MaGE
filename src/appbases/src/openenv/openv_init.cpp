@@ -268,7 +268,7 @@ void OpenEnv::d3d11_system_events_openenv()
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_groundEntity, channelsRendering);
+						renderingHelper->registerToQueues(m_entitygraph, m_groundEntity, channelsRendering);
 					}
 
 					// wall rendering
@@ -331,7 +331,7 @@ void OpenEnv::d3d11_system_events_openenv()
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_wallEntity, channelsRendering);
+						renderingHelper->registerToQueues(m_entitygraph, m_wallEntity, channelsRendering);
 					}
 
 
@@ -396,7 +396,7 @@ void OpenEnv::d3d11_system_events_openenv()
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_sphereEntity, channelsRendering);
+						renderingHelper->registerToQueues(m_entitygraph, m_sphereEntity, channelsRendering);
 					}
 
 
@@ -487,7 +487,7 @@ void OpenEnv::d3d11_system_events_openenv()
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_treeEntity, channelsRendering);
+						renderingHelper->registerToQueues(m_entitygraph, m_treeEntity, channelsRendering);
 					}
 
 
@@ -561,7 +561,7 @@ void OpenEnv::d3d11_system_events_openenv()
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_cloudsEntity, channelsRendering);
+						renderingHelper->registerToQueues(m_entitygraph, m_cloudsEntity, channelsRendering);
 					}
 
 
@@ -640,7 +640,7 @@ void OpenEnv::d3d11_system_events_openenv()
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_skydomeEntity, channelsRendering);
+						renderingHelper->registerToQueues(m_entitygraph, m_skydomeEntity, channelsRendering);
 					}
 
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

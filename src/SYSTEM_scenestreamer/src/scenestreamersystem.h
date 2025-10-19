@@ -439,7 +439,7 @@ namespace mage
 
     private:
 
-        void registerToPasses(const json::Channels& p_channels, mage::core::Entity* p_entity);
+        void registerToQueues(const json::Channels& p_channels, mage::core::Entity* p_entity);
 
         std::unordered_map<std::string, mage::core::Entity*>    m_scene_entities;
         std::unordered_map<std::string, EntityRendering>        m_entity_renderings;

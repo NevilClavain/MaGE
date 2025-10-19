@@ -50,7 +50,7 @@ ChannelConfig RenderingChannels::getChannelConfig(const std::string& p_queue_ent
 	return m_configs_table.at(p_queue_entity_id);
 }
 
-std::unordered_map<std::string, Entity*> RenderingChannels::registerToPasses(mage::core::Entitygraph& p_entitygraph,
+std::unordered_map<std::string, Entity*> RenderingChannels::registerToQueues(mage::core::Entitygraph& p_entitygraph,
 									mage::core::Entity* p_entity,					
 									const ChannelsRendering& p_channelsRendering)
 {

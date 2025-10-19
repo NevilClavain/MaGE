@@ -91,7 +91,7 @@ namespace mage
 				return m_configs_table;
 			}
 
-			std::unordered_map<std::string, core::Entity*> registerToPasses(mage::core::Entitygraph& p_entitygraph,
+			std::unordered_map<std::string, core::Entity*> registerToQueues(mage::core::Entitygraph& p_entitygraph,
 									mage::core::Entity* p_entity, 
 									const ChannelsRendering& p_channelsRendering);
 

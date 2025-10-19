@@ -346,7 +346,7 @@ void ModuleImpl::d3d11_system_events()
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_raptorEntity, channelsRendering);
+						renderingHelper->registerToQueues(m_entitygraph, m_raptorEntity, channelsRendering);
 					}
 
 					// SETUP SHADOWS
@@ -487,7 +487,7 @@ void ModuleImpl::complete_install_shadows_renderer_objects()
 			}
 		};
 
-		renderingHelper->registerToPasses(m_entitygraph, m_raptorEntity, channelsRendering);
+		renderingHelper->registerToQueues(m_entitygraph, m_raptorEntity, channelsRendering);
 	}
 	
 }

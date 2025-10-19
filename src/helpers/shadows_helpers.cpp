@@ -208,6 +208,6 @@ void mage::helpers::installShadowsRendering(mage::core::Entitygraph& p_entitygra
 			config.second.textures_ptr_list.push_back(sm_texture_ptr);
 		}
 
-		renderingHelper->registerToPasses(p_entitygraph, shadowSourceEntity.entity, shadowSourceEntity.channelsRendering);
+		renderingHelper->registerToQueues(p_entitygraph, shadowSourceEntity.entity, shadowSourceEntity.channelsRendering);
 	}
 }

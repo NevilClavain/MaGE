@@ -63,7 +63,7 @@ void SceneStreamerSystem::run()
     {
         if (e.second.m_request_rendering && !e.second.m_rendered)
         {            
-            registerToPasses(e.second.m_channels, m_scene_entities.at(e.first));
+            registerToQueues(e.second.m_channels, m_scene_entities.at(e.first));
             e.second.m_rendered = true;
         }
     }
@@ -620,7 +620,7 @@ void SceneStreamerSystem::requestEntityRendering(const std::string& p_entity_id)
     }
 }
 
-void SceneStreamerSystem::registerToPasses(const json::Channels& p_channels, mage::core::Entity* p_entity)
+void SceneStreamerSystem::registerToQueues(const json::Channels& p_channels, mage::core::Entity* p_entity)
 {
     const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
 
@@ -739,5 +739,5 @@ void SceneStreamerSystem::registerToPasses(const json::Channels& p_channels, mag
         }
     }
 
-    renderingHelper->registerToPasses(m_entitygraph, p_entity, channelsRendering);
+    renderingHelper->registerToQueues(m_entitygraph, p_entity, channelsRendering);
 }
