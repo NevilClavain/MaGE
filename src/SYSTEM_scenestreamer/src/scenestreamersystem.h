@@ -439,15 +439,15 @@ namespace mage
 
     private:
 
-        void registerToQueues(const json::Channels& p_channels, mage::core::Entity* p_entity);
+        void register_to_queues(const json::Channels& p_channels, mage::core::Entity* p_entity);
 
         std::unordered_map<std::string, mage::core::Entity*>    m_scene_entities;
         std::unordered_map<std::string, EntityRendering>        m_entity_renderings;
 
         void register_scene_entity(mage::core::Entity* p_entity);
 
-        core::SyncVariable buildSyncVariableFromJson(const json::SyncVariable& p_syncvar);
+        core::SyncVariable build_syncvariable_fromjson(const json::SyncVariable& p_syncvar);
 
-        mage::transform::MatrixFactory processMatrixFactoryFromJson(const json::MatrixFactory& p_json_matrix_factory, mage::core::ComponentContainer& p_world_aspect, mage::core::ComponentContainer& p_time_aspect);
+        mage::transform::MatrixFactory process_matrixfactory_fromjson(const json::MatrixFactory& p_json_matrix_factory, mage::core::ComponentContainer& p_world_aspect, mage::core::ComponentContainer& p_time_aspect);
     };
 }

@@ -63,7 +63,7 @@ void SceneStreamerSystem::run()
     {
         if (e.second.m_request_rendering && !e.second.m_rendered)
         {            
-            registerToQueues(e.second.m_channels, m_scene_entities.at(e.first));
+            register_to_queues(e.second.m_channels, m_scene_entities.at(e.first));
             e.second.m_rendered = true;
         }
     }
@@ -276,7 +276,7 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
 
                     for (const auto& json_mf : p_animator.matrix_factory_chain)
                     {
-                        const auto mf{ processMatrixFactoryFromJson(json_mf, world_aspect, time_aspect) };
+                        const auto mf{ process_matrixfactory_fromjson(json_mf, world_aspect, time_aspect) };
                         mf_stack.push_back(mf);
                     }
 
@@ -393,7 +393,7 @@ void SceneStreamerSystem::buildViewgroup(const std::string& p_jsonsource, int p_
 
 }
 
-core::SyncVariable SceneStreamerSystem::buildSyncVariableFromJson(const json::SyncVariable& p_syncvar)
+core::SyncVariable SceneStreamerSystem::build_syncvariable_fromjson(const json::SyncVariable& p_syncvar)
 {
     std::unordered_map<std::string, core::SyncVariable::State> aig_state
     {
@@ -430,7 +430,7 @@ core::SyncVariable SceneStreamerSystem::buildSyncVariableFromJson(const json::Sy
     return sync_variable;
 }
 
-mage::transform::MatrixFactory SceneStreamerSystem::processMatrixFactoryFromJson(const json::MatrixFactory& p_json_matrix_factory, mage::core::ComponentContainer& p_world_aspect, mage::core::ComponentContainer& p_time_aspect)
+mage::transform::MatrixFactory SceneStreamerSystem::process_matrixfactory_fromjson(const json::MatrixFactory& p_json_matrix_factory, mage::core::ComponentContainer& p_world_aspect, mage::core::ComponentContainer& p_time_aspect)
 {
     mage::transform::MatrixFactory matrix_factory(p_json_matrix_factory.type);
 
@@ -468,7 +468,7 @@ mage::transform::MatrixFactory SceneStreamerSystem::processMatrixFactoryFromJson
             }
             else if ("" != p_json_matrix_factory.w_syncvar_value.descr)
             {
-                const auto sync_var{ buildSyncVariableFromJson(p_json_matrix_factory.w_syncvar_value.sync_var) };
+                const auto sync_var{ build_syncvariable_fromjson(p_json_matrix_factory.w_syncvar_value.sync_var) };
 
                 const std::string sync_var_name{ p_json_matrix_factory.w_syncvar_value.descr + " sync_var" };
                 p_time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
@@ -499,7 +499,7 @@ mage::transform::MatrixFactory SceneStreamerSystem::processMatrixFactoryFromJson
             }
             else if ("" != p_json_matrix_factory.w_syncvar_value.descr)
             {
-                const auto sync_var{ buildSyncVariableFromJson(p_json_matrix_factory.w_syncvar_value.sync_var) };
+                const auto sync_var{ build_syncvariable_fromjson(p_json_matrix_factory.w_syncvar_value.sync_var) };
 
                 const std::string sync_var_name{ p_json_matrix_factory.w_syncvar_value.descr + " sync_var" };
                 p_time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
@@ -523,7 +523,7 @@ mage::transform::MatrixFactory SceneStreamerSystem::processMatrixFactoryFromJson
             }
             else if ("" != p_json_matrix_factory.x_syncvar_value.descr)
             {
-                const auto sync_var{ buildSyncVariableFromJson(p_json_matrix_factory.x_syncvar_value.sync_var) };
+                const auto sync_var{ build_syncvariable_fromjson(p_json_matrix_factory.x_syncvar_value.sync_var) };
 
                 const std::string sync_var_name{ p_json_matrix_factory.x_syncvar_value.descr + " sync_var" };
                 p_time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
@@ -546,7 +546,7 @@ mage::transform::MatrixFactory SceneStreamerSystem::processMatrixFactoryFromJson
             }
             else if ("" != p_json_matrix_factory.y_syncvar_value.descr)
             {
-                const auto sync_var{ buildSyncVariableFromJson(p_json_matrix_factory.y_syncvar_value.sync_var) };
+                const auto sync_var{ build_syncvariable_fromjson(p_json_matrix_factory.y_syncvar_value.sync_var) };
 
                 const std::string sync_var_name{ p_json_matrix_factory.y_syncvar_value.descr + " sync_var" };
                 p_time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
@@ -568,7 +568,7 @@ mage::transform::MatrixFactory SceneStreamerSystem::processMatrixFactoryFromJson
             }
             else if ("" != p_json_matrix_factory.z_syncvar_value.descr)
             {
-                const auto sync_var{ buildSyncVariableFromJson(p_json_matrix_factory.z_syncvar_value.sync_var) };
+                const auto sync_var{ build_syncvariable_fromjson(p_json_matrix_factory.z_syncvar_value.sync_var) };
 
                 const std::string sync_var_name{ p_json_matrix_factory.z_syncvar_value.descr + " sync_var" };
                 p_time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
@@ -590,7 +590,7 @@ mage::transform::MatrixFactory SceneStreamerSystem::processMatrixFactoryFromJson
             }
             else if ("" != p_json_matrix_factory.w_syncvar_value.descr)
             {
-                const auto sync_var{ buildSyncVariableFromJson(p_json_matrix_factory.w_syncvar_value.sync_var) };
+                const auto sync_var{ build_syncvariable_fromjson(p_json_matrix_factory.w_syncvar_value.sync_var) };
 
                 const std::string sync_var_name{ p_json_matrix_factory.w_syncvar_value.descr + " sync_var" };
                 p_time_aspect.addComponent<SyncVariable>(sync_var_name, sync_var);
@@ -620,7 +620,7 @@ void SceneStreamerSystem::requestEntityRendering(const std::string& p_entity_id)
     }
 }
 
-void SceneStreamerSystem::registerToQueues(const json::Channels& p_channels, mage::core::Entity* p_entity)
+void SceneStreamerSystem::register_to_queues(const json::Channels& p_channels, mage::core::Entity* p_entity)
 {
     const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
 
