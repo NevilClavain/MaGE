@@ -193,7 +193,7 @@ void mage::helpers::installShadowsRendering(mage::core::Entitygraph& p_entitygra
 	/////// III : entities in rendering graph
 
 
-	const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
+	const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
 
 	auto& shadowMapNode{ p_entitygraph.node(p_shadows_rendering_params.shadowmap_target_entity_id) };
 	const auto shadowmap_texture_entity{ shadowMapNode.data() };

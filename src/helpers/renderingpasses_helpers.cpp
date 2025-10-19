@@ -36,21 +36,21 @@ using namespace mage::core;
 using namespace mage::helpers;
 
 
-void RenderingPasses::registerPass(const std::string& p_queue_entity_id, const std::string& p_rendering_channel_type)
+void RenderingChannels::createDefaultChannelConfig(const std::string& p_queue_entity_id, const std::string& p_rendering_channel_type)
 {
-	PassConfig pc;
-	pc.queue_entity_id = p_queue_entity_id;
-	pc.rendering_channel_type = p_rendering_channel_type;
+	ChannelConfig cc;
+	cc.queue_entity_id = p_queue_entity_id;
+	cc.rendering_channel_type = p_rendering_channel_type;
 
-	m_configs_table.emplace(p_queue_entity_id, pc);
+	m_configs_table.emplace(p_queue_entity_id, cc);
 }
 
-PassConfig RenderingPasses::getPassConfig(const std::string& p_queue_entity_id) const
+ChannelConfig RenderingChannels::getChannelConfig(const std::string& p_queue_entity_id) const
 {
 	return m_configs_table.at(p_queue_entity_id);
 }
 
-std::unordered_map<std::string, Entity*> RenderingPasses::registerToPasses(mage::core::Entitygraph& p_entitygraph,
+std::unordered_map<std::string, Entity*> RenderingChannels::registerToPasses(mage::core::Entitygraph& p_entitygraph,
 									mage::core::Entity* p_entity,					
 									const PassesDescriptors& p_passesdescriptors)
 {

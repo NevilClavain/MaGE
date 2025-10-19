@@ -300,8 +300,6 @@ namespace mage
             JS_OBJ(stage, filename);
         };
 
-
-
         struct RenderState
         {
             std::string operation;
@@ -310,7 +308,7 @@ namespace mage
             JS_OBJ(operation, argument);
         };
 
-        struct PassConfig
+        struct ChannelConfig
         {           
             std::string	                rendering_channel_type;
             std::vector<RenderState>	rs_list;
@@ -343,7 +341,7 @@ namespace mage
 
         struct Channels
         {           
-            std::vector<PassConfig>         configs;
+            std::vector<ChannelConfig>      configs;
 
             std::vector<PassShadersParams>  vertex_shaders_params;
             std::vector<PassShadersParams>  pixel_shaders_params;
@@ -444,7 +442,7 @@ namespace mage
         void registerToPasses(const json::Channels& p_channels, mage::core::Entity* p_entity);
 
         std::unordered_map<std::string, mage::core::Entity*>    m_scene_entities;
-        std::unordered_map<std::string, EntityRendering>        m_entity_passes;
+        std::unordered_map<std::string, EntityRendering>        m_entity_renderings;
 
         void register_scene_entity(mage::core::Entity* p_entity);
 

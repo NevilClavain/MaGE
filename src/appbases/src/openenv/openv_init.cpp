@@ -198,37 +198,37 @@ void OpenEnv::d3d11_system_events_openenv()
 
 					// create passes default configs
 
-					const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
+					const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
 
-					renderingHelper->registerPass("bufferRendering_Scene_TexturesChannel_Queue_Entity", "texture");
-					renderingHelper->registerPass("bufferRendering_Scene_ZDepthChannel_Queue_Entity", "zdepth");
-					renderingHelper->registerPass("bufferRendering_Scene_AmbientLightChannel_Queue_Entity", "ambient_light");
-					renderingHelper->registerPass("bufferRendering_Scene_LitChannel_Queue_Entity", "lit");
-					renderingHelper->registerPass("bufferRendering_Scene_EmissiveChannel_Queue_Entity", "emissive");
+					renderingHelper->createDefaultChannelConfig("bufferRendering_Scene_TexturesChannel_Queue_Entity", "texture");
+					renderingHelper->createDefaultChannelConfig("bufferRendering_Scene_ZDepthChannel_Queue_Entity", "zdepth");
+					renderingHelper->createDefaultChannelConfig("bufferRendering_Scene_AmbientLightChannel_Queue_Entity", "ambient_light");
+					renderingHelper->createDefaultChannelConfig("bufferRendering_Scene_LitChannel_Queue_Entity", "lit");
+					renderingHelper->createDefaultChannelConfig("bufferRendering_Scene_EmissiveChannel_Queue_Entity", "emissive");
 
 					
 					// ground rendering
 					{
-						auto textures_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_TexturesChannel_Queue_Entity") };
+						auto textures_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_TexturesChannel_Queue_Entity") };
 						textures_channel_config.vshader = "scene_recursive_texture_vs";
 						textures_channel_config.pshader = "scene_recursive_texture_ps";
 						textures_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("grass08.jpg", Texture())) };
 						textures_channel_config.rs_list.at(3).setOperation(RenderState::Operation::SETTEXTUREFILTERTYPE);
 						textures_channel_config.rs_list.at(3).setArg("linear_uvwrap");
 
-						auto zdepth_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
+						auto zdepth_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
 						zdepth_channel_config.vshader = "scene_zdepth_vs";
 						zdepth_channel_config.pshader = "scene_zdepth_ps";
 
-						auto ambientlight_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_AmbientLightChannel_Queue_Entity") };
+						auto ambientlight_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_AmbientLightChannel_Queue_Entity") };
 						ambientlight_channel_config.vshader = "scene_flatcolor_vs";
 						ambientlight_channel_config.pshader = "scene_flatcolor_ps";
 
-						auto lit_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_LitChannel_Queue_Entity") };
+						auto lit_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_LitChannel_Queue_Entity") };
 						lit_channel_config.vshader = "scene_lit_vs";
 						lit_channel_config.pshader = "scene_lit_ps";
 
-						auto em_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
+						auto em_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
 						em_channel_config.vshader = "scene_flatcolor_vs";
 						em_channel_config.pshader = "scene_flatcolor_ps";
 
@@ -273,24 +273,24 @@ void OpenEnv::d3d11_system_events_openenv()
 
 					// wall rendering
 					{
-						auto textures_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_TexturesChannel_Queue_Entity") };
+						auto textures_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_TexturesChannel_Queue_Entity") };
 						textures_channel_config.vshader = "scene_texture1stage_keycolor_vs";
 						textures_channel_config.pshader = "scene_texture1stage_keycolor_ps";
 						textures_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("wall.jpg", Texture())) };
 
-						auto zdepth_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
+						auto zdepth_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
 						zdepth_channel_config.vshader = "scene_zdepth_vs";
 						zdepth_channel_config.pshader = "scene_zdepth_ps";
 
-						auto ambientlight_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_AmbientLightChannel_Queue_Entity") };
+						auto ambientlight_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_AmbientLightChannel_Queue_Entity") };
 						ambientlight_channel_config.vshader = "scene_flatcolor_vs";
 						ambientlight_channel_config.pshader = "scene_flatcolor_ps";
 
-						auto lit_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_LitChannel_Queue_Entity") };
+						auto lit_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_LitChannel_Queue_Entity") };
 						lit_channel_config.vshader = "scene_lit_vs";
 						lit_channel_config.pshader = "scene_lit_ps";
 
-						auto em_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
+						auto em_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
 						em_channel_config.vshader = "scene_flatcolor_vs";
 						em_channel_config.pshader = "scene_flatcolor_ps";
 
@@ -338,24 +338,24 @@ void OpenEnv::d3d11_system_events_openenv()
 
 					// sphere rendering
 					{
-						auto textures_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_TexturesChannel_Queue_Entity") };
+						auto textures_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_TexturesChannel_Queue_Entity") };
 						textures_channel_config.vshader = "scene_texture1stage_keycolor_vs";
 						textures_channel_config.pshader = "scene_texture1stage_keycolor_ps";
 						textures_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("marbre.jpg", Texture())) };
 
-						auto zdepth_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
+						auto zdepth_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
 						zdepth_channel_config.vshader = "scene_zdepth_vs";
 						zdepth_channel_config.pshader = "scene_zdepth_ps";
 						
-						auto ambientlight_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_AmbientLightChannel_Queue_Entity") };
+						auto ambientlight_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_AmbientLightChannel_Queue_Entity") };
 						ambientlight_channel_config.vshader = "scene_flatcolor_vs";
 						ambientlight_channel_config.pshader = "scene_flatcolor_ps";
 
-						auto lit_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_LitChannel_Queue_Entity") };
+						auto lit_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_LitChannel_Queue_Entity") };
 						lit_channel_config.vshader = "scene_lit_vs";
 						lit_channel_config.pshader = "scene_lit_ps";
 
-						auto em_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
+						auto em_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
 						em_channel_config.vshader = "scene_flatcolor_vs";
 						em_channel_config.pshader = "scene_flatcolor_ps";
 
@@ -402,28 +402,28 @@ void OpenEnv::d3d11_system_events_openenv()
 
 					// tree rendering
 					{
-						auto textures_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_TexturesChannel_Queue_Entity") };
+						auto textures_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_TexturesChannel_Queue_Entity") };
 						textures_channel_config.vshader = "scene_texture1stage_keycolor_vs";
 						textures_channel_config.pshader = "scene_texture1stage_keycolor_ps";
 						textures_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
 						textures_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
 						textures_channel_config.rs_list.at(0).setArg("none");
 
-						auto zdepth_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
+						auto zdepth_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
 						zdepth_channel_config.vshader = "scene_zdepth_keycolor_vs";
 						zdepth_channel_config.pshader = "scene_zdepth_keycolor_ps";
 						zdepth_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
 						zdepth_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
 						zdepth_channel_config.rs_list.at(0).setArg("none");
 
-						auto ambientlight_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_AmbientLightChannel_Queue_Entity") };
+						auto ambientlight_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_AmbientLightChannel_Queue_Entity") };
 						ambientlight_channel_config.vshader = "scene_flatcolor_keycolor_vs";
 						ambientlight_channel_config.pshader = "scene_flatcolor_keycolor_ps";
 						ambientlight_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
 						ambientlight_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
 						ambientlight_channel_config.rs_list.at(0).setArg("none");
 
-						auto lit_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_LitChannel_Queue_Entity") };
+						auto lit_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_LitChannel_Queue_Entity") };
 						lit_channel_config.vshader = "scene_lit_keycolor_vs";
 						lit_channel_config.pshader = "scene_lit_keycolor_ps";
 						lit_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
@@ -431,7 +431,7 @@ void OpenEnv::d3d11_system_events_openenv()
 						lit_channel_config.rs_list.at(0).setArg("none");
 
 
-						auto em_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
+						auto em_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
 						em_channel_config.vshader = "scene_flatcolor_keycolor_vs";
 						em_channel_config.pshader = "scene_flatcolor_keycolor_ps";
 						em_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
@@ -493,7 +493,7 @@ void OpenEnv::d3d11_system_events_openenv()
 
 					// clouds rendering
 					{
-						auto textures_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_TexturesChannel_Queue_Entity") };
+						auto textures_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_TexturesChannel_Queue_Entity") };
 						textures_channel_config.vshader = "scene_flatclouds_vs";
 						textures_channel_config.pshader = "scene_flatclouds_ps";
 						textures_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("flatclouds.jpg", Texture())) };
@@ -525,7 +525,7 @@ void OpenEnv::d3d11_system_events_openenv()
 						textures_channel_config.rs_list.push_back(rs_alphablendsrc);
 
 
-						auto em_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
+						auto em_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
 						em_channel_config.vshader = "scene_flatcolor_vs";
 						em_channel_config.pshader = "scene_flatcolor_ps";
 						em_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };
@@ -567,7 +567,7 @@ void OpenEnv::d3d11_system_events_openenv()
 
 					// skydome rendering
 					{
-						auto textures_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_TexturesChannel_Queue_Entity") };
+						auto textures_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_TexturesChannel_Queue_Entity") };
 						textures_channel_config.vshader = "scene_skydome_vs";
 						textures_channel_config.pshader = "scene_skydome_ps";
 						textures_channel_config.rendering_order = 900;
@@ -593,7 +593,7 @@ void OpenEnv::d3d11_system_events_openenv()
 						textures_channel_config.rs_list.push_back(rs_alphablendsrc);
 
 
-						auto em_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
+						auto em_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
 						em_channel_config.vshader = "scene_flatcolor_vs";
 						em_channel_config.pshader = "scene_flatcolor_ps";
 
@@ -1104,24 +1104,24 @@ void OpenEnv::enable_shadows()
 
 
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-	const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
+	const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
 
 
 	
 	std::vector<helpers::ShadowSourceEntity> shadowSourceEntities;
 
-	renderingHelper->registerPass("bufferRendering_Scene_ShadowsChannel_Queue_Entity", "shadow_mask");
-	renderingHelper->registerPass("bufferRendering_Scene_ShadowMapChannel_Queue_Entity", "shadow_map");
+	renderingHelper->createDefaultChannelConfig("bufferRendering_Scene_ShadowsChannel_Queue_Entity", "shadow_mask");
+	renderingHelper->createDefaultChannelConfig("bufferRendering_Scene_ShadowMapChannel_Queue_Entity", "shadow_map");
 
 
 	// ground shadows rendering
 	{
-		auto shadows_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
+		auto shadows_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
 		shadows_channel_config.vshader = "scene_shadowsmask_vs";
 		shadows_channel_config.pshader = "scene_shadowsmask_ps";
 
 
-		auto shadowmap_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
+		auto shadowmap_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
 		shadowmap_channel_config.vshader = "scene_zdepth_vs";
 		shadowmap_channel_config.pshader = "scene_zdepth_ps";
 
@@ -1155,11 +1155,11 @@ void OpenEnv::enable_shadows()
 
 	// wall shadows rendering
 	{
-		auto shadows_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
+		auto shadows_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
 		shadows_channel_config.vshader = "scene_shadowsmask_vs";
 		shadows_channel_config.pshader = "scene_shadowsmask_ps";
 
-		auto shadowmap_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
+		auto shadowmap_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
 		shadowmap_channel_config.vshader = "scene_zdepth_vs";
 		shadowmap_channel_config.pshader = "scene_zdepth_ps";
 
@@ -1192,11 +1192,11 @@ void OpenEnv::enable_shadows()
 
 	// sphere shadows rendering
 	{
-		auto shadows_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
+		auto shadows_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
 		shadows_channel_config.vshader = "scene_shadowsmask_vs";
 		shadows_channel_config.pshader = "scene_shadowsmask_ps";
 
-		auto shadowmap_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
+		auto shadowmap_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
 		shadowmap_channel_config.vshader = "scene_zdepth_vs";
 		shadowmap_channel_config.pshader = "scene_zdepth_ps";
 		shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
@@ -1232,7 +1232,7 @@ void OpenEnv::enable_shadows()
 
 	// tree shadows rendering
 	{
-		auto shadows_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
+		auto shadows_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
 		shadows_channel_config.vshader = "scene_shadowsmask_keycolor_vs";
 		shadows_channel_config.pshader = "scene_shadowsmask_keycolor_ps";
 
@@ -1240,7 +1240,7 @@ void OpenEnv::enable_shadows()
 		shadows_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
 		shadows_channel_config.rs_list.at(0).setArg("none");
 
-		auto shadowmap_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
+		auto shadowmap_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
 		shadowmap_channel_config.vshader = "scene_zdepth_keycolor_vs";
 		shadowmap_channel_config.pshader = "scene_zdepth_keycolor_ps";
 		shadowmap_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("tree2_tex.bmp", Texture())) };

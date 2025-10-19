@@ -45,7 +45,7 @@ namespace mage
 
 	namespace helpers
 	{
-		struct PassConfig
+		struct ChannelConfig
 		{
 			std::string	queue_entity_id;
 			std::string rendering_channel_type;
@@ -70,23 +70,23 @@ namespace mage
 
 		struct PassesDescriptors
 		{
-			std::unordered_map< std::string, PassConfig>										configs;
+			std::unordered_map< std::string, ChannelConfig>										configs;
 			std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>	vertex_shaders_params;
 			std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>	pixel_shaders_params;
 		};
 
 		// rendering passes helper struct
-		struct RenderingPasses : public property::Singleton<RenderingPasses>
+		struct RenderingChannels : public property::Singleton<RenderingChannels>
 		{
 		public:
-			RenderingPasses() = default;
-			~RenderingPasses() = default;
+			RenderingChannels() = default;
+			~RenderingChannels() = default;
 
-			void registerPass(const std::string& p_queue_entity_id, const std::string& p_rendering_channel_type);
+			void createDefaultChannelConfig(const std::string& p_queue_entity_id, const std::string& p_rendering_channel_type);
 
-			PassConfig getPassConfig(const std::string& p_queue_entity_id) const;
+			ChannelConfig getChannelConfig(const std::string& p_queue_entity_id) const;
 
-			const std::unordered_map<std::string, PassConfig>& getPassConfigsList() const
+			const std::unordered_map<std::string, ChannelConfig>& getPassConfigsList() const
 			{
 				return m_configs_table;
 			}
@@ -97,7 +97,7 @@ namespace mage
 
 		private:
 
-			std::unordered_map<std::string, PassConfig> m_configs_table;
+			std::unordered_map<std::string, ChannelConfig> m_configs_table;
 
 		};
 	}

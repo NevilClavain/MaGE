@@ -59,7 +59,7 @@ SceneStreamerSystem::SceneStreamerSystem(Entitygraph& p_entitygraph) : System(p_
 void SceneStreamerSystem::run()
 {
     // loop on entity rendering entries
-    for (auto& e : m_entity_passes)
+    for (auto& e : m_entity_renderings)
     {
         if (e.second.m_request_rendering && !e.second.m_rendered)
         {            
@@ -176,8 +176,8 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
 
 
                 // register passe default configs
-                const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
-                renderingHelper->registerPass(p_node.queue.id, p_node.queue.rendering_channel_type);
+                const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
+                renderingHelper->createDefaultChannelConfig(p_node.queue.id, p_node.queue.rendering_channel_type);
             }
         }
     };
@@ -322,14 +322,14 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
 
                 register_scene_entity(entity);
 
-                if (m_entity_passes.count(p_node.id) > 0)
+                if (m_entity_renderings.count(p_node.id) > 0)
                 {
                     _EXCEPTION("Already registered " + p_node.id);
                 }
                 else
                 {
                     EntityRendering rendering_infos(p_node.channels);
-                    m_entity_passes[p_node.id] = rendering_infos;
+                    m_entity_renderings[p_node.id] = rendering_infos;
                 }
             }
 
@@ -610,9 +610,9 @@ mage::transform::MatrixFactory SceneStreamerSystem::processMatrixFactoryFromJson
 
 void SceneStreamerSystem::requestEntityRendering(const std::string& p_entity_id)
 {
-    if (m_entity_passes.count(p_entity_id))
+    if (m_entity_renderings.count(p_entity_id))
     {
-        m_entity_passes.at(p_entity_id).m_request_rendering = true;
+        m_entity_renderings.at(p_entity_id).m_request_rendering = true;
     }
     else
     {
@@ -622,7 +622,7 @@ void SceneStreamerSystem::requestEntityRendering(const std::string& p_entity_id)
 
 void SceneStreamerSystem::registerToPasses(const json::Channels& p_channels, mage::core::Entity* p_entity)
 {
-    const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
+    const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
 
     const std::unordered_map<std::string, rendering::RenderState::Operation> rs_op_aig
     {
@@ -649,7 +649,7 @@ void SceneStreamerSystem::registerToPasses(const json::Channels& p_channels, mag
         {
             if (e.second.rendering_channel_type == config.rendering_channel_type)
             {
-                auto default_channel_config{ renderingHelper->getPassConfig(e.second.queue_entity_id) };
+                auto default_channel_config{ renderingHelper->getChannelConfig(e.second.queue_entity_id) };
 
                 // manage shaders
                 default_channel_config.vshader = config.vshader;

@@ -286,29 +286,29 @@ void ModuleImpl::d3d11_system_events()
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// RENDERGRAPH
 
-					const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
+					const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
 
 					// raptor rendering
 					{
-						auto textures_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_TexturesChannel_Queue_Entity") };
+						auto textures_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_TexturesChannel_Queue_Entity") };
 						textures_channel_config.vshader = "scene_texture1stage_skinning_vs";
 						textures_channel_config.pshader = "scene_texture1stage_skinning_ps";
 						textures_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("raptorDif2.png", Texture())) };
 
 
-						auto zdepth_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
+						auto zdepth_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
 						zdepth_channel_config.vshader = "scene_zdepth_skinning_vs";
 						zdepth_channel_config.pshader = "scene_zdepth_skinning_ps";
 
-						auto ambientlight_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_AmbientLightChannel_Queue_Entity") };
+						auto ambientlight_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_AmbientLightChannel_Queue_Entity") };
 						ambientlight_channel_config.vshader = "scene_flatcolor_skinning_vs";
 						ambientlight_channel_config.pshader = "scene_flatcolor_skinning_ps";
 
-						auto lit_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_LitChannel_Queue_Entity") };
+						auto lit_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_LitChannel_Queue_Entity") };
 						lit_channel_config.vshader = "scene_lit_skinning_vs";
 						lit_channel_config.pshader = "scene_lit_skinning_ps";
 
-						auto em_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
+						auto em_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
 						em_channel_config.vshader = "scene_flatcolor_skinning_vs";
 						em_channel_config.pshader = "scene_flatcolor_skinning_ps";
 
@@ -445,20 +445,20 @@ void ModuleImpl::complete_install_shadows_renderer_objects()
 	auto& sm_resource_aspect{ shadowmap_texture_entity->aspectAccess(core::resourcesAspect::id) };
 	std::pair<size_t, Texture>* sm_texture_ptr{ &sm_resource_aspect.getComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture")->getPurpose() };
 
-	const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
+	const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
 
-	renderingHelper->registerPass("bufferRendering_Scene_ShadowsChannel_Queue_Entity", "shadow_mask");
-	renderingHelper->registerPass("bufferRendering_Scene_ShadowMapChannel_Queue_Entity", "shadow_map");
+	renderingHelper->createDefaultChannelConfig("bufferRendering_Scene_ShadowsChannel_Queue_Entity", "shadow_mask");
+	renderingHelper->createDefaultChannelConfig("bufferRendering_Scene_ShadowMapChannel_Queue_Entity", "shadow_map");
 
 	
 	// raptor shadows rendering
 	{
-		auto shadows_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
+		auto shadows_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
 		shadows_channel_config.vshader = "scene_shadowsmask_skinning_vs";
 		shadows_channel_config.pshader = "scene_shadowsmask_skinning_ps";
 		shadows_channel_config.textures_ptr_list = { sm_texture_ptr };
 
-		auto shadowmap_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
+		auto shadowmap_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
 		shadowmap_channel_config.vshader = "scene_zdepth_skinning_vs";
 		shadowmap_channel_config.pshader = "scene_zdepth_skinning_ps";
 		shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
