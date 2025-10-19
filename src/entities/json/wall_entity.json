@@ -13,7 +13,7 @@
       },
 
 
-      "passes": {
+      "channels": {
         "configs": [
           {
             "rendering_channel_type": "texture",

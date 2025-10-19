@@ -341,7 +341,7 @@ namespace mage
             JS_OBJ(rendering_channel_type, shaders_params);
         };
 
-        struct Passes
+        struct Channels
         {           
             std::vector<PassConfig>         configs;
 
@@ -364,11 +364,11 @@ namespace mage
             WorldAspect                 world_aspect;
             ResourceAspect              resource_aspect;
             std::string                 helper;
-            Passes                      passes;
+            Channels                    channels;
 
             std::vector<ScenegraphEntity> subs;
             
-            JS_OBJ(id, world_aspect, resource_aspect, helper, passes, subs);
+            JS_OBJ(id, world_aspect, resource_aspect, helper, channels, subs);
         };
 
         struct ScenegraphEntitiesCollection
@@ -399,10 +399,14 @@ namespace mage
     {
     public:
         EntityRendering() = default;
-        EntityRendering(const json::Passes& p_passes);
+        
+        EntityRendering(const json::Channels& p_channels) :
+            m_channels(p_channels)
+        {
+        }
 
     private:
-        json::Passes    m_passes;
+        json::Channels  m_channels;
         bool            m_request_rendering         { false };
         bool            m_rendered                  { false }; // if true, passes are actually mapped in rendergraph side and so entity is normally rendered
 
@@ -437,7 +441,7 @@ namespace mage
 
     private:
 
-        void registerToPasses(const json::Passes& p_passes, mage::core::Entity* p_entity);
+        void registerToPasses(const json::Channels& p_channels, mage::core::Entity* p_entity);
 
         std::unordered_map<std::string, mage::core::Entity*>    m_scene_entities;
         std::unordered_map<std::string, EntityRendering>        m_entity_passes;

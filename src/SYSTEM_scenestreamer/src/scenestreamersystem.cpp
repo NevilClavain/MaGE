@@ -51,10 +51,6 @@
 using namespace mage;
 using namespace mage::core;
 
-EntityRendering::EntityRendering(const json::Passes& p_passes) : 
-m_passes(p_passes)
-{
-}
 
 SceneStreamerSystem::SceneStreamerSystem(Entitygraph& p_entitygraph) : System(p_entitygraph)
 {
@@ -67,7 +63,7 @@ void SceneStreamerSystem::run()
     {
         if (e.second.m_request_rendering && !e.second.m_rendered)
         {            
-            registerToPasses(e.second.m_passes, m_scene_entities.at(e.first));
+            registerToPasses(e.second.m_channels, m_scene_entities.at(e.first));
             e.second.m_rendered = true;
         }
     }
@@ -332,7 +328,7 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
                 }
                 else
                 {
-                    EntityRendering rendering_infos(p_node.passes);
+                    EntityRendering rendering_infos(p_node.channels);
                     m_entity_passes[p_node.id] = rendering_infos;
                 }
             }
@@ -624,7 +620,7 @@ void SceneStreamerSystem::requestEntityRendering(const std::string& p_entity_id)
     }
 }
 
-void SceneStreamerSystem::registerToPasses(const json::Passes& p_passes, mage::core::Entity* p_entity)
+void SceneStreamerSystem::registerToPasses(const json::Channels& p_channels, mage::core::Entity* p_entity)
 {
     const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
 
@@ -646,7 +642,7 @@ void SceneStreamerSystem::registerToPasses(const json::Passes& p_passes, mage::c
 
     const auto& default_channel_configs_list{ renderingHelper->getPassConfigsList() };
 
-    for (const auto& config : p_passes.configs)
+    for (const auto& config : p_channels.configs)
     {
        
         for (const auto& e : default_channel_configs_list)
@@ -714,7 +710,7 @@ void SceneStreamerSystem::registerToPasses(const json::Passes& p_passes, mage::c
         }
     }
    
-    for (const auto& pass_vshader_param : p_passes.vertex_shaders_params)
+    for (const auto& pass_vshader_param : p_channels.vertex_shaders_params)
     {
         for (const auto& e : default_channel_configs_list)
         {
@@ -728,7 +724,7 @@ void SceneStreamerSystem::registerToPasses(const json::Passes& p_passes, mage::c
         }
     }
 
-    for (const auto& pass_pshader_param : p_passes.pixel_shaders_params)
+    for (const auto& pass_pshader_param : p_channels.pixel_shaders_params)
     {
 
         for (const auto& e : default_channel_configs_list)
