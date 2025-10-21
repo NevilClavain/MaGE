@@ -156,3 +156,12 @@ std::unordered_map<std::string, Entity*> RenderingChannels::registerToQueues(mag
 
 	return proxy_entities;
 }
+
+void RenderingChannels::unregisterFromQueues(mage::core::Entitygraph& p_entitygraph,
+												mage::core::Entity* p_entity,
+												std::unordered_map<std::string, Entity*> p_proxies)
+{
+
+
+
+}

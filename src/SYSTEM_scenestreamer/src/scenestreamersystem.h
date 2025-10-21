@@ -441,8 +441,11 @@ namespace mage
 
         void register_to_queues(const json::Channels& p_channels, mage::core::Entity* p_entity);
 
-        std::unordered_map<std::string, mage::core::Entity*>    m_scene_entities;
-        std::unordered_map<std::string, EntityRendering>        m_entity_renderings;
+        std::unordered_map<std::string, mage::core::Entity*>                                    m_scene_entities;
+        std::unordered_map<std::string, std::unordered_map<std::string, mage::core::Entity*>>   m_rendering_proxies; // i.e rendering_entites ;-)
+
+        std::unordered_map<std::string, EntityRendering>                                        m_entity_renderings;
+        
 
         void register_scene_entity(mage::core::Entity* p_entity);
 

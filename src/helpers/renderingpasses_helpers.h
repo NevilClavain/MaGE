@@ -95,6 +95,11 @@ namespace mage
 									mage::core::Entity* p_entity, 
 									const ChannelsRendering& p_channelsRendering);
 
+
+			void unregisterFromQueues(mage::core::Entitygraph& p_entitygraph, 
+										mage::core::Entity* p_entity, 
+										std::unordered_map<std::string, mage::core::Entity*> p_proxies);
+
 		private:
 
 			std::unordered_map<std::string, ChannelConfig> m_configs_table;

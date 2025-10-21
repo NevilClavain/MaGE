@@ -739,5 +739,7 @@ void SceneStreamerSystem::register_to_queues(const json::Channels& p_channels, m
         }
     }
 
-    renderingHelper->registerToQueues(m_entitygraph, p_entity, channelsRendering);
+    const auto rendering_proxies{ renderingHelper->registerToQueues(m_entitygraph, p_entity, channelsRendering) };
+    
+    m_rendering_proxies[p_entity->getId()] = rendering_proxies;
 }
