@@ -66,6 +66,11 @@ void SceneStreamerSystem::run()
             register_to_queues(e.second.m_channels, m_scene_entities.at(e.first));
             e.second.m_rendered = true;
         }
+        else if (!e.second.m_request_rendering && e.second.m_rendered)
+        {
+            unregister_from_queues(m_scene_entities.at(e.first));
+            e.second.m_rendered = false;
+        }
     }
 }
 
@@ -608,11 +613,11 @@ mage::transform::MatrixFactory SceneStreamerSystem::process_matrixfactory_fromjs
     return matrix_factory;
 }
 
-void SceneStreamerSystem::requestEntityRendering(const std::string& p_entity_id)
+void SceneStreamerSystem::requestEntityRendering(const std::string& p_entity_id, bool p_render_it)
 {
     if (m_entity_renderings.count(p_entity_id))
     {
-        m_entity_renderings.at(p_entity_id).m_request_rendering = true;
+        m_entity_renderings.at(p_entity_id).m_request_rendering = p_render_it;
     }
     else
     {
@@ -643,8 +648,7 @@ void SceneStreamerSystem::register_to_queues(const json::Channels& p_channels, m
     const auto& default_channel_configs_list{ renderingHelper->getPassConfigsList() };
 
     for (const auto& config : p_channels.configs)
-    {
-       
+    {       
         for (const auto& e : default_channel_configs_list)
         {
             if (e.second.rendering_channel_type == config.rendering_channel_type)
@@ -742,4 +746,14 @@ void SceneStreamerSystem::register_to_queues(const json::Channels& p_channels, m
     const auto rendering_proxies{ renderingHelper->registerToQueues(m_entitygraph, p_entity, channelsRendering) };
     
     m_rendering_proxies[p_entity->getId()] = rendering_proxies;
+}
+
+void SceneStreamerSystem::unregister_from_queues(mage::core::Entity* p_entity)
+{
+    const auto rendering_proxies = m_rendering_proxies.at(p_entity->getId());
+
+    const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
+    renderingHelper->unregisterFromQueues(m_entitygraph, p_entity, rendering_proxies);
+
+    m_rendering_proxies.erase(p_entity->getId());
 }

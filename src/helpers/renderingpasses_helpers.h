@@ -98,7 +98,7 @@ namespace mage
 
 			void unregisterFromQueues(mage::core::Entitygraph& p_entitygraph, 
 										mage::core::Entity* p_entity, 
-										std::unordered_map<std::string, mage::core::Entity*> p_proxies);
+										const std::unordered_map<std::string, mage::core::Entity*>& p_proxies);
 
 		private:
 

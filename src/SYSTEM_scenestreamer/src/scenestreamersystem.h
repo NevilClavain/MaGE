@@ -435,11 +435,13 @@ namespace mage
 
         void buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot);
 
-        void requestEntityRendering(const std::string& p_entity_id);
+        void requestEntityRendering(const std::string& p_entity_id, bool p_render_it);
 
     private:
 
         void register_to_queues(const json::Channels& p_channels, mage::core::Entity* p_entity);
+
+        void unregister_from_queues(mage::core::Entity* p_entity);
 
         std::unordered_map<std::string, mage::core::Entity*>                                    m_scene_entities;
         std::unordered_map<std::string, std::unordered_map<std::string, mage::core::Entity*>>   m_rendering_proxies; // i.e rendering_entites ;-)

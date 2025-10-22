@@ -29,6 +29,8 @@
 #include "logger_service.h"
 #include "logging.h"
 #include "renderingqueuesystem.h"
+#include "scenestreamersystem.h"
+
 #include "sysengine.h"
 #include "datacloud.h"
 #include "aspects.h"
@@ -190,6 +192,13 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 			speed = 0.0;
 		}
+	}
+
+	else if (VK_SPACE == p_key)
+	{
+		auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot)) };
+
+		sceneStreamerSystemInstance->requestEntityRendering("ground_Entity", false);
 	}
 
 	else if (VK_CONTROL == p_key)

@@ -159,9 +159,19 @@ std::unordered_map<std::string, Entity*> RenderingChannels::registerToQueues(mag
 
 void RenderingChannels::unregisterFromQueues(mage::core::Entitygraph& p_entitygraph,
 												mage::core::Entity* p_entity,
-												std::unordered_map<std::string, Entity*> p_proxies)
+												const std::unordered_map<std::string, Entity*>& p_proxies)
 {
+	for (const auto& rend_proxy_entity : p_proxies)
+	{
+		p_entitygraph.remove(rend_proxy_entity.second->getId());		
+	}
 
-
-
+	/////////////////////////////////////////////////////
+	// IF HAS SKINING ANIMATION
+	// if needed, clear vshaders ref on anim aspect of scenegraph entity
+	if (p_entity->hasAspect(core::animationsAspect::id))
+	{
+		auto& entity_animations_aspect{ p_entity->aspectAccess(core::animationsAspect::id) };
+		entity_animations_aspect.getComponent<std::vector<std::pair<std::string, Shader>*>>("target_vshaders")->getPurpose().clear();
+	}
 }
