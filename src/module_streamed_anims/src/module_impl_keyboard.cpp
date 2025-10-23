@@ -198,7 +198,19 @@ void ModuleImpl::onEndKeyPress(long p_key)
 	{
 		auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot)) };
 
-		sceneStreamerSystemInstance->requestEntityRendering("ground_Entity", false);
+		static bool draw_it{ true };
+
+		if(draw_it)
+		{ 
+			sceneStreamerSystemInstance->requestEntityRendering("wall_Entity", false);
+			draw_it = false;
+		}
+		else
+		{
+			sceneStreamerSystemInstance->requestEntityRendering("wall_Entity", true);
+			draw_it = true;
+		}
+		
 	}
 
 	else if (VK_CONTROL == p_key)
