@@ -211,6 +211,10 @@ ALL_BUILD.vcxproj*
 /src/CORE_services/*.sln
 /src/CORE_services/*.vcxproj*
 
+/src/CORE_xtree/CMakeFiles/
+/src/CORE_xtree/*.sln
+/src/CORE_xtree/*.vcxproj*
+
 
 /src/RENDERING_control/CMakeFiles/
 /src/RENDERING_control/*.sln

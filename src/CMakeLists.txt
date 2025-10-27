@@ -71,6 +71,7 @@ add_subdirectory(CORE_module)
 add_subdirectory(CORE_maths)
 add_subdirectory(CORE_time)
 add_subdirectory(CORE_services)
+add_subdirectory(CORE_xtree)
 
 add_subdirectory(RENDERING_control)
 add_subdirectory(TRANSFORM_control)
