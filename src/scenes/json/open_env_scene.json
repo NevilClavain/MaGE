@@ -117,6 +117,54 @@
     },
 
     {
+      "file": "tree_entity",
+
+      "animator": {
+        "descr": "tree_Entity pos animator",
+
+        "matrix_factory_chain": [
+          {
+            "type": "translation",
+
+            "x_direct_value": {
+              "descr": "tree_entity pos in x part I",
+              "value": 0
+            },
+
+            "y_datacloud_value": {
+              "descr": "tree_entity pos in y part I",
+              "var_name": "app.skydomeInnerRadius"
+            },
+
+            "z_direct_value": {
+              "descr": "tree_entity pos in z part I",
+              "value": 0
+            }
+          },
+          {
+            "type": "translation",
+
+            "x_direct_value": {
+              "descr": "tree_entity pos in x part II",
+              "value": 0
+            },
+
+            "y_datacloud_value": {
+              "descr": "tree_entity pos in y part II",
+              "var_name": "app.groundLevel"
+            },
+
+            "z_direct_value": {
+              "descr": "tree_entity pos in z part II",
+              "value": -30.0
+            }
+          }
+        ]
+      }
+    },
+
+
+    {
       "file": "wall_entity",
 
       "animator": {

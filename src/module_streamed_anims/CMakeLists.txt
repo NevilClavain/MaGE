@@ -107,9 +107,11 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/config_deployment/module_streamed_anims_co
 install(FILES ${CMAKE_SOURCE_DIR}/module_streamed_anims/json/datacloud.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 
 install(FILES ${CMAKE_SOURCE_DIR}/rendergraphs/json/open_env_rendergraph.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
+
 install(FILES ${CMAKE_SOURCE_DIR}/entities/json/ground_entity.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 install(FILES ${CMAKE_SOURCE_DIR}/entities/json/skydome_entity.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 install(FILES ${CMAKE_SOURCE_DIR}/entities/json/wall_entity.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
+install(FILES ${CMAKE_SOURCE_DIR}/entities/json/tree_entity.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 install(FILES ${CMAKE_SOURCE_DIR}/entities/json/gblcamera_entity.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 
 install(FILES ${CMAKE_SOURCE_DIR}/scenes/json/open_env_scene.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)

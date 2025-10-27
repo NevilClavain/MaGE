@@ -1,0 +1,83 @@
+{
+  "subs": [
+
+    {
+      "id": "tree_Entity",
+
+      "resource_aspect": {
+        "meshe": {
+          "descr": "tree_Entity_meshe",
+          "filename": "tree0.ac",
+          "meshe_id": "Plane.001"
+        }
+      },
+
+
+      "channels": {
+        "configs": [
+          {
+            "rendering_channel_type": "texture",
+
+            "textures_files_list": [
+              {
+                "stage": 0,
+                "filename": "tree2_tex.bmp"
+              }
+            ],
+
+            "vshader": "scene_texture1stage_keycolor_vs",
+            "pshader": "scene_texture1stage_keycolor_ps",
+
+            "rs_list": [
+              {
+                "operation": "SETCULLING",
+                "argument": "none"
+              }
+            ]
+          },
+
+          {
+            "rendering_channel_type": "zdepth",
+            "textures_files_list": [
+              {
+                "stage": 0,
+                "filename": "tree2_tex.bmp"
+              }
+            ],
+
+            "vshader": "scene_zdepth_keycolor_vs",
+            "pshader": "scene_zdepth_keycolor_ps",
+
+            "rs_list": [
+              {
+                "operation": "SETCULLING",
+                "argument": "none"
+              }
+            ]
+          }
+        ],
+
+        "pixel_shaders_params": [
+          {
+            "rendering_channel_type": "texture",
+            "shaders_params": [
+              {
+                "datacloud_name": "texture_keycolor_ps.key_color",
+                "param_name": "key_color"
+              }
+            ]
+          },
+          {
+            "rendering_channel_type": "zdepth",
+            "shaders_params": [
+              {
+                "datacloud_name": "texture_keycolor_ps.key_color",
+                "param_name": "key_color"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
