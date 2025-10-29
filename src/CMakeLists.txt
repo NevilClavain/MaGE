@@ -105,6 +105,7 @@ add_subdirectory(console_tests/console_components)
 add_subdirectory(console_tests/console_ecs)
 add_subdirectory(console_tests/console_maths)
 add_subdirectory(console_tests/console_datacloud)
+add_subdirectory(console_tests/console_xtree)
 
 add_subdirectory(module_scene00)
 add_subdirectory(module_sprites)

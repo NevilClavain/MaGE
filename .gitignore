@@ -138,6 +138,10 @@ ALL_BUILD.vcxproj*
 /src/console_tests/console_datacloud/*.sln
 /src/console_tests/console_datacloud/*.vcxproj*
 
+/src/console_tests/console_xtree/CMakeFiles/
+/src/console_tests/console_xtree/*.sln
+/src/console_tests/console_xtree/*.vcxproj*
+
 /src/module_scene00/CMakeFiles/
 /src/module_scene00/*.sln
 /src/module_scene00/*.vcxproj*
