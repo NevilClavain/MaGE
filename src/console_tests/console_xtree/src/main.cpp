@@ -24,6 +24,7 @@
 /* -*-LIC_END-*- */
 
 #include <iostream>
+#include <string>
 #include "xtree.h"
 
 using namespace mage::core;
@@ -33,6 +34,12 @@ int main( int argc, char* argv[] )
 {    
 	std::cout << "XTree test !\n";
 
+	QuadTreeNode<std::string> root("i am the root !");
+
+	root.traverse([](const std::string& p_data, size_t p_depth) 
+					{
+						std::cout << "depth " << p_depth << " value = " << p_data << "\n";
+					}); 
 
     return 0;
 }
