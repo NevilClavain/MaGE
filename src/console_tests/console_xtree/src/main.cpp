@@ -34,12 +34,39 @@ int main( int argc, char* argv[] )
 {    
 	std::cout << "XTree test !\n";
 
-	QuadTreeNode<std::string> root("i am the root !");
+	QuadTreeNode<std::string> root("root");
+
+	root.split();
+
+	root.getChild(0)->setData("index 0");
+	root.getChild(1)->setData("index 1");
+	root.getChild(2)->setData("index 2");
+	root.getChild(3)->setData("index 3");
+
+
+	root.getChild(0)->split();
+	root.getChild(0)->getChild(0)->setData("index 0");
+	root.getChild(0)->getChild(1)->setData("index 1");
+	root.getChild(0)->getChild(2)->setData("index 2");
+	root.getChild(0)->getChild(3)->setData("index 3");
+
+	root.getChild(3)->split();
+	root.getChild(3)->getChild(0)->setData("index 0");
+	root.getChild(3)->getChild(1)->setData("index 1");
+	root.getChild(3)->getChild(2)->setData("index 2");
+	root.getChild(3)->getChild(3)->setData("index 3");
+
+
+
+
+	////////////////////////////////////////////
 
 	root.traverse([](const std::string& p_data, size_t p_depth) 
-					{
-						std::cout << "depth " << p_depth << " value = " << p_data << "\n";
-					}); 
+	{
+		for (int i = 0; i < p_depth; i++) std::cout << " ";
+
+		std::cout << "depth " << p_depth << " value = " << p_data << "\n";
+	}); 
 
     return 0;
 }
