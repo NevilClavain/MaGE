@@ -28,6 +28,7 @@
 #include <array>
 #include <memory>
 #include <functional>
+#include <cmath>
 
 #include "exceptions.h"
 
@@ -123,7 +124,7 @@ namespace mage
 {
 	namespace core
 	{
-		template <size_t ChildCount, typename NodeData>
+		template <size_t Dim, typename NodeData>
 		class XTreeNode
 		{
 		public:
@@ -223,6 +224,16 @@ namespace mage
 
 		private:
 
+			static constexpr size_t two_pow(size_t exp)
+			{
+				size_t result = 1;
+				for (size_t i = 0; i < exp; ++i) {
+					result *= 2;
+				}
+				return result;
+			}
+			static constexpr int ChildCount{ two_pow(Dim) };
+
 			XTreeNode* create_child(size_t index)
 			{
 				if (index < ChildCount)
@@ -243,14 +254,15 @@ namespace mage
 			std::array<std::unique_ptr<XTreeNode>, ChildCount>		m_children;
 			size_t													m_depth{ 0 };
 
-			//std::array<XTreeNode*, ?>						m_neighbours;
+			std::array<XTreeNode*, Dim * 2>							m_neighbours; // quadtree : 2 * 2 -> 4 neighbours; octtree 3 * 2 -> 6 neighbours
+
 		};
 
 		template <typename NodeData>
-		using QuadTreeNode = XTreeNode<4, NodeData>;
+		using QuadTreeNode = XTreeNode<2, NodeData>;
 
 		template <typename NodeData>
-		using OctreeNode = XTreeNode<8, NodeData>;
+		using OctreeNode = XTreeNode<3, NodeData>;
 
 	} // core
 } // mage
