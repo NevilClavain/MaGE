@@ -76,7 +76,48 @@
 //                                                  +--------  OctTree  -------------------+                                                    
 //                                                                                                                                              
 //                                                                                                                                              
-//                                                                                                                                             
+//       
+// 
+// for each node :
+//	up_neighbour, down_neighbour, left_neighbour, right_neighbour
+// 
+// default neigbours at creation (parent split) :
+// 
+// L0_UP_LEFT:
+//	up_neighbour = null
+//	down_neighbour = L0_DOWN_LEFT
+//	left_neighbour = null
+//	right_neighbour = L0_UP_RIGHT
+//  top_neighbour = L1_UP_LEFT
+//  bottom_neighbour = nullptr
+// 
+//
+// L0_UP_RIGHT:
+//	up_neighbour = null
+//	down_neighbour = L0_DOWN_RIGHT
+//	left_neighbour = L0_UP_LEFT
+//	right_neighbour = null
+//  top_neighbour = L1_UP_RIGHT
+//  bottom_neighbour = nullptr
+// 
+//
+// L0_DOWN_LEFT:
+//	up_neighbour = L0_UP_LEFT
+//	down_neighbour = null
+//	left_neighbour = null
+//	right_neighbour = L0_DOWN_RIGHT
+//  top_neighbour = L1_DOWN_LEFT
+//  bottom_neighbour = nullptr
+// 
+//
+// L0_DOWN_RIGHT:
+//	up_neighbour = L0_UP_RIGHT
+//	down_neighbour = null
+//	left_neighbour = L0_DOWN_LEFT
+//	right_neighbour = null
+//  top_neighbour = L1_DOWN_RIGHT
+//  bottom_neighbour = nullptr
+
 
 namespace mage
 {
@@ -86,33 +127,32 @@ namespace mage
 		class XTreeNode
 		{
 		public:
+
+			enum class Index
+			{
+				L0_UP_LEFT_INDEX = 0,
+				L0_UP_RIGHT = 1,
+				L0_DOWN_RIGHT_INDEX = 2,
+				L0_DOWN_LEFT_INDEX = 3,
+
+				L1_DOWN_LEFT_INDEX = 4,
+				L1_UP_LEFT_INDEX = 5,
+				L1_UP_RIGHT_INDEX = 6,
+				L1_DOWN_RIGHT_INDEX = 7
+			};
+
+			enum class Neighbour
+			{
+				UP_NEIGHBOUR,
+				DOWN_NEIGHBOUR,
+				LEFT_NEIGHBOUR,
+				RIGHT_NEIGHBOUR,
+				TOP_NEIGHBOUR,    // used in octtree case
+				BOTTOM_NEIGHBOUR // used in octtree case
+			};
+
 			XTreeNode() : m_depth(0) {}
 			explicit XTreeNode(const NodeData& data, size_t depth = 0) : m_data(data), m_depth(depth) {}
-
-			void createChild(size_t index, const NodeData& childData)
-			{
-				if (index < ChildCount)
-				{
-					if (m_children[index])
-					{
-						_EXCEPTION("children already exists")
-					}
-					m_children[index] = std::make_unique<XTreeNode>(childData, m_depth + 1);
-				}
-			}
-
-			void createChild(size_t index)
-			{
-				if (index < ChildCount)
-				{
-					if (m_children[index])
-					{
-						_EXCEPTION("children already exists")
-					}
-					m_children[index] = std::make_unique<XTreeNode>();
-					m_children[index]->m_depth = m_depth + 1;
-				}
-			}
 
 			XTreeNode* getChild(size_t index) const
 			{
@@ -151,7 +191,13 @@ namespace mage
 			{
 				for (int i = 0; i < ChildCount; i++)
 				{
-					createChild(i);
+					XTreeNode* node{ create_child(i) };
+
+					switch (i)
+					{
+						default:
+							break;
+					}
 				}
 			}
 
@@ -159,7 +205,7 @@ namespace mage
 			{
 				for (size_t i = 0; i < ChildCount; ++i)
 				{
-					m_children[i].reset();
+					m_children.at(i).reset();
 				}
 			}
 
@@ -176,9 +222,28 @@ namespace mage
 			}
 
 		private:
-			NodeData m_data;
-			std::array<std::unique_ptr<XTreeNode>, ChildCount> m_children;
-			size_t m_depth{ 0 };
+
+			XTreeNode* create_child(size_t index)
+			{
+				if (index < ChildCount)
+				{
+					if (m_children.at(index))
+					{
+						_EXCEPTION("children already exists")
+					}
+					m_children[index] = std::make_unique<XTreeNode>();
+					m_children.at(index)->m_depth = m_depth + 1;
+
+					return m_children.at(index).get();
+				}
+				return nullptr;
+			}
+
+			NodeData												m_data;
+			std::array<std::unique_ptr<XTreeNode>, ChildCount>		m_children;
+			size_t													m_depth{ 0 };
+
+			//std::array<XTreeNode*, ?>						m_neighbours;
 		};
 
 		template <typename NodeData>

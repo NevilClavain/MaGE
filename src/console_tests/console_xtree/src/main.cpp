@@ -57,14 +57,14 @@ int main( int argc, char* argv[] )
 	root.getChild(3)->getChild(3)->setData("index 3");
 
 
-
+	//root.merge();
+	//root.getChild(3)->merge();
 
 	////////////////////////////////////////////
 
 	root.traverse([](const std::string& p_data, size_t p_depth) 
 	{
-		for (int i = 0; i < p_depth; i++) std::cout << " ";
-
+		for (size_t i = 0; i < p_depth; i++) std::cout << " ";
 		std::cout << "depth " << p_depth << " value = " << p_data << "\n";
 	}); 
 
