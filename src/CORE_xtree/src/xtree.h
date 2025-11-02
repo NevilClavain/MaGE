@@ -26,6 +26,7 @@
 #pragma once
 
 #include <array>
+#include <vector>
 #include <memory>
 #include <functional>
 #include <cmath>
@@ -85,38 +86,38 @@
 // default neigbours at creation (parent split) :
 // 
 // L0_UP_LEFT:
-//	up_neighbour = null
+//	up_neighbour = nullptr
 //	down_neighbour = L0_DOWN_LEFT
-//	left_neighbour = null
+//	left_neighbour = nullptr
 //	right_neighbour = L0_UP_RIGHT
 //  top_neighbour = L1_UP_LEFT
 //  bottom_neighbour = nullptr
 // 
 //
 // L0_UP_RIGHT:
-//	up_neighbour = null
+//	up_neighbour = nullptr
 //	down_neighbour = L0_DOWN_RIGHT
 //	left_neighbour = L0_UP_LEFT
-//	right_neighbour = null
+//	right_neighbour = nullptr
 //  top_neighbour = L1_UP_RIGHT
-//  bottom_neighbour = nullptr
-// 
-//
-// L0_DOWN_LEFT:
-//	up_neighbour = L0_UP_LEFT
-//	down_neighbour = null
-//	left_neighbour = null
-//	right_neighbour = L0_DOWN_RIGHT
-//  top_neighbour = L1_DOWN_LEFT
 //  bottom_neighbour = nullptr
 // 
 //
 // L0_DOWN_RIGHT:
 //	up_neighbour = L0_UP_RIGHT
-//	down_neighbour = null
+//	down_neighbour = nullptr
 //	left_neighbour = L0_DOWN_LEFT
-//	right_neighbour = null
+//	right_neighbour = nullptr
 //  top_neighbour = L1_DOWN_RIGHT
+//  bottom_neighbour = nullptr
+// 
+// 
+// L0_DOWN_LEFT:
+//	up_neighbour = L0_UP_LEFT
+//	down_neighbour = nullptr
+//	left_neighbour = nullptr
+//	right_neighbour = L0_DOWN_RIGHT
+//  top_neighbour = L1_DOWN_LEFT
 //  bottom_neighbour = nullptr
 
 
@@ -129,31 +130,32 @@ namespace mage
 		{
 		public:
 
-			enum class Index
+			static constexpr unsigned int L0_UP_LEFT_INDEX		{ 0 };
+			static constexpr unsigned int L0_UP_RIGHT_INDEX		{ 1 };
+			static constexpr unsigned int L0_DOWN_RIGHT_INDEX	{ 2 };
+			static constexpr unsigned int L0_DOWN_LEFT_INDEX	{ 3 };
+			static constexpr unsigned int L1_DOWN_LEFT_INDEX	{ 4 };
+			static constexpr unsigned int L1_UP_LEFT_INDEX		{ 5 };
+			static constexpr unsigned int L1_UP_RIGHT_INDEX		{ 6 };
+			static constexpr unsigned int L1_DOWN_RIGHT_INDEX	{ 7 };
+
+			static constexpr unsigned int UP_NEIGHBOUR			{ 0 };
+			static constexpr unsigned int DOWN_NEIGHBOUR		{ 1 };
+			static constexpr unsigned int LEFT_NEIGHBOUR		{ 2 };
+			static constexpr unsigned int RIGHT_NEIGHBOUR		{ 3 };
+			static constexpr unsigned int TOP_NEIGHBOUR			{ 4 };			// used in octtree case
+			static constexpr unsigned int BOTTOM_NEIGHBOUR		{ 5 };			// used in octtree case
+
+
+			XTreeNode()
 			{
-				L0_UP_LEFT_INDEX = 0,
-				L0_UP_RIGHT = 1,
-				L0_DOWN_RIGHT_INDEX = 2,
-				L0_DOWN_LEFT_INDEX = 3,
+				init_neighbours();
+			}
 
-				L1_DOWN_LEFT_INDEX = 4,
-				L1_UP_LEFT_INDEX = 5,
-				L1_UP_RIGHT_INDEX = 6,
-				L1_DOWN_RIGHT_INDEX = 7
-			};
-
-			enum class Neighbour
+			explicit XTreeNode(const NodeData& data, size_t depth = 0) : m_data(data), m_depth(depth) 
 			{
-				UP_NEIGHBOUR,
-				DOWN_NEIGHBOUR,
-				LEFT_NEIGHBOUR,
-				RIGHT_NEIGHBOUR,
-				TOP_NEIGHBOUR,    // used in octtree case
-				BOTTOM_NEIGHBOUR // used in octtree case
-			};
-
-			XTreeNode() : m_depth(0) {}
-			explicit XTreeNode(const NodeData& data, size_t depth = 0) : m_data(data), m_depth(depth) {}
+				init_neighbours();
+			}
 
 			XTreeNode* getChild(size_t index) const
 			{
@@ -192,13 +194,124 @@ namespace mage
 			{
 				for (int i = 0; i < ChildCount; i++)
 				{
-					XTreeNode* node{ create_child(i) };
+					create_child(i);
+				}
 
+				for (int i = 0; i < ChildCount; i++)
+				{
+					const auto child { m_children.at(i).get()};
+
+					// compute default neighbours
 					switch (i)
 					{
+						case L0_UP_LEFT_INDEX:
+
+							child->m_neighbours.at(UP_NEIGHBOUR) = nullptr;
+							child->m_neighbours.at(DOWN_NEIGHBOUR) = m_children.at(L0_DOWN_LEFT_INDEX).get();
+							child->m_neighbours.at(LEFT_NEIGHBOUR) = nullptr;
+							child->m_neighbours.at(RIGHT_NEIGHBOUR) = m_children.at(L0_UP_RIGHT_INDEX).get();
+
+							if (3 == Dim) // octtree
+							{
+								child->m_neighbours.at(TOP_NEIGHBOUR) = m_children.at(L1_UP_LEFT_INDEX).get();
+								child->m_neighbours.at(BOTTOM_NEIGHBOUR) = nullptr;
+							}
+							break;
+
+						case L0_UP_RIGHT_INDEX:
+
+							child->m_neighbours.at(UP_NEIGHBOUR) = nullptr;
+							child->m_neighbours.at(DOWN_NEIGHBOUR) = m_children.at(L0_DOWN_RIGHT_INDEX).get();
+							child->m_neighbours.at(LEFT_NEIGHBOUR) = m_children.at(L0_UP_LEFT_INDEX).get();
+							child->m_neighbours.at(RIGHT_NEIGHBOUR) = nullptr;
+
+							if (3 == Dim) // octtree
+							{
+								child->m_neighbours.at(TOP_NEIGHBOUR) = m_children.at(L1_UP_RIGHT_INDEX).get();
+								child->m_neighbours.at(BOTTOM_NEIGHBOUR) = nullptr;
+							}
+							break;
+
+						case L0_DOWN_RIGHT_INDEX:
+
+							child->m_neighbours.at(UP_NEIGHBOUR) = m_children.at(L0_UP_RIGHT_INDEX).get();
+							child->m_neighbours.at(DOWN_NEIGHBOUR) = nullptr;
+							child->m_neighbours.at(LEFT_NEIGHBOUR) = m_children.at(L0_DOWN_LEFT_INDEX).get();
+							child->m_neighbours.at(RIGHT_NEIGHBOUR) = nullptr;
+
+							if (3 == Dim) // octtree
+							{
+								child->m_neighbours.at(TOP_NEIGHBOUR) = m_children.at(L1_DOWN_RIGHT_INDEX).get();
+								child->m_neighbours.at(BOTTOM_NEIGHBOUR) = nullptr;
+							}
+							break;
+
+
+						case L0_DOWN_LEFT_INDEX:
+
+							child->m_neighbours.at(UP_NEIGHBOUR) = m_children.at(L0_UP_LEFT_INDEX).get();
+							child->m_neighbours.at(DOWN_NEIGHBOUR) = nullptr;
+							child->m_neighbours.at(LEFT_NEIGHBOUR) = nullptr;
+							child->m_neighbours.at(RIGHT_NEIGHBOUR) = m_children.at(L0_DOWN_RIGHT_INDEX).get();
+
+							if (3 == Dim) // octtree
+							{
+								child->m_neighbours.at(TOP_NEIGHBOUR) = m_children.at(L1_DOWN_LEFT_INDEX).get();
+								child->m_neighbours.at(BOTTOM_NEIGHBOUR) = nullptr;
+							}
+							break;
+
+
+						// octtree from here
+						case L1_DOWN_LEFT_INDEX:
+
+							child->m_neighbours.at(UP_NEIGHBOUR) = m_children.at(L1_UP_LEFT_INDEX).get();
+							child->m_neighbours.at(DOWN_NEIGHBOUR) = nullptr;
+							child->m_neighbours.at(LEFT_NEIGHBOUR) = nullptr;
+							child->m_neighbours.at(RIGHT_NEIGHBOUR) = m_children.at(L1_DOWN_RIGHT_INDEX).get();
+
+							child->m_neighbours.at(TOP_NEIGHBOUR) = nullptr;
+							child->m_neighbours.at(BOTTOM_NEIGHBOUR) = m_children.at(L0_DOWN_LEFT_INDEX).get();
+							break;
+
+						case L1_UP_LEFT_INDEX:
+
+							child->m_neighbours.at(UP_NEIGHBOUR) = nullptr;
+							child->m_neighbours.at(DOWN_NEIGHBOUR) = m_children.at(L1_DOWN_LEFT_INDEX).get();
+							child->m_neighbours.at(LEFT_NEIGHBOUR) = nullptr;
+							child->m_neighbours.at(RIGHT_NEIGHBOUR) = m_children.at(L1_UP_RIGHT_INDEX).get();
+
+							child->m_neighbours.at(TOP_NEIGHBOUR) = nullptr;
+							child->m_neighbours.at(BOTTOM_NEIGHBOUR) = m_children.at(L0_UP_LEFT_INDEX).get();
+							break;
+
+						case L1_UP_RIGHT_INDEX:
+
+							child->m_neighbours.at(UP_NEIGHBOUR) = nullptr;
+							child->m_neighbours.at(DOWN_NEIGHBOUR) = m_children.at(L1_DOWN_RIGHT_INDEX).get();
+							child->m_neighbours.at(LEFT_NEIGHBOUR) = m_children.at(L1_UP_LEFT_INDEX).get();
+							child->m_neighbours.at(RIGHT_NEIGHBOUR) = nullptr;
+
+							child->m_neighbours.at(TOP_NEIGHBOUR) = nullptr;
+							child->m_neighbours.at(BOTTOM_NEIGHBOUR) = m_children.at(L0_UP_RIGHT_INDEX).get();
+							break;
+
+						case L1_DOWN_RIGHT_INDEX:
+
+							child->m_neighbours.at(UP_NEIGHBOUR) = m_children.at(L1_UP_RIGHT_INDEX).get();
+							child->m_neighbours.at(DOWN_NEIGHBOUR) = nullptr;
+							child->m_neighbours.at(LEFT_NEIGHBOUR) = m_children.at(L1_DOWN_LEFT_INDEX).get();
+							child->m_neighbours.at(RIGHT_NEIGHBOUR) = nullptr;
+
+							child->m_neighbours.at(TOP_NEIGHBOUR) = nullptr;
+							child->m_neighbours.at(BOTTOM_NEIGHBOUR) = m_children.at(L0_DOWN_RIGHT_INDEX).get();
+							break;
+
 						default:
 							break;
 					}
+
+					//complete neighbours with parent's other childen
 				}
 			}
 
@@ -220,6 +333,17 @@ namespace mage
 						child->traverse(func);
 					}
 				}
+			}
+
+			std::vector<XTreeNode*> getNeighbours() const			
+			{
+				std::vector<XTreeNode*> neighbours;
+
+				for (auto e : m_neighbours)
+				{
+					neighbours.push_back(e);
+				}
+				return neighbours;
 			}
 
 		private:
@@ -248,6 +372,14 @@ namespace mage
 					return m_children.at(index).get();
 				}
 				return nullptr;
+			}
+
+			void init_neighbours()
+			{
+				for (int i = 0; i < m_neighbours.size(); i++)
+				{
+					m_neighbours.at(i) = nullptr;
+				}
 			}
 
 			NodeData												m_data;

@@ -25,10 +25,48 @@
 
 #include <iostream>
 #include <string>
+#include <map>
 #include "xtree.h"
 
 using namespace mage::core;
 
+
+void print_neighbours(QuadTreeNode<std::string>* node)
+{
+	std::cout << "---------------------\n";
+	std::cout << "neigbours of " << node->getData() << "\n";
+
+	const std::vector<QuadTreeNode<std::string>*> neighbours{ node->getNeighbours() };
+
+	const std::map<int, std::string> neighb_index
+	{
+		{ 0, "UP_NEIGHBOUR" },
+		{ 1, "DOWN_NEIGHBOUR" },
+		{ 2, "LEFT_NEIGHBOUR" },
+		{ 3, "RIGHT_NEIGHBOUR" },
+		{ 4, "TOP_NEIGHBOUR" },
+		{ 5, "BOTTOM_NEIGHBOUR" }
+	};
+
+	for (size_t i = 0; i < neighbours.size(); i++)
+	{
+		std::string data;
+
+		if (nullptr == neighbours.at(i))
+		{
+			data = "(null)";
+		}
+		else
+		{
+			data = neighbours.at(i)->getData();
+		}
+
+		std::cout << neighb_index.at(i) << " : " << data << "\n";
+	}
+
+	std::cout << "\n";
+	std::cout << "---------------------\n";
+}
 
 int main( int argc, char* argv[] )
 {    
@@ -45,16 +83,29 @@ int main( int argc, char* argv[] )
 
 
 	root.getChild(0)->split();
-	root.getChild(0)->getChild(0)->setData("index 0");
-	root.getChild(0)->getChild(1)->setData("index 1");
-	root.getChild(0)->getChild(2)->setData("index 2");
-	root.getChild(0)->getChild(3)->setData("index 3");
+	root.getChild(0)->getChild(0)->setData("index 0 of 0");
+	root.getChild(0)->getChild(1)->setData("index 1 of 0");
+	root.getChild(0)->getChild(2)->setData("index 2 of 0");
+	root.getChild(0)->getChild(3)->setData("index 3 of 0");
+
+	root.getChild(1)->split();
+	root.getChild(1)->getChild(0)->setData("index 0 of 1");
+	root.getChild(1)->getChild(1)->setData("index 1 of 1");
+	root.getChild(1)->getChild(2)->setData("index 2 of 1");
+	root.getChild(1)->getChild(3)->setData("index 3 of 1");
+
+	root.getChild(2)->split();
+	root.getChild(2)->getChild(0)->setData("index 0 of 2");
+	root.getChild(2)->getChild(1)->setData("index 1 of 2");
+	root.getChild(2)->getChild(2)->setData("index 2 of 2");
+	root.getChild(2)->getChild(3)->setData("index 3 of 2");
+
 
 	root.getChild(3)->split();
-	root.getChild(3)->getChild(0)->setData("index 0");
-	root.getChild(3)->getChild(1)->setData("index 1");
-	root.getChild(3)->getChild(2)->setData("index 2");
-	root.getChild(3)->getChild(3)->setData("index 3");
+	root.getChild(3)->getChild(0)->setData("index 0 of 3");
+	root.getChild(3)->getChild(1)->setData("index 1 of 3");
+	root.getChild(3)->getChild(2)->setData("index 2 of 3");
+	root.getChild(3)->getChild(3)->setData("index 3 of 3");
 
 
 	//root.merge();
@@ -63,10 +114,18 @@ int main( int argc, char* argv[] )
 	////////////////////////////////////////////
 
 	root.traverse([](const std::string& p_data, size_t p_depth) 
-	{
+	{		
 		for (size_t i = 0; i < p_depth; i++) std::cout << " ";
 		std::cout << "depth " << p_depth << " value = " << p_data << "\n";
 	}); 
+
+	//print_neighbours(&root);
+	//print_neighbours(root.getChild(0));
+	//print_neighbours(root.getChild(2));
+
+	print_neighbours(root.getChild(2)->getChild(3));
+
+
 
     return 0;
 }
