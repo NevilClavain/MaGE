@@ -76,36 +76,36 @@ int main( int argc, char* argv[] )
 
 	root.split();
 
-	root.getChild(0)->setData("index 0");
-	root.getChild(1)->setData("index 1");
-	root.getChild(2)->setData("index 2");
-	root.getChild(3)->setData("index 3");
+	root.getChild(0)->setData("<0>");
+	root.getChild(1)->setData("<1>");
+	root.getChild(2)->setData("<2>");
+	root.getChild(3)->setData("<3>");
 
 
 	root.getChild(0)->split();
-	root.getChild(0)->getChild(0)->setData("index 0 of 0");
-	root.getChild(0)->getChild(1)->setData("index 1 of 0");
-	root.getChild(0)->getChild(2)->setData("index 2 of 0");
-	root.getChild(0)->getChild(3)->setData("index 3 of 0");
+	root.getChild(0)->getChild(0)->setData("<0_0>");
+	root.getChild(0)->getChild(1)->setData("<0_1>");
+	root.getChild(0)->getChild(2)->setData("<0_2>");
+	root.getChild(0)->getChild(3)->setData("<0_3>");
 
 	root.getChild(1)->split();
-	root.getChild(1)->getChild(0)->setData("index 0 of 1");
-	root.getChild(1)->getChild(1)->setData("index 1 of 1");
-	root.getChild(1)->getChild(2)->setData("index 2 of 1");
-	root.getChild(1)->getChild(3)->setData("index 3 of 1");
+	root.getChild(1)->getChild(0)->setData("<1_0>");
+	root.getChild(1)->getChild(1)->setData("<1_1>");
+	root.getChild(1)->getChild(2)->setData("<1_2>");
+	root.getChild(1)->getChild(3)->setData("<1_3>");
 
 	root.getChild(2)->split();
-	root.getChild(2)->getChild(0)->setData("index 0 of 2");
-	root.getChild(2)->getChild(1)->setData("index 1 of 2");
-	root.getChild(2)->getChild(2)->setData("index 2 of 2");
-	root.getChild(2)->getChild(3)->setData("index 3 of 2");
+	root.getChild(2)->getChild(0)->setData("<2_0>");
+	root.getChild(2)->getChild(1)->setData("<2_1>");
+	root.getChild(2)->getChild(2)->setData("<2_2>");
+	root.getChild(2)->getChild(3)->setData("<2_3>");
 
 
 	root.getChild(3)->split();
-	root.getChild(3)->getChild(0)->setData("index 0 of 3");
-	root.getChild(3)->getChild(1)->setData("index 1 of 3");
-	root.getChild(3)->getChild(2)->setData("index 2 of 3");
-	root.getChild(3)->getChild(3)->setData("index 3 of 3");
+	root.getChild(3)->getChild(0)->setData("<3_0>");
+	root.getChild(3)->getChild(1)->setData("<3_1>");
+	root.getChild(3)->getChild(2)->setData("<3_2>");
+	root.getChild(3)->getChild(3)->setData("<3_3>");
 
 
 	//root.merge();
@@ -123,7 +123,7 @@ int main( int argc, char* argv[] )
 	//print_neighbours(root.getChild(0));
 	//print_neighbours(root.getChild(2));
 
-	print_neighbours(root.getChild(2)->getChild(3));
+	print_neighbours(root.getChild(3)->getChild(1));
 
 
 
