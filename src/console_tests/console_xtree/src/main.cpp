@@ -123,7 +123,12 @@ int main( int argc, char* argv[] )
 	//print_neighbours(root.getChild(0));
 	//print_neighbours(root.getChild(2));
 
-	print_neighbours(root.getChild(3)->getChild(1));
+	//print_neighbours(root.getChild(3)->getChild(1));
+	//print_neighbours(root.getChild(1)->getChild(3));
+
+	print_neighbours(root.getChild(3)->getChild(0));
+
+	
 
 
 
