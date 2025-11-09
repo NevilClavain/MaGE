@@ -222,7 +222,7 @@ namespace mage
 							child->m_neighbours.at(LEFT_NEIGHBOUR) = nullptr;
 							child->m_neighbours.at(RIGHT_NEIGHBOUR) = m_children.at(L0_UP_RIGHT_INDEX).get();
 
-							if (3 == Dim) // octtree
+							if constexpr (3 == Dim) // octtree
 							{
 								child->m_neighbours.at(TOP_NEIGHBOUR) = m_children.at(L1_UP_LEFT_INDEX).get();
 								child->m_neighbours.at(BOTTOM_NEIGHBOUR) = nullptr;
@@ -236,7 +236,7 @@ namespace mage
 							child->m_neighbours.at(LEFT_NEIGHBOUR) = m_children.at(L0_UP_LEFT_INDEX).get();
 							child->m_neighbours.at(RIGHT_NEIGHBOUR) = nullptr;
 
-							if (3 == Dim) // octtree
+							if constexpr (3 == Dim) // octtree
 							{
 								child->m_neighbours.at(TOP_NEIGHBOUR) = m_children.at(L1_UP_RIGHT_INDEX).get();
 								child->m_neighbours.at(BOTTOM_NEIGHBOUR) = nullptr;
@@ -250,7 +250,7 @@ namespace mage
 							child->m_neighbours.at(LEFT_NEIGHBOUR) = m_children.at(L0_DOWN_LEFT_INDEX).get();
 							child->m_neighbours.at(RIGHT_NEIGHBOUR) = nullptr;
 
-							if (3 == Dim) // octtree
+							if constexpr (3 == Dim) // octtree
 							{
 								child->m_neighbours.at(TOP_NEIGHBOUR) = m_children.at(L1_DOWN_RIGHT_INDEX).get();
 								child->m_neighbours.at(BOTTOM_NEIGHBOUR) = nullptr;
@@ -265,7 +265,7 @@ namespace mage
 							child->m_neighbours.at(LEFT_NEIGHBOUR) = nullptr;
 							child->m_neighbours.at(RIGHT_NEIGHBOUR) = m_children.at(L0_DOWN_RIGHT_INDEX).get();
 
-							if (3 == Dim) // octtree
+							if constexpr (3 == Dim) // octtree
 							{
 								child->m_neighbours.at(TOP_NEIGHBOUR) = m_children.at(L1_DOWN_LEFT_INDEX).get();
 								child->m_neighbours.at(BOTTOM_NEIGHBOUR) = nullptr;
@@ -325,7 +325,7 @@ namespace mage
 					if (!isRoot())
 					{
 						//complete children neighbours with neighbours's others childen
-
+						
 						switch (i)
 						{
 							case L0_UP_LEFT_INDEX:
@@ -392,12 +392,6 @@ namespace mage
 
 									///////////////////////////////////////////////////////////
 								}
-
-								if (3 == Dim) // octtree
-								{
-									child->m_neighbours.at(UP_NEIGHBOUR) = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L1_UP_LEFT_INDEX).get();
-								}
-
 								break;
 
 							case L0_UP_RIGHT_INDEX:
@@ -459,12 +453,6 @@ namespace mage
 
 										///////////////////////////////////////////////////////////
 								}
-
-								if (3 == Dim) // octtree
-								{
-									child->m_neighbours.at(UP_NEIGHBOUR) = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L1_UP_RIGHT_INDEX).get();
-								}
-
 								break;
 
 							case L0_DOWN_RIGHT_INDEX:
@@ -531,12 +519,6 @@ namespace mage
 
 										///////////////////////////////////////////////////////////
 								}
-
-								if (3 == Dim) // octtree
-								{
-									child->m_neighbours.at(UP_NEIGHBOUR) = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L1_DOWN_RIGHT_INDEX).get();
-								}
-
 								break;
 
 							case L0_DOWN_LEFT_INDEX:
@@ -598,12 +580,6 @@ namespace mage
 
 										///////////////////////////////////////////////////////////
 								}
-
-								if (3 == Dim) // octtree
-								{
-									child->m_neighbours.at(UP_NEIGHBOUR) = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L1_DOWN_LEFT_INDEX).get();
-								}
-
 								break;
 
 							// octtree from here
@@ -611,6 +587,11 @@ namespace mage
 
 								switch (m_id)
 								{
+
+
+
+
+
 									case L1_UP_LEFT_INDEX:
 										break;
 
@@ -661,18 +642,18 @@ namespace mage
 										//child->m_neighbours.at(UP_NEIGHBOUR) = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L1_DOWN_LEFT_INDEX).get();
 										break;
 								}
-
-								if (3 == Dim) // octtree
-								{
-									child->m_neighbours.at(DOWN_NEIGHBOUR) = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L0_DOWN_LEFT_INDEX).get();
-								}
-
 								break;
 
 							case L1_UP_RIGHT_INDEX:
 
 								switch (m_id)
 								{
+
+
+
+
+
+
 									case L1_UP_LEFT_INDEX:
 										{
 											auto neighbour0 = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L1_UP_LEFT_INDEX).get();
@@ -722,18 +703,16 @@ namespace mage
 										//child->m_neighbours.at(UP_NEIGHBOUR) = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L1_DOWN_RIGHT_INDEX).get();
 										break;
 								}
-
-								if (3 == Dim) // octtree
-								{
-									child->m_neighbours.at(DOWN_NEIGHBOUR) = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L0_UP_LEFT_INDEX).get();
-								}
-
 								break;
 
 							case L1_DOWN_RIGHT_INDEX:
 
 								switch (m_id)
 								{
+
+
+
+
 									case L1_UP_LEFT_INDEX:
 										{
 											auto neighbour0 = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L1_UP_RIGHT_INDEX).get();
@@ -750,8 +729,6 @@ namespace mage
 												neighbour1->m_neighbours.at(LEFT_NEIGHBOUR) = child;
 											}
 										}
-										//child->m_neighbours.at(DOWN_NEIGHBOUR) = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L1_UP_RIGHT_INDEX).get();
-										//child->m_neighbours.at(RIGHT_NEIGHBOUR) = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L1_DOWN_LEFT_INDEX).get();
 
 										break;
 
@@ -764,8 +741,6 @@ namespace mage
 												neighbour0->m_neighbours.at(UP_NEIGHBOUR) = child;
 											}
 										}
-
-										//child->m_neighbours.at(DOWN_NEIGHBOUR) = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L1_UP_RIGHT_INDEX).get();
 										break;
 
 									case L1_DOWN_RIGHT_INDEX:
@@ -780,21 +755,18 @@ namespace mage
 												neighbour0->m_neighbours.at(LEFT_NEIGHBOUR) = child;
 											}
 										}
-										//child->m_neighbours.at(RIGHT_NEIGHBOUR) = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L1_DOWN_LEFT_INDEX).get();
 										break;
 								}
-
-								if (3 == Dim) // octtree
-								{
-									child->m_neighbours.at(DOWN_NEIGHBOUR) = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L0_UP_RIGHT_INDEX).get();
-								}
-
 								break;
 
 							case L1_DOWN_LEFT_INDEX:
 
 								switch (m_id)
 								{
+
+
+
+
 									case L1_UP_LEFT_INDEX:
 										{
 											auto neighbour0 = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L1_UP_LEFT_INDEX).get();
@@ -843,12 +815,6 @@ namespace mage
 									case L1_DOWN_LEFT_INDEX:
 										break;
 								}
-
-								if (3 == Dim) // octtree
-								{
-									child->m_neighbours.at(DOWN_NEIGHBOUR) = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L0_DOWN_RIGHT_INDEX).get();
-								}
-
 								break;
 
 							default:
