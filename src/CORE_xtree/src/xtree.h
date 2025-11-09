@@ -337,9 +337,6 @@ namespace mage
 
 									case L0_UP_RIGHT_INDEX:
 										{
-
-											//child->m_neighbours.at(LEFT_NEIGHBOUR) = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L0_UP_RIGHT_INDEX).get();
-
 											auto neighbour0 = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L0_UP_RIGHT_INDEX).get();
 											if (neighbour0)
 											{
@@ -352,16 +349,12 @@ namespace mage
 									case L0_DOWN_RIGHT_INDEX:
 
 										{
-											//child->m_neighbours.at(LEFT_NEIGHBOUR) = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L0_UP_RIGHT_INDEX).get();
-
 											auto neighbour0 = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L0_UP_RIGHT_INDEX).get();
 											if (neighbour0)
 											{
 												child->m_neighbours.at(LEFT_NEIGHBOUR) = neighbour0;
 												neighbour0->m_neighbours.at(RIGHT_NEIGHBOUR) = child;
 											}
-
-											//child->m_neighbours.at(UP_NEIGHBOUR) = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L0_DOWN_LEFT_INDEX).get();
 
 											auto neighbour1 = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L0_DOWN_LEFT_INDEX).get();
 											if (neighbour1)
@@ -376,9 +369,6 @@ namespace mage
 									case L0_DOWN_LEFT_INDEX:
 
 										{
-
-											//child->m_neighbours.at(UP_NEIGHBOUR) = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L0_DOWN_LEFT_INDEX).get();
-
 											auto neighbour0 = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L0_DOWN_LEFT_INDEX).get();
 											if (neighbour0)
 											{
@@ -400,7 +390,6 @@ namespace mage
 								{
 									case L0_UP_LEFT_INDEX:
 										{
-											//child->m_neighbours.at(RIGHT_NEIGHBOUR) = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L0_UP_LEFT_INDEX).get();
 
 											auto neighbour0 = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L0_UP_LEFT_INDEX).get();
 											if (neighbour0)
@@ -416,8 +405,6 @@ namespace mage
 
 									case L0_DOWN_RIGHT_INDEX:
 										{
-											//child->m_neighbours.at(UP_NEIGHBOUR) = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L0_DOWN_RIGHT_INDEX).get();
-
 											auto neighbour0 = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L0_DOWN_RIGHT_INDEX).get();
 											if (neighbour0)
 											{
@@ -430,10 +417,6 @@ namespace mage
 
 									case L0_DOWN_LEFT_INDEX:
 										{
-
-											//child->m_neighbours.at(RIGHT_NEIGHBOUR) = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L0_UP_LEFT_INDEX).get();
-											//child->m_neighbours.at(UP_NEIGHBOUR) = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L0_DOWN_RIGHT_INDEX).get();
-
 											auto neighbour0 = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L0_UP_LEFT_INDEX).get();
 											if (neighbour0)
 											{
@@ -462,17 +445,12 @@ namespace mage
 									case L0_UP_LEFT_INDEX:
 
 										{
-
-											//child->m_neighbours.at(DOWN_NEIGHBOUR) = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L0_UP_RIGHT_INDEX).get();
-
 											auto neighbour0 = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L0_UP_RIGHT_INDEX).get();
 											if (neighbour0)
 											{
 												child->m_neighbours.at(DOWN_NEIGHBOUR) = neighbour0;
 												neighbour0->m_neighbours.at(UP_NEIGHBOUR) = child;
 											}
-
-											//child->m_neighbours.at(RIGHT_NEIGHBOUR) = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L0_DOWN_LEFT_INDEX).get();
 
 											auto neighbour1 = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L0_DOWN_LEFT_INDEX).get();
 											if (neighbour1)
@@ -487,9 +465,6 @@ namespace mage
 									case L0_UP_RIGHT_INDEX:
 
 										{
-
-											//child->m_neighbours.at(DOWN_NEIGHBOUR) = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L0_UP_RIGHT_INDEX).get();
-
 											auto neighbour0 = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L0_UP_RIGHT_INDEX).get();
 											if (neighbour0)
 											{
@@ -506,8 +481,6 @@ namespace mage
 									case L0_DOWN_LEFT_INDEX:
 
 										{
-											//child->m_neighbours.at(RIGHT_NEIGHBOUR) = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L0_DOWN_LEFT_INDEX).get();
-
 											auto neighbour0 = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L0_DOWN_LEFT_INDEX).get();
 											if (neighbour0)
 											{
@@ -527,8 +500,6 @@ namespace mage
 								{
 									case L0_UP_LEFT_INDEX:
 										{
-											// child->m_neighbours.at(DOWN_NEIGHBOUR) = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L0_UP_LEFT_INDEX).get();
-
 											auto neighbour0 = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L0_UP_LEFT_INDEX).get();
 											if (neighbour0)
 											{
@@ -540,16 +511,12 @@ namespace mage
 
 									case L0_UP_RIGHT_INDEX:
 										{
-											//child->m_neighbours.at(DOWN_NEIGHBOUR) = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L0_UP_LEFT_INDEX).get();
-
 											auto neighbour0 = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L0_UP_LEFT_INDEX).get();
 											if (neighbour0)
 											{
 												child->m_neighbours.at(DOWN_NEIGHBOUR) = neighbour0;
 												neighbour0->m_neighbours.at(UP_NEIGHBOUR) = child;
 											}
-
-											//child->m_neighbours.at(LEFT_NEIGHBOUR) = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L0_DOWN_RIGHT_INDEX).get();
 
 											auto neighbour1 = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L0_DOWN_RIGHT_INDEX).get();
 											if (neighbour1)
@@ -563,8 +530,6 @@ namespace mage
 									case L0_DOWN_RIGHT_INDEX:
 
 										{
-											//child->m_neighbours.at(LEFT_NEIGHBOUR) = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L0_DOWN_RIGHT_INDEX).get();
-
 											auto neighbour0 = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L0_DOWN_RIGHT_INDEX).get();
 											if (neighbour0)
 											{
@@ -604,8 +569,6 @@ namespace mage
 												neighbour0->m_neighbours.at(RIGHT_NEIGHBOUR) = child;
 											}
 										}
-
-										//child->m_neighbours.at(LEFT_NEIGHBOUR) = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L1_UP_RIGHT_INDEX).get();
 										break;
 
 									case L1_DOWN_RIGHT_INDEX:
@@ -624,9 +587,6 @@ namespace mage
 												neighbour1->m_neighbours.at(DOWN_NEIGHBOUR) = child;
 											}
 										}
-
-										//child->m_neighbours.at(LEFT_NEIGHBOUR) = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L1_UP_RIGHT_INDEX).get();
-										//child->m_neighbours.at(UP_NEIGHBOUR) = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L1_DOWN_LEFT_INDEX).get();
 										break;
 
 									case L1_DOWN_LEFT_INDEX:
@@ -639,7 +599,6 @@ namespace mage
 											}
 										}
 
-										//child->m_neighbours.at(UP_NEIGHBOUR) = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L1_DOWN_LEFT_INDEX).get();
 										break;
 								}
 								break;
@@ -648,12 +607,6 @@ namespace mage
 
 								switch (m_id)
 								{
-
-
-
-
-
-
 									case L1_UP_LEFT_INDEX:
 										{
 											auto neighbour0 = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L1_UP_LEFT_INDEX).get();
@@ -663,8 +616,6 @@ namespace mage
 												neighbour0->m_neighbours.at(LEFT_NEIGHBOUR) = child;
 											}
 										}
-
-										//child->m_neighbours.at(RIGHT_NEIGHBOUR) = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L1_UP_LEFT_INDEX).get();
 										break;
 
 									case L1_UP_RIGHT_INDEX:
@@ -679,7 +630,6 @@ namespace mage
 												neighbour0->m_neighbours.at(DOWN_NEIGHBOUR) = child;
 											}
 										}
-										//child->m_neighbours.at(UP_NEIGHBOUR) = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L1_DOWN_RIGHT_INDEX).get();
 										break;
 
 									case L1_DOWN_LEFT_INDEX:
@@ -698,9 +648,6 @@ namespace mage
 												neighbour1->m_neighbours.at(DOWN_NEIGHBOUR) = child;
 											}
 										}
-
-										//child->m_neighbours.at(RIGHT_NEIGHBOUR) = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L1_UP_LEFT_INDEX).get();
-										//child->m_neighbours.at(UP_NEIGHBOUR) = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L1_DOWN_RIGHT_INDEX).get();
 										break;
 								}
 								break;
@@ -763,10 +710,6 @@ namespace mage
 
 								switch (m_id)
 								{
-
-
-
-
 									case L1_UP_LEFT_INDEX:
 										{
 											auto neighbour0 = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L1_UP_LEFT_INDEX).get();
@@ -776,8 +719,6 @@ namespace mage
 												neighbour0->m_neighbours.at(UP_NEIGHBOUR) = child;
 											}
 										}
-
-										//child->m_neighbours.at(DOWN_NEIGHBOUR) = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L1_UP_LEFT_INDEX).get();
 										break;
 
 									case L1_UP_RIGHT_INDEX:
@@ -796,8 +737,6 @@ namespace mage
 												neighbour1->m_neighbours.at(RIGHT_NEIGHBOUR) = child;
 											}
 										}
-										//child->m_neighbours.at(DOWN_NEIGHBOUR) = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L1_UP_LEFT_INDEX).get();
-										//child->m_neighbours.at(LEFT_NEIGHBOUR) = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L1_DOWN_RIGHT_INDEX).get();
 										break;
 
 									case L1_DOWN_RIGHT_INDEX:
@@ -809,7 +748,6 @@ namespace mage
 												neighbour0->m_neighbours.at(RIGHT_NEIGHBOUR) = child;
 											}
 										}
-										//child->m_neighbours.at(LEFT_NEIGHBOUR) = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L1_DOWN_RIGHT_INDEX).get();
 										break;
 
 									case L1_DOWN_LEFT_INDEX:

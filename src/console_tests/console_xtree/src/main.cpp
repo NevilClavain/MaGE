@@ -284,7 +284,9 @@ int main( int argc, char* argv[] )
 
 	//print_neighbours(root.getChild(0)->getChild(6)); // INCOMPLET
 
-	print_neighbours(root.getChild(1)->getChild(4)); // INCOMPLET
+
+	print_neighbours(root.getChild(0)->getChild(1)); 
+	print_neighbours(root.getChild(0)->getChild(5));
 	
 	
 
