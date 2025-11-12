@@ -464,6 +464,15 @@ namespace mage
 												neighbour1->m_neighbours.at(LEFT_NEIGHBOUR) = child;
 											}
 
+											if (m_neighbours.at(BOTTOM_NEIGHBOUR))
+											{
+												auto neighbour2 = m_neighbours.at(BOTTOM_NEIGHBOUR)->m_children.at(L1_DOWN_RIGHT_INDEX).get();
+												if (neighbour2)
+												{
+													child->m_neighbours.at(BOTTOM_NEIGHBOUR) = neighbour2;
+													neighbour2->m_neighbours.at(TOP_NEIGHBOUR) = child;
+												}
+											}
 										}
 										break;
 
@@ -732,6 +741,16 @@ namespace mage
 											{
 												child->m_neighbours.at(RIGHT_NEIGHBOUR) = neighbour1;
 												neighbour1->m_neighbours.at(LEFT_NEIGHBOUR) = child;
+											}
+
+											if (m_neighbours.at(TOP_NEIGHBOUR))
+											{
+												auto neighbour2 = m_neighbours.at(TOP_NEIGHBOUR)->m_children.at(L0_DOWN_RIGHT_INDEX).get();
+												if (neighbour1)
+												{
+													child->m_neighbours.at(TOP_NEIGHBOUR) = neighbour2;
+													neighbour2->m_neighbours.at(BOTTOM_NEIGHBOUR) = child;
+												}
 											}
 										}
 										break;
