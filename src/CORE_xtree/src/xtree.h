@@ -448,6 +448,9 @@ namespace mage
 
 								switch (m_id)
 								{
+									///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+									// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
 									case L0_UP_LEFT_INDEX:
 										{
 											auto neighbour0 = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L0_UP_RIGHT_INDEX).get();
@@ -500,6 +503,9 @@ namespace mage
 											}
 										}
 										break;
+
+									//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+									///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 									case L0_UP_RIGHT_INDEX:
 									case L1_UP_RIGHT_INDEX:
@@ -702,6 +708,9 @@ namespace mage
 
 								switch (m_id)
 								{
+									///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+									// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
 									case L0_UP_LEFT_INDEX:
 										{
 											auto neighbour0 = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L1_UP_RIGHT_INDEX).get();
@@ -754,6 +763,10 @@ namespace mage
 											}
 										}
 										break;
+
+									//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+									///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 									case L0_UP_RIGHT_INDEX:
 									case L1_UP_RIGHT_INDEX:
