@@ -324,534 +324,295 @@ namespace mage
 				
 					if (!isRoot())
 					{
-						//complete children neighbours with neighbours's others childen
-						
+						//complete children neighbours with neighbours's others childen					
 						switch (i)
 						{
 							case L0_UP_LEFT_INDEX:
 
-								switch (m_id)
+								if (m_neighbours.at(LEFT_NEIGHBOUR))
 								{
-									case L0_UP_LEFT_INDEX:
-									case L1_UP_LEFT_INDEX:
-										break;
+									auto child_neighbour = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L0_UP_RIGHT_INDEX).get();
+									if (child_neighbour)
+									{
+										child->m_neighbours.at(LEFT_NEIGHBOUR) = child_neighbour;
+										child_neighbour->m_neighbours.at(RIGHT_NEIGHBOUR) = child;
+									}
+								}
 
-									case L0_UP_RIGHT_INDEX:
-									case L1_UP_RIGHT_INDEX:
+								if(m_neighbours.at(UP_NEIGHBOUR))
+								{
+									auto child_neighbour = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L0_DOWN_LEFT_INDEX).get();
+									if (child_neighbour)
+									{
+										child->m_neighbours.at(UP_NEIGHBOUR) = child_neighbour;
+										child_neighbour->m_neighbours.at(DOWN_NEIGHBOUR) = child;
+									}
+								}
+
+								if constexpr (3 == Dim) // octtree
+								{
+									if (m_neighbours.at(BOTTOM_NEIGHBOUR))
+									{
+										auto child_neighbour = m_neighbours.at(BOTTOM_NEIGHBOUR)->m_children.at(L1_UP_LEFT_INDEX).get();
+										if (child_neighbour)
 										{
-											auto neighbour0 = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L0_UP_RIGHT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(LEFT_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(RIGHT_NEIGHBOUR) = child;
-											}
+											child->m_neighbours.at(BOTTOM_NEIGHBOUR) = child_neighbour;
+											child_neighbour->m_neighbours.at(TOP_NEIGHBOUR) = child;
 										}
-										break;
-
-									case L0_DOWN_RIGHT_INDEX:
-									case L1_DOWN_RIGHT_INDEX:
-										{
-											auto neighbour0 = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L0_UP_RIGHT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(LEFT_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(RIGHT_NEIGHBOUR) = child;
-											}
-
-											auto neighbour1 = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L0_DOWN_LEFT_INDEX).get();
-											if (neighbour1)
-											{
-												child->m_neighbours.at(UP_NEIGHBOUR) = neighbour1;
-												neighbour1->m_neighbours.at(DOWN_NEIGHBOUR) = child;
-											}
-										}
-
-										break;
-
-									case L0_DOWN_LEFT_INDEX:
-									case L1_DOWN_LEFT_INDEX:
-										{
-											auto neighbour0 = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L0_DOWN_LEFT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(UP_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(DOWN_NEIGHBOUR) = child;
-											}
-
-										}
-
-										break;
-
-									///////////////////////////////////////////////////////////
+									}
 								}
 								break;
 
 							case L0_UP_RIGHT_INDEX:
 
-								switch (m_id)
+								if (m_neighbours.at(RIGHT_NEIGHBOUR))
 								{
-									case L0_UP_LEFT_INDEX:
-									case L1_UP_LEFT_INDEX:
+									auto child_neighbour = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L0_UP_LEFT_INDEX).get();
+									if (child_neighbour)
+									{
+										child->m_neighbours.at(RIGHT_NEIGHBOUR) = child_neighbour;
+										child_neighbour->m_neighbours.at(LEFT_NEIGHBOUR) = child;
+									}
+								}
+
+								if (m_neighbours.at(UP_NEIGHBOUR))
+								{
+									auto child_neighbour = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L0_DOWN_RIGHT_INDEX).get();
+									if (child_neighbour)
+									{
+										child->m_neighbours.at(UP_NEIGHBOUR) = child_neighbour;
+										child_neighbour->m_neighbours.at(DOWN_NEIGHBOUR) = child;
+									}
+								}
+
+								if constexpr (3 == Dim) // octtree
+								{
+									if (m_neighbours.at(BOTTOM_NEIGHBOUR))
+									{
+										auto child_neighbour = m_neighbours.at(BOTTOM_NEIGHBOUR)->m_children.at(L1_UP_RIGHT_INDEX).get();
+										if (child_neighbour)
 										{
-
-											auto neighbour0 = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L0_UP_LEFT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(RIGHT_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(LEFT_NEIGHBOUR) = child;
-											}
-										}										
-										break;
-
-									case L0_UP_RIGHT_INDEX:
-									case L1_UP_RIGHT_INDEX:
-										break;
-
-									case L0_DOWN_RIGHT_INDEX:
-									case L1_DOWN_RIGHT_INDEX:
-										{
-											auto neighbour0 = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L0_DOWN_RIGHT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(UP_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(DOWN_NEIGHBOUR) = child;
-											}
+											child->m_neighbours.at(BOTTOM_NEIGHBOUR) = child_neighbour;
+											child_neighbour->m_neighbours.at(TOP_NEIGHBOUR) = child;
 										}
-											
-										break;
-
-									case L0_DOWN_LEFT_INDEX:
-									case L1_DOWN_LEFT_INDEX:
-										{
-											auto neighbour0 = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L0_UP_LEFT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(RIGHT_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(LEFT_NEIGHBOUR) = child;
-											}
-
-											auto neighbour1 = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L0_DOWN_RIGHT_INDEX).get();
-											if (neighbour1)
-											{
-												child->m_neighbours.at(UP_NEIGHBOUR) = neighbour1;
-												neighbour1->m_neighbours.at(DOWN_NEIGHBOUR) = child;
-											}
-
-										}
-										break;
-
-										///////////////////////////////////////////////////////////
+									}
 								}
 								break;
 
 							case L0_DOWN_RIGHT_INDEX:
 
-								switch (m_id)
+								if (m_neighbours.at(RIGHT_NEIGHBOUR))
 								{
-									///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-									// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+									auto child_neighbour = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L0_DOWN_LEFT_INDEX).get();
+									if (child_neighbour)
+									{
+										child->m_neighbours.at(RIGHT_NEIGHBOUR) = child_neighbour;
+										child_neighbour->m_neighbours.at(LEFT_NEIGHBOUR) = child;
+									}
+								}
 
-									case L0_UP_LEFT_INDEX:
+								if (m_neighbours.at(DOWN_NEIGHBOUR))
+								{
+									auto child_neighbour = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L0_UP_RIGHT_INDEX).get();
+									if (child_neighbour)
+									{
+										child->m_neighbours.at(DOWN_NEIGHBOUR) = child_neighbour;
+										child_neighbour->m_neighbours.at(UP_NEIGHBOUR) = child;
+									}
+								}
+
+								if constexpr (3 == Dim) // octtree
+								{
+									if (m_neighbours.at(BOTTOM_NEIGHBOUR))
+									{
+										auto child_neighbour = m_neighbours.at(BOTTOM_NEIGHBOUR)->m_children.at(L1_DOWN_RIGHT_INDEX).get();
+										if (child_neighbour)
 										{
-											auto neighbour0 = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L0_UP_RIGHT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(DOWN_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(UP_NEIGHBOUR) = child;
-											}
-
-											auto neighbour1 = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L0_DOWN_LEFT_INDEX).get();
-											if (neighbour1)
-											{
-												child->m_neighbours.at(RIGHT_NEIGHBOUR) = neighbour1;
-												neighbour1->m_neighbours.at(LEFT_NEIGHBOUR) = child;
-											}
-
-											if (m_neighbours.at(BOTTOM_NEIGHBOUR))
-											{
-												auto neighbour2 = m_neighbours.at(BOTTOM_NEIGHBOUR)->m_children.at(L1_DOWN_RIGHT_INDEX).get();
-												if (neighbour2)
-												{
-													child->m_neighbours.at(BOTTOM_NEIGHBOUR) = neighbour2;
-													neighbour2->m_neighbours.at(TOP_NEIGHBOUR) = child;
-												}
-											}
+											child->m_neighbours.at(BOTTOM_NEIGHBOUR) = child_neighbour;
+											child_neighbour->m_neighbours.at(TOP_NEIGHBOUR) = child;
 										}
-										break;
-
-									case L1_UP_LEFT_INDEX:
-										{
-											auto neighbour0 = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L0_UP_RIGHT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(DOWN_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(UP_NEIGHBOUR) = child;
-											}
-
-											auto neighbour1 = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L0_DOWN_LEFT_INDEX).get();
-											if (neighbour1)
-											{
-												child->m_neighbours.at(RIGHT_NEIGHBOUR) = neighbour1;
-												neighbour1->m_neighbours.at(LEFT_NEIGHBOUR) = child;
-											}
-
-											auto neighbour2 = m_neighbours.at(BOTTOM_NEIGHBOUR)->m_children.at(L1_DOWN_RIGHT_INDEX).get();
-											if (neighbour2)
-											{
-												child->m_neighbours.at(BOTTOM_NEIGHBOUR) = neighbour2;
-												neighbour2->m_neighbours.at(TOP_NEIGHBOUR) = child;
-											}
-										}
-										break;
-
-									//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-									///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-									case L0_UP_RIGHT_INDEX:
-									case L1_UP_RIGHT_INDEX:
-										{
-											auto neighbour0 = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L0_UP_RIGHT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(DOWN_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(UP_NEIGHBOUR) = child;
-											}
-
-										}
-										break;
-
-									case L0_DOWN_RIGHT_INDEX:
-									case L1_DOWN_RIGHT_INDEX:
-										break;
-
-									case L0_DOWN_LEFT_INDEX:
-									case L1_DOWN_LEFT_INDEX:
-										{
-											auto neighbour0 = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L0_DOWN_LEFT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(RIGHT_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(LEFT_NEIGHBOUR) = child;
-											}
-										}
-										break;
-
-										///////////////////////////////////////////////////////////
+									}
 								}
 								break;
 
 							case L0_DOWN_LEFT_INDEX:
 
-								switch (m_id)
+								if (m_neighbours.at(LEFT_NEIGHBOUR))
 								{
-									case L0_UP_LEFT_INDEX:
-									case L1_UP_LEFT_INDEX:
-										{
-											auto neighbour0 = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L0_UP_LEFT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(DOWN_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(UP_NEIGHBOUR) = child;
-											}
-										}										
-										break;
+									auto child_neighbour = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L0_DOWN_RIGHT_INDEX).get();
+									if (child_neighbour)
+									{
+										child->m_neighbours.at(LEFT_NEIGHBOUR) = child_neighbour;
+										child_neighbour->m_neighbours.at(RIGHT_NEIGHBOUR) = child;
+									}
+								}
 
-									case L0_UP_RIGHT_INDEX:
-									case L1_UP_RIGHT_INDEX:
-										{
-											auto neighbour0 = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L0_UP_LEFT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(DOWN_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(UP_NEIGHBOUR) = child;
-											}
+								if (m_neighbours.at(DOWN_NEIGHBOUR))
+								{
+									auto child_neighbour = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L0_UP_LEFT_INDEX).get();
+									if (child_neighbour)
+									{
+										child->m_neighbours.at(DOWN_NEIGHBOUR) = child_neighbour;
+										child_neighbour->m_neighbours.at(UP_NEIGHBOUR) = child;
+									}
+								}
 
-											auto neighbour1 = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L0_DOWN_RIGHT_INDEX).get();
-											if (neighbour1)
-											{
-												child->m_neighbours.at(LEFT_NEIGHBOUR) = neighbour1;
-												neighbour1->m_neighbours.at(RIGHT_NEIGHBOUR) = child;
-											}
+								if constexpr (3 == Dim) // octtree
+								{
+									if (m_neighbours.at(BOTTOM_NEIGHBOUR))
+									{
+										auto child_neighbour = m_neighbours.at(BOTTOM_NEIGHBOUR)->m_children.at(L1_DOWN_LEFT_INDEX).get();
+										if (child_neighbour)
+										{
+											child->m_neighbours.at(BOTTOM_NEIGHBOUR) = child_neighbour;
+											child_neighbour->m_neighbours.at(TOP_NEIGHBOUR) = child;
 										}
-										break;
-
-									case L0_DOWN_RIGHT_INDEX:
-									case L1_DOWN_RIGHT_INDEX:
-										{
-											auto neighbour0 = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L0_DOWN_RIGHT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(LEFT_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(RIGHT_NEIGHBOUR) = child;
-											}
-
-										}
-										break;
-
-									case L0_DOWN_LEFT_INDEX:
-									case L1_DOWN_LEFT_INDEX:
-										break;
-
-										///////////////////////////////////////////////////////////
+									}
 								}
 								break;
 
-							// octtree from here
 							case L1_UP_LEFT_INDEX:
 
-								switch (m_id)
+								if (m_neighbours.at(LEFT_NEIGHBOUR))
 								{
-									case L0_UP_LEFT_INDEX:
-									case L1_UP_LEFT_INDEX:
-										break;
+									auto child_neighbour = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L1_UP_RIGHT_INDEX).get();
+									if (child_neighbour)
+									{
+										child->m_neighbours.at(LEFT_NEIGHBOUR) = child_neighbour;
+										child_neighbour->m_neighbours.at(RIGHT_NEIGHBOUR) = child;
+									}
+								}
 
-									case L0_UP_RIGHT_INDEX:
-									case L1_UP_RIGHT_INDEX:
+								if (m_neighbours.at(UP_NEIGHBOUR))
+								{
+									auto child_neighbour = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L1_DOWN_LEFT_INDEX).get();
+									if (child_neighbour)
+									{
+										child->m_neighbours.at(UP_NEIGHBOUR) = child_neighbour;
+										child_neighbour->m_neighbours.at(DOWN_NEIGHBOUR) = child;
+									}
+								}
+
+								if constexpr (3 == Dim) // octtree
+								{
+									if (m_neighbours.at(TOP_NEIGHBOUR))
+									{
+										auto child_neighbour = m_neighbours.at(TOP_NEIGHBOUR)->m_children.at(L0_UP_LEFT_INDEX).get();
+										if (child_neighbour)
 										{
-											auto neighbour0 = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L1_UP_RIGHT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(LEFT_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(RIGHT_NEIGHBOUR) = child;
-											}
+											child->m_neighbours.at(TOP_NEIGHBOUR) = child_neighbour;
+											child_neighbour->m_neighbours.at(BOTTOM_NEIGHBOUR) = child;
 										}
-										break;
-
-									case L0_DOWN_RIGHT_INDEX:
-									case L1_DOWN_RIGHT_INDEX:
-										{
-											auto neighbour0 = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L1_UP_RIGHT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(LEFT_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(RIGHT_NEIGHBOUR) = child;
-											}
-
-											auto neighbour1 = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L1_DOWN_LEFT_INDEX).get();
-											if (neighbour1)
-											{
-												child->m_neighbours.at(UP_NEIGHBOUR) = neighbour1;
-												neighbour1->m_neighbours.at(DOWN_NEIGHBOUR) = child;
-											}
-										}
-										break;
-
-									case L0_DOWN_LEFT_INDEX:
-									case L1_DOWN_LEFT_INDEX:
-										{
-											auto neighbour0 = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L1_DOWN_LEFT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(UP_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(DOWN_NEIGHBOUR) = child;
-											}
-										}
-
-										break;
+									}
 								}
 								break;
 
 							case L1_UP_RIGHT_INDEX:
 
-								switch (m_id)
+								if (m_neighbours.at(RIGHT_NEIGHBOUR))
 								{
-									case L0_UP_LEFT_INDEX:
-									case L1_UP_LEFT_INDEX:
+									auto child_neighbour = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L1_UP_LEFT_INDEX).get();
+									if (child_neighbour)
+									{
+										child->m_neighbours.at(RIGHT_NEIGHBOUR) = child_neighbour;
+										child_neighbour->m_neighbours.at(LEFT_NEIGHBOUR) = child;
+									}
+								}
+
+								if (m_neighbours.at(UP_NEIGHBOUR))
+								{
+									auto child_neighbour = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L1_DOWN_RIGHT_INDEX).get();
+									if (child_neighbour)
+									{
+										child->m_neighbours.at(UP_NEIGHBOUR) = child_neighbour;
+										child_neighbour->m_neighbours.at(DOWN_NEIGHBOUR) = child;
+									}
+								}
+
+								if constexpr (3 == Dim) // octtree
+								{
+									if (m_neighbours.at(TOP_NEIGHBOUR))
+									{
+										auto child_neighbour = m_neighbours.at(TOP_NEIGHBOUR)->m_children.at(L0_UP_RIGHT_INDEX).get();
+										if (child_neighbour)
 										{
-											auto neighbour0 = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L1_UP_LEFT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(RIGHT_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(LEFT_NEIGHBOUR) = child;
-											}
+											child->m_neighbours.at(TOP_NEIGHBOUR) = child_neighbour;
+											child_neighbour->m_neighbours.at(BOTTOM_NEIGHBOUR) = child;
 										}
-										break;
-
-									case L0_UP_RIGHT_INDEX:
-									case L1_UP_RIGHT_INDEX:
-										break;
-
-									case L0_DOWN_RIGHT_INDEX:
-									case L1_DOWN_RIGHT_INDEX:
-										{
-											auto neighbour0 = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L1_DOWN_RIGHT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(UP_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(DOWN_NEIGHBOUR) = child;
-											}
-										}
-										break;
-
-									case L0_DOWN_LEFT_INDEX:
-									case L1_DOWN_LEFT_INDEX:
-										{
-											auto neighbour0 = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L1_UP_LEFT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(RIGHT_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(LEFT_NEIGHBOUR) = child;
-											}
-
-											auto neighbour1 = m_neighbours.at(UP_NEIGHBOUR)->m_children.at(L1_DOWN_RIGHT_INDEX).get();
-											if (neighbour1)
-											{
-												child->m_neighbours.at(UP_NEIGHBOUR) = neighbour1;
-												neighbour1->m_neighbours.at(DOWN_NEIGHBOUR) = child;
-											}
-										}
-										break;
+									}
 								}
 								break;
 
 							case L1_DOWN_RIGHT_INDEX:
 
-								switch (m_id)
+								if (m_neighbours.at(RIGHT_NEIGHBOUR))
 								{
-									///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-									// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+									auto child_neighbour = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L1_DOWN_LEFT_INDEX).get();
+									if (child_neighbour)
+									{
+										child->m_neighbours.at(RIGHT_NEIGHBOUR) = child_neighbour;
+										child_neighbour->m_neighbours.at(LEFT_NEIGHBOUR) = child;
+									}
+								}
 
-									case L0_UP_LEFT_INDEX:
+								if (m_neighbours.at(DOWN_NEIGHBOUR))
+								{
+									auto child_neighbour = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L1_UP_RIGHT_INDEX).get();
+									if (child_neighbour)
+									{
+										child->m_neighbours.at(DOWN_NEIGHBOUR) = child_neighbour;
+										child_neighbour->m_neighbours.at(UP_NEIGHBOUR) = child;
+									}
+								}
+
+								if constexpr (3 == Dim) // octtree
+								{
+									if (m_neighbours.at(TOP_NEIGHBOUR))
+									{
+										auto child_neighbour = m_neighbours.at(TOP_NEIGHBOUR)->m_children.at(L0_DOWN_RIGHT_INDEX).get();
+										if (child_neighbour)
 										{
-											auto neighbour0 = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L1_UP_RIGHT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(DOWN_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(UP_NEIGHBOUR) = child;
-											}
-
-											auto neighbour1 = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L1_DOWN_LEFT_INDEX).get();
-											if (neighbour1)
-											{
-												child->m_neighbours.at(RIGHT_NEIGHBOUR) = neighbour1;
-												neighbour1->m_neighbours.at(LEFT_NEIGHBOUR) = child;
-											}
-
-											auto neighbour2 = m_neighbours.at(TOP_NEIGHBOUR)->m_children.at(L0_DOWN_RIGHT_INDEX).get();
-											if (neighbour1)
-											{
-												child->m_neighbours.at(TOP_NEIGHBOUR) = neighbour2;
-												neighbour2->m_neighbours.at(BOTTOM_NEIGHBOUR) = child;
-											}
+											child->m_neighbours.at(TOP_NEIGHBOUR) = child_neighbour;
+											child_neighbour->m_neighbours.at(BOTTOM_NEIGHBOUR) = child;
 										}
-										break;
-
-									case L1_UP_LEFT_INDEX:
-										{
-											auto neighbour0 = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L1_UP_RIGHT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(DOWN_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(UP_NEIGHBOUR) = child;
-											}
-
-											auto neighbour1 = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L1_DOWN_LEFT_INDEX).get();
-											if (neighbour1)
-											{
-												child->m_neighbours.at(RIGHT_NEIGHBOUR) = neighbour1;
-												neighbour1->m_neighbours.at(LEFT_NEIGHBOUR) = child;
-											}
-
-											if (m_neighbours.at(TOP_NEIGHBOUR))
-											{
-												auto neighbour2 = m_neighbours.at(TOP_NEIGHBOUR)->m_children.at(L0_DOWN_RIGHT_INDEX).get();
-												if (neighbour1)
-												{
-													child->m_neighbours.at(TOP_NEIGHBOUR) = neighbour2;
-													neighbour2->m_neighbours.at(BOTTOM_NEIGHBOUR) = child;
-												}
-											}
-										}
-										break;
-
-									//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-									///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-									case L0_UP_RIGHT_INDEX:
-									case L1_UP_RIGHT_INDEX:
-										{
-											auto neighbour0 = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L1_UP_RIGHT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(DOWN_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(UP_NEIGHBOUR) = child;
-											}
-										}
-										break;
-
-									case L0_DOWN_RIGHT_INDEX:
-									case L1_DOWN_RIGHT_INDEX:
-										break;
-
-									case L0_DOWN_LEFT_INDEX:
-									case L1_DOWN_LEFT_INDEX:
-										{
-											auto neighbour0 = m_neighbours.at(RIGHT_NEIGHBOUR)->m_children.at(L1_DOWN_LEFT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(RIGHT_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(LEFT_NEIGHBOUR) = child;
-											}
-										}
-										break;
+									}
 								}
 								break;
 
 							case L1_DOWN_LEFT_INDEX:
 
-								switch (m_id)
+								if (m_neighbours.at(LEFT_NEIGHBOUR))
 								{
-									case L0_UP_LEFT_INDEX:
-									case L1_UP_LEFT_INDEX:
-										{
-											auto neighbour0 = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L1_UP_LEFT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(DOWN_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(UP_NEIGHBOUR) = child;
-											}
-										}
-										break;
-
-									case L0_UP_RIGHT_INDEX:
-									case L1_UP_RIGHT_INDEX:
-										{
-											auto neighbour0 = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L1_UP_LEFT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(DOWN_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(UP_NEIGHBOUR) = child;
-											}
-
-											auto neighbour1 = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L1_DOWN_RIGHT_INDEX).get();
-											if (neighbour1)
-											{
-												child->m_neighbours.at(LEFT_NEIGHBOUR) = neighbour1;
-												neighbour1->m_neighbours.at(RIGHT_NEIGHBOUR) = child;
-											}
-										}
-										break;
-
-									case L0_DOWN_RIGHT_INDEX:
-									case L1_DOWN_RIGHT_INDEX:
-										{
-											auto neighbour0 = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L1_DOWN_RIGHT_INDEX).get();
-											if (neighbour0)
-											{
-												child->m_neighbours.at(LEFT_NEIGHBOUR) = neighbour0;
-												neighbour0->m_neighbours.at(RIGHT_NEIGHBOUR) = child;
-											}
-										}
-										break;
-
-									case L0_DOWN_LEFT_INDEX:
-									case L1_DOWN_LEFT_INDEX:
-										break;
+									auto child_neighbour = m_neighbours.at(LEFT_NEIGHBOUR)->m_children.at(L1_DOWN_RIGHT_INDEX).get();
+									if (child_neighbour)
+									{
+										child->m_neighbours.at(LEFT_NEIGHBOUR) = child_neighbour;
+										child_neighbour->m_neighbours.at(RIGHT_NEIGHBOUR) = child;
+									}
 								}
-								break;
 
-							default:
+								if (m_neighbours.at(DOWN_NEIGHBOUR))
+								{
+									auto child_neighbour = m_neighbours.at(DOWN_NEIGHBOUR)->m_children.at(L1_UP_LEFT_INDEX).get();
+									if (child_neighbour)
+									{
+										child->m_neighbours.at(DOWN_NEIGHBOUR) = child_neighbour;
+										child_neighbour->m_neighbours.at(UP_NEIGHBOUR) = child;
+									}
+								}
+
+								if constexpr (3 == Dim) // octtree
+								{
+									if (m_neighbours.at(TOP_NEIGHBOUR))
+									{
+										auto child_neighbour = m_neighbours.at(TOP_NEIGHBOUR)->m_children.at(L0_DOWN_LEFT_INDEX).get();
+										if (child_neighbour)
+										{
+											child->m_neighbours.at(TOP_NEIGHBOUR) = child_neighbour;
+											child_neighbour->m_neighbours.at(BOTTOM_NEIGHBOUR) = child;
+										}
+									}
+								}
 								break;
 						}
 					}

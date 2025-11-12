@@ -279,17 +279,30 @@ int main( int argc, char* argv[] )
 			std::cout << "depth " << p_depth << " value = " << p_data << "\n";
 		});
 
-	// PASS
-	//print_neighbours(root.getChild(3)->getChild(1)); 
 
-	// PASS
-	//print_neighbours(root.getChild(4)->getChild(6));
+	//print_neighbours(root.getChild(0)->getChild(6));
+	//print_neighbours(root.getChild(4)->getChild(2));
 
-	// PASS - 0_6 missing top : 4_2
-	print_neighbours(root.getChild(0)->getChild(6));
+	//print_neighbours(root.getChild(0)->getChild(4));
 
-	// PASS - 4_2 missing bottom : 0_6
-	print_neighbours(root.getChild(4)->getChild(2));
+	//print_neighbours(root.getChild(6)->getChild(0));
+	//print_neighbours(root.getChild(6)->getChild(6));
+
+	//print_neighbours(root.getChild(7)->getChild(5));
+
+	//print_neighbours(root.getChild(5)->getChild(1));
+
+	//print_neighbours(root.getChild(2)->getChild(4));
+
+	//print_neighbours(root.getChild(2)->getChild(2));
+
+	//print_neighbours(root.getChild(3)->getChild(3));
+
+	//print_neighbours(root.getChild(7)->getChild(0));
+
+	//print_neighbours(root.getChild(5)->getChild(2));
+
+	print_neighbours(root.getChild(5)->getChild(4));
 	
 	
 	
