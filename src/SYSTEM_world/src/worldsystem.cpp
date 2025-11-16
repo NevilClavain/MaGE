@@ -114,6 +114,7 @@ void WorldSystem::run()
 					{
 						case transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT:
 
+							//entity_worldposition.global_pos = entity_worldposition.local_pos * parententity_worldposition.global_pos;
 							updated_global_pos = entity_worldposition.local_pos * parententity_worldposition.global_pos;
 
 							position_delta_event(p_entity, updated_global_pos.getPosition(), entity_worldposition.global_pos.getPosition());
@@ -123,6 +124,7 @@ void WorldSystem::run()
 
 						case transform::WorldPosition::TransformationComposition::TRANSFORMATION_ABSOLUTE:
 
+							//entity_worldposition.global_pos = entity_worldposition.local_pos;
 							updated_global_pos = entity_worldposition.local_pos;
 
 							position_delta_event(p_entity, updated_global_pos.getPosition(), entity_worldposition.global_pos.getPosition());
