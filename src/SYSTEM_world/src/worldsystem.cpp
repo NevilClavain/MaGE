@@ -30,7 +30,6 @@
 #include "worldposition.h"
 #include "animatorfunc.h"
 #include "renderingqueue.h"
-#include "matrix.h"
 #include "matrixchain.h"
 #include "datacloud.h"
 
@@ -108,28 +107,16 @@ void WorldSystem::run()
 
 					///////////////////////
 
-					core::maths::Matrix updated_global_pos;
-
 					switch (entity_worldposition.composition_operation)
 					{
 						case transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT:
 
-							//entity_worldposition.global_pos = entity_worldposition.local_pos * parententity_worldposition.global_pos;
-							updated_global_pos = entity_worldposition.local_pos * parententity_worldposition.global_pos;
-
-							position_delta_event(p_entity, updated_global_pos.getPosition(), entity_worldposition.global_pos.getPosition());
-							entity_worldposition.global_pos = updated_global_pos;
-
+							entity_worldposition.global_pos = entity_worldposition.local_pos * parententity_worldposition.global_pos;
 							break;
 
 						case transform::WorldPosition::TransformationComposition::TRANSFORMATION_ABSOLUTE:
 
-							//entity_worldposition.global_pos = entity_worldposition.local_pos;
-							updated_global_pos = entity_worldposition.local_pos;
-
-							position_delta_event(p_entity, updated_global_pos.getPosition(), entity_worldposition.global_pos.getPosition());
-							entity_worldposition.global_pos = updated_global_pos;
-
+							entity_worldposition.global_pos = entity_worldposition.local_pos;
 							break;
 
 						case transform::WorldPosition::TransformationComposition::TRANSFORMATION_PARENT_PROJECTEDPOS:
@@ -199,10 +186,7 @@ void WorldSystem::run()
 
 				///////////////////////
 
-				core::maths::Matrix updated_global_pos = entity_worldposition.local_pos;
-				position_delta_event(p_entity, updated_global_pos.getPosition(), entity_worldposition.global_pos.getPosition());
-
-				entity_worldposition.global_pos = updated_global_pos;
+				entity_worldposition.global_pos = entity_worldposition.local_pos;
 			}			
 		}
 	};
@@ -425,17 +409,4 @@ void WorldSystem::run()
 	};
 
 	browseHierarchy(root, 0);
-}
-
-void WorldSystem::position_delta_event(core::Entity* p_entity, const core::maths::Real3Vector& p_vA, const core::maths::Real3Vector& p_vB)
-{
-	core::maths::Real3Vector delta(p_vA[0] - p_vB[0], p_vA[1] - p_vB[1], p_vA[2] - p_vB[2]);
-	if (delta.length() > 0)
-	{
-		const std::string entity_id{ p_entity->getId() };
-		for (const auto& call : m_callbacks)
-		{
-			call(WorldSystemEvent::WORLD_POSITION_UPDATED, entity_id);
-		}
-	}
 }

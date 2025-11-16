@@ -46,8 +46,6 @@
 #include "trianglemeshe.h"
 #include "matrixchain.h"
 
-#include "worldsystem.h"
-
 #include "filesystem.h"
 
 using namespace mage;
@@ -74,31 +72,6 @@ void SceneStreamerSystem::run()
             e.second.m_rendered = false;
         }
     }
-}
-
-void SceneStreamerSystem::connectWorldSystem(int p_worldSystemSlot)
-{
-    const auto sysEngine{ SystemEngine::getInstance() };
-    auto worldSystemInstance{ dynamic_cast<mage::WorldSystem*>(SystemEngine::getInstance()->getSystem(p_worldSystemSlot)) };
-
-    // register to world system events
-    const WorldSystem::Callback world_cb
-    {
-        [&, this](WorldSystemEvent p_event, const std::string& p_entityId)
-        {            
-            switch (p_event)
-            {
-                case WorldSystemEvent::WORLD_POSITION_UPDATED:
-                    {
-                        const auto id = p_entityId;
-                    }
-                    break;
-
-            }
-        }
-    };
-
-    worldSystemInstance->registerSubscriber(world_cb);
 }
 
 void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId,
@@ -405,7 +378,7 @@ void SceneStreamerSystem::buildViewgroup(const std::string& p_jsonsource, int p_
         _EXCEPTION("Cannot parse scenegraph: " + errorStr);
     }
 
-    auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(p_renderingQueueSystemSlot))};
+    auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(p_renderingQueueSystemSlot))}; // TODO
 
     renderingQueueSystemInstance->createViewGroup(vg.name);
     renderingQueueSystemInstance->setViewGroupMainView(vg.name, vg.mainview_camera_entity_id);

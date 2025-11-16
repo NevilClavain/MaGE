@@ -420,7 +420,7 @@ namespace mage
 
         void run();
 
-        void connectWorldSystem(int p_worldSystemSlot);
+        
 
         void buildRendergraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId,
                                     int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);

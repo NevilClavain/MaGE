@@ -292,7 +292,7 @@ int main( int argc, char* argv[] )
 
 	//print_neighbours(root.getChild(5)->getChild(1));
 
-	print_neighbours(root.getChild(2)->getChild(4));
+	//print_neighbours(root.getChild(2)->getChild(4));
 
 	//print_neighbours(root.getChild(2)->getChild(2));
 
@@ -302,7 +302,7 @@ int main( int argc, char* argv[] )
 
 	//print_neighbours(root.getChild(5)->getChild(2));
 
-	//print_neighbours(root.getChild(5)->getChild(4));
+	print_neighbours(root.getChild(5)->getChild(4));
 	
 	
 	

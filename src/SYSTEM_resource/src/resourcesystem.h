@@ -122,6 +122,7 @@ namespace mage
         const std::string                                   m_meshesBasePath{ "./meshes" };
         const std::string                                   m_shadersCachePath{ "./bc_cache" };
 
+        //mage::core::Json<Shader>::Callback	                m_jsonparser_cb;
         std::mutex                                          m_jsonparser_mutex;
 
         static constexpr unsigned int                       nbRunners{ 2 };
