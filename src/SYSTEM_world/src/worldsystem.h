@@ -25,14 +25,20 @@
 
 #pragma once
 #include "system.h"
-#include "matrix.h"
+#include "tvector.h"
+#include "eventsource.h"
 
 namespace mage
 {
     namespace core { class Entity; }
     namespace core { class Entitygraph; }
+
+    enum class WorldSystemEvent
+    {
+        WORLD_POSITION_UPDATED
+    };
    
-    class WorldSystem : public core::System
+    class WorldSystem : public core::System, public mage::property::EventSource<WorldSystemEvent, const std::string&>
     {
     public:
         WorldSystem() = delete;
@@ -40,5 +46,8 @@ namespace mage
         ~WorldSystem() = default;
 
         void run();
+    private:
+
+        void inline position_delta_event(core::Entity* p_entity, const core::maths::Real3Vector& p_vA, const core::maths::Real3Vector& p_vB);
     };
 }
