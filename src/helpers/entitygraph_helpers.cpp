@@ -140,6 +140,7 @@ namespace mage
 							{ core::resourcesAspect::id,	"resourcesAspect" },
 							{ core::cameraAspect::id,		"cameraAspect" },
 							{ core::worldAspect::id,		"worldAspect" },
+							{ core::stampAspect::id,		"stampAspect" },
 						};
 
 						for (const auto& e : aspects_translate)
@@ -345,6 +346,10 @@ namespace mage
 			renderingAspect.addComponent<rendering::Queue>("renderingQueue", p_renderingqueue);
 			auto& stored_rendering_queue{ renderingAspect.getComponent<rendering::Queue>("renderingQueue")->getPurpose() };
 
+			auto& stamp_aspect{ renderingQueueNodeEntity->makeAspect(core::stampAspect::id) };
+			stamp_aspect.addComponent<core::stampAspect::GraphDomain>("domain", core::stampAspect::GraphDomain::RENDERGRAPH);
+
+
 			return stored_rendering_queue;
 		}
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -388,6 +393,9 @@ namespace mage
 			camera_world_aspect.addComponent<transform::WorldPosition>("camera_position", transform::WorldPosition());
 
 			rendering_queue_ref.setMainView(p_viewEntityid);
+
+			auto& view_stamp_aspect{ cameraEntity->makeAspect(core::stampAspect::id) };
+			view_stamp_aspect.addComponent<core::stampAspect::GraphDomain>("domain", core::stampAspect::GraphDomain::RENDERGRAPH);
 
 			///////////////////////////////////////////////////////////////
 
@@ -488,6 +496,8 @@ namespace mage
 			));
 
 			//////////////////////////////////////
+			auto& stamp_aspect{ screenRenderingQuadEntity->makeAspect(core::stampAspect::id) };
+			stamp_aspect.addComponent<core::stampAspect::GraphDomain>("domain", core::stampAspect::GraphDomain::RENDERGRAPH);
 
 			return rendering_queue_ref;			
 		}
@@ -509,6 +519,11 @@ namespace mage
 
 			camera_world_aspect.addComponent<transform::WorldPosition>("camera_position", transform::WorldPosition());
 
+			///////////////////////////////////////////////
+			auto& stamp_aspect{ cameraEntity->makeAspect(core::stampAspect::id) };
+			stamp_aspect.addComponent<core::stampAspect::GraphDomain>("domain", core::stampAspect::GraphDomain::SCENEGRAPH);
+
+	
 			return cameraEntity;
 		}
 
@@ -639,6 +654,10 @@ namespace mage
 					wp.local_pos = wp.local_pos * rotationmat * positionmat;
 				}
 			));
+
+			///////////////////////////////////////////////
+			auto& stamp_aspect{ sprite2DEntity->makeAspect(core::stampAspect::id) };
+			stamp_aspect.addComponent<core::stampAspect::GraphDomain>("domain", core::stampAspect::GraphDomain::HUD);
 
 			return sprite2DEntity;
 		}
@@ -785,6 +804,11 @@ namespace mage
 				}
 			));
 
+			///////////////////////////////////////////////
+			auto& stamp_aspect{ sprite2DEntity->makeAspect(core::stampAspect::id) };
+			stamp_aspect.addComponent<core::stampAspect::GraphDomain>("domain", core::stampAspect::GraphDomain::HUD);
+
+
 			return sprite2DEntity;
 		}
 
@@ -835,6 +859,10 @@ namespace mage
 
 			// time aspect
 			textEntity->makeAspect(core::timeAspect::id);
+
+			///////////////////////////////////////////////
+			auto& stamp_aspect{ textEntity->makeAspect(core::stampAspect::id) };
+			stamp_aspect.addComponent<core::stampAspect::GraphDomain>("domain", core::stampAspect::GraphDomain::HUD);
 
 			return textEntity;
 		}
@@ -912,6 +940,10 @@ namespace mage
 			/////////// Rendering Order
 			rendering_aspect.addComponent<int>("renderingOrder", p_rendering_order);
 
+			///////////////////////////////////////////////
+			auto& stamp_aspect{ entity->makeAspect(core::stampAspect::id) };
+			stamp_aspect.addComponent<core::stampAspect::GraphDomain>("domain", core::stampAspect::GraphDomain::RENDERGRAPH);
+
 			return entity;
 		}
 
@@ -935,6 +967,10 @@ namespace mage
 
 			/////////// render target Texture		
 			resource_aspect.addComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture", p_renderTargetTexture);
+
+			///////////////////////////////////////////////
+			auto& stamp_aspect{ entity->makeAspect(core::stampAspect::id) };
+			stamp_aspect.addComponent<core::stampAspect::GraphDomain>("domain", core::stampAspect::GraphDomain::RENDERGRAPH);
 
 			return entity;
 		}

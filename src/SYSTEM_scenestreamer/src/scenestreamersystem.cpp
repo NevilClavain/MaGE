@@ -325,6 +325,11 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
                     resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair(p_node.resource_aspect.meshe.meshe_id, p_node.resource_aspect.meshe.filename), TriangleMeshe()));
                 }
 
+                ///////////////////////////////////////////////
+                auto& stamp_aspect{ entity->makeAspect(core::stampAspect::id) };
+                stamp_aspect.addComponent<core::stampAspect::GraphDomain>("domain", core::stampAspect::GraphDomain::SCENEGRAPH);
+
+
                 register_scene_entity(entity);
 
                 if (m_entity_renderings.count(p_node.id) > 0)
