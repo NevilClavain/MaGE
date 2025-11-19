@@ -52,7 +52,7 @@ void WorldSystem::run()
 		{
 			///// compute matrix hierarchy
 
-			auto& entity_worldposition_list { p_world_components.getComponentsByType<transform::WorldPosition>() };
+			const auto& entity_worldposition_list { p_world_components.getComponentsByType<transform::WorldPosition>() };
 			if (0 == entity_worldposition_list.size())
 			{
 				//_EXCEPTION("Entity world aspect : missing world position " + p_entity->getId());

@@ -58,7 +58,9 @@ SceneStreamerSystem::SceneStreamerSystem(Entitygraph& p_entitygraph) : System(p_
 
 void SceneStreamerSystem::run()
 {
+    /////////////////////////////////////////////////////////
     // loop on entity rendering entries
+    /////////////////////////////////////////////////////////
     for (auto& e : m_entity_renderings)
     {
         if (e.second.m_request_rendering && !e.second.m_rendered)
@@ -72,6 +74,43 @@ void SceneStreamerSystem::run()
             e.second.m_rendered = false;
         }
     }
+    /////////////////////////////////////////////////////////
+
+    const auto forEachWorldAspect
+    {
+        [&](Entity* p_entity, const ComponentContainer& p_world_components)
+        {
+            ///// compute matrix hierarchy
+
+            const auto& entity_worldposition_list { p_world_components.getComponentsByType<transform::WorldPosition>() };
+            if (0 == entity_worldposition_list.size())
+            {
+                return;
+            }
+
+            const auto& stampAspect { p_entity->aspectAccess(mage::core::stampAspect::id)};            
+            const auto& entity_domainstamps_list{ stampAspect.getComponentsByType<mage::core::stampAspect::GraphDomain>() };
+            if (0 == entity_domainstamps_list.size())
+            {
+                return;
+            }
+
+            if (entity_domainstamps_list.at(0)->getPurpose() != mage::core::stampAspect::GraphDomain::SCENEGRAPH)
+            {
+                return;
+            }
+
+            /*
+            auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose()};            
+            const auto global_pos = entity_worldposition.global_pos;
+            */
+
+
+        }
+    };
+
+    mage::helpers::extractAspectsTopDown<mage::core::worldAspect>(m_entitygraph, forEachWorldAspect);
+
 }
 
 void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId,
