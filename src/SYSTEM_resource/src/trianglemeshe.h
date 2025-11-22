@@ -153,6 +153,9 @@ namespace mage
 		std::string												getPreviousAnimation() const;
 		void													setPreviousAnimation(const std::string& p_previous_animation);
 
+		void													computeSize();
+		size_t													getSize() const;
+
 	private:
 
 		std::string																m_resource_uid;       // meshe content source unique identifier
@@ -185,6 +188,8 @@ namespace mage
 		std::unordered_map<std::string, AnimationKeys>							m_animations_keys;
 
 		std::string																m_previous_animation;
+
+		size_t																	m_meshe_size{ 0 };
 
 		// IF NEW MEMBERS HERE :
 		// UPDATE COPY CTOR AND OPERATOR !!!!!!
