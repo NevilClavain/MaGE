@@ -149,15 +149,18 @@ namespace mage
 			static constexpr unsigned int BOTTOM_NEIGHBOUR		{ 5 };			// used in octtree case
 
 
+
 			XTreeNode()
 			{
 				init_neighbours();
 			}
-
-			explicit XTreeNode(const NodeData& data, size_t depth = 0) : m_data(data), m_depth(depth) 
+	
+			
+			explicit XTreeNode(const NodeData& data) : m_data(data)
 			{
 				init_neighbours();
 			}
+			
 
 			XTreeNode* getChild(size_t index) const
 			{
