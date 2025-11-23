@@ -34,6 +34,7 @@ include_directories(${CMAKE_SOURCE_DIR}/CORE_time/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_threads/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_filesystem/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_services/src)
+include_directories(${CMAKE_SOURCE_DIR}/CORE_xtree/src)
 
 include_directories(${CMAKE_SOURCE_DIR}/RENDERING_control/src)
 include_directories(${CMAKE_SOURCE_DIR}/TRANSFORM_control/src)

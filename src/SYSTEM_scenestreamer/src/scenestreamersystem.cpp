@@ -50,14 +50,32 @@
 
 using namespace mage;
 using namespace mage::core;
-
+using namespace mage::core::maths;
 
 SceneStreamerSystem::SceneStreamerSystem(Entitygraph& p_entitygraph) : System(p_entitygraph)
 {
 }
 
+void SceneStreamerSystem::initXTree(double p_scene_size, int p_xtree_max_depth)
+{
+    m_scene_size = p_scene_size;
+    m_xtree_max_depth = p_xtree_max_depth;
+
+    const SceneQuadTreeNode root_node{ m_scene_size, Real2Vector(0, 0) };
+    m_root = std::make_unique<core::QuadTreeNode<SceneQuadTreeNode>>(root_node);
+
+    // TO BE CONTINUED...
+}
+
+
 void SceneStreamerSystem::run()
 {
+    if (-1 == m_scene_size || -1 == m_xtree_max_depth)
+    {
+        _EXCEPTION("xtree not initialized");
+    }
+
+
     /////////////////////////////////////////////////////////
     // loop on entity rendering entries
     /////////////////////////////////////////////////////////

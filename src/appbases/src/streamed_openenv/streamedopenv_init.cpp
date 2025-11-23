@@ -206,6 +206,9 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 					auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot)) };
 
+
+					sceneStreamerSystemInstance->initXTree(3000.0, 3);
+
 					sceneStreamerSystemInstance->buildRendergraphPart(rendergraphFileContent.getData(), "screenRendering_Filter_DirectForward_Quad_Entity",
 																		w_width, w_height, characteristics_v_width, characteristics_v_height);
 

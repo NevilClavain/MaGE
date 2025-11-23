@@ -26,17 +26,21 @@
 #pragma once
 
 #include <vector>
-#include<unordered_map>
+#include <unordered_map>
 #include <string>
+#include <set>
+#include <memory>
 
 #include <json_struct/json_struct.h>
 
 #include "system.h"
 #include "matrix.h"
+#include "tvector.h"
 
 #include "syncvariable.h"
 
 #include "matrixfactory.h"
+#include "xtree.h"
 
 namespace mage
 {
@@ -393,6 +397,15 @@ namespace mage
 
     }
 
+    // node for quadtree
+    struct SceneQuadTreeNode
+    {
+        double                          side_length{ 0 };
+        core::maths::Real2Vector        position;
+        
+        std::set<mage::core::Entity*>   entities;
+    };
+
     class EntityRendering
     {
     public:
@@ -437,6 +450,8 @@ namespace mage
 
         void requestEntityRendering(const std::string& p_entity_id, bool p_render_it);
 
+        void initXTree(double p_scene_size, int p_xtree_max_depth);
+
     private:
 
         void register_to_queues(const json::Channels& p_channels, mage::core::Entity* p_entity);
@@ -447,8 +462,14 @@ namespace mage
         std::unordered_map<std::string, std::unordered_map<std::string, mage::core::Entity*>>   m_rendering_proxies; // i.e rendering_entites ;-)
 
         std::unordered_map<std::string, EntityRendering>                                        m_entity_renderings;
-        
 
+        //config for xtree build
+        double                                                                                  m_scene_size{ -1 };
+        int                                                                                     m_xtree_max_depth{ -1 };
+
+        // the xtree
+        std::unique_ptr<core::QuadTreeNode<SceneQuadTreeNode>>                                  m_root;
+        
         void register_scene_entity(mage::core::Entity* p_entity);
 
         core::SyncVariable build_syncvariable_fromjson(const json::SyncVariable& p_syncvar);
