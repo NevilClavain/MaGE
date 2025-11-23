@@ -305,7 +305,5 @@ int main( int argc, char* argv[] )
 	print_neighbours(root.getChild(5)->getChild(4));
 	
 	
-	
-
     return 0;
 }
