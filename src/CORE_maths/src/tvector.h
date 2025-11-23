@@ -213,6 +213,7 @@ namespace mage
             using FloatCoords2D     = Vector<float, 2>;
             using Real4Vector       = Vector<>;
             using Real3Vector       = Vector<double, 3>;
+            using Real2Vector       = Vector<double, 2>;
 
             // Constants
             
