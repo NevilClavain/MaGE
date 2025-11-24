@@ -111,41 +111,66 @@ int main( int argc, char* argv[] )
 {    
 	std::cout << "XTree test !\n";
 
-	/*
+	
 	QuadTreeNode<std::string> root("root");
 
-	root.split();
+	//root.split();
 
-	root.getChild(0)->setData("<0>");
-	root.getChild(1)->setData("<1>");
-	root.getChild(2)->setData("<2>");
-	root.getChild(3)->setData("<3>");
-
-
-	root.getChild(0)->split();
-	root.getChild(0)->getChild(0)->setData("<0_0>");
-	root.getChild(0)->getChild(1)->setData("<0_1>");
-	root.getChild(0)->getChild(2)->setData("<0_2>");
-	root.getChild(0)->getChild(3)->setData("<0_3>");
-
-	root.getChild(1)->split();
-	root.getChild(1)->getChild(0)->setData("<1_0>");
-	root.getChild(1)->getChild(1)->setData("<1_1>");
-	root.getChild(1)->getChild(2)->setData("<1_2>");
-	root.getChild(1)->getChild(3)->setData("<1_3>");
-
-	root.getChild(2)->split();
-	root.getChild(2)->getChild(0)->setData("<2_0>");
-	root.getChild(2)->getChild(1)->setData("<2_1>");
-	root.getChild(2)->getChild(2)->setData("<2_2>");
-	root.getChild(2)->getChild(3)->setData("<2_3>");
+	//root.getChild(0)->setData("<0>");
+	//root.getChild(1)->setData("<1>");
+	//root.getChild(2)->setData("<2>");
+	//root.getChild(3)->setData("<3>");
 
 
-	root.getChild(3)->split();
-	root.getChild(3)->getChild(0)->setData("<3_0>");
-	root.getChild(3)->getChild(1)->setData("<3_1>");
-	root.getChild(3)->getChild(2)->setData("<3_2>");
-	root.getChild(3)->getChild(3)->setData("<3_3>");
+	//root.getChild(0)->split();
+	//root.getChild(0)->getChild(0)->setData("<0_0>");
+	//root.getChild(0)->getChild(1)->setData("<0_1>");
+	//root.getChild(0)->getChild(2)->setData("<0_2>");
+	//root.getChild(0)->getChild(3)->setData("<0_3>");
+
+	//root.getChild(1)->split();
+	//root.getChild(1)->getChild(0)->setData("<1_0>");
+	//root.getChild(1)->getChild(1)->setData("<1_1>");
+	//root.getChild(1)->getChild(2)->setData("<1_2>");
+	//root.getChild(1)->getChild(3)->setData("<1_3>");
+
+	//root.getChild(2)->split();
+	//root.getChild(2)->getChild(0)->setData("<2_0>");
+	//root.getChild(2)->getChild(1)->setData("<2_1>");
+	//root.getChild(2)->getChild(2)->setData("<2_2>");
+	//root.getChild(2)->getChild(3)->setData("<2_3>");
+
+
+	//root.getChild(3)->split();
+	//root.getChild(3)->getChild(0)->setData("<3_0>");
+	//root.getChild(3)->getChild(1)->setData("<3_1>");
+	//root.getChild(3)->getChild(2)->setData("<3_2>");
+	//root.getChild(3)->getChild(3)->setData("<3_3>");
+
+	
+	const std::function<void(QuadTreeNode<std::string>*, int)> expand
+	{
+		[&](QuadTreeNode<std::string>* p_current_node, int p_max_depth)
+		{
+			if (p_max_depth == p_current_node->getDepth())
+			{
+				return;
+			}
+
+			p_current_node->split();
+
+			for (int i = 0; i < 4; i++)
+			{
+				auto child { p_current_node->getChild(i) };
+				const auto content = p_current_node->getData() + "_<" + std::to_string(i) + ">";
+
+				child->setData(content);
+				expand(child, p_max_depth);
+			}
+		}
+	};
+
+	expand(&root, 2);
 
 
 	//root.merge();
@@ -168,8 +193,8 @@ int main( int argc, char* argv[] )
 
 	//print_neighbours(root.getChild(3)->getChild(0));
 
-	*/
-
+	
+	/*
 	OctreeNode<std::string> root("root");
 
 	root.split();
@@ -303,7 +328,7 @@ int main( int argc, char* argv[] )
 	//print_neighbours(root.getChild(5)->getChild(2));
 
 	print_neighbours(root.getChild(5)->getChild(4));
-	
+	*/
 	
     return 0;
 }
