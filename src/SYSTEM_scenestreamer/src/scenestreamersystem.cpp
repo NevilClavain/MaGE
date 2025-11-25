@@ -65,6 +65,61 @@ void SceneStreamerSystem::initXTree(double p_scene_size, int p_xtree_max_depth)
     m_root = std::make_unique<core::QuadTreeNode<SceneQuadTreeNode>>(root_node);
 
     // TO BE CONTINUED...
+
+    const std::function<void(QuadTreeNode<SceneQuadTreeNode>*, int)> expand
+    {
+        [&](QuadTreeNode<SceneQuadTreeNode>* p_current_node, int p_max_depth)
+        {
+            if (p_max_depth == p_current_node->getDepth())
+            {
+                return;
+            }
+
+            p_current_node->split();
+
+            const auto curr_node_pos{ p_current_node->getData().position };
+
+            for (int i = 0; i < 4; i++)
+            {
+                auto child { p_current_node->getChild(i) };
+
+                SceneQuadTreeNode childNodeContent;
+                childNodeContent.side_length = p_current_node->getData().side_length / 2;
+
+                switch (i)
+                {
+                    case QuadTreeNode<SceneQuadTreeNode>::L0_UP_LEFT_INDEX:
+
+                        childNodeContent.position[0] = curr_node_pos[0] - childNodeContent.side_length;
+                        childNodeContent.position[1] = curr_node_pos[1] - childNodeContent.side_length;
+                        break;
+
+                    case QuadTreeNode<SceneQuadTreeNode>::L0_UP_RIGHT_INDEX:
+
+                        childNodeContent.position[0] = curr_node_pos[0] + childNodeContent.side_length;
+                        childNodeContent.position[1] = curr_node_pos[1] - childNodeContent.side_length;
+                        break;
+
+                    case QuadTreeNode<SceneQuadTreeNode>::L0_DOWN_RIGHT_INDEX:
+
+                        childNodeContent.position[0] = curr_node_pos[0] + childNodeContent.side_length;
+                        childNodeContent.position[1] = curr_node_pos[1] + childNodeContent.side_length;
+                        break;
+
+                    case QuadTreeNode<SceneQuadTreeNode>::L0_DOWN_LEFT_INDEX:
+
+                        childNodeContent.position[0] = curr_node_pos[0] - childNodeContent.side_length;
+                        childNodeContent.position[1] = curr_node_pos[1] + childNodeContent.side_length;
+                        break;
+                }
+                child->setData(childNodeContent);
+
+                expand(child, p_max_depth);
+            }
+        }
+    };
+
+    expand(m_root.get(), p_xtree_max_depth);
 }
 
 
