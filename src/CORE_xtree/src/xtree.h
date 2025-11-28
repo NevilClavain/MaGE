@@ -685,7 +685,7 @@ namespace mage
 
 			void init_neighbours()
 			{
-				for (int i = 0; i < m_neighbours.size(); i++)
+				for (size_t i = 0; i < m_neighbours.size(); i++)
 				{
 					m_neighbours.at(i) = nullptr;
 				}
