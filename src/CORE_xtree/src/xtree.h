@@ -663,7 +663,11 @@ namespace mage
 				}
 				return result;
 			}
+
+		public:
 			static constexpr int ChildCount{ two_pow(Dim) };
+
+		private:
 
 			XTreeNode* create_child(size_t p_index)
 			{

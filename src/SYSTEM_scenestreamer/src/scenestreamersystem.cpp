@@ -52,7 +52,8 @@ using namespace mage;
 using namespace mage::core;
 using namespace mage::core::maths;
 
-SceneStreamerSystem::SceneStreamerSystem(Entitygraph& p_entitygraph) : System(p_entitygraph)
+SceneStreamerSystem::SceneStreamerSystem(Entitygraph& p_entitygraph) : System(p_entitygraph),
+m_localLogger("SceneStreamerSystem", mage::core::logger::Configuration::getInstance())
 {
 }
 
@@ -61,10 +62,11 @@ void SceneStreamerSystem::initXTree(double p_scene_size, int p_xtree_max_depth)
     m_scene_size = p_scene_size;
     m_xtree_max_depth = p_xtree_max_depth;
 
-    const SceneQuadTreeNode root_node{ m_scene_size, Real2Vector(0, 0) };
-    m_root = std::make_unique<core::QuadTreeNode<SceneQuadTreeNode>>(root_node);
+    const SceneQuadTreeNode root_node{ m_scene_size, Real2Vector(0, 0), 
+                                        Real2Vector(-m_scene_size / 2, -m_scene_size / 2), 
+                                        Real2Vector(m_scene_size / 2, m_scene_size / 2) };
 
-    // TO BE CONTINUED...
+    m_root = std::make_unique<core::QuadTreeNode<SceneQuadTreeNode>>(root_node);
 
     const std::function<void(QuadTreeNode<SceneQuadTreeNode>*, int)> expand
     {
@@ -79,7 +81,7 @@ void SceneStreamerSystem::initXTree(double p_scene_size, int p_xtree_max_depth)
 
             const auto curr_node_pos{ p_current_node->getData().position };
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < mage::core::QuadTreeNode<SceneQuadTreeNode>::ChildCount; i++)
             {
                 auto child { p_current_node->getChild(i) };
 
@@ -90,28 +92,36 @@ void SceneStreamerSystem::initXTree(double p_scene_size, int p_xtree_max_depth)
                 {
                     case QuadTreeNode<SceneQuadTreeNode>::L0_UP_LEFT_INDEX:
 
-                        childNodeContent.position[0] = curr_node_pos[0] - childNodeContent.side_length;
-                        childNodeContent.position[1] = curr_node_pos[1] - childNodeContent.side_length;
+                        childNodeContent.position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
+                        childNodeContent.position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
                         break;
 
                     case QuadTreeNode<SceneQuadTreeNode>::L0_UP_RIGHT_INDEX:
 
-                        childNodeContent.position[0] = curr_node_pos[0] + childNodeContent.side_length;
-                        childNodeContent.position[1] = curr_node_pos[1] - childNodeContent.side_length;
+                        childNodeContent.position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
+                        childNodeContent.position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
                         break;
 
                     case QuadTreeNode<SceneQuadTreeNode>::L0_DOWN_RIGHT_INDEX:
 
-                        childNodeContent.position[0] = curr_node_pos[0] + childNodeContent.side_length;
-                        childNodeContent.position[1] = curr_node_pos[1] + childNodeContent.side_length;
+                        childNodeContent.position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
+                        childNodeContent.position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
                         break;
 
                     case QuadTreeNode<SceneQuadTreeNode>::L0_DOWN_LEFT_INDEX:
 
-                        childNodeContent.position[0] = curr_node_pos[0] - childNodeContent.side_length;
-                        childNodeContent.position[1] = curr_node_pos[1] + childNodeContent.side_length;
+                        childNodeContent.position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
+                        childNodeContent.position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
                         break;
                 }
+
+                childNodeContent.xz_min[0] = childNodeContent.position[0] - childNodeContent.side_length / 2;
+                childNodeContent.xz_min[1] = childNodeContent.position[1] - childNodeContent.side_length / 2;
+
+                childNodeContent.xz_max[0] = childNodeContent.position[0] + childNodeContent.side_length / 2;
+                childNodeContent.xz_max[1] = childNodeContent.position[1] + childNodeContent.side_length / 2;
+
+
                 child->setData(childNodeContent);
 
                 expand(child, p_max_depth);
@@ -130,25 +140,8 @@ void SceneStreamerSystem::run()
         _EXCEPTION("xtree not initialized");
     }
 
-
     /////////////////////////////////////////////////////////
-    // loop on entity rendering entries
-    /////////////////////////////////////////////////////////
-    for (auto& e : m_entity_renderings)
-    {
-        if (e.second.m_request_rendering && !e.second.m_rendered)
-        {            
-            register_to_queues(e.second.m_channels, m_scene_entities.at(e.first));
-            e.second.m_rendered = true;
-        }
-        else if (!e.second.m_request_rendering && e.second.m_rendered)
-        {
-            unregister_from_queues(m_scene_entities.at(e.first));
-            e.second.m_rendered = false;
-        }
-    }
-    /////////////////////////////////////////////////////////
-
+    // detect new entities to insert in the XTree
     const auto forEachWorldAspect
     {
         [&](Entity* p_entity, const ComponentContainer& p_world_components)
@@ -161,7 +154,7 @@ void SceneStreamerSystem::run()
                 return;
             }
 
-            const auto& stampAspect { p_entity->aspectAccess(mage::core::stampAspect::id)};            
+            const auto& stampAspect { p_entity->aspectAccess(mage::core::stampAspect::id)};
             const auto& entity_domainstamps_list{ stampAspect.getComponentsByType<mage::core::stampAspect::GraphDomain>() };
             if (0 == entity_domainstamps_list.size())
             {
@@ -173,17 +166,37 @@ void SceneStreamerSystem::run()
                 return;
             }
 
-            /*
-            auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose()};            
-            const auto global_pos = entity_worldposition.global_pos;
-            */
+            if (!m_xtree_entities.count(p_entity->getId()))
+            {
+                XTreeEntity xtreeEnt;
+                xtreeEnt.entity = p_entity;
 
-
+                m_xtree_entities[p_entity->getId()] = xtreeEnt;
+            }
         }
     };
-
     mage::helpers::extractAspectsTopDown<mage::core::worldAspect>(m_entitygraph, forEachWorldAspect);
 
+    /////////////////////////////////////////////////////////
+    // XTree updating
+    update_XTree();
+
+    /////////////////////////////////////////////////////////
+    // loop on entity rendering entries
+    /////////////////////////////////////////////////////////
+    for (auto& e : m_entity_renderings)
+    {
+        if (e.second.m_request_rendering && !e.second.m_rendered)
+        {            
+            register_to_queues(e.second.m_channels, m_scene_entities.at(e.first));
+            e.second.m_rendered = true;            
+        }
+        else if (!e.second.m_request_rendering && e.second.m_rendered)
+        {
+            unregister_from_queues(m_scene_entities.at(e.first));
+            e.second.m_rendered = false;
+        }
+    }
 }
 
 void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId,
@@ -873,4 +886,96 @@ void SceneStreamerSystem::unregister_from_queues(mage::core::Entity* p_entity)
     renderingHelper->unregisterFromQueues(m_entitygraph, p_entity, rendering_proxies);
 
     m_rendering_proxies.erase(p_entity->getId());
+}
+
+void SceneStreamerSystem::update_XTree()
+{
+    for (auto& xe : m_xtree_entities)
+    {
+        const core::Entity* entity{ xe.second.entity };
+        const auto& world_aspect{ entity->aspectAccess(worldAspect::id) };
+
+        const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
+        auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
+        const auto global_pos = entity_worldposition.global_pos;
+
+        if (!xe.second.tree_node)
+        {
+            // place it in the xtree
+
+            if (entity->hasAspect(cameraAspect::id))
+            {
+                // camera
+                const std::function<void(QuadTreeNode<SceneQuadTreeNode>*)> place_cam_on_leaf
+                {
+                    [&](QuadTreeNode<SceneQuadTreeNode>* p_current_node)
+                    {
+                        if (p_current_node->isLeaf())
+                        {
+                            /*
+                            int a = 0;
+                            a++;
+                            */
+                        }
+                        else
+                        {
+                            /*
+                            for (int i = 0; i < mage::core::QuadTreeNode<SceneQuadTreeNode>::ChildCount; i++)
+                            {
+                                auto child { p_current_node->getChild(i) };
+                                place_cam_on_leaf(child);
+                            }
+                            */
+                        }
+                    }
+                };
+
+                place_cam_on_leaf(m_root.get());                
+            }
+            else if (entity->hasAspect(resourcesAspect::id))
+            {
+                
+            }
+        }
+        else
+        {
+            // update it in the xtree
+
+        }
+
+    }
+}
+
+bool SceneStreamerSystem::is_inside(const SceneQuadTreeNode& p_qtn, const core::maths::Matrix& p_global_pos)
+{
+    bool inside{ false };
+
+    return inside;
+}
+
+void SceneStreamerSystem::dumpXTree()
+{
+    _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE DUMP BEGIN <<<<<<<<<<<<<<<<<<<<<<<<")
+
+    m_root->traverse([&](const SceneQuadTreeNode& p_data, size_t p_depth)
+    {
+        std::string tab;
+        for (size_t i = 0; i < p_depth; i++) tab = tab + " ";
+
+        _MAGE_DEBUG(m_localLogger, tab + "depth = " + std::to_string(p_depth) 
+
+                                                    + " side_length = " + std::to_string(p_data.side_length)
+                                                    + " position = " + std::to_string(p_data.position[0]) + " " + std::to_string(p_data.position[1])
+
+                                                    + " xz min = " + std::to_string(p_data.xz_min[0]) + " " + std::to_string(p_data.xz_min[1])
+                                                    + " xz max = " + std::to_string(p_data.xz_max[0]) + " " + std::to_string(p_data.xz_max[1])
+        
+        )
+
+
+        //std::cout << "depth " << p_depth << " value = " << p_data << "\n";
+    });
+
+
+    _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE DUMP END <<<<<<<<<<<<<<<<<<<<<<<<")
 }

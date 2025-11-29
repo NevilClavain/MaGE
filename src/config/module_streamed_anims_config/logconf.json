@@ -34,6 +34,12 @@
 			"output": "file0"
 		},
 		{
+			"source": "SceneStreamerSystem",
+			"level": "TRACE",
+			"state": "on",
+			"output": "file0"
+		},
+		{
 			"source": "Helpers",
 			"level": "TRACE",
 			"state": "on",

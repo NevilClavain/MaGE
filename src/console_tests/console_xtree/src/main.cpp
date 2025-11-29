@@ -159,7 +159,7 @@ int main( int argc, char* argv[] )
 
 			p_current_node->split();
 
-			for (int i = 0; i < 4; i++)
+			for (int i = 0; i < mage::core::QuadTreeNode<std::string>::ChildCount; i++)
 			{
 				auto child { p_current_node->getChild(i) };
 				const auto content = p_current_node->getData() + "_<" + std::to_string(i) + ">";

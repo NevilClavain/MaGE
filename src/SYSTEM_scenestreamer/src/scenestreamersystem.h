@@ -27,8 +27,8 @@
 
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include <string>
-#include <set>
 #include <memory>
 
 #include <json_struct/json_struct.h>
@@ -41,6 +41,11 @@
 
 #include "matrixfactory.h"
 #include "xtree.h"
+
+#include "logsink.h"
+#include "logconf.h"
+#include "logging.h"
+
 
 namespace mage
 {
@@ -400,10 +405,19 @@ namespace mage
     // node for quadtree
     struct SceneQuadTreeNode
     {
-        double                          side_length{ 0 };
-        core::maths::Real2Vector        position;
+        double                                      side_length{ 0 };
+        core::maths::Real2Vector                    position;
+
+        core::maths::Real2Vector                    xz_min;
+        core::maths::Real2Vector                    xz_max;
         
-        std::set<mage::core::Entity*>   entities;
+        std::unordered_set<mage::core::Entity*>     entities;
+    };
+
+    struct XTreeEntity
+    {
+        core::Entity*                           entity{ nullptr };
+        core::QuadTreeNode<SceneQuadTreeNode>*  tree_node{ nullptr };
     };
 
     class EntityRendering
@@ -433,8 +447,6 @@ namespace mage
 
         void run();
 
-        
-
         void buildRendergraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId,
                                     int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
 
@@ -452,16 +464,27 @@ namespace mage
 
         void initXTree(double p_scene_size, int p_xtree_max_depth);
 
+        void dumpXTree();
+
     private:
+
+        bool is_inside(const SceneQuadTreeNode& p_qtn, const core::maths::Matrix& p_global_pos);
 
         void register_to_queues(const json::Channels& p_channels, mage::core::Entity* p_entity);
 
         void unregister_from_queues(mage::core::Entity* p_entity);
 
+
+        void update_XTree();
+
+        mutable mage::core::logger::Sink                                                        m_localLogger;
+
         std::unordered_map<std::string, mage::core::Entity*>                                    m_scene_entities;
         std::unordered_map<std::string, std::unordered_map<std::string, mage::core::Entity*>>   m_rendering_proxies; // i.e rendering_entites ;-)
 
         std::unordered_map<std::string, EntityRendering>                                        m_entity_renderings;
+
+        std::unordered_map<std::string, XTreeEntity>                                            m_xtree_entities;
 
         //config for xtree build
         double                                                                                  m_scene_size{ -1 };
