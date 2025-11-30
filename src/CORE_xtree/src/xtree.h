@@ -176,6 +176,11 @@ namespace mage
 				return m_data;
 			}
 
+			NodeData& dataAccess()
+			{
+				return m_data;
+			}
+
 			void setData(const NodeData& data)
 			{
 				m_data = data;

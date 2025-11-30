@@ -405,13 +405,13 @@ namespace mage
     // node for quadtree
     struct SceneQuadTreeNode
     {
-        double                                      side_length{ 0 };
-        core::maths::Real2Vector                    position;
+        double                                              side_length{ 0 };
+        core::maths::Real2Vector                            position;
 
-        core::maths::Real2Vector                    xz_min;
-        core::maths::Real2Vector                    xz_max;
+        core::maths::Real2Vector                            xz_min;
+        core::maths::Real2Vector                            xz_max;
         
-        std::unordered_set<mage::core::Entity*>     entities;
+        std::unordered_set<mage::core::Entity*>             entities;
     };
 
     struct XTreeEntity
@@ -468,7 +468,7 @@ namespace mage
 
     private:
 
-        bool is_inside(const SceneQuadTreeNode& p_qtn, const core::maths::Matrix& p_global_pos);
+        bool is_inside_quadtreenode(const SceneQuadTreeNode& p_qtn, const core::maths::Matrix& p_global_pos);
 
         void register_to_queues(const json::Channels& p_channels, mage::core::Entity* p_entity);
 

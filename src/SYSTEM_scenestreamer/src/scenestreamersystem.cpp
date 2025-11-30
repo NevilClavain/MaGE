@@ -874,7 +874,7 @@ void SceneStreamerSystem::register_to_queues(const json::Channels& p_channels, m
     }
 
     const auto rendering_proxies{ renderingHelper->registerToQueues(m_entitygraph, p_entity, channelsRendering) };
-    
+
     m_rendering_proxies[p_entity->getId()] = rendering_proxies;
 }
 
@@ -892,7 +892,7 @@ void SceneStreamerSystem::update_XTree()
 {
     for (auto& xe : m_xtree_entities)
     {
-        const core::Entity* entity{ xe.second.entity };
+        core::Entity* entity{ xe.second.entity };
         const auto& world_aspect{ entity->aspectAccess(worldAspect::id) };
 
         const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
@@ -912,29 +912,28 @@ void SceneStreamerSystem::update_XTree()
                     {
                         if (p_current_node->isLeaf())
                         {
-                            /*
-                            int a = 0;
-                            a++;
-                            */
+                            p_current_node->dataAccess().entities.insert(entity);
                         }
                         else
-                        {
-                            /*
+                        {                            
                             for (int i = 0; i < mage::core::QuadTreeNode<SceneQuadTreeNode>::ChildCount; i++)
                             {
                                 auto child { p_current_node->getChild(i) };
-                                place_cam_on_leaf(child);
-                            }
-                            */
+
+                                if (is_inside_quadtreenode(child->getData(), global_pos))
+                                {
+                                    place_cam_on_leaf(child);
+                                }
+                            }                            
                         }
                     }
                 };
 
-                place_cam_on_leaf(m_root.get());                
+                place_cam_on_leaf(m_root.get());
             }
             else if (entity->hasAspect(resourcesAspect::id))
             {
-                
+
             }
         }
         else
@@ -946,10 +945,17 @@ void SceneStreamerSystem::update_XTree()
     }
 }
 
-bool SceneStreamerSystem::is_inside(const SceneQuadTreeNode& p_qtn, const core::maths::Matrix& p_global_pos)
+bool SceneStreamerSystem::is_inside_quadtreenode(const SceneQuadTreeNode& p_qtn, const core::maths::Matrix& p_global_pos)
 {
     bool inside{ false };
 
+    Real2Vector object_pos(p_global_pos(3, 0), p_global_pos(3, 2));
+
+    if (p_qtn.xz_min.x() <= object_pos.x() && object_pos.x() < p_qtn.xz_max.x() &&
+        p_qtn.xz_min.y() <= object_pos.y() && object_pos.y() < p_qtn.xz_max.y())
+    {
+        inside = true;
+    }
     return inside;
 }
 
@@ -968,14 +974,18 @@ void SceneStreamerSystem::dumpXTree()
                                                     + " position = " + std::to_string(p_data.position[0]) + " " + std::to_string(p_data.position[1])
 
                                                     + " xz min = " + std::to_string(p_data.xz_min[0]) + " " + std::to_string(p_data.xz_min[1])
-                                                    + " xz max = " + std::to_string(p_data.xz_max[0]) + " " + std::to_string(p_data.xz_max[1])
-        
-        )
+                                                    + " xz max = " + std::to_string(p_data.xz_max[0]) + " " + std::to_string(p_data.xz_max[1]))        
+        for (const auto& e : p_data.entities)
+        {
+            const auto& world_aspect{ e->aspectAccess(worldAspect::id) };
 
+            const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
+            auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
+            const auto global_pos = entity_worldposition.global_pos;
 
-        //std::cout << "depth " << p_depth << " value = " << p_data << "\n";
+            _MAGE_DEBUG(m_localLogger, tab + e->getId() + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 2)));
+        }        
     });
-
 
     _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE DUMP END <<<<<<<<<<<<<<<<<<<<<<<<")
 }
