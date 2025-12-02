@@ -913,6 +913,7 @@ void SceneStreamerSystem::update_XTree()
                         if (p_current_node->isLeaf())
                         {
                             p_current_node->dataAccess().entities.insert(entity);
+                            xe.second.tree_node = p_current_node;
                         }
                         else
                         {                            
@@ -935,6 +936,8 @@ void SceneStreamerSystem::update_XTree()
             {
 
             }
+
+            
         }
         else
         {
