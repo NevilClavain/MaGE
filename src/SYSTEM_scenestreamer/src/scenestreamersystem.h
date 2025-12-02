@@ -447,6 +447,7 @@ namespace mage
         void initXTree(double p_scene_size, int p_xtree_max_depth);
 
         void dumpXTree();
+        void dumpXTreeEntities();
 
     private:
 
@@ -466,6 +467,8 @@ namespace mage
         {
             core::Entity* entity{ nullptr };
             core::QuadTreeNode<SceneQuadTreeNode>* tree_node{ nullptr };
+
+            core::maths::Matrix previous_global_pos; // TO BE CONTINUED...
         };
 
 

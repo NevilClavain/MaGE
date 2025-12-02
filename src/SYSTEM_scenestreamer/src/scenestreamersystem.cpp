@@ -965,7 +965,6 @@ bool SceneStreamerSystem::is_inside_quadtreenode(const SceneQuadTreeNode& p_qtn,
 void SceneStreamerSystem::dumpXTree()
 {
     _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE DUMP BEGIN <<<<<<<<<<<<<<<<<<<<<<<<")
-
     m_xtree_root->traverse([&](const SceneQuadTreeNode& p_data, size_t p_depth)
     {
         std::string tab;
@@ -989,6 +988,29 @@ void SceneStreamerSystem::dumpXTree()
             _MAGE_DEBUG(m_localLogger, tab + e->getId() + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 2)));
         }        
     });
-
     _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE DUMP END <<<<<<<<<<<<<<<<<<<<<<<<")
+}
+
+void SceneStreamerSystem::dumpXTreeEntities()
+{
+    _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE ENTITIES BEGIN <<<<<<<<<<<<<<<<<<<<<<<<")
+    for (const auto& e : m_xtree_entities)
+    {
+        if (e.second.tree_node)
+        {
+            const core::Entity* entity{ e.second.entity };
+            const auto& world_aspect{ entity->aspectAccess(worldAspect::id) };
+
+            const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
+            auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
+            const auto global_pos = entity_worldposition.global_pos;
+
+            const SceneQuadTreeNode data { e.second.tree_node->getData() };
+
+            _MAGE_DEBUG(m_localLogger, e.first + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 2)) 
+                                                + " tree -> xz min = " + std::to_string(data.xz_min[0]) + " " + std::to_string(data.xz_min[1])
+                                                + " xz max = " + std::to_string(data.xz_max[0]) + " " + std::to_string(data.xz_max[1]))
+        }        
+    }
+    _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE ENTITIES END <<<<<<<<<<<<<<<<<<<<<<<<")
 }
