@@ -400,20 +400,7 @@ namespace mage
             JS_OBJ(entities);
         };
 
-    }
-
-    // node for quadtree
-    struct SceneQuadTreeNode
-    {
-        double                                              side_length{ 0 };
-        core::maths::Real2Vector                            position;
-
-        core::maths::Real2Vector                            xz_min;
-        core::maths::Real2Vector                            xz_max;
-        
-        std::unordered_set<mage::core::Entity*>             entities;
-    };
-
+    } // json
 
     class EntityRendering
     {
@@ -463,6 +450,27 @@ namespace mage
 
     private:
 
+        // node for quadtree
+        struct SceneQuadTreeNode
+        {
+            double                                              side_length{ 0 };
+            core::maths::Real2Vector                            position;
+
+            core::maths::Real2Vector                            xz_min;
+            core::maths::Real2Vector                            xz_max;
+
+            std::unordered_set<mage::core::Entity*>             entities;
+        };
+
+        struct XTreeEntity
+        {
+            core::Entity* entity{ nullptr };
+            core::QuadTreeNode<SceneQuadTreeNode>* tree_node{ nullptr };
+        };
+
+
+
+
         bool is_inside_quadtreenode(const SceneQuadTreeNode& p_qtn, const core::maths::Matrix& p_global_pos);
 
         void register_to_queues(const json::Channels& p_channels, mage::core::Entity* p_entity);
@@ -485,12 +493,6 @@ namespace mage
 
         // the xtree
         std::unique_ptr<core::QuadTreeNode<SceneQuadTreeNode>>                                  m_xtree_root;
-
-        struct XTreeEntity
-        {
-            core::Entity* entity{ nullptr };
-            core::QuadTreeNode<SceneQuadTreeNode>* tree_node{ nullptr };
-        };
 
         // regrouping here all entities dispatched in m_xtree_root above
         std::unordered_map<std::string, XTreeEntity>                                            m_xtree_entities;
