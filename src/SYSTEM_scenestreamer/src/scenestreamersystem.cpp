@@ -66,7 +66,7 @@ void SceneStreamerSystem::initXTree(double p_scene_size, int p_xtree_max_depth)
                                         Real2Vector(-m_scene_size / 2, -m_scene_size / 2), 
                                         Real2Vector(m_scene_size / 2, m_scene_size / 2) };
 
-    m_root = std::make_unique<core::QuadTreeNode<SceneQuadTreeNode>>(root_node);
+    m_xtree_root = std::make_unique<core::QuadTreeNode<SceneQuadTreeNode>>(root_node);
 
     const std::function<void(QuadTreeNode<SceneQuadTreeNode>*, int)> expand
     {
@@ -129,7 +129,7 @@ void SceneStreamerSystem::initXTree(double p_scene_size, int p_xtree_max_depth)
         }
     };
 
-    expand(m_root.get(), p_xtree_max_depth);
+    expand(m_xtree_root.get(), p_xtree_max_depth);
 }
 
 
@@ -930,7 +930,7 @@ void SceneStreamerSystem::update_XTree()
                     }
                 };
 
-                place_cam_on_leaf(m_root.get());
+                place_cam_on_leaf(m_xtree_root.get());
             }
             else if (entity->hasAspect(resourcesAspect::id))
             {
@@ -966,7 +966,7 @@ void SceneStreamerSystem::dumpXTree()
 {
     _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE DUMP BEGIN <<<<<<<<<<<<<<<<<<<<<<<<")
 
-    m_root->traverse([&](const SceneQuadTreeNode& p_data, size_t p_depth)
+    m_xtree_root->traverse([&](const SceneQuadTreeNode& p_data, size_t p_depth)
     {
         std::string tab;
         for (size_t i = 0; i < p_depth; i++) tab = tab + " ";

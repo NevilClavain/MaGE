@@ -414,11 +414,6 @@ namespace mage
         std::unordered_set<mage::core::Entity*>             entities;
     };
 
-    struct XTreeEntity
-    {
-        core::Entity*                           entity{ nullptr };
-        core::QuadTreeNode<SceneQuadTreeNode>*  tree_node{ nullptr };
-    };
 
     class EntityRendering
     {
@@ -483,15 +478,22 @@ namespace mage
         std::unordered_map<std::string, std::unordered_map<std::string, mage::core::Entity*>>   m_rendering_proxies; // i.e rendering_entites ;-)
 
         std::unordered_map<std::string, EntityRendering>                                        m_entity_renderings;
-
-        std::unordered_map<std::string, XTreeEntity>                                            m_xtree_entities;
-
+       
         //config for xtree build
         double                                                                                  m_scene_size{ -1 };
         int                                                                                     m_xtree_max_depth{ -1 };
 
         // the xtree
-        std::unique_ptr<core::QuadTreeNode<SceneQuadTreeNode>>                                  m_root;
+        std::unique_ptr<core::QuadTreeNode<SceneQuadTreeNode>>                                  m_xtree_root;
+
+        struct XTreeEntity
+        {
+            core::Entity* entity{ nullptr };
+            core::QuadTreeNode<SceneQuadTreeNode>* tree_node{ nullptr };
+        };
+
+        // regrouping here all entities dispatched in m_xtree_root above
+        std::unordered_map<std::string, XTreeEntity>                                            m_xtree_entities;
         
         void register_scene_entity(mage::core::Entity* p_entity);
 
