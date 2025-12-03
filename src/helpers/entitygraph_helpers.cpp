@@ -140,7 +140,7 @@ namespace mage
 							{ core::resourcesAspect::id,	"resourcesAspect" },
 							{ core::cameraAspect::id,		"cameraAspect" },
 							{ core::worldAspect::id,		"worldAspect" },
-							{ core::stampAspect::id,		"stampAspect" },
+							{ core::tagsAspect::id,			"tagsAspect" },
 						};
 
 						for (const auto& e : aspects_translate)
@@ -346,8 +346,8 @@ namespace mage
 			renderingAspect.addComponent<rendering::Queue>("renderingQueue", p_renderingqueue);
 			auto& stored_rendering_queue{ renderingAspect.getComponent<rendering::Queue>("renderingQueue")->getPurpose() };
 
-			auto& stamp_aspect{ renderingQueueNodeEntity->makeAspect(core::stampAspect::id) };
-			stamp_aspect.addComponent<core::stampAspect::GraphDomain>("domain", core::stampAspect::GraphDomain::RENDERGRAPH);
+			auto& stamp_aspect{ renderingQueueNodeEntity->makeAspect(core::tagsAspect::id) };
+			stamp_aspect.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::RENDERGRAPH);
 
 
 			return stored_rendering_queue;
@@ -394,8 +394,8 @@ namespace mage
 
 			rendering_queue_ref.setMainView(p_viewEntityid);
 
-			auto& view_stamp_aspect{ cameraEntity->makeAspect(core::stampAspect::id) };
-			view_stamp_aspect.addComponent<core::stampAspect::GraphDomain>("domain", core::stampAspect::GraphDomain::RENDERGRAPH);
+			auto& view_stamp_aspect{ cameraEntity->makeAspect(core::tagsAspect::id) };
+			view_stamp_aspect.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::RENDERGRAPH);
 
 			///////////////////////////////////////////////////////////////
 
@@ -496,8 +496,8 @@ namespace mage
 			));
 
 			//////////////////////////////////////
-			auto& stamp_aspect{ screenRenderingQuadEntity->makeAspect(core::stampAspect::id) };
-			stamp_aspect.addComponent<core::stampAspect::GraphDomain>("domain", core::stampAspect::GraphDomain::RENDERGRAPH);
+			auto& stamp_aspect{ screenRenderingQuadEntity->makeAspect(core::tagsAspect::id) };
+			stamp_aspect.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::RENDERGRAPH);
 
 			return rendering_queue_ref;			
 		}
@@ -520,8 +520,8 @@ namespace mage
 			camera_world_aspect.addComponent<transform::WorldPosition>("camera_position", transform::WorldPosition());
 
 			///////////////////////////////////////////////
-			auto& stamp_aspect{ cameraEntity->makeAspect(core::stampAspect::id) };
-			stamp_aspect.addComponent<core::stampAspect::GraphDomain>("domain", core::stampAspect::GraphDomain::SCENEGRAPH);
+			auto& stamp_aspect{ cameraEntity->makeAspect(core::tagsAspect::id) };
+			stamp_aspect.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::SCENEGRAPH);
 
 	
 			return cameraEntity;
@@ -656,8 +656,8 @@ namespace mage
 			));
 
 			///////////////////////////////////////////////
-			auto& stamp_aspect{ sprite2DEntity->makeAspect(core::stampAspect::id) };
-			stamp_aspect.addComponent<core::stampAspect::GraphDomain>("domain", core::stampAspect::GraphDomain::HUD);
+			auto& stamp_aspect{ sprite2DEntity->makeAspect(core::tagsAspect::id) };
+			stamp_aspect.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::HUD);
 
 			return sprite2DEntity;
 		}
@@ -805,8 +805,8 @@ namespace mage
 			));
 
 			///////////////////////////////////////////////
-			auto& stamp_aspect{ sprite2DEntity->makeAspect(core::stampAspect::id) };
-			stamp_aspect.addComponent<core::stampAspect::GraphDomain>("domain", core::stampAspect::GraphDomain::HUD);
+			auto& stamp_aspect{ sprite2DEntity->makeAspect(core::tagsAspect::id) };
+			stamp_aspect.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::HUD);
 
 
 			return sprite2DEntity;
@@ -861,8 +861,8 @@ namespace mage
 			textEntity->makeAspect(core::timeAspect::id);
 
 			///////////////////////////////////////////////
-			auto& stamp_aspect{ textEntity->makeAspect(core::stampAspect::id) };
-			stamp_aspect.addComponent<core::stampAspect::GraphDomain>("domain", core::stampAspect::GraphDomain::HUD);
+			auto& stamp_aspect{ textEntity->makeAspect(core::tagsAspect::id) };
+			stamp_aspect.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::HUD);
 
 			return textEntity;
 		}
@@ -941,8 +941,8 @@ namespace mage
 			rendering_aspect.addComponent<int>("renderingOrder", p_rendering_order);
 
 			///////////////////////////////////////////////
-			auto& stamp_aspect{ entity->makeAspect(core::stampAspect::id) };
-			stamp_aspect.addComponent<core::stampAspect::GraphDomain>("domain", core::stampAspect::GraphDomain::RENDERGRAPH);
+			auto& stamp_aspect{ entity->makeAspect(core::tagsAspect::id) };
+			stamp_aspect.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::RENDERGRAPH);
 
 			return entity;
 		}
@@ -969,8 +969,8 @@ namespace mage
 			resource_aspect.addComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture", p_renderTargetTexture);
 
 			///////////////////////////////////////////////
-			auto& stamp_aspect{ entity->makeAspect(core::stampAspect::id) };
-			stamp_aspect.addComponent<core::stampAspect::GraphDomain>("domain", core::stampAspect::GraphDomain::RENDERGRAPH);
+			auto& stamp_aspect{ entity->makeAspect(core::tagsAspect::id) };
+			stamp_aspect.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::RENDERGRAPH);
 
 			return entity;
 		}

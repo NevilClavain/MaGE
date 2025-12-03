@@ -34,7 +34,7 @@ namespace mage
 			static constexpr int id{ 0x6000 };
 		};
 
-		struct stampAspect
+		struct tagsAspect
 		{
 			static constexpr int id{ 0x1000 };
 

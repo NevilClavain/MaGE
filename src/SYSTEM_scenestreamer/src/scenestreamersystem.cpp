@@ -154,14 +154,14 @@ void SceneStreamerSystem::run()
                 return;
             }
 
-            const auto& stampAspect { p_entity->aspectAccess(mage::core::stampAspect::id)};
-            const auto& entity_domainstamps_list{ stampAspect.getComponentsByType<mage::core::stampAspect::GraphDomain>() };
+            const auto& tagsAspect{ p_entity->aspectAccess(mage::core::tagsAspect::id)};
+            const auto& entity_domainstamps_list{ tagsAspect.getComponentsByType<mage::core::tagsAspect::GraphDomain>() };
             if (0 == entity_domainstamps_list.size())
             {
                 return;
             }
 
-            if (entity_domainstamps_list.at(0)->getPurpose() != mage::core::stampAspect::GraphDomain::SCENEGRAPH)
+            if (entity_domainstamps_list.at(0)->getPurpose() != mage::core::tagsAspect::GraphDomain::SCENEGRAPH)
             {
                 return;
             }
@@ -451,8 +451,8 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
                 }
 
                 ///////////////////////////////////////////////
-                auto& stamp_aspect{ entity->makeAspect(core::stampAspect::id) };
-                stamp_aspect.addComponent<core::stampAspect::GraphDomain>("domain", core::stampAspect::GraphDomain::SCENEGRAPH);
+                auto& stamp_aspect{ entity->makeAspect(core::tagsAspect::id) };
+                stamp_aspect.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::SCENEGRAPH);
 
 
                 register_scene_entity(entity);
