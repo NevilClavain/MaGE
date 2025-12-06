@@ -389,9 +389,11 @@ namespace mage
 
         struct ScenegraphNode
         {
-            std::string     file;
-            Animator        animator;
-            JS_OBJ(file, animator);
+            std::string                 file;
+            std::vector<std::string>    tags;
+            Animator                    animator;
+            
+            JS_OBJ(file, tags, animator);
         };
 
         struct Scenegraph
@@ -410,6 +412,11 @@ namespace mage
         EntityRendering(const json::Channels& p_channels) :
             m_channels(p_channels)
         {
+        }
+
+        bool isRendered() const
+        {
+            return m_rendered;
         }
 
     private:
@@ -436,7 +443,7 @@ namespace mage
         void buildScenegraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId, const mage::core::maths::Matrix p_perspective_projection);
 
 
-        void buildScenegraphEntity(const std::string& p_jsonsource, const json::Animator& p_animator, const std::string& p_parentEntityId,
+        void buildScenegraphEntity(const std::string& p_jsonsource, const json::Animator& p_animator, const std::vector<std::string>& p_tags, const std::string& p_parentEntityId,
                                     const mage::core::maths::Matrix p_perspective_projection);
 
 

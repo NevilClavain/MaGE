@@ -226,6 +226,10 @@
     {
       "file": "clouds_entity",
 
+      "tags": [
+        "#alwaysRendered"
+      ],
+
       "animator": {
         "descr": "clouds_Entity pos animator",
 
@@ -292,6 +296,10 @@
 
     {
       "file": "skydome_entity",
+
+      "tags": [
+        "#alwaysRendered"
+      ],
 
       "animator": {
         "descr": "skydome_Entity pos animator",

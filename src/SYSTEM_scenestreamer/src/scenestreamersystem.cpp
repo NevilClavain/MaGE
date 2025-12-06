@@ -155,13 +155,13 @@ void SceneStreamerSystem::run()
             }
 
             const auto& tagsAspect{ p_entity->aspectAccess(mage::core::tagsAspect::id)};
-            const auto& entity_domainstamps_list{ tagsAspect.getComponentsByType<mage::core::tagsAspect::GraphDomain>() };
-            if (0 == entity_domainstamps_list.size())
+            const auto& entity_domains_list{ tagsAspect.getComponentsByType<mage::core::tagsAspect::GraphDomain>() };
+            if (0 == entity_domains_list.size())
             {
                 return;
             }
 
-            if (entity_domainstamps_list.at(0)->getPurpose() != mage::core::tagsAspect::GraphDomain::SCENEGRAPH)
+            if (entity_domains_list.at(0)->getPurpose() != mage::core::tagsAspect::GraphDomain::SCENEGRAPH)
             {
                 return;
             }
@@ -335,11 +335,11 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
         mage::core::FileContent<char> entityFileContent("./module_streamed_anims_config/" + e.file + ".json");
         entityFileContent.load();
 
-        buildScenegraphEntity(entityFileContent.getData(), e.animator, p_parentEntityId, p_perspective_projection);
+        buildScenegraphEntity(entityFileContent.getData(), e.animator, e.tags, p_parentEntityId, p_perspective_projection);
     }
 }
 
-void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource, const json::Animator& p_animator, const std::string& p_parentEntityId, const mage::core::maths::Matrix p_perspective_projection)
+void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource, const json::Animator& p_animator, const std::vector<std::string>& p_tags, const std::string& p_parentEntityId, const mage::core::maths::Matrix p_perspective_projection)
 {
     json::ScenegraphEntitiesCollection sgc;
 
@@ -371,6 +371,19 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
                 auto& time_aspect{ entity->makeAspect(core::timeAspect::id) };
                 auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
                 auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
+                auto& tags_aspect{ entity->makeAspect(core::tagsAspect::id) };
+
+                // tags
+                ///////////////////////////////////////////////
+                
+                tags_aspect.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::SCENEGRAPH);
+
+                std::unordered_set<std::string> str_tags;
+                for (const auto& tag : p_tags)
+                {
+                    str_tags.insert(tag);                    
+                }
+                tags_aspect.addComponent<std::unordered_set<std::string>>("string_tags", str_tags);
 
                 // World Aspect
 
@@ -449,11 +462,6 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
                 {
                     resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair(p_node.resource_aspect.meshe.meshe_id, p_node.resource_aspect.meshe.filename), TriangleMeshe()));
                 }
-
-                ///////////////////////////////////////////////
-                auto& stamp_aspect{ entity->makeAspect(core::tagsAspect::id) };
-                stamp_aspect.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::SCENEGRAPH);
-
 
                 register_scene_entity(entity);
 
@@ -925,6 +933,28 @@ void SceneStreamerSystem::update_XTree()
             }
         };
         ///////////////////////////////////////////////////////////////////////////////////
+
+
+        // check tags
+
+        const auto& tagsAspect{ entity->aspectAccess(mage::core::tagsAspect::id) };
+        const auto& str_tags_list{ tagsAspect.getComponentsByType<std::unordered_set<std::string>>() };
+        if (str_tags_list.size())
+        {
+            const auto str_tags{ str_tags_list.at(0)->getPurpose() };
+            if (str_tags.count("#alwaysRendered"))
+            {
+                if (!m_entity_renderings.at(entity->getId()).m_rendered)
+                {
+                    m_entity_renderings.at(entity->getId()).m_request_rendering = true;
+                }                
+            }
+        }
+
+        ///////////////////////////////////////////////
+
+
+
 
         if (!xe.second.tree_node)
         {
