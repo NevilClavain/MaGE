@@ -899,36 +899,40 @@ void SceneStreamerSystem::update_XTree()
         auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
         const auto global_pos = entity_worldposition.global_pos;
 
+        ///////////////////////////////////////////////////////////////////////////////////
+        // place cam in appropriate xtree leaf : utility lambda
+        const std::function<void(QuadTreeNode<SceneQuadTreeNode>*)> place_cam_on_leaf
+        {
+            [&](QuadTreeNode<SceneQuadTreeNode>* p_current_node)
+            {
+                if (p_current_node->isLeaf())
+                {
+                    p_current_node->dataAccess().entities.insert(entity);
+                    xe.second.tree_node = p_current_node;
+                }
+                else
+                {
+                    for (int i = 0; i < mage::core::QuadTreeNode<SceneQuadTreeNode>::ChildCount; i++)
+                    {
+                        auto child { p_current_node->getChild(i) };
+
+                        if (is_inside_quadtreenode(child->getData(), global_pos))
+                        {
+                            place_cam_on_leaf(child);
+                        }
+                    }
+                }
+            }
+        };
+        ///////////////////////////////////////////////////////////////////////////////////
+
         if (!xe.second.tree_node)
         {
-            // place it in the xtree
+            //// PLACE NEW
 
             if (entity->hasAspect(cameraAspect::id))
             {
                 // camera
-                const std::function<void(QuadTreeNode<SceneQuadTreeNode>*)> place_cam_on_leaf
-                {
-                    [&](QuadTreeNode<SceneQuadTreeNode>* p_current_node)
-                    {
-                        if (p_current_node->isLeaf())
-                        {
-                            p_current_node->dataAccess().entities.insert(entity);
-                            xe.second.tree_node = p_current_node;
-                        }
-                        else
-                        {                            
-                            for (int i = 0; i < mage::core::QuadTreeNode<SceneQuadTreeNode>::ChildCount; i++)
-                            {
-                                auto child { p_current_node->getChild(i) };
-
-                                if (is_inside_quadtreenode(child->getData(), global_pos))
-                                {
-                                    place_cam_on_leaf(child);
-                                }
-                            }                            
-                        }
-                    }
-                };
 
                 place_cam_on_leaf(m_xtree_root.get());
             }
@@ -941,8 +945,25 @@ void SceneStreamerSystem::update_XTree()
         }
         else
         {
-            // update it in the xtree
+            //// UPDATE
 
+            if (entity->hasAspect(cameraAspect::id))
+            {
+                const bool is_inside{ is_inside_quadtreenode(xe.second.tree_node->getData(), global_pos) };
+                if(is_inside)
+                {
+
+                }
+                else
+                {
+                    // update location in xtree
+                    place_cam_on_leaf(m_xtree_root.get());
+                }
+            }
+            else if (entity->hasAspect(resourcesAspect::id))
+            {
+
+            }
         }
 
     }

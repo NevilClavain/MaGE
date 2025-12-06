@@ -467,8 +467,6 @@ namespace mage
         {
             core::Entity* entity{ nullptr };
             core::QuadTreeNode<SceneQuadTreeNode>* tree_node{ nullptr };
-
-            core::maths::Matrix previous_global_pos; // TO BE CONTINUED...
         };
 
 
