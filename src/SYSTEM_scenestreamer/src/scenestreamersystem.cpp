@@ -189,12 +189,22 @@ void SceneStreamerSystem::run()
         if (e.second.m_request_rendering && !e.second.m_rendered)
         {            
             register_to_queues(e.second.m_channels, m_scene_entities.at(e.first));
-            e.second.m_rendered = true;            
+            e.second.m_rendered = true;
+
+            for (const auto& call : m_callbacks)
+            {
+                call(SceneStreamerSystemEvent::RENDERING_ENABLED, e.first);
+            }
         }
         else if (!e.second.m_request_rendering && e.second.m_rendered)
         {
             unregister_from_queues(m_scene_entities.at(e.first));
             e.second.m_rendered = false;
+
+            for (const auto& call : m_callbacks)
+            {
+                call(SceneStreamerSystemEvent::RENDERING_DISABLED, e.first);
+            }
         }
     }
 }
@@ -232,16 +242,16 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
 
                 for (const auto& input : p_node.target.inputs)
                 {
-                    int final_w_width = (fillWithWindowDims == input.buffer_texture.width ? p_w_width : input.buffer_texture.width);
-                    int final_h_width = (fillWithWindowDims == input.buffer_texture.height ? p_w_height : input.buffer_texture.height);
+                    int final_w_width = (json::fillWithWindowDims == input.buffer_texture.width ? p_w_width : input.buffer_texture.width);
+                    int final_h_width = (json::fillWithWindowDims == input.buffer_texture.height ? p_w_height : input.buffer_texture.height);
 
                     const auto input_channnel{ Texture(texture_format_translation.at(input.buffer_texture.format_descr), final_w_width, final_h_width) };
 
                     inputs.push_back(std::make_pair(input.stage, input_channnel));
                 }
 
-                int final_v_width = (fillWithViewportDims == p_node.target.width ? p_w_width : p_characteristics_v_width);
-                int final_v_height = (fillWithViewportDims == p_node.target.height ? p_w_height : p_characteristics_v_height);
+                int final_v_width = (json::fillWithViewportDims == p_node.target.width ? p_w_width : p_characteristics_v_width);
+                int final_v_height = (json::fillWithViewportDims == p_node.target.height ? p_w_height : p_characteristics_v_height);
 
                 const std::string queue_name{ p_node.target.descr + "_queue" };
 

@@ -33,6 +33,8 @@
 
 #include <json_struct/json_struct.h>
 
+#include "eventsource.h"
+
 #include "system.h"
 #include "matrix.h"
 #include "tvector.h"
@@ -54,12 +56,18 @@ namespace mage
     namespace core { class Entitygraph; }
     namespace core { class ComponentContainer; }
 
-    static constexpr int fillWithWindowDims{ -1 };
-    static constexpr int fillWithViewportDims{ -1 };
+    enum class SceneStreamerSystemEvent
+    {
+        RENDERING_ENABLED,
+        RENDERING_DISABLED,
+    };
 
     namespace json
     {
         // JSON struct for rendergraph part
+
+        static constexpr int fillWithWindowDims{ -1 };
+        static constexpr int fillWithViewportDims{ -1 };
 
         struct BufferTexture
         {
@@ -427,7 +435,7 @@ namespace mage
         friend class SceneStreamerSystem;
     };
    
-    class SceneStreamerSystem : public mage::core::System
+    class SceneStreamerSystem : public mage::core::System, public mage::property::EventSource<SceneStreamerSystemEvent, const std::string&>
     {
     public:
         SceneStreamerSystem() = delete;
