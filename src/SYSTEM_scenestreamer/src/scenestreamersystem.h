@@ -464,6 +464,8 @@ namespace mage
         void dumpXTree();
         void dumpXTreeEntities();
 
+        void enableSystem(bool p_enabled);
+
     private:
 
         // node for quadtree
@@ -495,6 +497,8 @@ namespace mage
 
 
         void update_XTree();
+
+        bool                                                                                    m_enabled{ false };
 
         mutable mage::core::logger::Sink                                                        m_localLogger;
 

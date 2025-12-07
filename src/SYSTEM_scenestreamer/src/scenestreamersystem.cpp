@@ -57,6 +57,11 @@ m_localLogger("SceneStreamerSystem", mage::core::logger::Configuration::getInsta
 {
 }
 
+void SceneStreamerSystem::enableSystem(bool p_enabled)
+{
+    m_enabled = p_enabled;
+}
+
 void SceneStreamerSystem::initXTree(double p_scene_size, int p_xtree_max_depth)
 {
     m_scene_size = p_scene_size;
@@ -135,6 +140,12 @@ void SceneStreamerSystem::initXTree(double p_scene_size, int p_xtree_max_depth)
 
 void SceneStreamerSystem::run()
 {
+    if (!m_enabled)
+    {
+        return;
+    }
+
+
     if (-1 == m_scene_size || -1 == m_xtree_max_depth)
     {
         _EXCEPTION("xtree not initialized");
@@ -195,6 +206,7 @@ void SceneStreamerSystem::run()
             {
                 call(SceneStreamerSystemEvent::RENDERING_ENABLED, e.first);
             }
+            _MAGE_DEBUG(m_localLogger, "SceneStreamerSystemEvent::RENDERING_ENABLED for " + e.first);
         }
         else if (!e.second.m_request_rendering && e.second.m_rendered)
         {
@@ -205,6 +217,7 @@ void SceneStreamerSystem::run()
             {
                 call(SceneStreamerSystemEvent::RENDERING_DISABLED, e.first);
             }
+            _MAGE_DEBUG(m_localLogger, "SceneStreamerSystemEvent::RENDERING_DISABLED for " + e.first);
         }
     }
 }
