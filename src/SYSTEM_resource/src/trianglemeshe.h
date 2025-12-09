@@ -154,7 +154,7 @@ namespace mage
 		void													setPreviousAnimation(const std::string& p_previous_animation);
 
 		void													computeSize();
-		size_t													getSize() const;
+		double													getSize() const;
 
 	private:
 
@@ -189,7 +189,7 @@ namespace mage
 
 		std::string																m_previous_animation;
 
-		size_t																	m_meshe_size{ 0 };
+		double																	m_meshe_size{ 0 };
 
 		// IF NEW MEMBERS HERE :
 		// UPDATE COPY CTOR AND OPERATOR !!!!!!

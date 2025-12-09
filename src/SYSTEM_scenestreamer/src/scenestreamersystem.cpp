@@ -957,6 +957,48 @@ void SceneStreamerSystem::update_XTree()
         };
         ///////////////////////////////////////////////////////////////////////////////////
 
+        ///////////////////////////////////////////////////////////////////////////////////
+        // place 3D object in appropriate xtree leaf : utility lambda
+
+        const std::function<void(QuadTreeNode<SceneQuadTreeNode>*, double)> place_obj_on_leaf
+        {
+            [&](QuadTreeNode<SceneQuadTreeNode>* p_current_node, double p_obj_size)
+            {
+                if (p_current_node->isLeaf())
+                {
+                    // leaf reached, cannt go beyond, so place it anyway
+                    p_current_node->dataAccess().entities.insert(entity);
+                    xe.second.tree_node = p_current_node;
+                }
+                else
+                {
+                    const double node_size { p_current_node->getData().side_length };
+
+                    if (p_obj_size / node_size > 0.1)
+                    {
+                        //place it
+                        p_current_node->dataAccess().entities.insert(entity);
+                        xe.second.tree_node = p_current_node;
+                    }
+                    else
+                    {
+                        for (int i = 0; i < mage::core::QuadTreeNode<SceneQuadTreeNode>::ChildCount; i++)
+                        {
+                            auto child{ p_current_node->getChild(i) };
+
+                            if (is_inside_quadtreenode(child->getData(), global_pos))
+                            {
+                                place_obj_on_leaf(child, p_obj_size);
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        ///////////////////////////////////////////////////////////////////////////////////
+
+
+
 
         // check tags
 
@@ -970,14 +1012,12 @@ void SceneStreamerSystem::update_XTree()
                 if (!m_entity_renderings.at(entity->getId()).m_rendered)
                 {
                     m_entity_renderings.at(entity->getId()).m_request_rendering = true;
-                }                
-            }
+                }
+                continue;
+            }            
         }
 
         ///////////////////////////////////////////////
-
-
-
 
         if (!xe.second.tree_node)
         {
@@ -991,10 +1031,21 @@ void SceneStreamerSystem::update_XTree()
             }
             else if (entity->hasAspect(resourcesAspect::id))
             {
+                const auto& resources_aspect{ entity->aspectAccess(resourcesAspect::id) };
 
-            }
+                const auto meshes_list{ resources_aspect.getComponentsByType<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>() };
+                if (meshes_list.size() > 0)
+                {
+                    auto& meshe_descr{ meshes_list.at(0)->getPurpose() };
+                    TriangleMeshe& meshe{ meshe_descr.second };
 
-            
+                    if (TriangleMeshe::State::BLOBLOADED == meshe.getState())
+                    {
+                        const double meshe_size{ meshe.getSize() };
+                        place_obj_on_leaf(m_xtree_root.get(), meshe_size);
+                    }
+                }
+            }            
         }
         else
         {
@@ -1003,11 +1054,7 @@ void SceneStreamerSystem::update_XTree()
             if (entity->hasAspect(cameraAspect::id))
             {
                 const bool is_inside{ is_inside_quadtreenode(xe.second.tree_node->getData(), global_pos) };
-                if(is_inside)
-                {
-
-                }
-                else
+                if(!is_inside)
                 {
                     // update location in xtree
                     place_cam_on_leaf(m_xtree_root.get());
@@ -1018,7 +1065,6 @@ void SceneStreamerSystem::update_XTree()
 
             }
         }
-
     }
 }
 

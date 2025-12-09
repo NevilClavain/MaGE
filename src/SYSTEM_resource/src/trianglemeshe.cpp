@@ -305,7 +305,7 @@ void TriangleMeshe::computeResourceUID()
 	const std::string hash_smooth_norm_gen{ md5.digestMemory((BYTE*)&m_smooth_normales_generations, (int)(sizeof(m_smooth_normales_generations))) };
 
 	std::string hash_bones;
-	for (int i = 0; i < m_animation_bones.size(); i++)
+	for (size_t i = 0; i < m_animation_bones.size(); i++)
 	{
 		const double* content_array{ m_animation_bones.at(i).offset_matrix.getArray() };
 		const std::string hash_bone{ md5.digestMemory((BYTE*)&content_array, (int)(16 * sizeof(double))) };
@@ -414,10 +414,10 @@ void TriangleMeshe::computeSize()
 			}
 		}
 	}
-	m_meshe_size = 2 * meshe_ray;
+	m_meshe_size = 2.0 * meshe_ray;
 }
 
-size_t TriangleMeshe::getSize() const
+double TriangleMeshe::getSize() const
 {
 	return m_meshe_size;
 }
