@@ -72,6 +72,10 @@
     {
       "file": "ground_entity",
 
+      "tags": [
+        "#static"
+      ],
+
       "animator": {
         "descr": "ground_Entity pos animator",
 
@@ -119,6 +123,10 @@
     {
       "file": "tree_entity",
 
+      "tags": [
+        "#static"
+      ],
+
       "animator": {
         "descr": "tree_Entity pos animator",
 
@@ -165,6 +173,10 @@
 
     {
       "file": "wall_entity",
+
+      "tags": [
+        "#static"
+      ],
 
       "animator": {
         "descr": "wall_Entity pos animator",

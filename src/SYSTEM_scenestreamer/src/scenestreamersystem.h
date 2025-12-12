@@ -484,6 +484,7 @@ namespace mage
         {
             core::Entity* entity{ nullptr };
             core::QuadTreeNode<SceneQuadTreeNode>* tree_node{ nullptr };
+            bool is_static{ false };
         };
 
 

@@ -166,7 +166,10 @@ void SceneStreamerSystem::run()
             }
 
             const auto& tagsAspect{ p_entity->aspectAccess(mage::core::tagsAspect::id)};
+
             const auto& entity_domains_list{ tagsAspect.getComponentsByType<mage::core::tagsAspect::GraphDomain>() };
+            const auto& str_tags_list{ tagsAspect.getComponentsByType<std::unordered_set<std::string>>() };
+
             if (0 == entity_domains_list.size())
             {
                 return;
@@ -182,6 +185,14 @@ void SceneStreamerSystem::run()
                 XTreeEntity xtreeEnt;
                 xtreeEnt.entity = p_entity;
 
+                if (str_tags_list.size() > 0)
+                {
+                    const auto str_tags{ str_tags_list.at(0)->getPurpose() };
+                    if (str_tags.count("#static"))
+                    {
+                        xtreeEnt.is_static = true;
+                    }
+                }
                 m_xtree_entities[p_entity->getId()] = xtreeEnt;
             }
         }
@@ -1060,9 +1071,28 @@ void SceneStreamerSystem::update_XTree()
                     place_cam_on_leaf(m_xtree_root.get());
                 }
             }
-            else if (entity->hasAspect(resourcesAspect::id))
+            else if (entity->hasAspect(resourcesAspect::id) && !xe.second.is_static)
             {
+                const bool is_inside{ is_inside_quadtreenode(xe.second.tree_node->getData(), global_pos) };
 
+                if (!is_inside)
+                {
+                    // update location in xtree
+                    const auto& resources_aspect{ entity->aspectAccess(resourcesAspect::id) };
+
+                    const auto meshes_list{ resources_aspect.getComponentsByType<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>() };
+                    if (meshes_list.size() > 0)
+                    {
+                        auto& meshe_descr{ meshes_list.at(0)->getPurpose() };
+                        TriangleMeshe& meshe{ meshe_descr.second };
+
+                        if (TriangleMeshe::State::BLOBLOADED == meshe.getState())
+                        {
+                            const double meshe_size{ meshe.getSize() };
+                            place_obj_on_leaf(m_xtree_root.get(), meshe_size);
+                        }
+                    }
+                }
             }
         }
     }
