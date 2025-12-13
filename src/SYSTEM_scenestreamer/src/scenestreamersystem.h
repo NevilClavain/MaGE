@@ -498,6 +498,7 @@ namespace mage
 
 
         void update_XTree();
+        void check_XTree();
 
         bool                                                                                    m_enabled{ false };
 

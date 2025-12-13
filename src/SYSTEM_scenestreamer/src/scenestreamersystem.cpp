@@ -203,6 +203,12 @@ void SceneStreamerSystem::run()
     // XTree updating
     update_XTree();
 
+
+    /////////////////////////////////////////////////////////
+    // XTree check
+    check_XTree();
+
+
     /////////////////////////////////////////////////////////
     // loop on entity rendering entries
     /////////////////////////////////////////////////////////
@@ -1110,6 +1116,11 @@ bool SceneStreamerSystem::is_inside_quadtreenode(const SceneQuadTreeNode& p_qtn,
         inside = true;
     }
     return inside;
+}
+
+void SceneStreamerSystem::update_XTree()
+{
+
 }
 
 void SceneStreamerSystem::dumpXTree()
