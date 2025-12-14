@@ -823,7 +823,7 @@ void SceneStreamerSystem::register_to_queues(const json::Channels& p_channels, m
 
     helpers::ChannelsRendering channelsRendering;
 
-    const auto& default_channel_configs_list{ renderingHelper->getPassConfigsList() };
+    const std::unordered_map<std::string, helpers::ChannelConfig>& default_channel_configs_list{ renderingHelper->getPassConfigsList() };
 
     for (const auto& config : p_channels.configs)
     {       
@@ -831,7 +831,7 @@ void SceneStreamerSystem::register_to_queues(const json::Channels& p_channels, m
         {
             if (e.second.rendering_channel_type == config.rendering_channel_type)
             {
-                auto default_channel_config{ renderingHelper->getChannelConfig(e.second.queue_entity_id) };
+                helpers::ChannelConfig default_channel_config{ renderingHelper->getChannelConfig(e.second.queue_entity_id) };
 
                 // manage shaders
                 default_channel_config.vshader = config.vshader;
@@ -1118,7 +1118,7 @@ bool SceneStreamerSystem::is_inside_quadtreenode(const SceneQuadTreeNode& p_qtn,
     return inside;
 }
 
-void SceneStreamerSystem::update_XTree()
+void SceneStreamerSystem::check_XTree()
 {
 
 }
