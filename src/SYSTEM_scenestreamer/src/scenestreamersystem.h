@@ -437,35 +437,6 @@ namespace mage
    
     class SceneStreamerSystem : public mage::core::System, public mage::property::EventSource<SceneStreamerSystemEvent, const std::string&>
     {
-    public:
-        SceneStreamerSystem() = delete;
-        SceneStreamerSystem(core::Entitygraph& p_entitygraph);
-        ~SceneStreamerSystem() = default;
-
-        void run();
-
-        void buildRendergraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId,
-                                    int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
-
-
-        void buildScenegraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId, const mage::core::maths::Matrix p_perspective_projection);
-
-
-        void buildScenegraphEntity(const std::string& p_jsonsource, const json::Animator& p_animator, const std::vector<std::string>& p_tags, const std::string& p_parentEntityId,
-                                    const mage::core::maths::Matrix p_perspective_projection);
-
-
-        void buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot);
-
-        void requestEntityRendering(const std::string& p_entity_id, bool p_render_it);
-
-        void initXTree(double p_scene_size, int p_xtree_max_depth);
-
-        void dumpXTree();
-        void dumpXTreeEntities();
-
-        void enableSystem(bool p_enabled);
-
     private:
 
         // node for quadtree
@@ -488,6 +459,37 @@ namespace mage
         };
 
 
+    public:
+        SceneStreamerSystem() = delete;
+        SceneStreamerSystem(core::Entitygraph& p_entitygraph);
+        ~SceneStreamerSystem() = default;
+
+        void run();
+
+        void buildRendergraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId,
+                                    int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
+
+
+        void buildScenegraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId, const mage::core::maths::Matrix p_perspective_projection);
+
+
+        void buildScenegraphEntity(const std::string& p_jsonsource, const json::Animator& p_animator, const std::vector<std::string>& p_tags, const std::string& p_parentEntityId,
+                                    const mage::core::maths::Matrix p_perspective_projection);
+
+
+        void buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot);
+
+        void requestEntityRendering(const std::string& p_entity_id, bool p_render_it);
+
+        // temporary deactivated
+        //void initXTree(double p_scene_size, int p_xtree_max_depth);
+
+        void dumpXTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root);
+        void dumpXTreeEntities(const std::unordered_map<std::string, XTreeEntity>& p_xtree_entities);
+
+        void enableSystem(bool p_enabled);
+
+    private:
 
 
         bool is_inside_quadtreenode(const SceneQuadTreeNode& p_qtn, const core::maths::Matrix& p_global_pos);
@@ -497,7 +499,7 @@ namespace mage
         void unregister_from_queues(mage::core::Entity* p_entity);
 
 
-        void update_XTree();
+        void update_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root, std::unordered_map<std::string, XTreeEntity>& p_xtree_entities);
         void check_XTree();
 
         bool                                                                                    m_enabled{ false };
@@ -513,11 +515,12 @@ namespace mage
         double                                                                                  m_scene_size{ -1 };
         int                                                                                     m_xtree_max_depth{ -1 };
 
+        /*
         // the xtree
         std::unique_ptr<core::QuadTreeNode<SceneQuadTreeNode>>                                  m_xtree_root;
-
         // regrouping here all entities dispatched in m_xtree_root above
         std::unordered_map<std::string, XTreeEntity>                                            m_xtree_entities;
+        */
         
         void register_scene_entity(mage::core::Entity* p_entity);
 

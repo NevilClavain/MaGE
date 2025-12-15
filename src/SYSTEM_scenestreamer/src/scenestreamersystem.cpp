@@ -62,6 +62,8 @@ void SceneStreamerSystem::enableSystem(bool p_enabled)
     m_enabled = p_enabled;
 }
 
+// temporary deactivated
+/*
 void SceneStreamerSystem::initXTree(double p_scene_size, int p_xtree_max_depth)
 {
     m_scene_size = p_scene_size;
@@ -136,6 +138,7 @@ void SceneStreamerSystem::initXTree(double p_scene_size, int p_xtree_max_depth)
 
     expand(m_xtree_root.get(), p_xtree_max_depth);
 }
+*/
 
 
 void SceneStreamerSystem::run()
@@ -180,28 +183,31 @@ void SceneStreamerSystem::run()
                 return;
             }
 
-            if (!m_xtree_entities.count(p_entity->getId()))
-            {
-                XTreeEntity xtreeEnt;
-                xtreeEnt.entity = p_entity;
+            // temporary deactivated
+            //if (!m_xtree_entities.count(p_entity->getId()))
+            //{
+            //    XTreeEntity xtreeEnt;
+            //    xtreeEnt.entity = p_entity;
 
-                if (str_tags_list.size() > 0)
-                {
-                    const auto str_tags{ str_tags_list.at(0)->getPurpose() };
-                    if (str_tags.count("#static"))
-                    {
-                        xtreeEnt.is_static = true;
-                    }
-                }
-                m_xtree_entities[p_entity->getId()] = xtreeEnt;
-            }
+            //    if (str_tags_list.size() > 0)
+            //    {
+            //        const auto str_tags{ str_tags_list.at(0)->getPurpose() };
+            //        if (str_tags.count("#static"))
+            //        {
+            //            xtreeEnt.is_static = true;
+            //        }
+            //    }
+            //    m_xtree_entities[p_entity->getId()] = xtreeEnt;
+            //}
         }
     };
     mage::helpers::extractAspectsTopDown<mage::core::worldAspect>(m_entitygraph, forEachWorldAspect);
 
     /////////////////////////////////////////////////////////
     // XTree updating
-    update_XTree();
+    // 
+    // temporary deactivated
+    //update_XTree(m_xtree_root.get(), m_xtree_entities);
 
 
     /////////////////////////////////////////////////////////
@@ -936,9 +942,9 @@ void SceneStreamerSystem::unregister_from_queues(mage::core::Entity* p_entity)
     m_rendering_proxies.erase(p_entity->getId());
 }
 
-void SceneStreamerSystem::update_XTree()
+void SceneStreamerSystem::update_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root, std::unordered_map<std::string, XTreeEntity>& p_xtree_entities)
 {
-    for (auto& xe : m_xtree_entities)
+    for (auto& xe : p_xtree_entities)
     {
         core::Entity* entity{ xe.second.entity };
         const auto& world_aspect{ entity->aspectAccess(worldAspect::id) };
@@ -1044,7 +1050,7 @@ void SceneStreamerSystem::update_XTree()
             {
                 // camera
 
-                place_cam_on_leaf(m_xtree_root.get());
+                place_cam_on_leaf(p_xtree_root);
             }
             else if (entity->hasAspect(resourcesAspect::id))
             {
@@ -1059,7 +1065,7 @@ void SceneStreamerSystem::update_XTree()
                     if (TriangleMeshe::State::BLOBLOADED == meshe.getState())
                     {
                         const double meshe_size{ meshe.getSize() };
-                        place_obj_on_leaf(m_xtree_root.get(), meshe_size);
+                        place_obj_on_leaf(p_xtree_root, meshe_size);
                     }
                 }
             }            
@@ -1074,7 +1080,7 @@ void SceneStreamerSystem::update_XTree()
                 if(!is_inside)
                 {
                     // update location in xtree
-                    place_cam_on_leaf(m_xtree_root.get());
+                    place_cam_on_leaf(p_xtree_root);
                 }
             }
             else if (entity->hasAspect(resourcesAspect::id) && !xe.second.is_static)
@@ -1095,7 +1101,7 @@ void SceneStreamerSystem::update_XTree()
                         if (TriangleMeshe::State::BLOBLOADED == meshe.getState())
                         {
                             const double meshe_size{ meshe.getSize() };
-                            place_obj_on_leaf(m_xtree_root.get(), meshe_size);
+                            place_obj_on_leaf(p_xtree_root, meshe_size);
                         }
                     }
                 }
@@ -1123,10 +1129,10 @@ void SceneStreamerSystem::check_XTree()
 
 }
 
-void SceneStreamerSystem::dumpXTree()
+void SceneStreamerSystem::dumpXTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root)
 {
     _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE DUMP BEGIN <<<<<<<<<<<<<<<<<<<<<<<<")
-    m_xtree_root->traverse([&](const SceneQuadTreeNode& p_data, size_t p_depth)
+    p_xtree_root->traverse([&](const SceneQuadTreeNode& p_data, size_t p_depth)
     {
         std::string tab;
         for (size_t i = 0; i < p_depth; i++) tab = tab + " ";
@@ -1152,10 +1158,10 @@ void SceneStreamerSystem::dumpXTree()
     _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE DUMP END <<<<<<<<<<<<<<<<<<<<<<<<")
 }
 
-void SceneStreamerSystem::dumpXTreeEntities()
+void SceneStreamerSystem::dumpXTreeEntities(const std::unordered_map<std::string, XTreeEntity>& p_xtree_entities)
 {
     _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE ENTITIES BEGIN <<<<<<<<<<<<<<<<<<<<<<<<")
-    for (const auto& e : m_xtree_entities)
+    for (const auto& e : p_xtree_entities)
     {
         if (e.second.tree_node)
         {
