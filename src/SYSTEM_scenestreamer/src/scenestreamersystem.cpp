@@ -149,10 +149,10 @@ void SceneStreamerSystem::run()
     }
 
 
-    if (-1 == m_scene_size || -1 == m_xtree_max_depth)
-    {
-        _EXCEPTION("xtree not initialized");
-    }
+    //if (-1 == m_scene_size || -1 == m_xtree_max_depth)
+    //{
+    //    _EXCEPTION("xtree not initialized");
+    //}
 
     /////////////////////////////////////////////////////////
     // detect new entities to insert in the XTree

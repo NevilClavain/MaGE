@@ -220,7 +220,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 					const char viewgroup_json[] = R"json(
 					{
-						"name": "player_camera",
+						"name": "openenv_main_graph",
 						"mainview_camera_entity_id": "camera_Entity",
 
 						"queue_entities":
@@ -234,11 +234,18 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					sceneStreamerSystemInstance->buildViewgroup(viewgroup_json, Base::renderingQueueSystemSlot);
 
 					
-					sceneStreamerSystemInstance->requestEntityRendering("ground_Entity", false /*true*/);
-					sceneStreamerSystemInstance->requestEntityRendering("skydome_Entity", false);
-					sceneStreamerSystemInstance->requestEntityRendering("wall_Entity", false /*true*/);
-					sceneStreamerSystemInstance->requestEntityRendering("tree_Entity", false /*true*/);
-					sceneStreamerSystemInstance->requestEntityRendering("clouds_Entity", false /*true*/);
+					//sceneStreamerSystemInstance->requestEntityRendering("ground_Entity", false /*true*/);
+					//sceneStreamerSystemInstance->requestEntityRendering("skydome_Entity", false);
+					//sceneStreamerSystemInstance->requestEntityRendering("wall_Entity", false /*true*/);
+					//sceneStreamerSystemInstance->requestEntityRendering("tree_Entity", false /*true*/);
+					//sceneStreamerSystemInstance->requestEntityRendering("clouds_Entity", false /*true*/);
+
+					sceneStreamerSystemInstance->requestEntityRendering("ground_Entity", true);
+					sceneStreamerSystemInstance->requestEntityRendering("skydome_Entity", true);
+					sceneStreamerSystemInstance->requestEntityRendering("wall_Entity", true);
+					sceneStreamerSystemInstance->requestEntityRendering("tree_Entity", true);
+					sceneStreamerSystemInstance->requestEntityRendering("clouds_Entity", true);
+
 				}
 				break;
 			}

@@ -46,7 +46,7 @@ void ModuleImpl::onKeyPress(long p_key)
 	if (!m_appReady) return;
 
 	auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot)) };
-	auto& [mainView, secondaryView] { renderingQueueSystemInstance->getViewGroupCurrentViews("player_camera") };
+	auto& [mainView, secondaryView] { renderingQueueSystemInstance->getViewGroupCurrentViews("openenv_main_graph") };
 
 
 	if ('Q' == p_key)
@@ -90,7 +90,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 	auto& eventsLogger{ services::LoggerSharing::getInstance()->getLogger("Events") };
 
 	auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot)) };
-	auto& [mainView, secondaryView] { renderingQueueSystemInstance->getViewGroupCurrentViews("player_camera") };
+	auto& [mainView, secondaryView] { renderingQueueSystemInstance->getViewGroupCurrentViews("openenv_main_graph") };
 
 
 	if (VK_ESCAPE == p_key)
