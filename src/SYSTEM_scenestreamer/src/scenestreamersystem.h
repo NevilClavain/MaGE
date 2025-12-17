@@ -399,9 +399,12 @@ namespace mage
         {
             std::string                 file;
             std::vector<std::string>    tags;
+
+            std::vector<std::string>    rendergraph_parts;
+
             Animator                    animator;
             
-            JS_OBJ(file, tags, animator);
+            JS_OBJ(file, tags, rendergraph_parts, animator);
         };
 
         struct Scenegraph
@@ -473,7 +476,7 @@ namespace mage
         void buildScenegraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId, const mage::core::maths::Matrix p_perspective_projection);
 
 
-        void buildScenegraphEntity(const std::string& p_jsonsource, const json::Animator& p_animator, const std::vector<std::string>& p_tags, const std::string& p_parentEntityId,
+        void buildScenegraphEntity(const std::string& p_jsonsource, const std::vector<std::string>& p_rendergraph_parts, const json::Animator& p_animator, const std::vector<std::string>& p_tags, const std::string& p_parentEntityId,
                                     const mage::core::maths::Matrix p_perspective_projection);
 
 
@@ -508,6 +511,8 @@ namespace mage
 
         std::unordered_map<std::string, mage::core::Entity*>                                    m_scene_entities;
         std::unordered_map<std::string, std::unordered_map<std::string, mage::core::Entity*>>   m_rendering_proxies; // i.e rendering_entites ;-)
+
+        std::unordered_map<std::string, std::unordered_set<std::string>>                        m_scene_entities_rg_parts; // rendergraph parts for each scene entity (defined in json as "rendergraph_parts" array)
 
         std::unordered_map<std::string, EntityRendering>                                        m_entity_renderings;
        

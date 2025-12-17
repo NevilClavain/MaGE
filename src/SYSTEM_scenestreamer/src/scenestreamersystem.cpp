@@ -212,7 +212,7 @@ void SceneStreamerSystem::run()
 
     /////////////////////////////////////////////////////////
     // XTree check
-    check_XTree();
+    //check_XTree();
 
 
     /////////////////////////////////////////////////////////
@@ -381,11 +381,15 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
         mage::core::FileContent<char> entityFileContent("./module_streamed_anims_config/" + e.file + ".json");
         entityFileContent.load();
 
-        buildScenegraphEntity(entityFileContent.getData(), e.animator, e.tags, p_parentEntityId, p_perspective_projection);
+        buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, e.animator, e.tags, p_parentEntityId, p_perspective_projection);
     }
 }
 
-void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource, const json::Animator& p_animator, const std::vector<std::string>& p_tags, const std::string& p_parentEntityId, const mage::core::maths::Matrix p_perspective_projection)
+void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource, const std::vector<std::string>& p_rendergraph_parts,
+                                                                                    const json::Animator& p_animator, 
+                                                                                    const std::vector<std::string>& p_tags, 
+                                                                                    const std::string& p_parentEntityId, 
+                                                                                    const mage::core::maths::Matrix p_perspective_projection)
 {
     json::ScenegraphEntitiesCollection sgc;
 
@@ -400,6 +404,11 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
     {
         [&](const json::ScenegraphEntity& p_node, const std::string& p_parent_id, const json::Animator& p_animator, int depth)
         {
+            for (int i = 0; i < p_rendergraph_parts.size(); i++)
+            {
+                m_scene_entities_rg_parts[p_node.id].insert(p_rendergraph_parts[i]);
+            }
+
             if ("" != p_node.helper)
             {
                 if ("plugCamera" == p_node.helper)
@@ -835,7 +844,7 @@ void SceneStreamerSystem::register_to_queues(const json::Channels& p_channels, m
     {       
         for (const auto& e : default_channel_configs_list)
         {
-            if (e.second.rendering_channel_type == config.rendering_channel_type)
+            if (m_scene_entities_rg_parts.at(p_entity->getId()).count(e.first) > 0 && e.second.rendering_channel_type == config.rendering_channel_type)
             {
                 helpers::ChannelConfig default_channel_config{ renderingHelper->getChannelConfig(e.second.queue_entity_id) };
 

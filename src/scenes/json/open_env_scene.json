@@ -76,6 +76,11 @@
         "#static"
       ],
 
+      "rendergraph_parts": [
+        "TextureChannelScene_Entity",
+        "ZdepthChannelScene_Entity"
+      ],
+
       "animator": {
         "descr": "ground_Entity pos animator",
 
@@ -127,6 +132,11 @@
         "#static"
       ],
 
+      "rendergraph_parts": [
+        "TextureChannelScene_Entity",
+        "ZdepthChannelScene_Entity"
+      ],
+
       "animator": {
         "descr": "tree_Entity pos animator",
 
@@ -176,6 +186,11 @@
 
       "tags": [
         "#static"
+      ],
+
+      "rendergraph_parts": [
+        "TextureChannelScene_Entity",
+        "ZdepthChannelScene_Entity"
       ],
 
       "animator": {
@@ -240,6 +255,10 @@
 
       "tags": [
         "#alwaysRendered"
+      ],
+
+      "rendergraph_parts": [
+        "TextureChannelScene_Entity"
       ],
 
       "animator": {
@@ -311,6 +330,10 @@
 
       "tags": [
         "#alwaysRendered"
+      ],
+
+      "rendergraph_parts": [
+        "TextureChannelScene_Entity"
       ],
 
       "animator": {
