@@ -221,8 +221,6 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					const char viewgroup_json[] = R"json(
 					{
 						"name": "openenv_main_graph",
-						"mainview_camera_entity_id": "camera_Entity",
-
 						"queue_entities":
 						[
 							"TextureChannelScene_Entity",
@@ -233,12 +231,14 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					
 					sceneStreamerSystemInstance->buildViewgroup(viewgroup_json, Base::renderingQueueSystemSlot);
 
+					sceneStreamerSystemInstance->setViewgroupMainview("openenv_main_graph", "camera_Entity", Base::renderingQueueSystemSlot);
+
 					
-					sceneStreamerSystemInstance->requestEntityRendering("ground_Entity", false /*true*/);
-					sceneStreamerSystemInstance->requestEntityRendering("skydome_Entity", false);
-					sceneStreamerSystemInstance->requestEntityRendering("wall_Entity", false /*true*/);
-					sceneStreamerSystemInstance->requestEntityRendering("tree_Entity", false /*true*/);
-					sceneStreamerSystemInstance->requestEntityRendering("clouds_Entity", false /*true*/);
+					sceneStreamerSystemInstance->requestEntityRendering("ground_Entity", true);
+					sceneStreamerSystemInstance->requestEntityRendering("skydome_Entity", true);
+					sceneStreamerSystemInstance->requestEntityRendering("wall_Entity", true);
+					sceneStreamerSystemInstance->requestEntityRendering("tree_Entity", true);
+					sceneStreamerSystemInstance->requestEntityRendering("clouds_Entity", true);
 
 				}
 				break;

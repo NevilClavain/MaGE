@@ -166,12 +166,10 @@ namespace mage
         struct ViewGroup
         {
             std::string name;
-            std::string mainview_camera_entity_id;
-            std::string secondaryview_camera_entity_id;
 
             std::vector<std::string> queue_entities;
 
-            JS_OBJ(name, mainview_camera_entity_id, queue_entities);
+            JS_OBJ(name, queue_entities);
         };
 
         ///////////////////////////////////////////////////////////////////
@@ -462,6 +460,21 @@ namespace mage
         };
 
 
+        // regroup main infos related to a rendergraph part:
+        // 
+        //  > associated viewgroup
+        //  > xtree stuff
+
+        struct RendergraphPartData
+        {
+            json::ViewGroup                                                                        viewgroup;
+
+            std::unique_ptr<core::QuadTreeNode<SceneQuadTreeNode>>                                 xtree_root;
+            // regrouping here all entities dispatched in m_xtree_root above
+            std::unordered_map<std::string, XTreeEntity>                                           xtree_entities;
+        };
+
+
     public:
         SceneStreamerSystem() = delete;
         SceneStreamerSystem(core::Entitygraph& p_entitygraph);
@@ -481,6 +494,8 @@ namespace mage
 
 
         void buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot);
+
+        void setViewgroupMainview(const std::string& p_vg_id, const std::string& p_mainview, int p_renderingQueueSystemSlot);
 
         void requestEntityRendering(const std::string& p_entity_id, bool p_render_it);
 
@@ -515,6 +530,8 @@ namespace mage
         std::unordered_map<std::string, std::unordered_set<std::string>>                        m_scene_entities_rg_parts; // rendergraph parts for each scene entity (defined in json as "rendergraph_parts" array)
 
         std::unordered_map<std::string, EntityRendering>                                        m_entity_renderings;
+
+        std::unordered_map<std::string, RendergraphPartData>                                    m_rendergraphpart_data;
        
         //config for xtree build
         double                                                                                  m_scene_size{ -1 };

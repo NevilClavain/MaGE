@@ -571,15 +571,14 @@ void SceneStreamerSystem::buildViewgroup(const std::string& p_jsonsource, int p_
         _EXCEPTION("Cannot parse scenegraph: " + errorStr);
     }
 
-    auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(p_renderingQueueSystemSlot))}; // TODO
+    if (m_rendergraphpart_data.count(vg.name) > 0)
+    {
+        _EXCEPTION("Already registered " + vg.name);
+    }
+
+    auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(p_renderingQueueSystemSlot))};
 
     renderingQueueSystemInstance->createViewGroup(vg.name);
-    renderingQueueSystemInstance->setViewGroupMainView(vg.name, vg.mainview_camera_entity_id);
-
-    if ("" != vg.secondaryview_camera_entity_id)
-    {
-        renderingQueueSystemInstance->setViewGroupSecondaryView(vg.name, vg.secondaryview_camera_entity_id);
-    }
 
     std::unordered_set<std::string> queues_id_list;
     for (const auto& e : vg.queue_entities)
@@ -589,6 +588,20 @@ void SceneStreamerSystem::buildViewgroup(const std::string& p_jsonsource, int p_
 
     renderingQueueSystemInstance->addQueuesToViewGroup(vg.name, queues_id_list);
 
+    m_rendergraphpart_data[vg.name].viewgroup = vg;
+}
+
+void SceneStreamerSystem::setViewgroupMainview(const std::string& p_vg_id, const std::string& p_mainview, int p_renderingQueueSystemSlot)
+{
+    if (0 == m_rendergraphpart_data.count(p_vg_id))
+    {
+        _EXCEPTION("Unknown view group id " + p_vg_id);
+    }
+
+    auto& rgdata{ m_rendergraphpart_data.at(p_vg_id) };
+
+    auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(p_renderingQueueSystemSlot)) };
+    renderingQueueSystemInstance->setViewGroupMainView(rgdata.viewgroup.name, p_mainview);
 }
 
 core::SyncVariable SceneStreamerSystem::build_syncvariable_fromjson(const json::SyncVariable& p_syncvar)
