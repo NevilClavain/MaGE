@@ -505,7 +505,7 @@ namespace mage
         //void initXTree(double p_scene_size, int p_xtree_max_depth);
 
         void dumpXTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root);
-        void dumpXTreeEntities(const std::unordered_map<std::string, XTreeEntity>& p_xtree_entities);
+        void dumpXTreeEntities();
 
         void enableSystem(bool p_enabled);
 

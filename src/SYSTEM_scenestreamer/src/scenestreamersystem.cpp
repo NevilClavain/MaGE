@@ -1201,26 +1201,33 @@ void SceneStreamerSystem::dumpXTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtr
     _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE DUMP END <<<<<<<<<<<<<<<<<<<<<<<<")
 }
 
-void SceneStreamerSystem::dumpXTreeEntities(const std::unordered_map<std::string, XTreeEntity>& p_xtree_entities)
+void SceneStreamerSystem::dumpXTreeEntities()
 {
     _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE ENTITIES BEGIN <<<<<<<<<<<<<<<<<<<<<<<<")
-    for (const auto& e : p_xtree_entities)
+
+    for (const auto& rgpd : m_rendergraphpart_data)
     {
-        if (e.second.tree_node)
+        _MAGE_DEBUG(m_localLogger, "for ViewGroup " + rgpd.first)
+
+        for (const auto& e : rgpd.second.xtree_entities)
         {
-            const core::Entity* entity{ e.second.entity };
-            const auto& world_aspect{ entity->aspectAccess(worldAspect::id) };
+            if (e.second.tree_node)
+            {
+                const core::Entity* entity{ e.second.entity };
+                const auto& world_aspect{ entity->aspectAccess(worldAspect::id) };
 
-            const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
-            auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
-            const auto global_pos = entity_worldposition.global_pos;
+                const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
+                auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
+                const auto global_pos = entity_worldposition.global_pos;
 
-            const SceneQuadTreeNode data { e.second.tree_node->getData() };
+                const SceneQuadTreeNode data{ e.second.tree_node->getData() };
 
-            _MAGE_DEBUG(m_localLogger, e.first + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 2)) 
-                                                + " tree -> xz min = " + std::to_string(data.xz_min[0]) + " " + std::to_string(data.xz_min[1])
-                                                + " xz max = " + std::to_string(data.xz_max[0]) + " " + std::to_string(data.xz_max[1]))
-        }        
+                _MAGE_DEBUG(m_localLogger, e.first + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 2))
+                    + " tree -> xz min = " + std::to_string(data.xz_min[0]) + " " + std::to_string(data.xz_min[1])
+                    + " xz max = " + std::to_string(data.xz_max[0]) + " " + std::to_string(data.xz_max[1]))
+            }
+        }
     }
+
     _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE ENTITIES END <<<<<<<<<<<<<<<<<<<<<<<<")
 }
