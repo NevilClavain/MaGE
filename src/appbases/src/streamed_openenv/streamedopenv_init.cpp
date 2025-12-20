@@ -207,7 +207,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot)) };
 
 					sceneStreamerSystemInstance->enableSystem(true);
-					//sceneStreamerSystemInstance->initXTree(3000.0, 6);
+					sceneStreamerSystemInstance->configureXTree(3000.0, 6);
 
 					sceneStreamerSystemInstance->buildRendergraphPart(rendergraphFileContent.getData(), "screenRendering_Filter_DirectForward_Quad_Entity",
 																		w_width, w_height, characteristics_v_width, characteristics_v_height);
@@ -233,12 +233,12 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 					sceneStreamerSystemInstance->setViewgroupMainview("openenv_main_graph", "camera_Entity", Base::renderingQueueSystemSlot);
 
-					
-					sceneStreamerSystemInstance->requestEntityRendering("ground_Entity", true);
-					sceneStreamerSystemInstance->requestEntityRendering("skydome_Entity", true);
-					sceneStreamerSystemInstance->requestEntityRendering("wall_Entity", true);
-					sceneStreamerSystemInstance->requestEntityRendering("tree_Entity", true);
-					sceneStreamerSystemInstance->requestEntityRendering("clouds_Entity", true);
+					constexpr bool rendering{ 0 };
+					sceneStreamerSystemInstance->requestEntityRendering("ground_Entity", rendering);
+					sceneStreamerSystemInstance->requestEntityRendering("skydome_Entity", rendering);
+					sceneStreamerSystemInstance->requestEntityRendering("wall_Entity", rendering);
+					sceneStreamerSystemInstance->requestEntityRendering("tree_Entity", rendering);
+					sceneStreamerSystemInstance->requestEntityRendering("clouds_Entity", rendering);
 
 				}
 				break;

@@ -482,6 +482,8 @@ namespace mage
 
         void run();
 
+        void configureXTree(double p_scene_size, int p_xtree_max_depth);
+
         void buildRendergraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId,
                                     int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
 
@@ -516,6 +518,7 @@ namespace mage
 
         void unregister_from_queues(mage::core::Entity* p_entity);
 
+        void init_XTree(RendergraphPartData& p_rgpd);
 
         void update_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root, std::unordered_map<std::string, XTreeEntity>& p_xtree_entities);
         void check_XTree();

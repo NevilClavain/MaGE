@@ -62,18 +62,26 @@ void SceneStreamerSystem::enableSystem(bool p_enabled)
     m_enabled = p_enabled;
 }
 
-// temporary deactivated
-/*
-void SceneStreamerSystem::initXTree(double p_scene_size, int p_xtree_max_depth)
+void SceneStreamerSystem::configureXTree(double p_scene_size, int p_xtree_max_depth)
 {
     m_scene_size = p_scene_size;
     m_xtree_max_depth = p_xtree_max_depth;
+}
 
-    const SceneQuadTreeNode root_node{ m_scene_size, Real2Vector(0, 0), 
-                                        Real2Vector(-m_scene_size / 2, -m_scene_size / 2), 
+void SceneStreamerSystem::init_XTree(RendergraphPartData& p_rgpd)
+{
+    if (-1 == m_scene_size || -1 == m_xtree_max_depth)
+    {
+        _EXCEPTION("xtree not configured");
+    }
+
+
+    const SceneQuadTreeNode root_node{ m_scene_size, Real2Vector(0, 0),
+                                        Real2Vector(-m_scene_size / 2, -m_scene_size / 2),
                                         Real2Vector(m_scene_size / 2, m_scene_size / 2) };
 
-    m_xtree_root = std::make_unique<core::QuadTreeNode<SceneQuadTreeNode>>(root_node);
+    
+    p_rgpd.xtree_root = std::make_unique<core::QuadTreeNode<SceneQuadTreeNode>>(root_node);
 
     const std::function<void(QuadTreeNode<SceneQuadTreeNode>*, int)> expand
     {
@@ -136,10 +144,8 @@ void SceneStreamerSystem::initXTree(double p_scene_size, int p_xtree_max_depth)
         }
     };
 
-    expand(m_xtree_root.get(), p_xtree_max_depth);
+    expand(p_rgpd.xtree_root.get(), m_xtree_max_depth);
 }
-*/
-
 
 void SceneStreamerSystem::run()
 {
@@ -147,12 +153,6 @@ void SceneStreamerSystem::run()
     {
         return;
     }
-
-
-    //if (-1 == m_scene_size || -1 == m_xtree_max_depth)
-    //{
-    //    _EXCEPTION("xtree not initialized");
-    //}
 
     /////////////////////////////////////////////////////////
     // detect new entities to insert in the XTree
@@ -199,6 +199,25 @@ void SceneStreamerSystem::run()
             //    }
             //    m_xtree_entities[p_entity->getId()] = xtreeEnt;
             //}
+
+
+            if (m_scene_entities_rg_parts.count(p_entity->getId()))
+            {
+                const std::unordered_set<std::string> scene_entity_rg_parts{ m_scene_entities_rg_parts.at(p_entity->getId()) };
+
+                for (auto& rgpd : m_rendergraphpart_data)
+                {
+                    for (const std::string& rendering_queue_id : rgpd.second.viewgroup.queue_entities)
+                    {
+                        if (scene_entity_rg_parts.count(rendering_queue_id))
+                        {
+                            int a = 0;
+                            a++;
+                        }
+                    }
+                }
+            }
+
         }
     };
     mage::helpers::extractAspectsTopDown<mage::core::worldAspect>(m_entitygraph, forEachWorldAspect);
@@ -589,6 +608,8 @@ void SceneStreamerSystem::buildViewgroup(const std::string& p_jsonsource, int p_
     renderingQueueSystemInstance->addQueuesToViewGroup(vg.name, queues_id_list);
 
     m_rendergraphpart_data[vg.name].viewgroup = vg;
+
+    init_XTree(m_rendergraphpart_data.at(vg.name));
 }
 
 void SceneStreamerSystem::setViewgroupMainview(const std::string& p_vg_id, const std::string& p_mainview, int p_renderingQueueSystemSlot)
