@@ -233,12 +233,12 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 					sceneStreamerSystemInstance->setViewgroupMainview("openenv_main_graph", "camera_Entity", Base::renderingQueueSystemSlot);
 
-					constexpr bool rendering{ 0 };
-					sceneStreamerSystemInstance->requestEntityRendering("ground_Entity", rendering);
-					sceneStreamerSystemInstance->requestEntityRendering("skydome_Entity", rendering);
-					sceneStreamerSystemInstance->requestEntityRendering("wall_Entity", rendering);
-					sceneStreamerSystemInstance->requestEntityRendering("tree_Entity", rendering);
-					sceneStreamerSystemInstance->requestEntityRendering("clouds_Entity", rendering);
+					//constexpr bool rendering{ 0 };
+					//sceneStreamerSystemInstance->requestEntityRendering("ground_Entity", rendering);
+					//sceneStreamerSystemInstance->requestEntityRendering("skydome_Entity", rendering);
+					//sceneStreamerSystemInstance->requestEntityRendering("wall_Entity", rendering);
+					//sceneStreamerSystemInstance->requestEntityRendering("tree_Entity", rendering);
+					//sceneStreamerSystemInstance->requestEntityRendering("clouds_Entity", rendering);
 
 				}
 				break;

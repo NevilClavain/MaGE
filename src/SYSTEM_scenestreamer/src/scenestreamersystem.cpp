@@ -183,24 +183,6 @@ void SceneStreamerSystem::run()
                 return;
             }
 
-            // temporary deactivated
-            //if (!m_xtree_entities.count(p_entity->getId()))
-            //{
-            //    XTreeEntity xtreeEnt;
-            //    xtreeEnt.entity = p_entity;
-
-            //    if (str_tags_list.size() > 0)
-            //    {
-            //        const auto str_tags{ str_tags_list.at(0)->getPurpose() };
-            //        if (str_tags.count("#static"))
-            //        {
-            //            xtreeEnt.is_static = true;
-            //        }
-            //    }
-            //    m_xtree_entities[p_entity->getId()] = xtreeEnt;
-            //}
-
-
             if (m_scene_entities_rg_parts.count(p_entity->getId()))
             {
                 const std::unordered_set<std::string> scene_entity_rg_parts{ m_scene_entities_rg_parts.at(p_entity->getId()) };
@@ -211,8 +193,22 @@ void SceneStreamerSystem::run()
                     {
                         if (scene_entity_rg_parts.count(rendering_queue_id))
                         {
-                            int a = 0;
-                            a++;
+                            // can add this entity in this viewgroup/rgpd xtree
+                            if (!rgpd.second.xtree_entities.count(p_entity->getId()))
+                            {
+                                XTreeEntity xtreeEnt;
+                                xtreeEnt.entity = p_entity;
+
+                                 if (str_tags_list.size() > 0)
+                                 {
+                                    const auto str_tags{ str_tags_list.at(0)->getPurpose() };
+                                    if (str_tags.count("#static"))
+                                    {
+                                        xtreeEnt.is_static = true;
+                                    }
+                                 }
+                                 rgpd.second.xtree_entities[p_entity->getId()] = xtreeEnt;
+                            }
                         }
                     }
                 }
@@ -223,11 +219,13 @@ void SceneStreamerSystem::run()
     mage::helpers::extractAspectsTopDown<mage::core::worldAspect>(m_entitygraph, forEachWorldAspect);
 
     /////////////////////////////////////////////////////////
-    // XTree updating
+    // XTrees updating
     // 
-    // temporary deactivated
-    //update_XTree(m_xtree_root.get(), m_xtree_entities);
-
+    for (auto& rgpd : m_rendergraphpart_data)
+    {
+        auto& rgpd_data = rgpd.second;
+        update_XTree(rgpd_data.xtree_root.get(), rgpd_data.xtree_entities);
+    }
 
     /////////////////////////////////////////////////////////
     // XTree check
