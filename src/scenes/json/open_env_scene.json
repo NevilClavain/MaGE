@@ -5,6 +5,12 @@
     {
       "file": "gblcamera_entity",
 
+      "rendergraph_parts": [
+        "TextureChannelScene_Entity",
+        "ZdepthChannelScene_Entity"
+      ],
+
+
       "animator": {
         "descr": "camera_Entity pos animator",
 
