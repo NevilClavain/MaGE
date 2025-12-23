@@ -497,12 +497,10 @@ namespace mage
 
         void buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot);
 
-        void setViewgroupMainview(const std::string& p_vg_id, const std::string& p_mainview, int p_renderingQueueSystemSlot);
+        void setViewgroupMainview(const std::string& p_vg_id, const std::string& p_mainview);
 
         void requestEntityRendering(const std::string& p_entity_id, bool p_render_it);
 
-        // temporary deactivated
-        //void initXTree(double p_scene_size, int p_xtree_max_depth);
 
         void dumpXTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root);
         void dumpXTreeEntities();
@@ -521,7 +519,7 @@ namespace mage
         void init_XTree(RendergraphPartData& p_rgpd);
 
         void update_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root, std::unordered_map<std::string, XTreeEntity>& p_xtree_entities);
-        void check_XTree();
+        void check_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root, std::unordered_map<std::string, XTreeEntity>& p_xtree_entities, const json::ViewGroup& p_viewgroup);
 
         bool                                                                                    m_enabled{ false };
 
@@ -540,12 +538,7 @@ namespace mage
         double                                                                                  m_scene_size{ -1 };
         int                                                                                     m_xtree_max_depth{ -1 };
 
-        /*
-        // the xtree
-        std::unique_ptr<core::QuadTreeNode<SceneQuadTreeNode>>                                  m_xtree_root;
-        // regrouping here all entities dispatched in m_xtree_root above
-        std::unordered_map<std::string, XTreeEntity>                                            m_xtree_entities;
-        */
+        int                                                                                     m_renderingQueueSystemSlot{ -1 };
         
         void register_scene_entity(mage::core::Entity* p_entity);
 

@@ -231,7 +231,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					
 					sceneStreamerSystemInstance->buildViewgroup(viewgroup_json, Base::renderingQueueSystemSlot);
 
-					sceneStreamerSystemInstance->setViewgroupMainview("openenv_main_graph", "camera_Entity", Base::renderingQueueSystemSlot);
+					sceneStreamerSystemInstance->setViewgroupMainview("openenv_main_graph", "camera_Entity");
 
 					//constexpr bool rendering{ 0 };
 					//sceneStreamerSystemInstance->requestEntityRendering("ground_Entity", rendering);

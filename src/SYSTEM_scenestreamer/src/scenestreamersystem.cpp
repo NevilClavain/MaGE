@@ -229,7 +229,12 @@ void SceneStreamerSystem::run()
 
     /////////////////////////////////////////////////////////
     // XTree check
-    //check_XTree();
+    //
+    for (auto& rgpd : m_rendergraphpart_data)
+    {
+        auto& rgpd_data = rgpd.second;
+        check_XTree(rgpd_data.xtree_root.get(), rgpd_data.xtree_entities, rgpd_data.viewgroup);
+    }
 
 
     /////////////////////////////////////////////////////////
@@ -537,14 +542,18 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
 
                 register_scene_entity(entity);
 
-                if (m_entity_renderings.count(p_node.id) > 0)
+    
+                if (p_node.channels.configs.size() > 0) // store only entites that can be "rendered" -> those with number of channels > 0
                 {
-                    _EXCEPTION("Already registered " + p_node.id);
-                }
-                else
-                {
-                    EntityRendering rendering_infos(p_node.channels);
-                    m_entity_renderings[p_node.id] = rendering_infos;
+                    if (m_entity_renderings.count(p_node.id) > 0)
+                    {
+                        _EXCEPTION("Already registered " + p_node.id);
+                    }
+                    else
+                    {
+                        EntityRendering rendering_infos(p_node.channels);
+                        m_entity_renderings[p_node.id] = rendering_infos;
+                    }
                 }
             }
 
@@ -608,9 +617,11 @@ void SceneStreamerSystem::buildViewgroup(const std::string& p_jsonsource, int p_
     m_rendergraphpart_data[vg.name].viewgroup = vg;
 
     init_XTree(m_rendergraphpart_data.at(vg.name));
+
+    m_renderingQueueSystemSlot = p_renderingQueueSystemSlot;
 }
 
-void SceneStreamerSystem::setViewgroupMainview(const std::string& p_vg_id, const std::string& p_mainview, int p_renderingQueueSystemSlot)
+void SceneStreamerSystem::setViewgroupMainview(const std::string& p_vg_id, const std::string& p_mainview)
 {
     if (0 == m_rendergraphpart_data.count(p_vg_id))
     {
@@ -619,7 +630,7 @@ void SceneStreamerSystem::setViewgroupMainview(const std::string& p_vg_id, const
 
     auto& rgdata{ m_rendergraphpart_data.at(p_vg_id) };
 
-    auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(p_renderingQueueSystemSlot)) };
+    auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(m_renderingQueueSystemSlot)) };
     renderingQueueSystemInstance->setViewGroupMainView(rgdata.viewgroup.name, p_mainview);
 }
 
@@ -1165,9 +1176,60 @@ bool SceneStreamerSystem::is_inside_quadtreenode(const SceneQuadTreeNode& p_qtn,
     return inside;
 }
 
-void SceneStreamerSystem::check_XTree()
+void SceneStreamerSystem::check_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root, std::unordered_map<std::string, XTreeEntity>& p_xtree_entities, const json::ViewGroup& p_viewgroup)
 {
+    // for current view group, find current camera id 
 
+    auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(m_renderingQueueSystemSlot)) };
+    const auto current_views{ renderingQueueSystemInstance->getViewGroupCurrentViews(p_viewgroup.name) };
+
+    const std::string main_camera_id{ current_views.first };
+
+    XTreeEntity xe{ p_xtree_entities.at(main_camera_id) };
+
+    std::unordered_set<mage::core::Entity*> found_entities; // search entities in camera's neighbourood
+
+    std::vector<core::QuadTreeNode<SceneQuadTreeNode>*> neighbours{ xe.tree_node->getNeighbours() };
+    for (const auto& n : neighbours)
+    {
+        const SceneQuadTreeNode& scene_quadtree_node { n->getData() };
+        for (const auto& e: scene_quadtree_node.entities)
+        {
+            found_entities.insert(e);
+        }
+    }
+
+    static constexpr int max_neighbourood_depth{ 1 };
+
+    const std::function<void(std::unordered_set<mage::core::Entity*>&, core::QuadTreeNode<SceneQuadTreeNode>*, int)> searchNeighbourood
+    {
+        [&](std::unordered_set<mage::core::Entity*>& p_found_entities, core::QuadTreeNode<SceneQuadTreeNode>* node, int neighbourood_depth)
+        {
+            if (neighbourood_depth > max_neighbourood_depth)
+            {
+                return;
+            }
+
+            std::vector<core::QuadTreeNode<SceneQuadTreeNode>*> neighbours{ node->getNeighbours() };
+            for (const auto& n : neighbours)
+            {
+                const SceneQuadTreeNode& scene_quadtree_node { n->getData() };
+                for (mage::core::Entity* e : scene_quadtree_node.entities)
+                {
+                    if (m_entity_renderings.count(e->getId()) > 0)
+                    {
+                        // store only those than can be rendered
+                        p_found_entities.insert(e);
+                    }                    
+                }
+                searchNeighbourood(p_found_entities, n, neighbourood_depth + 1);
+            }
+        }
+    };
+
+    searchNeighbourood(found_entities, xe.tree_node, 0);
+
+    _asm nop // TBC
 }
 
 void SceneStreamerSystem::dumpXTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root)
@@ -1222,7 +1284,8 @@ void SceneStreamerSystem::dumpXTreeEntities()
 
                 _MAGE_DEBUG(m_localLogger, e.first + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 2))
                     + " tree -> xz min = " + std::to_string(data.xz_min[0]) + " " + std::to_string(data.xz_min[1])
-                    + " xz max = " + std::to_string(data.xz_max[0]) + " " + std::to_string(data.xz_max[1]))
+                    + " xz max = " + std::to_string(data.xz_max[0]) + " " + std::to_string(data.xz_max[1]) + " depth = " 
+                    + std::to_string(e.second.tree_node->getDepth()) + " side length = " + std::to_string(data.side_length) )
             }
         }
     }
