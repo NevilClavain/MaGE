@@ -164,6 +164,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(sceneStreamerSystem) };
 
 		sceneStreamerSystemInstance->dumpXTreeEntities();
+		//sceneStreamerSystemInstance->dumpXTree();
 	}
 
 	else if (VK_F9 == p_key)

@@ -1189,19 +1189,9 @@ void SceneStreamerSystem::check_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_x
 
     std::unordered_set<mage::core::Entity*> found_entities; // search entities in camera's neighbourood
 
-    std::vector<core::QuadTreeNode<SceneQuadTreeNode>*> neighbours{ xe.tree_node->getNeighbours() };
-    for (const auto& n : neighbours)
-    {
-        const SceneQuadTreeNode& scene_quadtree_node { n->getData() };
-        for (const auto& e: scene_quadtree_node.entities)
-        {
-            found_entities.insert(e);
-        }
-    }
-
     static constexpr int max_neighbourood_depth{ 1 };
 
-    const std::function<void(std::unordered_set<mage::core::Entity*>&, core::QuadTreeNode<SceneQuadTreeNode>*, int)> searchNeighbourood
+    const std::function<void(std::unordered_set<mage::core::Entity*>&, core::QuadTreeNode<SceneQuadTreeNode>*, int)> search
     {
         [&](std::unordered_set<mage::core::Entity*>& p_found_entities, core::QuadTreeNode<SceneQuadTreeNode>* node, int neighbourood_depth)
         {
@@ -1210,54 +1200,93 @@ void SceneStreamerSystem::check_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_x
                 return;
             }
 
-            std::vector<core::QuadTreeNode<SceneQuadTreeNode>*> neighbours{ node->getNeighbours() };
-            for (const auto& n : neighbours)
+            ////////// search in current node
+            const SceneQuadTreeNode& scene_quadtree_node{ node->getData() };
+            for (mage::core::Entity* e : scene_quadtree_node.entities)
             {
-                const SceneQuadTreeNode& scene_quadtree_node { n->getData() };
-                for (mage::core::Entity* e : scene_quadtree_node.entities)
+                if (m_entity_renderings.count(e->getId()) > 0)
                 {
-                    if (m_entity_renderings.count(e->getId()) > 0)
-                    {
-                        // store only those than can be rendered
-                        p_found_entities.insert(e);
-                    }                    
+                    // store only those than can be rendered
+                    p_found_entities.insert(e);
                 }
-                searchNeighbourood(p_found_entities, n, neighbourood_depth + 1);
+            }
+
+            ////////// search in current node neighbours
+
+            std::vector<core::QuadTreeNode<SceneQuadTreeNode>*> neighbours{ node->getNeighbours() };
+            for (core::QuadTreeNode<SceneQuadTreeNode>* n : neighbours)
+            {
+                if (nullptr != n)
+                {
+                    const SceneQuadTreeNode& n_scene_quadtree_node{ n->getData() };
+                    for (mage::core::Entity* e : n_scene_quadtree_node.entities)
+                    {
+                        if (m_entity_renderings.count(e->getId()) > 0)
+                        {
+                            // store only those than can be rendered
+                            p_found_entities.insert(e);
+                        }
+                    }
+                    search(p_found_entities, n, neighbourood_depth + 1);
+                }
             }
         }
     };
 
-    searchNeighbourood(found_entities, xe.tree_node, 0);
+    core::QuadTreeNode<SceneQuadTreeNode>* curr = xe.tree_node;
+
+    while (1)
+    {
+        search(found_entities, curr, 0);
+
+        curr = curr->getParent();
+        if (nullptr == curr)
+        {
+            break;
+        }
+    }
+
+    
+
+        
+
+    
 
     _asm nop // TBC
 }
 
-void SceneStreamerSystem::dumpXTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root)
+void SceneStreamerSystem::dumpXTree(/*core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root*/)
 {
     _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE DUMP BEGIN <<<<<<<<<<<<<<<<<<<<<<<<")
-    p_xtree_root->traverse([&](const SceneQuadTreeNode& p_data, size_t p_depth)
+
+    for (const auto& rgpd : m_rendergraphpart_data)
     {
-        std::string tab;
-        for (size_t i = 0; i < p_depth; i++) tab = tab + " ";
+        _MAGE_DEBUG(m_localLogger, "for ViewGroup " + rgpd.first)
 
-        _MAGE_DEBUG(m_localLogger, tab + "depth = " + std::to_string(p_depth) 
-
-                                                    + " side_length = " + std::to_string(p_data.side_length)
-                                                    + " position = " + std::to_string(p_data.position[0]) + " " + std::to_string(p_data.position[1])
-
-                                                    + " xz min = " + std::to_string(p_data.xz_min[0]) + " " + std::to_string(p_data.xz_min[1])
-                                                    + " xz max = " + std::to_string(p_data.xz_max[0]) + " " + std::to_string(p_data.xz_max[1]))        
-        for (const auto& e : p_data.entities)
+        rgpd.second.xtree_root->traverse([&](const SceneQuadTreeNode& p_data, size_t p_depth)
         {
-            const auto& world_aspect{ e->aspectAccess(worldAspect::id) };
+            std::string tab;
+            for (size_t i = 0; i < p_depth; i++) tab = tab + " ";
 
-            const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
-            auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
-            const auto global_pos = entity_worldposition.global_pos;
+            _MAGE_DEBUG(m_localLogger, tab + "depth = " + std::to_string(p_depth)
 
-            _MAGE_DEBUG(m_localLogger, tab + e->getId() + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 2)));
-        }        
-    });
+                + " side_length = " + std::to_string(p_data.side_length)
+                + " position = " + std::to_string(p_data.position[0]) + " " + std::to_string(p_data.position[1])
+
+                + " xz min = " + std::to_string(p_data.xz_min[0]) + " " + std::to_string(p_data.xz_min[1])
+                + " xz max = " + std::to_string(p_data.xz_max[0]) + " " + std::to_string(p_data.xz_max[1]))
+                for (const auto& e : p_data.entities)
+                {
+                    const auto& world_aspect{ e->aspectAccess(worldAspect::id) };
+
+                    const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
+                    auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
+                    const auto global_pos = entity_worldposition.global_pos;
+
+                    _MAGE_DEBUG(m_localLogger, tab + e->getId() + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 2)));
+                }
+        });   
+    }
     _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE DUMP END <<<<<<<<<<<<<<<<<<<<<<<<")
 }
 

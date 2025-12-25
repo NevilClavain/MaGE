@@ -502,7 +502,7 @@ namespace mage
         void requestEntityRendering(const std::string& p_entity_id, bool p_render_it);
 
 
-        void dumpXTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root);
+        void dumpXTree();
         void dumpXTreeEntities();
 
         void enableSystem(bool p_enabled);

@@ -171,6 +171,11 @@ namespace mage
 				return nullptr;
 			}
 
+			XTreeNode* getParent() const
+			{
+				return m_parent;
+			}
+
 			const NodeData& getData() const
 			{
 				return m_data;
