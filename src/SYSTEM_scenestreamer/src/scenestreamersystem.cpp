@@ -1114,7 +1114,7 @@ void SceneStreamerSystem::update_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_
                     auto& meshe_descr{ meshes_list.at(0)->getPurpose() };
                     TriangleMeshe& meshe{ meshe_descr.second };
 
-                    if (TriangleMeshe::State::BLOBLOADED == meshe.getState())
+                    if (TriangleMeshe::State::RENDERERLOADED == meshe.getState())
                     {
                         const double meshe_size{ meshe.getSize() };
                         place_obj_on_leaf(p_xtree_root, meshe_size);
@@ -1300,21 +1300,27 @@ void SceneStreamerSystem::dumpXTreeEntities()
 
         for (const auto& e : rgpd.second.xtree_entities)
         {
+            const core::Entity* entity{ e.second.entity };
+            const auto& world_aspect{ entity->aspectAccess(worldAspect::id) };
+
+            const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
+            auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
+            const auto global_pos = entity_worldposition.global_pos;
+
+
             if (e.second.tree_node)
             {
-                const core::Entity* entity{ e.second.entity };
-                const auto& world_aspect{ entity->aspectAccess(worldAspect::id) };
-
-                const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
-                auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
-                const auto global_pos = entity_worldposition.global_pos;
-
                 const SceneQuadTreeNode data{ e.second.tree_node->getData() };
 
                 _MAGE_DEBUG(m_localLogger, e.first + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 2))
                     + " tree -> xz min = " + std::to_string(data.xz_min[0]) + " " + std::to_string(data.xz_min[1])
                     + " xz max = " + std::to_string(data.xz_max[0]) + " " + std::to_string(data.xz_max[1]) + " depth = " 
                     + std::to_string(e.second.tree_node->getDepth()) + " side length = " + std::to_string(data.side_length) )
+            }
+            else
+            {
+                _MAGE_DEBUG(m_localLogger, e.first + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 2))
+                    + " NO SceneQuadTreeNode !!!")
             }
         }
     }
