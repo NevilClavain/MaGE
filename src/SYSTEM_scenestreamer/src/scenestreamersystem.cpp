@@ -1191,7 +1191,7 @@ void SceneStreamerSystem::check_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_x
 
     static constexpr int max_neighbourood_depth{ 1 };
 
-    const std::function<void(std::unordered_set<mage::core::Entity*>&, core::QuadTreeNode<SceneQuadTreeNode>*, int)> search
+    const std::function<void(std::unordered_set<mage::core::Entity*>&, core::QuadTreeNode<SceneQuadTreeNode>*, int)> search_near_entities
     {
         [&](std::unordered_set<mage::core::Entity*>& p_found_entities, core::QuadTreeNode<SceneQuadTreeNode>* node, int neighbourood_depth)
         {
@@ -1227,17 +1227,16 @@ void SceneStreamerSystem::check_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_x
                             p_found_entities.insert(e);
                         }
                     }
-                    search(p_found_entities, n, neighbourood_depth + 1);
+                    search_near_entities(p_found_entities, n, neighbourood_depth + 1);
                 }
             }
         }
     };
 
     core::QuadTreeNode<SceneQuadTreeNode>* curr = xe.tree_node;
-
     while (1)
     {
-        search(found_entities, curr, 0);
+        search_near_entities(found_entities, curr, 0);
 
         curr = curr->getParent();
         if (nullptr == curr)
@@ -1246,16 +1245,39 @@ void SceneStreamerSystem::check_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_x
         }
     }
 
-    
 
-        
+    // new entities discovered, to render
+    for (mage::core::Entity* entity : found_entities)
+    {
+        if (!m_found_entities_to_render.count(entity))
+        {
+            // just discovered -> ask for rendering
+            if (!m_entity_renderings.at(entity->getId()).m_rendered)
+            {
+                m_entity_renderings.at(entity->getId()).m_request_rendering = true;
+            }
+        }
+    }
 
-    
+    // entities not in neigbourood no more, to remove from rendering...
+    for (mage::core::Entity* rendered_entity : m_found_entities_to_render)
+    {
+        if (!found_entities.count(rendered_entity))
+        {
+            // not found no more -> ask to stop rendering
 
-    _asm nop // TBC
+            if (m_entity_renderings.at(rendered_entity->getId()).m_rendered)
+            {
+                m_entity_renderings.at(rendered_entity->getId()).m_request_rendering = false;
+            }
+        }
+    }
+
+    // update...
+    m_found_entities_to_render = found_entities;
 }
 
-void SceneStreamerSystem::dumpXTree(/*core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root*/)
+void SceneStreamerSystem::dumpXTree()
 {
     _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE DUMP BEGIN <<<<<<<<<<<<<<<<<<<<<<<<")
 

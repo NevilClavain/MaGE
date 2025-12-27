@@ -525,15 +525,22 @@ namespace mage
 
         mutable mage::core::logger::Sink                                                        m_localLogger;
 
+
+        ///////////////////////////// TABLES
         std::unordered_map<std::string, mage::core::Entity*>                                    m_scene_entities;
+
         std::unordered_map<std::string, std::unordered_map<std::string, mage::core::Entity*>>   m_rendering_proxies; // i.e rendering_entites ;-)
 
         std::unordered_map<std::string, std::unordered_set<std::string>>                        m_scene_entities_rg_parts; // rendergraph parts for each scene entity (defined in json as "rendergraph_parts" array)
 
-        std::unordered_map<std::string, EntityRendering>                                        m_entity_renderings;
+        std::unordered_map<std::string, EntityRendering>                                        m_entity_renderings;        // entities rendering infos (channels, etc...)
 
         std::unordered_map<std::string, RendergraphPartData>                                    m_rendergraphpart_data;
+
+        std::unordered_set<mage::core::Entity*>                                                 m_found_entities_to_render;   // entities actually rendered
+        /////////////////////////////////
        
+
         //config for xtree build
         double                                                                                  m_scene_size{ -1 };
         int                                                                                     m_xtree_max_depth{ -1 };
