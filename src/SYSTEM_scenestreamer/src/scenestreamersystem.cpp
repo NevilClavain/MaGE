@@ -1189,7 +1189,7 @@ void SceneStreamerSystem::check_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_x
 
     std::unordered_set<mage::core::Entity*> found_entities; // search entities in camera's neighbourood
 
-    static constexpr int max_neighbourood_depth{ 1 };
+    static constexpr int max_neighbourood_depth{ 2 };
 
     const std::function<void(std::unordered_set<mage::core::Entity*>&, core::QuadTreeNode<SceneQuadTreeNode>*, int)> search_near_entities
     {
