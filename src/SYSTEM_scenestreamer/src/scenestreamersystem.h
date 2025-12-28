@@ -476,13 +476,22 @@ namespace mage
 
 
     public:
+
+        struct Configuration
+        {
+            double      scene_size                  { 5000 };
+            int         xtree_max_depth             { 6 };
+            int         max_neighbourood_depth      { 2 };
+            double      object_xtreenode_ratio      { 0.1 };
+        };
+
         SceneStreamerSystem() = delete;
         SceneStreamerSystem(core::Entitygraph& p_entitygraph);
         ~SceneStreamerSystem() = default;
 
         void run();
 
-        void configureXTree(double p_scene_size, int p_xtree_max_depth);
+        void configure(const Configuration& p_config);
 
         void buildRendergraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId,
                                     int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
@@ -539,11 +548,10 @@ namespace mage
 
         std::unordered_set<mage::core::Entity*>                                                 m_found_entities_to_render;   // entities actually rendered
         /////////////////////////////////
-       
+      
+        Configuration                                                                           m_configuration;
+        bool                                                                                    m_configured{ false };
 
-        //config for xtree build
-        double                                                                                  m_scene_size{ -1 };
-        int                                                                                     m_xtree_max_depth{ -1 };
 
         int                                                                                     m_renderingQueueSystemSlot{ -1 };
         

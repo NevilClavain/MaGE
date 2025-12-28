@@ -207,7 +207,14 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot)) };
 
 					sceneStreamerSystemInstance->enableSystem(true);
-					sceneStreamerSystemInstance->configureXTree(3000.0, 6);
+
+					SceneStreamerSystem::Configuration ss_config;
+					ss_config.scene_size = 3000.0;
+					ss_config.xtree_max_depth = 6;
+					ss_config.max_neighbourood_depth = 2;
+					ss_config.object_xtreenode_ratio = 0.1;
+					sceneStreamerSystemInstance->configure(ss_config);
+
 
 					sceneStreamerSystemInstance->buildRendergraphPart(rendergraphFileContent.getData(), "screenRendering_Filter_DirectForward_Quad_Entity",
 																		w_width, w_height, characteristics_v_width, characteristics_v_height);

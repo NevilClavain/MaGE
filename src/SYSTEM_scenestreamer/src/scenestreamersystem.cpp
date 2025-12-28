@@ -62,23 +62,25 @@ void SceneStreamerSystem::enableSystem(bool p_enabled)
     m_enabled = p_enabled;
 }
 
-void SceneStreamerSystem::configureXTree(double p_scene_size, int p_xtree_max_depth)
+void SceneStreamerSystem::configure(const Configuration& p_config)
 {
-    m_scene_size = p_scene_size;
-    m_xtree_max_depth = p_xtree_max_depth;
+    if (!m_configured)
+    {
+        m_configuration = p_config;
+        m_configured = true;
+    }
 }
 
 void SceneStreamerSystem::init_XTree(RendergraphPartData& p_rgpd)
 {
-    if (-1 == m_scene_size || -1 == m_xtree_max_depth)
+    if (!m_configured)
     {
-        _EXCEPTION("xtree not configured");
+        _EXCEPTION("Not configured");
     }
 
-
-    const SceneQuadTreeNode root_node{ m_scene_size, Real2Vector(0, 0),
-                                        Real2Vector(-m_scene_size / 2, -m_scene_size / 2),
-                                        Real2Vector(m_scene_size / 2, m_scene_size / 2) };
+    const SceneQuadTreeNode root_node{ m_configuration.scene_size, Real2Vector(0, 0),
+                                        Real2Vector(-m_configuration.scene_size / 2, -m_configuration.scene_size / 2),
+                                        Real2Vector(m_configuration.scene_size / 2, m_configuration.scene_size / 2) };
 
     
     p_rgpd.xtree_root = std::make_unique<core::QuadTreeNode<SceneQuadTreeNode>>(root_node);
@@ -144,7 +146,7 @@ void SceneStreamerSystem::init_XTree(RendergraphPartData& p_rgpd)
         }
     };
 
-    expand(p_rgpd.xtree_root.get(), m_xtree_max_depth);
+    expand(p_rgpd.xtree_root.get(), m_configuration.xtree_max_depth);
 }
 
 void SceneStreamerSystem::run()
@@ -1049,7 +1051,7 @@ void SceneStreamerSystem::update_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_
                 {
                     const double node_size { p_current_node->getData().side_length };
 
-                    if (p_obj_size / node_size > 0.1)
+                    if (p_obj_size / node_size > m_configuration.object_xtreenode_ratio)
                     {
                         //place it
                         p_current_node->dataAccess().entities.insert(entity);
@@ -1189,13 +1191,13 @@ void SceneStreamerSystem::check_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_x
 
     std::unordered_set<mage::core::Entity*> found_entities; // search entities in camera's neighbourood
 
-    static constexpr int max_neighbourood_depth{ 2 };
+    //static constexpr int max_neighbourood_depth{ 2 };
 
     const std::function<void(std::unordered_set<mage::core::Entity*>&, core::QuadTreeNode<SceneQuadTreeNode>*, int)> search_near_entities
     {
         [&](std::unordered_set<mage::core::Entity*>& p_found_entities, core::QuadTreeNode<SceneQuadTreeNode>* node, int neighbourood_depth)
         {
-            if (neighbourood_depth > max_neighbourood_depth)
+            if (neighbourood_depth > m_configuration.max_neighbourood_depth)
             {
                 return;
             }
