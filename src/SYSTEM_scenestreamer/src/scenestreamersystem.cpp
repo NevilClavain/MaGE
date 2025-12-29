@@ -405,7 +405,13 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
         mage::core::FileContent<char> entityFileContent("./module_streamed_anims_config/" + e.file + ".json");
         entityFileContent.load();
 
-        buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, e.animator, e.tags, p_parentEntityId, p_perspective_projection);
+        std::unordered_map<std::string, std::string> file_args;
+        for (const json::FileArgument& file_arg : e.file_args)
+        {
+            file_args.emplace(file_arg.key, file_arg.value);
+        }
+
+        buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, e.animator, e.tags, p_parentEntityId, p_perspective_projection, file_args);
     }
 }
 
@@ -413,7 +419,8 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
                                                                                     const json::Animator& p_animator, 
                                                                                     const std::vector<std::string>& p_tags, 
                                                                                     const std::string& p_parentEntityId, 
-                                                                                    const mage::core::maths::Matrix p_perspective_projection)
+                                                                                    const mage::core::maths::Matrix p_perspective_projection,
+                                                                                    const std::unordered_map<std::string, std::string> p_file_args)
 {
     json::ScenegraphEntitiesCollection sgc;
 
@@ -428,22 +435,24 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
     {
         [&](const json::ScenegraphEntity& p_node, const std::string& p_parent_id, const json::Animator& p_animator, int depth)
         {
-            for (int i = 0; i < p_rendergraph_parts.size(); i++)
+            const std::string entity_id { filter_arguments_stack(p_node.id, p_file_args) };
+            
+            for (size_t i = 0; i < p_rendergraph_parts.size(); i++)
             {
-                m_scene_entities_rg_parts[p_node.id].insert(p_rendergraph_parts[i]);
+                m_scene_entities_rg_parts[entity_id].insert(p_rendergraph_parts[i]);
             }
 
             if ("" != p_node.helper)
             {
                 if ("plugCamera" == p_node.helper)
                 {
-                    core::Entity* camera_entity{ helpers::plugCamera(m_entitygraph, p_perspective_projection, p_parent_id, p_node.id) };
+                    core::Entity* camera_entity{ helpers::plugCamera(m_entitygraph, p_perspective_projection, p_parent_id, entity_id) };
                     register_scene_entity(camera_entity);
                 }
             }
             else
             {
-                auto& entityNode{ m_entitygraph.add(m_entitygraph.node(p_parent_id), p_node.id) };
+                auto& entityNode{ m_entitygraph.add(m_entitygraph.node(p_parent_id), entity_id) };
                 const auto entity{ entityNode.data() };
 
                 // create aspects
@@ -547,14 +556,14 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
     
                 if (p_node.channels.configs.size() > 0) // store only entites that can be "rendered" -> those with number of channels > 0
                 {
-                    if (m_entity_renderings.count(p_node.id) > 0)
+                    if (m_entity_renderings.count(entity_id) > 0)
                     {
-                        _EXCEPTION("Already registered " + p_node.id);
+                        _EXCEPTION("Already registered " + entity_id);
                     }
                     else
                     {
                         EntityRendering rendering_infos(p_node.channels);
-                        m_entity_renderings[p_node.id] = rendering_infos;
+                        m_entity_renderings[entity_id] = rendering_infos;
                     }
                 }
             }
@@ -562,7 +571,7 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
             // recursive call
             for (auto& e : p_node.subs)
             {
-                browseHierarchy(e, p_node.id, e.world_aspect.animator, depth + 1);
+                browseHierarchy(e, entity_id, e.world_aspect.animator, depth + 1);
             }
         }
     };
@@ -1350,4 +1359,16 @@ void SceneStreamerSystem::dumpXTreeEntities()
     }
 
     _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE ENTITIES END <<<<<<<<<<<<<<<<<<<<<<<<")
+}
+
+std::string SceneStreamerSystem::filter_arguments_stack(const std::string p_input, const std::unordered_map<std::string, std::string> p_file_args)
+{
+    if (p_file_args.find(p_input) == p_file_args.end())
+    {
+        return p_input;
+    }
+    else
+    {
+        return p_file_args.at(p_input);
+    }
 }

@@ -2,7 +2,7 @@
   "subs": [
 
     {
-      "id": "skydome_Entity",
+      "id": "@id",
 
       "resource_aspect": {
         "meshe": {

@@ -1,15 +1,27 @@
 {
   "entities": [
 
-
     {
-      "file": "gblcamera_entity",
+      "file": "gblcamera",
+      "file_args": [
+        {
+          "key": "@id_0",
+          "value": "cameraGblJointBasePos_Entity"
+        },
+        {
+          "key": "@id_1",
+          "value": "cameraGblJoint_Entity"
+        },
+        {
+          "key": "@id_2",
+          "value": "camera_Entity"
+        }
+      ],
 
       "rendergraph_parts": [
         "TextureChannelScene_Entity",
         "ZdepthChannelScene_Entity"
       ],
-
 
       "animator": {
         "descr": "camera_Entity pos animator",
@@ -76,7 +88,13 @@
     },
 
     {
-      "file": "ground_entity",
+      "file": "ground",
+      "file_args": [
+        {
+          "key": "@id",
+          "value": "ground_Entity"
+        }
+      ],
 
       "tags": [
         "#static"
@@ -132,7 +150,13 @@
     },
 
     {
-      "file": "tree_entity",
+      "file": "tree",
+      "file_args": [
+        {
+          "key": "@id",
+          "value": "tree_Entity"
+        }
+      ],
 
       "tags": [
         "#static"
@@ -188,7 +212,13 @@
     },
 
     {
-      "file": "wall_entity",
+      "file": "wall",
+      "file_args": [
+        {
+          "key": "@id",
+          "value": "wall_Entity"
+        }
+      ],
 
       "tags": [
         "#static"
@@ -257,7 +287,13 @@
     },
 
     {
-      "file": "clouds_entity",
+      "file": "clouds",
+      "file_args": [
+        {
+          "key": "@id",
+          "value": "clouds_Entity"
+        }
+      ],
 
       "tags": [
         "#alwaysRendered"
@@ -332,7 +368,13 @@
     },
 
     {
-      "file": "skydome_entity",
+      "file": "skydome",
+      "file_args": [
+        {
+          "key": "@id",
+          "value": "skydome_Entity"
+        }
+      ],
 
       "tags": [
         "#alwaysRendered"

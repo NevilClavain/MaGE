@@ -1,7 +1,7 @@
 {
   "subs": [
     {
-      "id": "ground_Entity",
+      "id": "@id",
 
       "resource_aspect": {
         "meshe": {

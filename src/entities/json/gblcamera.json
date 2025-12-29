@@ -1,11 +1,11 @@
 {
   "subs": [
     {
-      "id": "cameraGblJointBasePos_Entity",
+      "id": "@id_0",
 
       "subs": [
         {
-          "id": "cameraGblJoint_Entity",
+          "id": "@id_1",
 
           "world_aspect": {
             "animator": {
@@ -15,7 +15,7 @@
           },
           "subs": [
             {
-              "id": "camera_Entity",
+              "id": "@id_2",
               "helper": "plugCamera"
             }
           ]

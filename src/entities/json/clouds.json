@@ -2,7 +2,7 @@
   "subs": [
 
     {
-      "id": "clouds_Entity",
+      "id": "@id",
 
       "resource_aspect": {
         "meshe": {

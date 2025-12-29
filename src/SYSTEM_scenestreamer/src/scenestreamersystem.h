@@ -393,16 +393,27 @@ namespace mage
 
         ///////////////////////////////////
 
+        struct FileArgument
+        {
+            std::string key;
+            std::string value;
+
+            JS_OBJ(key, value);
+        };
+
         struct ScenegraphNode
         {
             std::string                 file;
+
+            std::vector<FileArgument>   file_args;
+
             std::vector<std::string>    tags;
 
             std::vector<std::string>    rendergraph_parts;
 
             Animator                    animator;
             
-            JS_OBJ(file, tags, rendergraph_parts, animator);
+            JS_OBJ(file, file_args, tags, rendergraph_parts, animator);
         };
 
         struct Scenegraph
@@ -501,7 +512,7 @@ namespace mage
 
 
         void buildScenegraphEntity(const std::string& p_jsonsource, const std::vector<std::string>& p_rendergraph_parts, const json::Animator& p_animator, const std::vector<std::string>& p_tags, const std::string& p_parentEntityId,
-                                    const mage::core::maths::Matrix p_perspective_projection);
+                                    const mage::core::maths::Matrix p_perspective_projection, const std::unordered_map<std::string, std::string> p_file_args);
 
 
         void buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot);
@@ -560,5 +571,7 @@ namespace mage
         core::SyncVariable build_syncvariable_fromjson(const json::SyncVariable& p_syncvar);
 
         mage::transform::MatrixFactory process_matrixfactory_fromjson(const json::MatrixFactory& p_json_matrix_factory, mage::core::ComponentContainer& p_world_aspect, mage::core::ComponentContainer& p_time_aspect);
+
+        std::string filter_arguments_stack(const std::string p_input, const std::unordered_map<std::string, std::string> p_file_args);
     };
 }
