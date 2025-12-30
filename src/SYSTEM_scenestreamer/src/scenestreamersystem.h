@@ -479,7 +479,7 @@ namespace mage
         {
             core::Entity* entity{ nullptr };
             core::QuadTreeNode<SceneQuadTreeNode>*              quadtree_node{ nullptr };
-            core::QuadTreeNode<SceneOctreeNode>*                octree_node{ nullptr };
+            core::OctreeNode<SceneOctreeNode>*                  octree_node{ nullptr };
             bool is_static{ false };
         };
 
