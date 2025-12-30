@@ -466,7 +466,7 @@ namespace mage
         struct XTreeEntity
         {
             core::Entity* entity{ nullptr };
-            core::QuadTreeNode<SceneQuadTreeNode>* tree_node{ nullptr };
+            core::QuadTreeNode<SceneQuadTreeNode>*              quadtree_node{ nullptr };
             bool is_static{ false };
         };
 
@@ -480,7 +480,7 @@ namespace mage
         {
             json::ViewGroup                                                                        viewgroup;
 
-            std::unique_ptr<core::QuadTreeNode<SceneQuadTreeNode>>                                 xtree_root;
+            std::unique_ptr<core::QuadTreeNode<SceneQuadTreeNode>>                                 quadtree_root;
             // regrouping here all entities dispatched in m_xtree_root above
             std::unordered_map<std::string, XTreeEntity>                                           xtree_entities;
         };

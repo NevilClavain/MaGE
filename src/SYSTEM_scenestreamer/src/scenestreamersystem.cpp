@@ -83,7 +83,7 @@ void SceneStreamerSystem::init_XTree(RendergraphPartData& p_rgpd)
                                         Real2Vector(m_configuration.scene_size / 2, m_configuration.scene_size / 2) };
 
     
-    p_rgpd.xtree_root = std::make_unique<core::QuadTreeNode<SceneQuadTreeNode>>(root_node);
+    p_rgpd.quadtree_root = std::make_unique<core::QuadTreeNode<SceneQuadTreeNode>>(root_node);
 
     const std::function<void(QuadTreeNode<SceneQuadTreeNode>*, int)> expand
     {
@@ -146,7 +146,7 @@ void SceneStreamerSystem::init_XTree(RendergraphPartData& p_rgpd)
         }
     };
 
-    expand(p_rgpd.xtree_root.get(), m_configuration.xtree_max_depth);
+    expand(p_rgpd.quadtree_root.get(), m_configuration.xtree_max_depth);
 }
 
 void SceneStreamerSystem::run()
@@ -226,7 +226,7 @@ void SceneStreamerSystem::run()
     for (auto& rgpd : m_rendergraphpart_data)
     {
         auto& rgpd_data = rgpd.second;
-        update_XTree(rgpd_data.xtree_root.get(), rgpd_data.xtree_entities);
+        update_XTree(rgpd_data.quadtree_root.get(), rgpd_data.xtree_entities);
     }
 
     /////////////////////////////////////////////////////////
@@ -235,7 +235,7 @@ void SceneStreamerSystem::run()
     for (auto& rgpd : m_rendergraphpart_data)
     {
         auto& rgpd_data = rgpd.second;
-        check_XTree(rgpd_data.xtree_root.get(), rgpd_data.xtree_entities, rgpd_data.viewgroup);
+        check_XTree(rgpd_data.quadtree_root.get(), rgpd_data.xtree_entities, rgpd_data.viewgroup);
     }
 
 
@@ -1025,7 +1025,7 @@ void SceneStreamerSystem::update_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_
                 if (p_current_node->isLeaf())
                 {
                     p_current_node->dataAccess().entities.insert(entity);
-                    xe.second.tree_node = p_current_node;
+                    xe.second.quadtree_node = p_current_node;
                 }
                 else
                 {
@@ -1054,7 +1054,7 @@ void SceneStreamerSystem::update_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_
                 {
                     // leaf reached, cannt go beyond, so place it anyway
                     p_current_node->dataAccess().entities.insert(entity);
-                    xe.second.tree_node = p_current_node;
+                    xe.second.quadtree_node = p_current_node;
                 }
                 else
                 {
@@ -1064,7 +1064,7 @@ void SceneStreamerSystem::update_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_
                     {
                         //place it
                         p_current_node->dataAccess().entities.insert(entity);
-                        xe.second.tree_node = p_current_node;
+                        xe.second.quadtree_node = p_current_node;
                     }
                     else
                     {
@@ -1105,7 +1105,7 @@ void SceneStreamerSystem::update_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_
 
         ///////////////////////////////////////////////
 
-        if (!xe.second.tree_node)
+        if (!xe.second.quadtree_node)
         {
             //// PLACE NEW
 
@@ -1139,7 +1139,7 @@ void SceneStreamerSystem::update_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_
 
             if (entity->hasAspect(cameraAspect::id))
             {
-                const bool is_inside{ is_inside_quadtreenode(xe.second.tree_node->getData(), global_pos) };
+                const bool is_inside{ is_inside_quadtreenode(xe.second.quadtree_node->getData(), global_pos) };
                 if(!is_inside)
                 {
                     // update location in xtree
@@ -1148,7 +1148,7 @@ void SceneStreamerSystem::update_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_
             }
             else if (entity->hasAspect(resourcesAspect::id) && !xe.second.is_static)
             {
-                const bool is_inside{ is_inside_quadtreenode(xe.second.tree_node->getData(), global_pos) };
+                const bool is_inside{ is_inside_quadtreenode(xe.second.quadtree_node->getData(), global_pos) };
 
                 if (!is_inside)
                 {
@@ -1244,7 +1244,7 @@ void SceneStreamerSystem::check_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_x
         }
     };
 
-    core::QuadTreeNode<SceneQuadTreeNode>* curr = xe.tree_node;
+    core::QuadTreeNode<SceneQuadTreeNode>* curr = xe.quadtree_node;
     while (1)
     {
         search_near_entities(found_entities, curr, 0);
@@ -1296,7 +1296,7 @@ void SceneStreamerSystem::dumpXTree()
     {
         _MAGE_DEBUG(m_localLogger, "for ViewGroup " + rgpd.first)
 
-        rgpd.second.xtree_root->traverse([&](const SceneQuadTreeNode& p_data, size_t p_depth)
+        rgpd.second.quadtree_root->traverse([&](const SceneQuadTreeNode& p_data, size_t p_depth)
         {
             std::string tab;
             for (size_t i = 0; i < p_depth; i++) tab = tab + " ";
@@ -1341,14 +1341,14 @@ void SceneStreamerSystem::dumpXTreeEntities()
             const auto global_pos = entity_worldposition.global_pos;
 
 
-            if (e.second.tree_node)
+            if (e.second.quadtree_node)
             {
-                const SceneQuadTreeNode data{ e.second.tree_node->getData() };
+                const SceneQuadTreeNode data{ e.second.quadtree_node->getData() };
 
                 _MAGE_DEBUG(m_localLogger, e.first + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 2))
                     + " tree -> xz min = " + std::to_string(data.xz_min[0]) + " " + std::to_string(data.xz_min[1])
                     + " xz max = " + std::to_string(data.xz_max[0]) + " " + std::to_string(data.xz_max[1]) + " depth = " 
-                    + std::to_string(e.second.tree_node->getDepth()) + " side length = " + std::to_string(data.side_length) )
+                    + std::to_string(e.second.quadtree_node->getDepth()) + " side length = " + std::to_string(data.side_length) )
             }
             else
             {
