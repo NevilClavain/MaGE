@@ -226,7 +226,7 @@ void SceneStreamerSystem::run()
     for (auto& rgpd : m_rendergraphpart_data)
     {
         auto& rgpd_data = rgpd.second;
-        update_XTree(rgpd_data.quadtree_root.get(), rgpd_data.xtree_entities);
+        update_QuadTree(rgpd_data.quadtree_root.get(), rgpd_data.xtree_entities);
     }
 
     /////////////////////////////////////////////////////////
@@ -235,7 +235,7 @@ void SceneStreamerSystem::run()
     for (auto& rgpd : m_rendergraphpart_data)
     {
         auto& rgpd_data = rgpd.second;
-        check_XTree(rgpd_data.quadtree_root.get(), rgpd_data.xtree_entities, rgpd_data.viewgroup);
+        check_QuadTree(rgpd_data.quadtree_root.get(), rgpd_data.xtree_entities, rgpd_data.viewgroup);
     }
 
 
@@ -1005,7 +1005,7 @@ void SceneStreamerSystem::unregister_from_queues(mage::core::Entity* p_entity)
     m_rendering_proxies.erase(p_entity->getId());
 }
 
-void SceneStreamerSystem::update_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root, std::unordered_map<std::string, XTreeEntity>& p_xtree_entities)
+void SceneStreamerSystem::update_QuadTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root, std::unordered_map<std::string, XTreeEntity>& p_xtree_entities)
 {
     for (auto& xe : p_xtree_entities)
     {
@@ -1187,7 +1187,22 @@ bool SceneStreamerSystem::is_inside_quadtreenode(const SceneQuadTreeNode& p_qtn,
     return inside;
 }
 
-void SceneStreamerSystem::check_XTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root, std::unordered_map<std::string, XTreeEntity>& p_xtree_entities, const json::ViewGroup& p_viewgroup)
+bool SceneStreamerSystem::is_inside_quadtreenode(const SceneOctreeNode& p_otn, const core::maths::Matrix& p_global_pos)
+{
+    bool inside{ false };
+
+    Real3Vector object_pos(p_global_pos(3, 0), p_global_pos(3, 1), p_global_pos(3, 2));
+
+    if (p_otn.xyz_min.x() <= object_pos.x() && object_pos.x() < p_otn.xyz_max.x() &&
+        p_otn.xyz_min.y() <= object_pos.y() && object_pos.y() < p_otn.xyz_max.y() &&
+        p_otn.xyz_min.z() <= object_pos.z() && object_pos.z() < p_otn.xyz_max.z())
+    {
+        inside = true;
+    }
+    return inside;
+}
+
+void SceneStreamerSystem::check_QuadTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root, std::unordered_map<std::string, XTreeEntity>& p_xtree_entities, const json::ViewGroup& p_viewgroup)
 {
     // for current view group, find current camera id 
 
