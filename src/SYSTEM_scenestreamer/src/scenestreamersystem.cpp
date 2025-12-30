@@ -235,7 +235,16 @@ void SceneStreamerSystem::run()
     for (auto& rgpd : m_rendergraphpart_data)
     {
         auto& rgpd_data = rgpd.second;
-        check_XTree(rgpd_data.xtree_entities, rgpd_data.viewgroup);
+
+        const std::function<core::QuadTreeNode<SceneQuadTreeNode>* (const XTreeEntity&)> get_quadtree_node_func
+        {
+            [](const XTreeEntity& p_xe) -> core::QuadTreeNode<SceneQuadTreeNode>*
+            {
+                return p_xe.quadtree_node;
+            }
+        };
+
+        check_XTree<SceneQuadTreeNode, core::QuadTreeNode<SceneQuadTreeNode>>(rgpd_data.xtree_entities, rgpd_data.viewgroup, get_quadtree_node_func);
     }
 
 
@@ -1200,105 +1209,6 @@ bool SceneStreamerSystem::is_inside_quadtreenode(const SceneOctreeNode& p_otn, c
         inside = true;
     }
     return inside;
-}
-
-void SceneStreamerSystem::check_XTree(std::unordered_map<std::string, XTreeEntity>& p_xtree_entities, const json::ViewGroup& p_viewgroup)
-{
-    // for current view group, find current camera id 
-
-    auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(m_renderingQueueSystemSlot)) };
-    const auto current_views{ renderingQueueSystemInstance->getViewGroupCurrentViews(p_viewgroup.name) };
-
-    const std::string main_camera_id{ current_views.first };
-
-    XTreeEntity xe{ p_xtree_entities.at(main_camera_id) };
-
-    std::unordered_set<mage::core::Entity*> found_entities; // search entities in camera's neighbourood
-
-    const std::function<void(std::unordered_set<mage::core::Entity*>&, core::QuadTreeNode<SceneQuadTreeNode>*, int)> search_near_entities
-    {
-        [&](std::unordered_set<mage::core::Entity*>& p_found_entities, core::QuadTreeNode<SceneQuadTreeNode>* node, int neighbourood_depth)
-        {
-            if (neighbourood_depth > m_configuration.max_neighbourood_depth)
-            {
-                return;
-            }
-
-            ////////// search in current node
-            const SceneQuadTreeNode& scene_quadtree_node{ node->getData() };
-            for (mage::core::Entity* e : scene_quadtree_node.entities)
-            {
-                if (m_entity_renderings.count(e->getId()) > 0)
-                {
-                    // store only those than can be rendered
-                    p_found_entities.insert(e);
-                }
-            }
-
-            ////////// search in current node neighbours
-
-            std::vector<core::QuadTreeNode<SceneQuadTreeNode>*> neighbours{ node->getNeighbours() };
-            for (core::QuadTreeNode<SceneQuadTreeNode>* n : neighbours)
-            {
-                if (nullptr != n)
-                {
-                    const SceneQuadTreeNode& n_scene_quadtree_node{ n->getData() };
-                    for (mage::core::Entity* e : n_scene_quadtree_node.entities)
-                    {
-                        if (m_entity_renderings.count(e->getId()) > 0)
-                        {
-                            // store only those than can be rendered
-                            p_found_entities.insert(e);
-                        }
-                    }
-                    search_near_entities(p_found_entities, n, neighbourood_depth + 1);
-                }
-            }
-        }
-    };
-
-    core::QuadTreeNode<SceneQuadTreeNode>* curr = xe.quadtree_node;
-    while (1)
-    {
-        search_near_entities(found_entities, curr, 0);
-
-        curr = curr->getParent();
-        if (nullptr == curr)
-        {
-            break;
-        }
-    }
-
-
-    // new entities discovered, to render
-    for (mage::core::Entity* entity : found_entities)
-    {
-        if (!m_found_entities_to_render.count(entity))
-        {
-            // just discovered -> ask for rendering
-            if (!m_entity_renderings.at(entity->getId()).m_rendered)
-            {
-                m_entity_renderings.at(entity->getId()).m_request_rendering = true;
-            }
-        }
-    }
-
-    // entities not in neigbourood no more, to remove from rendering...
-    for (mage::core::Entity* rendered_entity : m_found_entities_to_render)
-    {
-        if (!found_entities.count(rendered_entity))
-        {
-            // not found no more -> ask to stop rendering
-
-            if (m_entity_renderings.at(rendered_entity->getId()).m_rendered)
-            {
-                m_entity_renderings.at(rendered_entity->getId()).m_request_rendering = false;
-            }
-        }
-    }
-
-    // update...
-    m_found_entities_to_render = found_entities;
 }
 
 void SceneStreamerSystem::dumpXTree()
