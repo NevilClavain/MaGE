@@ -235,7 +235,7 @@ void SceneStreamerSystem::run()
     for (auto& rgpd : m_rendergraphpart_data)
     {
         auto& rgpd_data = rgpd.second;
-        check_QuadTree(rgpd_data.quadtree_root.get(), rgpd_data.xtree_entities, rgpd_data.viewgroup);
+        check_XTree(rgpd_data.xtree_entities, rgpd_data.viewgroup);
     }
 
 
@@ -1202,7 +1202,7 @@ bool SceneStreamerSystem::is_inside_quadtreenode(const SceneOctreeNode& p_otn, c
     return inside;
 }
 
-void SceneStreamerSystem::check_QuadTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root, std::unordered_map<std::string, XTreeEntity>& p_xtree_entities, const json::ViewGroup& p_viewgroup)
+void SceneStreamerSystem::check_XTree(std::unordered_map<std::string, XTreeEntity>& p_xtree_entities, const json::ViewGroup& p_viewgroup)
 {
     // for current view group, find current camera id 
 
@@ -1214,8 +1214,6 @@ void SceneStreamerSystem::check_QuadTree(core::QuadTreeNode<SceneQuadTreeNode>* 
     XTreeEntity xe{ p_xtree_entities.at(main_camera_id) };
 
     std::unordered_set<mage::core::Entity*> found_entities; // search entities in camera's neighbourood
-
-    //static constexpr int max_neighbourood_depth{ 2 };
 
     const std::function<void(std::unordered_set<mage::core::Entity*>&, core::QuadTreeNode<SceneQuadTreeNode>*, int)> search_near_entities
     {
