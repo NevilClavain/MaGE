@@ -463,10 +463,23 @@ namespace mage
             std::unordered_set<mage::core::Entity*>             entities;
         };
 
+        // node for Octree
+        struct SceneOctreeNode
+        {
+            double                                              side_length{ 0 };
+            core::maths::Real3Vector                            position;
+
+            core::maths::Real3Vector                            xyz_min;
+            core::maths::Real3Vector                            xyz_max;
+
+            std::unordered_set<mage::core::Entity*>             entities;
+        };
+
         struct XTreeEntity
         {
             core::Entity* entity{ nullptr };
             core::QuadTreeNode<SceneQuadTreeNode>*              quadtree_node{ nullptr };
+            core::QuadTreeNode<SceneOctreeNode>*                octree_node{ nullptr };
             bool is_static{ false };
         };
 
@@ -478,15 +491,23 @@ namespace mage
 
         struct RendergraphPartData
         {
-            json::ViewGroup                                                                        viewgroup;
+            json::ViewGroup                                                                         viewgroup;
 
-            std::unique_ptr<core::QuadTreeNode<SceneQuadTreeNode>>                                 quadtree_root;
+            std::unique_ptr<core::QuadTreeNode<SceneQuadTreeNode>>                                  quadtree_root;
+            std::unique_ptr<core::OctreeNode<SceneOctreeNode>>                                      octree_root;
+
             // regrouping here all entities dispatched in m_xtree_root above
-            std::unordered_map<std::string, XTreeEntity>                                           xtree_entities;
+            std::unordered_map<std::string, XTreeEntity>                                            xtree_entities;
         };
 
 
     public:
+
+        enum class XtreeType
+        {
+            QUADTREE,
+            OCTREE
+        };
 
         struct Configuration
         {
@@ -494,6 +515,8 @@ namespace mage
             int         xtree_max_depth             { 6 };
             int         max_neighbourood_depth      { 2 };
             double      object_xtreenode_ratio      { 0.1 };
+
+            XtreeType   xtree_type                  { XtreeType::QUADTREE };
         };
 
         SceneStreamerSystem() = delete;

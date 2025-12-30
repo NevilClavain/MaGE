@@ -213,6 +213,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					ss_config.xtree_max_depth = 6;
 					ss_config.max_neighbourood_depth = 2;
 					ss_config.object_xtreenode_ratio = 0.1;
+					ss_config.xtree_type = SceneStreamerSystem::XtreeType::QUADTREE;
 					sceneStreamerSystemInstance->configure(ss_config);
 
 
