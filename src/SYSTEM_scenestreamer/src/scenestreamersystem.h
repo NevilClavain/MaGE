@@ -553,8 +553,8 @@ namespace mage
     private:
 
 
-        bool is_inside_quadtreenode(const SceneQuadTreeNode& p_qtn, const core::maths::Matrix& p_global_pos);
-        bool is_inside_quadtreenode(const SceneOctreeNode& p_otn, const core::maths::Matrix& p_global_pos);
+        static bool is_inside_quadtreenode(const SceneQuadTreeNode& p_qtn, const core::maths::Matrix& p_global_pos);
+        static bool is_inside_quadtreenode(const SceneOctreeNode& p_otn, const core::maths::Matrix& p_global_pos);
 
         void register_to_queues(const json::Channels& p_channels, mage::core::Entity* p_entity);
 
@@ -568,7 +568,12 @@ namespace mage
                             const std::function<XTreeType* (const SceneStreamerSystem::XTreeEntity&)>& p_get_node_func);
 
 
-        void update_QuadTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root, std::unordered_map<std::string, XTreeEntity>& p_xtree_entities);
+        template<typename XTreeType>
+        void update_QuadTree(XTreeType* p_xtree_root, 
+                                std::unordered_map<std::string, 
+                                XTreeEntity>& p_xtree_entities,
+                                const std::function<void(XTreeType*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_cam_on_leaf_func,
+                                const std::function<void(XTreeType*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_obj_on_leaf_func);
 
 
 
@@ -605,6 +610,116 @@ namespace mage
 
         std::string filter_arguments_stack(const std::string p_input, const std::unordered_map<std::string, std::string> p_file_args);
     };
+
+
+    /////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////
+
+    template<typename XTreeType>
+    void SceneStreamerSystem::update_QuadTree(XTreeType* p_xtree_root, 
+                                                std::unordered_map<std::string, SceneStreamerSystem::XTreeEntity>& p_xtree_entities,
+                                                const std::function<void(XTreeType*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_cam_on_leaf_func,
+                                                const std::function<void(XTreeType*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_obj_on_leaf_func)
+    {
+        for (auto& xe : p_xtree_entities)
+        {
+            core::Entity* entity{ xe.second.entity };
+            const auto& world_aspect{ entity->aspectAccess(worldAspect::id) };
+
+            const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
+            auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
+            const auto global_pos = entity_worldposition.global_pos;
+
+
+
+            // check tags
+
+            const auto& tagsAspect{ entity->aspectAccess(mage::core::tagsAspect::id) };
+            const auto& str_tags_list{ tagsAspect.getComponentsByType<std::unordered_set<std::string>>() };
+            if (str_tags_list.size())
+            {
+                const auto str_tags{ str_tags_list.at(0)->getPurpose() };
+                if (str_tags.count("#alwaysRendered"))
+                {
+                    if (!m_entity_renderings.at(entity->getId()).m_rendered)
+                    {
+                        m_entity_renderings.at(entity->getId()).m_request_rendering = true;
+                    }
+                    continue;
+                }
+            }
+
+            ///////////////////////////////////////////////
+
+            if (!xe.second.quadtree_node)
+            {
+                //// PLACE NEW
+
+                if (entity->hasAspect(cameraAspect::id))
+                {
+                    // camera
+
+                    p_place_cam_on_leaf_func(p_xtree_root, global_pos, entity, xe.second);
+                }
+                else if (entity->hasAspect(resourcesAspect::id))
+                {
+                    const auto& resources_aspect{ entity->aspectAccess(resourcesAspect::id) };
+
+                    const auto meshes_list{ resources_aspect.getComponentsByType<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>() };
+                    if (meshes_list.size() > 0)
+                    {
+                        auto& meshe_descr{ meshes_list.at(0)->getPurpose() };
+                        TriangleMeshe& meshe{ meshe_descr.second };
+
+                        if (TriangleMeshe::State::RENDERERLOADED == meshe.getState())
+                        {
+                            const double meshe_size{ meshe.getSize() };
+                            p_place_obj_on_leaf_func(p_xtree_root, meshe_size, global_pos, entity, xe.second);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //// UPDATE
+
+                if (entity->hasAspect(cameraAspect::id))
+                {
+                    const bool is_inside{ is_inside_quadtreenode(xe.second.quadtree_node->getData(), global_pos) };
+                    if (!is_inside)
+                    {
+                        // update location in xtree
+                        p_place_cam_on_leaf_func(p_xtree_root, global_pos, entity, xe.second);
+                    }
+                }
+                else if (entity->hasAspect(resourcesAspect::id) && !xe.second.is_static)
+                {
+                    const bool is_inside{ is_inside_quadtreenode(xe.second.quadtree_node->getData(), global_pos) };
+
+                    if (!is_inside)
+                    {
+                        // update location in xtree
+                        const auto& resources_aspect{ entity->aspectAccess(resourcesAspect::id) };
+
+                        const auto meshes_list{ resources_aspect.getComponentsByType<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>() };
+                        if (meshes_list.size() > 0)
+                        {
+                            auto& meshe_descr{ meshes_list.at(0)->getPurpose() };
+                            TriangleMeshe& meshe{ meshe_descr.second };
+
+                            if (TriangleMeshe::State::BLOBLOADED == meshe.getState())
+                            {
+                                const double meshe_size{ meshe.getSize() };
+                                p_place_obj_on_leaf_func(p_xtree_root, meshe_size, global_pos, entity, xe.second);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 
     template<typename SceneXTreeNode, typename XTreeType>
