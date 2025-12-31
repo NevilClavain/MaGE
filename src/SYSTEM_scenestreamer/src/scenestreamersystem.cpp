@@ -236,15 +236,30 @@ void SceneStreamerSystem::run()
     {
         auto& rgpd_data = rgpd.second;
 
-        const std::function<core::QuadTreeNode<SceneQuadTreeNode>* (const XTreeEntity&)> get_quadtree_node_func
+        if (XtreeType::QUADTREE == m_configuration.xtree_type)
         {
-            [](const XTreeEntity& p_xe) -> core::QuadTreeNode<SceneQuadTreeNode>*
+            const std::function<core::QuadTreeNode<SceneQuadTreeNode>* (const XTreeEntity&)> get_quadtree_node_func
             {
-                return p_xe.quadtree_node;
-            }
-        };
+                [](const XTreeEntity& p_xe) -> core::QuadTreeNode<SceneQuadTreeNode>*
+                {
+                    return p_xe.quadtree_node;
+                }
+            };
 
-        check_XTree<SceneQuadTreeNode, core::QuadTreeNode<SceneQuadTreeNode>>(rgpd_data.xtree_entities, rgpd_data.viewgroup, get_quadtree_node_func);
+            check_XTree<SceneQuadTreeNode, core::QuadTreeNode<SceneQuadTreeNode>>(rgpd_data.xtree_entities, rgpd_data.viewgroup, get_quadtree_node_func);
+        }
+        else // XtreeType::OCTREE
+        {
+            const std::function<core::OctreeNode<SceneOctreeNode>* (const XTreeEntity&)> get_octree_node_func
+            {
+                [](const XTreeEntity& p_xe) -> core::OctreeNode<SceneOctreeNode>*
+                {
+                    return p_xe.octree_node;
+                }
+            };
+
+            check_XTree<SceneOctreeNode, core::OctreeNode<SceneOctreeNode>>(rgpd_data.xtree_entities, rgpd_data.viewgroup, get_octree_node_func);
+        }
     }
 
 
