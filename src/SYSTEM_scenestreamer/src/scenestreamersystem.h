@@ -562,107 +562,15 @@ namespace mage
 
         void init_XTree(RendergraphPartData& p_rgpd);
 
+        template<typename SceneXTreeNode, typename XTreeType>
+        void check_XTree(std::unordered_map<std::string, SceneStreamerSystem::XTreeEntity>& p_xtree_entities, 
+                            const json::ViewGroup& p_viewgroup, 
+                            const std::function<XTreeType* (const SceneStreamerSystem::XTreeEntity&)>& p_get_node_func);
+
+
         void update_QuadTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root, std::unordered_map<std::string, XTreeEntity>& p_xtree_entities);
 
-        template<typename SceneXTreeNode, typename XTreeType>
-        void check_XTree(std::unordered_map<std::string, XTreeEntity>& p_xtree_entities, const json::ViewGroup& p_viewgroup, const std::function<XTreeType*(const XTreeEntity&)>& p_get_node_func)
-        {
-            // for current view group, find current camera id 
 
-            auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(m_renderingQueueSystemSlot)) };
-            const auto current_views{ renderingQueueSystemInstance->getViewGroupCurrentViews(p_viewgroup.name) };
-
-            const std::string main_camera_id{ current_views.first };
-
-            XTreeEntity xe{ p_xtree_entities.at(main_camera_id) };
-
-            std::unordered_set<mage::core::Entity*> found_entities; // search entities in camera's neighbourood
-
-            const std::function<void(std::unordered_set<mage::core::Entity*>&, XTreeType*, int)> search_near_entities
-            {
-                [&](std::unordered_set<mage::core::Entity*>& p_found_entities, XTreeType* node, int neighbourood_depth)
-                {
-                    if (neighbourood_depth > m_configuration.max_neighbourood_depth)
-                    {
-                        return;
-                    }
-
-                    ////////// search in current node
-                    const SceneXTreeNode& scene_quadtree_node{ node->getData() };
-                    for (mage::core::Entity* e : scene_quadtree_node.entities)
-                    {
-                        if (m_entity_renderings.count(e->getId()) > 0)
-                        {
-                            // store only those than can be rendered
-                            p_found_entities.insert(e);
-                        }
-                    }
-
-                    ////////// search in current node neighbours
-
-                    std::vector<XTreeType*> neighbours{ node->getNeighbours() };
-                    for (XTreeType* n : neighbours)
-                    {
-                        if (nullptr != n)
-                        {
-                            const SceneXTreeNode& n_scene_quadtree_node{ n->getData() };
-                            for (mage::core::Entity* e : n_scene_quadtree_node.entities)
-                            {
-                                if (m_entity_renderings.count(e->getId()) > 0)
-                                {
-                                    // store only those than can be rendered
-                                    p_found_entities.insert(e);
-                                }
-                            }
-                            search_near_entities(p_found_entities, n, neighbourood_depth + 1);
-                        }
-                    }
-                }
-            };
-
-            
-            XTreeType* curr = p_get_node_func(xe); // get xe.quadtree or xe.octree regarding XTreeType used :)
-            while (1)
-            {
-                search_near_entities(found_entities, curr, 0);
-
-                curr = curr->getParent();
-                if (nullptr == curr)
-                {
-                    break;
-                }
-            }
-
-            // new entities discovered, to render
-            for (mage::core::Entity* entity : found_entities)
-            {
-                if (!m_found_entities_to_render.count(entity))
-                {
-                    // just discovered -> ask for rendering
-                    if (!m_entity_renderings.at(entity->getId()).m_rendered)
-                    {
-                        m_entity_renderings.at(entity->getId()).m_request_rendering = true;
-                    }
-                }
-            }
-
-            // entities not in neigbourood no more, to remove from rendering...
-            for (mage::core::Entity* rendered_entity : m_found_entities_to_render)
-            {
-                if (!found_entities.count(rendered_entity))
-                {
-                    // not found no more -> ask to stop rendering
-
-                    if (m_entity_renderings.at(rendered_entity->getId()).m_rendered)
-                    {
-                        m_entity_renderings.at(rendered_entity->getId()).m_request_rendering = false;
-                    }
-                }
-            }
-
-            // update...
-            m_found_entities_to_render = found_entities;
-        };
 
         bool                                                                                    m_enabled{ false };
 
@@ -696,5 +604,108 @@ namespace mage
         mage::transform::MatrixFactory process_matrixfactory_fromjson(const json::MatrixFactory& p_json_matrix_factory, mage::core::ComponentContainer& p_world_aspect, mage::core::ComponentContainer& p_time_aspect);
 
         std::string filter_arguments_stack(const std::string p_input, const std::unordered_map<std::string, std::string> p_file_args);
+    };
+
+
+    template<typename SceneXTreeNode, typename XTreeType>
+    void SceneStreamerSystem::check_XTree(std::unordered_map<std::string, SceneStreamerSystem::XTreeEntity>& p_xtree_entities, 
+                                            const json::ViewGroup& p_viewgroup, 
+                                            const std::function<XTreeType* (const SceneStreamerSystem::XTreeEntity&)>& p_get_node_func)
+    {
+        // for current view group, find current camera id 
+
+        auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(m_renderingQueueSystemSlot)) };
+        const auto current_views{ renderingQueueSystemInstance->getViewGroupCurrentViews(p_viewgroup.name) };
+
+        const std::string main_camera_id{ current_views.first };
+
+        XTreeEntity xe{ p_xtree_entities.at(main_camera_id) };
+
+        std::unordered_set<mage::core::Entity*> found_entities; // search entities in camera's neighbourood
+
+        const std::function<void(std::unordered_set<mage::core::Entity*>&, XTreeType*, int)> search_near_entities
+        {
+            [&](std::unordered_set<mage::core::Entity*>& p_found_entities, XTreeType* node, int neighbourood_depth)
+            {
+                if (neighbourood_depth > m_configuration.max_neighbourood_depth)
+                {
+                    return;
+                }
+
+                ////////// search in current node
+                const SceneXTreeNode& scene_quadtree_node{ node->getData() };
+                for (mage::core::Entity* e : scene_quadtree_node.entities)
+                {
+                    if (m_entity_renderings.count(e->getId()) > 0)
+                    {
+                        // store only those than can be rendered
+                        p_found_entities.insert(e);
+                    }
+                }
+
+                ////////// search in current node neighbours
+
+                std::vector<XTreeType*> neighbours{ node->getNeighbours() };
+                for (XTreeType* n : neighbours)
+                {
+                    if (nullptr != n)
+                    {
+                        const SceneXTreeNode& n_scene_quadtree_node{ n->getData() };
+                        for (mage::core::Entity* e : n_scene_quadtree_node.entities)
+                        {
+                            if (m_entity_renderings.count(e->getId()) > 0)
+                            {
+                                // store only those than can be rendered
+                                p_found_entities.insert(e);
+                            }
+                        }
+                        search_near_entities(p_found_entities, n, neighbourood_depth + 1);
+                    }
+                }
+            }
+        };
+
+
+        XTreeType* curr = p_get_node_func(xe); // get xe.quadtree or xe.octree regarding XTreeType used :)
+        while (1)
+        {
+            search_near_entities(found_entities, curr, 0);
+
+            curr = curr->getParent();
+            if (nullptr == curr)
+            {
+                break;
+            }
+        }
+
+        // new entities discovered, to render
+        for (mage::core::Entity* entity : found_entities)
+        {
+            if (!m_found_entities_to_render.count(entity))
+            {
+                // just discovered -> ask for rendering
+                if (!m_entity_renderings.at(entity->getId()).m_rendered)
+                {
+                    m_entity_renderings.at(entity->getId()).m_request_rendering = true;
+                }
+            }
+        }
+
+        // entities not in neigbourood no more, to remove from rendering...
+        for (mage::core::Entity* rendered_entity : m_found_entities_to_render)
+        {
+            if (!found_entities.count(rendered_entity))
+            {
+                // not found no more -> ask to stop rendering
+
+                if (m_entity_renderings.at(rendered_entity->getId()).m_rendered)
+                {
+                    m_entity_renderings.at(rendered_entity->getId()).m_request_rendering = false;
+                }
+            }
+        }
+
+        // update...
+        m_found_entities_to_render = found_entities;
     };
 }
