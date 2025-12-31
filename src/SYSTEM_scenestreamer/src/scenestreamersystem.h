@@ -564,8 +564,6 @@ namespace mage
 
         void update_QuadTree(core::QuadTreeNode<SceneQuadTreeNode>* p_xtree_root, std::unordered_map<std::string, XTreeEntity>& p_xtree_entities);
 
-        //void check_XTree(std::unordered_map<std::string, XTreeEntity>& p_xtree_entities, const json::ViewGroup& p_viewgroup);
-
         template<typename SceneXTreeNode, typename XTreeType>
         void check_XTree(std::unordered_map<std::string, XTreeEntity>& p_xtree_entities, const json::ViewGroup& p_viewgroup, const std::function<XTreeType*(const XTreeEntity&)>& p_get_node_func)
         {
