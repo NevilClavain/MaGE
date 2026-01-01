@@ -60,7 +60,7 @@ void ModuleImpl::onKeyPress(long p_key)
 
 			double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
 
-			speed = 20.0;
+			speed = 60.0;
 		}
 	}
 	else if ('W' == p_key)
@@ -74,7 +74,7 @@ void ModuleImpl::onKeyPress(long p_key)
 
 			double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
 
-			speed = -20.0;
+			speed = -60.0;
 		}
 	}
 	else if (VK_CONTROL == p_key)

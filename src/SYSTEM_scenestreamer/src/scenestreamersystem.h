@@ -554,7 +554,7 @@ namespace mage
 
 
         static bool is_inside_quadtreenode(const SceneQuadTreeNode& p_qtn, const core::maths::Matrix& p_global_pos);
-        static bool is_inside_quadtreenode(const SceneOctreeNode& p_otn, const core::maths::Matrix& p_global_pos);
+        static bool is_inside_octreenode(const SceneOctreeNode& p_otn, const core::maths::Matrix& p_global_pos);
 
         void register_to_queues(const json::Channels& p_channels, mage::core::Entity* p_entity);
 
@@ -569,7 +569,7 @@ namespace mage
 
 
         template<typename XTreeType>
-        void update_QuadTree(XTreeType* p_xtree_root, 
+        void update_XTree(XTreeType* p_xtree_root, 
                                 std::unordered_map<std::string, 
                                 XTreeEntity>& p_xtree_entities,
                                 const std::function<void(XTreeType*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_cam_on_leaf_func,
@@ -618,7 +618,7 @@ namespace mage
     /////////////////////////////////////////////////////////////////////////////////
 
     template<typename XTreeType>
-    void SceneStreamerSystem::update_QuadTree(XTreeType* p_xtree_root, 
+    void SceneStreamerSystem::update_XTree(XTreeType* p_xtree_root, 
                                                 std::unordered_map<std::string, SceneStreamerSystem::XTreeEntity>& p_xtree_entities,
                                                 const std::function<void(XTreeType*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_cam_on_leaf_func,
                                                 const std::function<void(XTreeType*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_obj_on_leaf_func)

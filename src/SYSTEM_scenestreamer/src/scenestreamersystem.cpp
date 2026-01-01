@@ -296,11 +296,80 @@ void SceneStreamerSystem::run()
             };
             /////////////////////////////////////////////////////////////////////////////////
 
-            update_QuadTree<core::QuadTreeNode<SceneQuadTreeNode>>(rgpd_data.quadtree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, place_obj_on_leaf);
+            update_XTree<core::QuadTreeNode<SceneQuadTreeNode>>(rgpd_data.quadtree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, place_obj_on_leaf);
         }
         else // XtreeType::OCTREE
-        {
+        {           
+            /////////////////////////////////////////////////////////////////////////////////
+            // place cam in appropriate xtree leaf : utility lambda
+            const std::function<void(core::OctreeNode<SceneOctreeNode>*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> place_cam_on_leaf
+            {
+                [&](core::OctreeNode<SceneOctreeNode>* p_current_node, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
+                {
+                    if (p_current_node->isLeaf())
+                    {
+                        p_current_node->dataAccess().entities.insert(p_entity);
+                        p_xtreeEntity.octree_node = p_current_node;
+                    }
+                    else
+                    {
+                        for (int i = 0; i < core::OctreeNode<SceneOctreeNode>::ChildCount; i++)
+                        {
+                            auto child { p_current_node->getChild(i) };
+
+                            if (SceneStreamerSystem::is_inside_octreenode(child->getData(), p_global_pos))
+                            {
+                                place_cam_on_leaf(child, p_global_pos, p_entity, p_xtreeEntity);
+                            }
+                        }
+                    }
+                }
+            };
+            /////////////////////////////////////////////////////////////////////////////////
+
             // To be continued...
+
+            /////////////////////////////////////////////////////////////////////////////////
+            // place 3D object in appropriate xtree leaf : utility lambda
+
+            const std::function<void(core::OctreeNode<SceneOctreeNode>*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> place_obj_on_leaf
+            {
+                [&](core::OctreeNode<SceneOctreeNode>* p_current_node, double p_obj_size, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
+                {
+                    if (p_current_node->isLeaf())
+                    {
+                        // leaf reached, cannt go beyond, so place it anyway
+                        p_current_node->dataAccess().entities.insert(p_entity);
+                        p_xtreeEntity.octree_node = p_current_node;
+                    }
+                    else
+                    {
+                        const double node_size { p_current_node->getData().side_length };
+
+                        if (p_obj_size / node_size > m_configuration.object_xtreenode_ratio)
+                        {
+                            //place it
+                            p_current_node->dataAccess().entities.insert(p_entity);
+                            p_xtreeEntity.octree_node = p_current_node;
+                        }
+                        else
+                        {
+                            for (int i = 0; i < core::OctreeNode<SceneOctreeNode>::ChildCount; i++)
+                            {
+                                auto child{ p_current_node->getChild(i) };
+
+                                if (SceneStreamerSystem::is_inside_octreenode(child->getData(), p_global_pos))
+                                {
+                                    place_obj_on_leaf(child, p_obj_size, p_global_pos, p_entity, p_xtreeEntity);
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            /////////////////////////////////////////////////////////////////////////////////
+
+            update_XTree<core::OctreeNode<SceneOctreeNode>>(rgpd_data.octree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, place_obj_on_leaf);            
         }
     }
 
@@ -1118,7 +1187,7 @@ bool SceneStreamerSystem::is_inside_quadtreenode(const SceneQuadTreeNode& p_qtn,
     return inside;
 }
 
-bool SceneStreamerSystem::is_inside_quadtreenode(const SceneOctreeNode& p_otn, const core::maths::Matrix& p_global_pos)
+bool SceneStreamerSystem::is_inside_octreenode(const SceneOctreeNode& p_otn, const core::maths::Matrix& p_global_pos)
 {
     bool inside{ false };
 

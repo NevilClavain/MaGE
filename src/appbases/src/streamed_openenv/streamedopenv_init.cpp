@@ -154,7 +154,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					dataCloud->updateDataValue<maths::Real4Vector>("std.fog.color", maths::Real4Vector(0.8, 0.9, 1, 1));
 
 					dataCloud->registerData<maths::Real4Vector>("std.fog.density");
-					dataCloud->updateDataValue<maths::Real4Vector>("std.fog.density", maths::Real4Vector(0.009, 0, 0, 0));
+					dataCloud->updateDataValue<maths::Real4Vector>("std.fog.density", maths::Real4Vector(0.003, 0, 0, 0));
 
 					const auto skydomeOuterRadius{ dataCloud->readDataValue<double>("app.skydomeOuterRadius") };
 					const auto skydomeInnerRadius{ dataCloud->readDataValue<double>("app.skydomeInnerRadius") };
@@ -211,7 +211,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					SceneStreamerSystem::Configuration ss_config;
 					ss_config.scene_size = 3000.0;
 					ss_config.xtree_max_depth = 6;
-					ss_config.max_neighbourood_depth = 2;
+					ss_config.max_neighbourood_depth = 1;
 					ss_config.object_xtreenode_ratio = 0.1;
 					ss_config.xtree_type = SceneStreamerSystem::XtreeType::QUADTREE;
 					sceneStreamerSystemInstance->configure(ss_config);
