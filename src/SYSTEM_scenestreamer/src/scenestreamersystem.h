@@ -740,16 +740,16 @@ namespace mage
 
         const std::function<void(std::unordered_set<mage::core::Entity*>&, XTreeType*, int)> search_near_entities
         {
-            [&](std::unordered_set<mage::core::Entity*>& p_found_entities, XTreeType* node, int neighbourood_depth)
+            [&](std::unordered_set<mage::core::Entity*>& p_found_entities, XTreeType* p_node, int p_neighbourood_depth)
             {
-                if (neighbourood_depth > m_configuration.max_neighbourood_depth)
+                if (p_neighbourood_depth > m_configuration.max_neighbourood_depth)
                 {
                     return;
                 }
 
                 ////////// search in current node
-                const SceneXTreeNode& scene_quadtree_node{ node->getData() };
-                for (mage::core::Entity* e : scene_quadtree_node.entities)
+                const SceneXTreeNode& scene_xtree_node{ p_node->getData() };
+                for (mage::core::Entity* e : scene_xtree_node.entities)
                 {
                     if (m_entity_renderings.count(e->getId()) > 0)
                     {
@@ -760,13 +760,13 @@ namespace mage
 
                 ////////// search in current node neighbours
 
-                std::vector<XTreeType*> neighbours{ node->getNeighbours() };
+                std::vector<XTreeType*> neighbours{ p_node->getNeighbours() };
                 for (XTreeType* n : neighbours)
                 {
                     if (nullptr != n)
                     {
-                        const SceneXTreeNode& n_scene_quadtree_node{ n->getData() };
-                        for (mage::core::Entity* e : n_scene_quadtree_node.entities)
+                        const SceneXTreeNode& n_scene_xtree_node{ n->getData() };
+                        for (mage::core::Entity* e : n_scene_xtree_node.entities)
                         {
                             if (m_entity_renderings.count(e->getId()) > 0)
                             {
@@ -774,7 +774,7 @@ namespace mage
                                 p_found_entities.insert(e);
                             }
                         }
-                        search_near_entities(p_found_entities, n, neighbourood_depth + 1);
+                        search_near_entities(p_found_entities, n, p_neighbourood_depth + 1);
                     }
                 }
             }

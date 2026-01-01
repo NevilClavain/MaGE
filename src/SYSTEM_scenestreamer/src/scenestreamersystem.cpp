@@ -512,7 +512,7 @@ void SceneStreamerSystem::run()
                 }
             };
 
-            check_XTree<SceneOctreeNode, core::OctreeNode<SceneOctreeNode>>(rgpd_data.xtree_entities, rgpd_data.viewgroup, get_octree_node_func);
+            //check_XTree<SceneOctreeNode, core::OctreeNode<SceneOctreeNode>>(rgpd_data.xtree_entities, rgpd_data.viewgroup, get_octree_node_func);
         }
     }
 
@@ -1420,7 +1420,7 @@ void SceneStreamerSystem::dumpXTreeEntities()
                     _MAGE_DEBUG(m_localLogger, e.first + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 1)) + " " + std::to_string(global_pos(3, 2))
                         + " tree -> xyz min = " + std::to_string(data.xyz_min[0]) + " " + std::to_string(data.xyz_min[1]) + " " + std::to_string(data.xyz_min[2])
                         + " xyz max = " + std::to_string(data.xyz_max[0]) + " " + std::to_string(data.xyz_max[1]) + " " + std::to_string(data.xyz_max[2])
-                        + " depth = " + std::to_string(e.second.quadtree_node->getDepth()) + " side length = " + std::to_string(data.side_length))
+                        + " depth = " + std::to_string(e.second.octree_node->getDepth()) + " side length = " + std::to_string(data.side_length))
                 }
                 else
                 {
