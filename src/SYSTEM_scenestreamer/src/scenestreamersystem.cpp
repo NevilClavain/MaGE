@@ -78,75 +78,185 @@ void SceneStreamerSystem::init_XTree(RendergraphPartData& p_rgpd)
         _EXCEPTION("Not configured");
     }
 
-    const SceneQuadTreeNode root_node{ m_configuration.scene_size, Real2Vector(0, 0),
-                                        Real2Vector(-m_configuration.scene_size / 2, -m_configuration.scene_size / 2),
-                                        Real2Vector(m_configuration.scene_size / 2, m_configuration.scene_size / 2) };
-
-    
-    p_rgpd.quadtree_root = std::make_unique<core::QuadTreeNode<SceneQuadTreeNode>>(root_node);
-
-    const std::function<void(QuadTreeNode<SceneQuadTreeNode>*, int)> expand
+    if (XtreeType::QUADTREE == m_configuration.xtree_type)
     {
-        [&](QuadTreeNode<SceneQuadTreeNode>* p_current_node, int p_max_depth)
+        const SceneQuadTreeNode root_node{ m_configuration.scene_size, Real2Vector(0, 0),
+                                            Real2Vector(-m_configuration.scene_size / 2, -m_configuration.scene_size / 2),
+                                            Real2Vector(m_configuration.scene_size / 2, m_configuration.scene_size / 2) };
+
+        p_rgpd.quadtree_root = std::make_unique<core::QuadTreeNode<SceneQuadTreeNode>>(root_node);
+
+        const std::function<void(QuadTreeNode<SceneQuadTreeNode>*, int)> expand
         {
-            if (p_max_depth == p_current_node->getDepth())
+            [&](QuadTreeNode<SceneQuadTreeNode>* p_current_node, int p_max_depth)
             {
-                return;
-            }
-
-            p_current_node->split();
-
-            const auto curr_node_pos{ p_current_node->getData().position };
-
-            for (int i = 0; i < mage::core::QuadTreeNode<SceneQuadTreeNode>::ChildCount; i++)
-            {
-                auto child { p_current_node->getChild(i) };
-
-                SceneQuadTreeNode childNodeContent;
-                childNodeContent.side_length = p_current_node->getData().side_length / 2;
-
-                switch (i)
+                if (p_max_depth == p_current_node->getDepth())
                 {
-                    case QuadTreeNode<SceneQuadTreeNode>::L0_UP_LEFT_INDEX:
-
-                        childNodeContent.position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
-                        childNodeContent.position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
-                        break;
-
-                    case QuadTreeNode<SceneQuadTreeNode>::L0_UP_RIGHT_INDEX:
-
-                        childNodeContent.position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
-                        childNodeContent.position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
-                        break;
-
-                    case QuadTreeNode<SceneQuadTreeNode>::L0_DOWN_RIGHT_INDEX:
-
-                        childNodeContent.position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
-                        childNodeContent.position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
-                        break;
-
-                    case QuadTreeNode<SceneQuadTreeNode>::L0_DOWN_LEFT_INDEX:
-
-                        childNodeContent.position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
-                        childNodeContent.position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
-                        break;
+                    return;
                 }
 
-                childNodeContent.xz_min[0] = childNodeContent.position[0] - childNodeContent.side_length / 2;
-                childNodeContent.xz_min[1] = childNodeContent.position[1] - childNodeContent.side_length / 2;
+                p_current_node->split();
 
-                childNodeContent.xz_max[0] = childNodeContent.position[0] + childNodeContent.side_length / 2;
-                childNodeContent.xz_max[1] = childNodeContent.position[1] + childNodeContent.side_length / 2;
+                const auto curr_node_pos{ p_current_node->getData().position };
+
+                for (int i = 0; i < mage::core::QuadTreeNode<SceneQuadTreeNode>::ChildCount; i++)
+                {
+                    auto child { p_current_node->getChild(i) };
+
+                    SceneQuadTreeNode childNodeContent;
+                    childNodeContent.side_length = p_current_node->getData().side_length / 2;
+
+                    switch (i)
+                    {
+                        case QuadTreeNode<SceneQuadTreeNode>::L0_UP_LEFT_INDEX:
+
+                            childNodeContent.position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
+                            childNodeContent.position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
+                            break;
+
+                        case QuadTreeNode<SceneQuadTreeNode>::L0_UP_RIGHT_INDEX:
+
+                            childNodeContent.position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
+                            childNodeContent.position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
+                            break;
+
+                        case QuadTreeNode<SceneQuadTreeNode>::L0_DOWN_RIGHT_INDEX:
+
+                            childNodeContent.position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
+                            childNodeContent.position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
+                            break;
+
+                        case QuadTreeNode<SceneQuadTreeNode>::L0_DOWN_LEFT_INDEX:
+
+                            childNodeContent.position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
+                            childNodeContent.position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
+                            break;
+                    }
+
+                    childNodeContent.xz_min[0] = childNodeContent.position[0] - childNodeContent.side_length / 2;
+                    childNodeContent.xz_min[1] = childNodeContent.position[1] - childNodeContent.side_length / 2;
+
+                    childNodeContent.xz_max[0] = childNodeContent.position[0] + childNodeContent.side_length / 2;
+                    childNodeContent.xz_max[1] = childNodeContent.position[1] + childNodeContent.side_length / 2;
 
 
-                child->setData(childNodeContent);
+                    child->setData(childNodeContent);
 
-                expand(child, p_max_depth);
+                    expand(child, p_max_depth);
+                }
             }
-        }
-    };
+        };
 
-    expand(p_rgpd.quadtree_root.get(), m_configuration.xtree_max_depth);
+        expand(p_rgpd.quadtree_root.get(), m_configuration.xtree_max_depth);
+    }
+    else // XtreeType::OCTREE
+    {
+        const SceneOctreeNode root_node{ m_configuration.scene_size, Real3Vector(0, 0, 0),
+                                            Real3Vector(-m_configuration.scene_size / 2, -m_configuration.scene_size / 2, -m_configuration.scene_size / 2),
+                                            Real3Vector(m_configuration.scene_size / 2, m_configuration.scene_size / 2, m_configuration.scene_size / 2) };
+
+        p_rgpd.octree_root = std::make_unique<core::OctreeNode<SceneOctreeNode>>(root_node);
+
+        const std::function<void(OctreeNode<SceneOctreeNode>*, int)> expand
+        {
+            [&](OctreeNode<SceneOctreeNode>* p_current_node, int p_max_depth)
+            {
+                if (p_max_depth == p_current_node->getDepth())
+                {
+                    return;
+                }
+
+                p_current_node->split();
+
+                const auto curr_node_pos{ p_current_node->getData().position };
+
+                for (int i = 0; i < mage::core::OctreeNode<SceneOctreeNode>::ChildCount; i++)
+                {
+                    auto child { p_current_node->getChild(i) };
+
+                    SceneOctreeNode childNodeContent;
+                    childNodeContent.side_length = p_current_node->getData().side_length / 2;
+
+                    switch (i)
+                    {
+                        case OctreeNode<SceneOctreeNode>::L0_UP_LEFT_INDEX:
+
+                            childNodeContent.position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
+                            childNodeContent.position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
+                            childNodeContent.position[2] = curr_node_pos[2] - childNodeContent.side_length / 2;
+                            break;
+
+                        case OctreeNode<SceneOctreeNode>::L0_UP_RIGHT_INDEX:
+
+                            childNodeContent.position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
+                            childNodeContent.position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
+                            childNodeContent.position[2] = curr_node_pos[2] - childNodeContent.side_length / 2;
+                            break;
+
+                        case OctreeNode<SceneOctreeNode>::L0_DOWN_RIGHT_INDEX:
+
+                            childNodeContent.position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
+                            childNodeContent.position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
+                            childNodeContent.position[2] = curr_node_pos[2] + childNodeContent.side_length / 2;
+                            break;
+
+                        case OctreeNode<SceneOctreeNode>::L0_DOWN_LEFT_INDEX:
+
+                            childNodeContent.position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
+                            childNodeContent.position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
+                            childNodeContent.position[2] = curr_node_pos[2] + childNodeContent.side_length / 2;
+                            break;
+
+                        case OctreeNode<SceneOctreeNode>::L1_UP_LEFT_INDEX:
+
+                            childNodeContent.position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
+                            childNodeContent.position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
+                            childNodeContent.position[2] = curr_node_pos[2] - childNodeContent.side_length / 2;
+                            break;
+
+                        case OctreeNode<SceneOctreeNode>::L1_UP_RIGHT_INDEX:
+
+                            childNodeContent.position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
+                            childNodeContent.position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
+                            childNodeContent.position[2] = curr_node_pos[2] - childNodeContent.side_length / 2;
+                            break;
+
+                        case OctreeNode<SceneOctreeNode>::L1_DOWN_RIGHT_INDEX:
+
+                            childNodeContent.position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
+                            childNodeContent.position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
+                            childNodeContent.position[2] = curr_node_pos[2] + childNodeContent.side_length / 2;
+                            break;
+
+                        case OctreeNode<SceneOctreeNode>::L1_DOWN_LEFT_INDEX:
+
+                            childNodeContent.position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
+                            childNodeContent.position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
+                            childNodeContent.position[2] = curr_node_pos[2] + childNodeContent.side_length / 2;
+                            break;
+
+                    }
+
+                    childNodeContent.xyz_min[0] = childNodeContent.position[0] - childNodeContent.side_length / 2;
+                    childNodeContent.xyz_min[1] = childNodeContent.position[1] - childNodeContent.side_length / 2;
+                    childNodeContent.xyz_min[2] = childNodeContent.position[2] - childNodeContent.side_length / 2;
+
+                    childNodeContent.xyz_max[0] = childNodeContent.position[0] + childNodeContent.side_length / 2;
+                    childNodeContent.xyz_min[2] = childNodeContent.position[2] - childNodeContent.side_length / 2;
+                    childNodeContent.xyz_max[2] = childNodeContent.position[2] + childNodeContent.side_length / 2;
+
+
+                    child->setData(childNodeContent);
+
+                    expand(child, p_max_depth);
+                }
+            }
+        };
+
+        expand(p_rgpd.octree_root.get(), m_configuration.xtree_max_depth);
+    }
+
+
 }
 
 void SceneStreamerSystem::run()
@@ -1210,29 +1320,59 @@ void SceneStreamerSystem::dumpXTree()
     {
         _MAGE_DEBUG(m_localLogger, "for ViewGroup " + rgpd.first)
 
-        rgpd.second.quadtree_root->traverse([&](const SceneQuadTreeNode& p_data, size_t p_depth)
+        if (XtreeType::QUADTREE == m_configuration.xtree_type)
         {
-            std::string tab;
-            for (size_t i = 0; i < p_depth; i++) tab = tab + " ";
-
-            _MAGE_DEBUG(m_localLogger, tab + "depth = " + std::to_string(p_depth)
-
-                + " side_length = " + std::to_string(p_data.side_length)
-                + " position = " + std::to_string(p_data.position[0]) + " " + std::to_string(p_data.position[1])
-
-                + " xz min = " + std::to_string(p_data.xz_min[0]) + " " + std::to_string(p_data.xz_min[1])
-                + " xz max = " + std::to_string(p_data.xz_max[0]) + " " + std::to_string(p_data.xz_max[1]))
-                for (const auto& e : p_data.entities)
+            rgpd.second.quadtree_root->traverse([&](const SceneQuadTreeNode& p_data, size_t p_depth)
                 {
-                    const auto& world_aspect{ e->aspectAccess(worldAspect::id) };
+                    std::string tab;
+                    for (size_t i = 0; i < p_depth; i++) tab = tab + " ";
 
-                    const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
-                    auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
-                    const auto global_pos = entity_worldposition.global_pos;
+                    _MAGE_DEBUG(m_localLogger, tab + "depth = " + std::to_string(p_depth)
 
-                    _MAGE_DEBUG(m_localLogger, tab + e->getId() + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 2)));
-                }
-        });   
+                        + " side_length = " + std::to_string(p_data.side_length)
+                        + " position = " + std::to_string(p_data.position[0]) + " " + std::to_string(p_data.position[1])
+
+                        + " xz min = " + std::to_string(p_data.xz_min[0]) + " " + std::to_string(p_data.xz_min[1])
+                        + " xz max = " + std::to_string(p_data.xz_max[0]) + " " + std::to_string(p_data.xz_max[1]))
+                        for (const auto& e : p_data.entities)
+                        {
+                            const auto& world_aspect{ e->aspectAccess(worldAspect::id) };
+
+                            const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
+                            auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
+                            const auto global_pos = entity_worldposition.global_pos;
+
+                            _MAGE_DEBUG(m_localLogger, tab + e->getId() + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 2)));
+                        }
+                });
+        }
+        else // XtreeType::OCTREE
+        {
+            rgpd.second.octree_root->traverse([&](const SceneOctreeNode& p_data, size_t p_depth)
+                {
+                    std::string tab;
+                    for (size_t i = 0; i < p_depth; i++) tab = tab + " ";
+
+                    _MAGE_DEBUG(m_localLogger, tab + "depth = " + std::to_string(p_depth)
+
+                        + " side_length = " + std::to_string(p_data.side_length)
+                        + " position = " + std::to_string(p_data.position[0]) + " " + std::to_string(p_data.position[1]) + " " + std::to_string(p_data.position[2])
+
+                        + " xz min = " + std::to_string(p_data.xyz_min[0]) + " " + std::to_string(p_data.xyz_min[1]) + " " + std::to_string(p_data.xyz_min[2])
+                        + " xz max = " + std::to_string(p_data.xyz_max[0]) + " " + std::to_string(p_data.xyz_max[1]) + " " + std::to_string(p_data.xyz_max[2]))
+
+                        for (const auto& e : p_data.entities)
+                        {
+                            const auto& world_aspect{ e->aspectAccess(worldAspect::id) };
+
+                            const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
+                            auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
+                            const auto global_pos = entity_worldposition.global_pos;
+
+                            _MAGE_DEBUG(m_localLogger, tab + e->getId() + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 2)));
+                        }
+                });
+        }
     }
     _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE DUMP END <<<<<<<<<<<<<<<<<<<<<<<<")
 }
@@ -1254,20 +1394,40 @@ void SceneStreamerSystem::dumpXTreeEntities()
             auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
             const auto global_pos = entity_worldposition.global_pos;
 
-
-            if (e.second.quadtree_node)
+            if (XtreeType::QUADTREE == m_configuration.xtree_type)
             {
-                const SceneQuadTreeNode data{ e.second.quadtree_node->getData() };
+                if (e.second.quadtree_node)
+                {
+                    const SceneQuadTreeNode data{ e.second.quadtree_node->getData() };
 
-                _MAGE_DEBUG(m_localLogger, e.first + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 2))
-                    + " tree -> xz min = " + std::to_string(data.xz_min[0]) + " " + std::to_string(data.xz_min[1])
-                    + " xz max = " + std::to_string(data.xz_max[0]) + " " + std::to_string(data.xz_max[1]) + " depth = " 
-                    + std::to_string(e.second.quadtree_node->getDepth()) + " side length = " + std::to_string(data.side_length) )
+                    _MAGE_DEBUG(m_localLogger, e.first + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 2))
+                        + " tree -> xz min = " + std::to_string(data.xz_min[0]) + " " + std::to_string(data.xz_min[1])
+                        + " xz max = " + std::to_string(data.xz_max[0]) + " " + std::to_string(data.xz_max[1]) + " depth = "
+                        + std::to_string(e.second.quadtree_node->getDepth()) + " side length = " + std::to_string(data.side_length))
+                }
+                else
+                {
+                    _MAGE_DEBUG(m_localLogger, e.first + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 2))
+                        + " NO SceneQuadTreeNode !!!")
+                }
             }
-            else
+            else // XtreeType::OCTREE
             {
-                _MAGE_DEBUG(m_localLogger, e.first + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 2))
-                    + " NO SceneQuadTreeNode !!!")
+                if (e.second.octree_node)
+                {
+                    const SceneOctreeNode data{ e.second.octree_node->getData() };
+
+                    _MAGE_DEBUG(m_localLogger, e.first + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 1)) + " " + std::to_string(global_pos(3, 2))
+                        + " tree -> xyz min = " + std::to_string(data.xyz_min[0]) + " " + std::to_string(data.xyz_min[1]) + " " + std::to_string(data.xyz_min[2])
+                        + " xyz max = " + std::to_string(data.xyz_max[0]) + " " + std::to_string(data.xyz_max[1]) + " " + std::to_string(data.xyz_max[2])
+                        + " depth = " + std::to_string(e.second.quadtree_node->getDepth()) + " side length = " + std::to_string(data.side_length))
+                }
+                else
+                {
+                    _MAGE_DEBUG(m_localLogger, e.first + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 1)) + " " + std::to_string(global_pos(3, 2))
+                        + " NO SceneOctreeNode !!!")
+                }
+
             }
         }
     }
