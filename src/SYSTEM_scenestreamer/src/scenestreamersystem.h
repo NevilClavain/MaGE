@@ -782,45 +782,49 @@ namespace mage
 
 
         XTreeType* curr = p_get_node_func(xe); // get xe.quadtree or xe.octree regarding XTreeType used :)
-        while (1)
-        {
-            search_near_entities(found_entities, curr, 0);
 
-            curr = curr->getParent();
-            if (nullptr == curr)
-            {
-                break;
-            }
-        }
-
-        // new entities discovered, to render
-        for (mage::core::Entity* entity : found_entities)
+        if (curr)
         {
-            if (!m_found_entities_to_render.count(entity))
+            while (1)
             {
-                // just discovered -> ask for rendering
-                if (!m_entity_renderings.at(entity->getId()).m_rendered)
+                search_near_entities(found_entities, curr, 0);
+
+                curr = curr->getParent();
+                if (nullptr == curr)
                 {
-                    m_entity_renderings.at(entity->getId()).m_request_rendering = true;
+                    break;
                 }
             }
-        }
 
-        // entities not in neigbourood no more, to remove from rendering...
-        for (mage::core::Entity* rendered_entity : m_found_entities_to_render)
-        {
-            if (!found_entities.count(rendered_entity))
+            // new entities discovered, to render
+            for (mage::core::Entity* entity : found_entities)
             {
-                // not found no more -> ask to stop rendering
-
-                if (m_entity_renderings.at(rendered_entity->getId()).m_rendered)
+                if (!m_found_entities_to_render.count(entity))
                 {
-                    m_entity_renderings.at(rendered_entity->getId()).m_request_rendering = false;
+                    // just discovered -> ask for rendering
+                    if (!m_entity_renderings.at(entity->getId()).m_rendered)
+                    {
+                        m_entity_renderings.at(entity->getId()).m_request_rendering = true;
+                    }
                 }
             }
-        }
 
-        // update...
-        m_found_entities_to_render = found_entities;
+            // entities not in neigbourood no more, to remove from rendering...
+            for (mage::core::Entity* rendered_entity : m_found_entities_to_render)
+            {
+                if (!found_entities.count(rendered_entity))
+                {
+                    // not found no more -> ask to stop rendering
+
+                    if (m_entity_renderings.at(rendered_entity->getId()).m_rendered)
+                    {
+                        m_entity_renderings.at(rendered_entity->getId()).m_request_rendering = false;
+                    }
+                }
+            }
+
+            // update...
+            m_found_entities_to_render = found_entities;
+        }
     };
 }
