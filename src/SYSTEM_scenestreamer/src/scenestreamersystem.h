@@ -563,20 +563,17 @@ namespace mage
         void init_XTree(RendergraphPartData& p_rgpd);
 
         template<typename SceneXTreeNode, typename XTreeType>
+        void update_XTree(XTreeType* p_xtree_root,
+                            std::unordered_map<std::string,
+                            XTreeEntity>& p_xtree_entities,
+                            const std::function<void(XTreeType*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_cam_on_leaf_func,
+                            const std::function<void(XTreeType*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_obj_on_leaf_func,
+                            const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> p_hasnode_func);
+
+        template<typename SceneXTreeNode, typename XTreeType>
         void check_XTree(std::unordered_map<std::string, SceneStreamerSystem::XTreeEntity>& p_xtree_entities, 
                             const json::ViewGroup& p_viewgroup, 
                             const std::function<XTreeType* (const SceneStreamerSystem::XTreeEntity&)>& p_get_node_func);
-
-
-        template<typename XTreeType>
-        void update_XTree(XTreeType* p_xtree_root, 
-                                std::unordered_map<std::string, 
-                                XTreeEntity>& p_xtree_entities,
-                                const std::function<void(XTreeType*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_cam_on_leaf_func,
-                                const std::function<void(XTreeType*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_obj_on_leaf_func,
-                                const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> p_hasnode_func);
-
-
 
         bool                                                                                    m_enabled{ false };
 
@@ -618,7 +615,7 @@ namespace mage
     /////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////
 
-    template<typename XTreeType>
+    template<typename SceneXTreeNode, typename XTreeType>
     void SceneStreamerSystem::update_XTree(XTreeType* p_xtree_root, 
                                                 std::unordered_map<std::string, SceneStreamerSystem::XTreeEntity>& p_xtree_entities,
                                                 const std::function<void(XTreeType*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_cam_on_leaf_func,

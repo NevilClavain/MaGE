@@ -414,7 +414,7 @@ void SceneStreamerSystem::run()
                 } 
             };
 
-            update_XTree<core::QuadTreeNode<SceneQuadTreeNode>>(rgpd_data.quadtree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, place_obj_on_leaf, has_node);
+            update_XTree<SceneQuadTreeNode, core::QuadTreeNode<SceneQuadTreeNode>>(rgpd_data.quadtree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, place_obj_on_leaf, has_node);
         }
         else // XtreeType::OCTREE
         {           
@@ -494,7 +494,7 @@ void SceneStreamerSystem::run()
                 }
             };
 
-            update_XTree<core::OctreeNode<SceneOctreeNode>>(rgpd_data.octree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, place_obj_on_leaf, has_node);
+            update_XTree<SceneOctreeNode, core::OctreeNode<SceneOctreeNode>>(rgpd_data.octree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, place_obj_on_leaf, has_node);
         }
     }
 
