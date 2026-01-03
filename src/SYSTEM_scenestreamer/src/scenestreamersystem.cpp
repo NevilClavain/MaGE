@@ -406,7 +406,15 @@ void SceneStreamerSystem::run()
             };
             /////////////////////////////////////////////////////////////////////////////////
 
-            update_XTree<core::QuadTreeNode<SceneQuadTreeNode>>(rgpd_data.quadtree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, place_obj_on_leaf);
+            const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> has_node
+            {
+                [&](const SceneStreamerSystem::XTreeEntity& p_xe) -> bool
+                {
+                    return (p_xe.quadtree_node != nullptr);
+                } 
+            };
+
+            update_XTree<core::QuadTreeNode<SceneQuadTreeNode>>(rgpd_data.quadtree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, place_obj_on_leaf, has_node);
         }
         else // XtreeType::OCTREE
         {           
@@ -437,7 +445,6 @@ void SceneStreamerSystem::run()
             };
             /////////////////////////////////////////////////////////////////////////////////
 
-            // To be continued...
 
             /////////////////////////////////////////////////////////////////////////////////
             // place 3D object in appropriate xtree leaf : utility lambda
@@ -479,7 +486,15 @@ void SceneStreamerSystem::run()
             };
             /////////////////////////////////////////////////////////////////////////////////
 
-            update_XTree<core::OctreeNode<SceneOctreeNode>>(rgpd_data.octree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, place_obj_on_leaf);            
+            const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> has_node
+            {
+                [&](const SceneStreamerSystem::XTreeEntity& p_xe) -> bool
+                {
+                    return (p_xe.octree_node != nullptr);
+                }
+            };
+
+            update_XTree<core::OctreeNode<SceneOctreeNode>>(rgpd_data.octree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, place_obj_on_leaf, has_node);
         }
     }
 

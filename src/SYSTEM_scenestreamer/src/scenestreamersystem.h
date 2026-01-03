@@ -573,7 +573,8 @@ namespace mage
                                 std::unordered_map<std::string, 
                                 XTreeEntity>& p_xtree_entities,
                                 const std::function<void(XTreeType*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_cam_on_leaf_func,
-                                const std::function<void(XTreeType*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_obj_on_leaf_func);
+                                const std::function<void(XTreeType*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_obj_on_leaf_func,
+                                const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> p_hasnode_func);
 
 
 
@@ -621,7 +622,8 @@ namespace mage
     void SceneStreamerSystem::update_XTree(XTreeType* p_xtree_root, 
                                                 std::unordered_map<std::string, SceneStreamerSystem::XTreeEntity>& p_xtree_entities,
                                                 const std::function<void(XTreeType*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_cam_on_leaf_func,
-                                                const std::function<void(XTreeType*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_obj_on_leaf_func)
+                                                const std::function<void(XTreeType*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_obj_on_leaf_func,
+                                                const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> p_hasnode_func)
     {
         for (auto& xe : p_xtree_entities)
         {
@@ -653,7 +655,7 @@ namespace mage
 
             ///////////////////////////////////////////////
 
-            if (!xe.second.quadtree_node)
+            if (!p_hasnode_func(xe.second))
             {
                 //// PLACE NEW
 
@@ -687,6 +689,7 @@ namespace mage
 
                 if (entity->hasAspect(cameraAspect::id))
                 {
+                    /* /!\ */
                     const bool is_inside{ is_inside_quadtreenode(xe.second.quadtree_node->getData(), global_pos) };
                     if (!is_inside)
                     {
@@ -696,6 +699,7 @@ namespace mage
                 }
                 else if (entity->hasAspect(resourcesAspect::id) && !xe.second.is_static)
                 {
+                    /* /!\ */
                     const bool is_inside{ is_inside_quadtreenode(xe.second.quadtree_node->getData(), global_pos) };
 
                     if (!is_inside)
