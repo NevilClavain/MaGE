@@ -414,7 +414,17 @@ void SceneStreamerSystem::run()
                 } 
             };
 
-            update_XTree<SceneQuadTreeNode, core::QuadTreeNode<SceneQuadTreeNode>>(rgpd_data.quadtree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, place_obj_on_leaf, has_node);
+            /////////////////////////////////////////////////////////////////////////////////
+
+            const std::function<bool(const SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> is_inside
+            {
+                [&](const SceneStreamerSystem::XTreeEntity& p_xe, const core::maths::Matrix& p_global_pos) -> bool
+                {
+                    return false;
+                }
+            };
+
+            update_XTree<SceneQuadTreeNode, core::QuadTreeNode<SceneQuadTreeNode>>(rgpd_data.quadtree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, place_obj_on_leaf, has_node, is_inside);
         }
         else // XtreeType::OCTREE
         {           
@@ -494,7 +504,18 @@ void SceneStreamerSystem::run()
                 }
             };
 
-            update_XTree<SceneOctreeNode, core::OctreeNode<SceneOctreeNode>>(rgpd_data.octree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, place_obj_on_leaf, has_node);
+            /////////////////////////////////////////////////////////////////////////////////
+
+            const std::function<bool(const SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> is_inside
+            {
+                [&](const SceneStreamerSystem::XTreeEntity& p_xe, const core::maths::Matrix& p_global_pos) -> bool
+                {
+                    return false;
+                }
+            };
+
+
+            update_XTree<SceneOctreeNode, core::OctreeNode<SceneOctreeNode>>(rgpd_data.octree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, place_obj_on_leaf, has_node, is_inside);
         }
     }
 
