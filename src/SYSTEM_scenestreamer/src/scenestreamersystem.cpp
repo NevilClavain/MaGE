@@ -81,8 +81,8 @@ void SceneStreamerSystem::init_XTree(RendergraphPartData& p_rgpd)
     if (XtreeType::QUADTREE == m_configuration.xtree_type)
     {
         const SceneQuadTreeNode root_node{ m_configuration.scene_size, Real2Vector(0, 0),
-                                            Real2Vector(-m_configuration.scene_size / 2, -m_configuration.scene_size / 2),
-                                            Real2Vector(m_configuration.scene_size / 2, m_configuration.scene_size / 2) };
+                                            Real2Vector(-m_configuration.scene_size / 2, -m_configuration.scene_size / 2) + Real2Vector(m_configuration.center[0], m_configuration.center[2]),
+                                            Real2Vector(m_configuration.scene_size / 2, m_configuration.scene_size / 2) + Real2Vector(m_configuration.center[0], m_configuration.center[2])};
 
         p_rgpd.quadtree_root = std::make_unique<core::QuadTreeNode<SceneQuadTreeNode>>(root_node);
 
@@ -152,8 +152,8 @@ void SceneStreamerSystem::init_XTree(RendergraphPartData& p_rgpd)
     else // XtreeType::OCTREE
     {
         const SceneOctreeNode root_node{ m_configuration.scene_size, Real3Vector(0, 0, 0),
-                                            Real3Vector(-m_configuration.scene_size / 2, -m_configuration.scene_size / 2, -m_configuration.scene_size / 2),
-                                            Real3Vector(m_configuration.scene_size / 2, m_configuration.scene_size / 2, m_configuration.scene_size / 2) };
+                                            Real3Vector(-m_configuration.scene_size / 2, -m_configuration.scene_size / 2, -m_configuration.scene_size / 2) + Real3Vector(m_configuration.center[0], m_configuration.center[1], m_configuration.center[2]),
+                                            Real3Vector(m_configuration.scene_size / 2, m_configuration.scene_size / 2, m_configuration.scene_size / 2) + Real3Vector(m_configuration.center[0], m_configuration.center[1], m_configuration.center[2]) };
 
         p_rgpd.octree_root = std::make_unique<core::OctreeNode<SceneOctreeNode>>(root_node);
 
