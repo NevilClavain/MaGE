@@ -97,7 +97,7 @@ void SceneStreamerSystem::init_XTree(RendergraphPartData& p_rgpd)
 
                 p_current_node->split();
 
-                const auto curr_node_pos{ p_current_node->getData().position };
+                const auto curr_node_pos{ p_current_node->getData().local_position };
 
                 for (int i = 0; i < mage::core::QuadTreeNode<SceneQuadTreeNode>::ChildCount; i++)
                 {
@@ -110,34 +110,34 @@ void SceneStreamerSystem::init_XTree(RendergraphPartData& p_rgpd)
                     {
                         case QuadTreeNode<SceneQuadTreeNode>::L0_UP_LEFT_INDEX:
 
-                            childNodeContent.position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
-                            childNodeContent.position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
+                            childNodeContent.local_position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
+                            childNodeContent.local_position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
                             break;
 
                         case QuadTreeNode<SceneQuadTreeNode>::L0_UP_RIGHT_INDEX:
 
-                            childNodeContent.position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
-                            childNodeContent.position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
+                            childNodeContent.local_position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
+                            childNodeContent.local_position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
                             break;
 
                         case QuadTreeNode<SceneQuadTreeNode>::L0_DOWN_RIGHT_INDEX:
 
-                            childNodeContent.position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
-                            childNodeContent.position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
+                            childNodeContent.local_position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
+                            childNodeContent.local_position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
                             break;
 
                         case QuadTreeNode<SceneQuadTreeNode>::L0_DOWN_LEFT_INDEX:
 
-                            childNodeContent.position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
-                            childNodeContent.position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
+                            childNodeContent.local_position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
+                            childNodeContent.local_position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
                             break;
                     }
 
-                    childNodeContent.xz_min[0] = childNodeContent.position[0] - childNodeContent.side_length / 2;
-                    childNodeContent.xz_min[1] = childNodeContent.position[1] - childNodeContent.side_length / 2;
+                    childNodeContent.xz_min[0] = childNodeContent.local_position[0] - childNodeContent.side_length / 2 + m_configuration.center[0];
+                    childNodeContent.xz_min[1] = childNodeContent.local_position[1] - childNodeContent.side_length / 2 + m_configuration.center[2];
 
-                    childNodeContent.xz_max[0] = childNodeContent.position[0] + childNodeContent.side_length / 2;
-                    childNodeContent.xz_max[1] = childNodeContent.position[1] + childNodeContent.side_length / 2;
+                    childNodeContent.xz_max[0] = childNodeContent.local_position[0] + childNodeContent.side_length / 2 + m_configuration.center[0];
+                    childNodeContent.xz_max[1] = childNodeContent.local_position[1] + childNodeContent.side_length / 2 + m_configuration.center[2];
 
 
                     child->setData(childNodeContent);
@@ -168,7 +168,7 @@ void SceneStreamerSystem::init_XTree(RendergraphPartData& p_rgpd)
 
                 p_current_node->split();
 
-                const auto curr_node_pos{ p_current_node->getData().position };
+                const auto curr_node_pos{ p_current_node->getData().local_position };
 
                 for (int i = 0; i < mage::core::OctreeNode<SceneOctreeNode>::ChildCount; i++)
                 {
@@ -181,71 +181,69 @@ void SceneStreamerSystem::init_XTree(RendergraphPartData& p_rgpd)
                     {
                         case OctreeNode<SceneOctreeNode>::L0_UP_LEFT_INDEX:
 
-                            childNodeContent.position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
-                            childNodeContent.position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
-                            childNodeContent.position[2] = curr_node_pos[2] - childNodeContent.side_length / 2;
+                            childNodeContent.local_position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
+                            childNodeContent.local_position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
+                            childNodeContent.local_position[2] = curr_node_pos[2] - childNodeContent.side_length / 2;
                             break;
 
                         case OctreeNode<SceneOctreeNode>::L0_UP_RIGHT_INDEX:
 
-                            childNodeContent.position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
-                            childNodeContent.position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
-                            childNodeContent.position[2] = curr_node_pos[2] - childNodeContent.side_length / 2;
+                            childNodeContent.local_position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
+                            childNodeContent.local_position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
+                            childNodeContent.local_position[2] = curr_node_pos[2] - childNodeContent.side_length / 2;
                             break;
 
                         case OctreeNode<SceneOctreeNode>::L0_DOWN_RIGHT_INDEX:
 
-                            childNodeContent.position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
-                            childNodeContent.position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
-                            childNodeContent.position[2] = curr_node_pos[2] + childNodeContent.side_length / 2;
+                            childNodeContent.local_position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
+                            childNodeContent.local_position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
+                            childNodeContent.local_position[2] = curr_node_pos[2] + childNodeContent.side_length / 2;
                             break;
 
                         case OctreeNode<SceneOctreeNode>::L0_DOWN_LEFT_INDEX:
 
-                            childNodeContent.position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
-                            childNodeContent.position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
-                            childNodeContent.position[2] = curr_node_pos[2] + childNodeContent.side_length / 2;
+                            childNodeContent.local_position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
+                            childNodeContent.local_position[1] = curr_node_pos[1] - childNodeContent.side_length / 2;
+                            childNodeContent.local_position[2] = curr_node_pos[2] + childNodeContent.side_length / 2;
                             break;
 
                         case OctreeNode<SceneOctreeNode>::L1_UP_LEFT_INDEX:
 
-                            childNodeContent.position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
-                            childNodeContent.position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
-                            childNodeContent.position[2] = curr_node_pos[2] - childNodeContent.side_length / 2;
+                            childNodeContent.local_position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
+                            childNodeContent.local_position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
+                            childNodeContent.local_position[2] = curr_node_pos[2] - childNodeContent.side_length / 2;
                             break;
 
                         case OctreeNode<SceneOctreeNode>::L1_UP_RIGHT_INDEX:
 
-                            childNodeContent.position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
-                            childNodeContent.position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
-                            childNodeContent.position[2] = curr_node_pos[2] - childNodeContent.side_length / 2;
+                            childNodeContent.local_position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
+                            childNodeContent.local_position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
+                            childNodeContent.local_position[2] = curr_node_pos[2] - childNodeContent.side_length / 2;
                             break;
 
                         case OctreeNode<SceneOctreeNode>::L1_DOWN_RIGHT_INDEX:
 
-                            childNodeContent.position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
-                            childNodeContent.position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
-                            childNodeContent.position[2] = curr_node_pos[2] + childNodeContent.side_length / 2;
+                            childNodeContent.local_position[0] = curr_node_pos[0] + childNodeContent.side_length / 2;
+                            childNodeContent.local_position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
+                            childNodeContent.local_position[2] = curr_node_pos[2] + childNodeContent.side_length / 2;
                             break;
 
                         case OctreeNode<SceneOctreeNode>::L1_DOWN_LEFT_INDEX:
 
-                            childNodeContent.position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
-                            childNodeContent.position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
-                            childNodeContent.position[2] = curr_node_pos[2] + childNodeContent.side_length / 2;
+                            childNodeContent.local_position[0] = curr_node_pos[0] - childNodeContent.side_length / 2;
+                            childNodeContent.local_position[1] = curr_node_pos[1] + childNodeContent.side_length / 2;
+                            childNodeContent.local_position[2] = curr_node_pos[2] + childNodeContent.side_length / 2;
                             break;
-
                     }
 
-                    childNodeContent.xyz_min[0] = childNodeContent.position[0] - childNodeContent.side_length / 2;
-                    childNodeContent.xyz_min[1] = childNodeContent.position[1] - childNodeContent.side_length / 2;
-                    childNodeContent.xyz_min[2] = childNodeContent.position[2] - childNodeContent.side_length / 2;
+                    childNodeContent.xyz_min[0] = childNodeContent.local_position[0] - childNodeContent.side_length / 2 + m_configuration.center[0];
+                    childNodeContent.xyz_min[1] = childNodeContent.local_position[1] - childNodeContent.side_length / 2 + m_configuration.center[1];
+                    childNodeContent.xyz_min[2] = childNodeContent.local_position[2] - childNodeContent.side_length / 2 + m_configuration.center[2];
 
-                    childNodeContent.xyz_max[0] = childNodeContent.position[0] + childNodeContent.side_length / 2;
-                    childNodeContent.xyz_min[2] = childNodeContent.position[2] - childNodeContent.side_length / 2;
-                    childNodeContent.xyz_max[2] = childNodeContent.position[2] + childNodeContent.side_length / 2;
-
-
+                    childNodeContent.xyz_max[0] = childNodeContent.local_position[0] + childNodeContent.side_length / 2 + m_configuration.center[0];
+                    childNodeContent.xyz_max[1] = childNodeContent.local_position[1] + childNodeContent.side_length / 2 + m_configuration.center[1];
+                    childNodeContent.xyz_max[2] = childNodeContent.local_position[2] + childNodeContent.side_length / 2 + m_configuration.center[2];
+                
                     child->setData(childNodeContent);
 
                     expand(child, p_max_depth);
@@ -444,7 +442,8 @@ void SceneStreamerSystem::run()
                         {
                             auto child { p_current_node->getChild(i) };
 
-                            if (SceneStreamerSystem::is_inside_octreenode(child->getData(), p_global_pos))
+                            const bool is_inside{ SceneStreamerSystem::is_inside_octreenode(child->getData(), p_global_pos) };
+                            if(is_inside)
                             {
                                 place_cam_on_leaf(child, p_global_pos, p_entity, p_xtreeEntity);
                             }
@@ -1364,7 +1363,7 @@ void SceneStreamerSystem::dumpXTree()
                     _MAGE_DEBUG(m_localLogger, tab + "depth = " + std::to_string(p_depth)
 
                         + " side_length = " + std::to_string(p_data.side_length)
-                        + " position = " + std::to_string(p_data.position[0]) + " " + std::to_string(p_data.position[1])
+                        + " local_position = " + std::to_string(p_data.local_position[0]) + " " + std::to_string(p_data.local_position[1])
 
                         + " xz min = " + std::to_string(p_data.xz_min[0]) + " " + std::to_string(p_data.xz_min[1])
                         + " xz max = " + std::to_string(p_data.xz_max[0]) + " " + std::to_string(p_data.xz_max[1]))
@@ -1390,7 +1389,7 @@ void SceneStreamerSystem::dumpXTree()
                     _MAGE_DEBUG(m_localLogger, tab + "depth = " + std::to_string(p_depth)
 
                         + " side_length = " + std::to_string(p_data.side_length)
-                        + " position = " + std::to_string(p_data.position[0]) + " " + std::to_string(p_data.position[1]) + " " + std::to_string(p_data.position[2])
+                        + " local_position = " + std::to_string(p_data.local_position[0]) + " " + std::to_string(p_data.local_position[1]) + " " + std::to_string(p_data.local_position[2])
 
                         + " xz min = " + std::to_string(p_data.xyz_min[0]) + " " + std::to_string(p_data.xyz_min[1]) + " " + std::to_string(p_data.xyz_min[2])
                         + " xz max = " + std::to_string(p_data.xyz_max[0]) + " " + std::to_string(p_data.xyz_max[1]) + " " + std::to_string(p_data.xyz_max[2]))

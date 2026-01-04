@@ -455,7 +455,7 @@ namespace mage
         struct SceneQuadTreeNode
         {
             double                                              side_length{ 0 };
-            core::maths::Real2Vector                            position;
+            core::maths::Real2Vector                            local_position;
 
             core::maths::Real2Vector                            xz_min;
             core::maths::Real2Vector                            xz_max;
@@ -467,7 +467,7 @@ namespace mage
         struct SceneOctreeNode
         {
             double                                              side_length{ 0 };
-            core::maths::Real3Vector                            position;
+            core::maths::Real3Vector                            local_position;
 
             core::maths::Real3Vector                            xyz_min;
             core::maths::Real3Vector                            xyz_max;
@@ -511,12 +511,19 @@ namespace mage
 
         struct Configuration
         {
-            double      scene_size                  { 5000 };
-            int         xtree_max_depth             { 6 };
-            int         max_neighbourood_depth      { 2 };
-            double      object_xtreenode_ratio      { 0.1 };
+            Configuration()
+            {
+                center[0] = 0.0;
+                center[1] = 0.0;
+                center[2] = 0.0;
+            }
 
-            XtreeType   xtree_type                  { XtreeType::QUADTREE };
+            double                      scene_size                  { 5000 };
+            int                         xtree_max_depth             { 6 };
+            int                         max_neighbourood_depth      { 2 };
+            double                      object_xtreenode_ratio      { 0.1 };            
+            XtreeType                   xtree_type                  { XtreeType::QUADTREE };
+            core::maths::Real3Vector    center;
         };
 
         SceneStreamerSystem() = delete;
