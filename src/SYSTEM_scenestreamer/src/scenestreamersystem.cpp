@@ -381,22 +381,21 @@ void SceneStreamerSystem::run()
                     }
                     else
                     {
-                        const double node_size { p_current_node->getData().side_length };
+                        if (SceneStreamerSystem::is_inside_quadtreenode(p_current_node->getData(), p_global_pos))
+                        {
+                            const double node_size{ p_current_node->getData().side_length };
 
-                        if (p_obj_size / node_size > m_configuration.object_xtreenode_ratio)
-                        {
-                            //place it
-                            p_current_node->dataAccess().entities.insert(p_entity);
-                            p_xtreeEntity.quadtree_node = p_current_node;
-                        }
-                        else
-                        {
-                            for (int i = 0; i < core::QuadTreeNode<SceneQuadTreeNode>::ChildCount; i++)
+                            if (p_obj_size / node_size > m_configuration.object_xtreenode_ratio)
                             {
-                                auto child{ p_current_node->getChild(i) };
-
-                                if (SceneStreamerSystem::is_inside_quadtreenode(child->getData(), p_global_pos))
+                                //place it
+                                p_current_node->dataAccess().entities.insert(p_entity);
+                                p_xtreeEntity.quadtree_node = p_current_node;
+                            }
+                            else
+                            {
+                                for (int i = 0; i < core::QuadTreeNode<SceneQuadTreeNode>::ChildCount; i++)
                                 {
+                                    auto child{ p_current_node->getChild(i) };
                                     place_obj_on_leaf(child, p_obj_size, p_global_pos, p_entity, p_xtreeEntity);
                                 }
                             }
@@ -471,23 +470,22 @@ void SceneStreamerSystem::run()
                     }
                     else
                     {
-                        const double node_size { p_current_node->getData().side_length };
+                        if (SceneStreamerSystem::is_inside_octreenode(p_current_node->getData(), p_global_pos))
+                        {
+                            const double node_size{ p_current_node->getData().side_length };
 
-                        if (p_obj_size / node_size > m_configuration.object_xtreenode_ratio)
-                        {
-                            //place it
-                            p_current_node->dataAccess().entities.insert(p_entity);
-                            p_xtreeEntity.octree_node = p_current_node;
-                        }
-                        else
-                        {
-                            for (int i = 0; i < core::OctreeNode<SceneOctreeNode>::ChildCount; i++)
+                            if (p_obj_size / node_size > m_configuration.object_xtreenode_ratio)
                             {
-                                auto child{ p_current_node->getChild(i) };
-
-                                if (SceneStreamerSystem::is_inside_octreenode(child->getData(), p_global_pos))
+                                //place it
+                                p_current_node->dataAccess().entities.insert(p_entity);
+                                p_xtreeEntity.octree_node = p_current_node;
+                            }
+                            else
+                            {
+                                for (int i = 0; i < core::OctreeNode<SceneOctreeNode>::ChildCount; i++)
                                 {
-                                    place_obj_on_leaf(child, p_obj_size, p_global_pos, p_entity, p_xtreeEntity);
+                                    auto child{ p_current_node->getChild(i) };
+                                    place_obj_on_leaf(child, p_obj_size, p_global_pos, p_entity, p_xtreeEntity);                                    
                                 }
                             }
                         }
