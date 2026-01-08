@@ -190,6 +190,19 @@ namespace mage
             JS_OBJ(type, step, direction, initial_value, min, max, management, initial_state);         
         };
 
+        struct ValueGenerator
+        {
+            std::string type;  // "increment", "rand"
+
+            double      increment_step;
+
+            double      rand_seed;
+            std::string rand_distribution_type;
+
+            JS_OBJ(type, step);
+        };
+
+
         struct ScalarDirectValueMatrixSource
         {
             std::string         descr;
@@ -218,6 +231,15 @@ namespace mage
             double              w;
 
             JS_OBJ(descr, x, y, z, w);
+        };
+
+
+        struct ValueGeneratorSource
+        {
+            std::string         descr;
+            ValueGenerator      value_generator;
+
+            JS_OBJ(descr, value_generator);
         };
 
         struct SyncVarValueMatrixSource
@@ -260,6 +282,11 @@ namespace mage
             SyncVarValueMatrixSource            y_syncvar_value;
             SyncVarValueMatrixSource            z_syncvar_value;
             SyncVarValueMatrixSource            w_syncvar_value;
+
+            ValueGeneratorSource                x_generated_value;
+            ValueGeneratorSource                y_generated_value;
+            ValueGeneratorSource                z_generated_value;
+            ValueGeneratorSource                w_generated_value;
 
             Vector4DatacloudValueMatrixSource   xyzw_datacloud_value;
             Vector3DatacloudValueMatrixSource   xyz_datacloud_value;
@@ -395,10 +422,27 @@ namespace mage
 
         struct FileArgument
         {
-            std::string key;
-            std::string value;
+            std::string                 key;
+            std::string                 value;
 
             JS_OBJ(key, value);
+        };
+
+
+        struct AnimatorRepeat
+        {
+            int                                         n;
+            std::vector<Animator>                       animators;
+
+            JS_OBJ(n, animators);
+        };
+
+        struct InstancesFactory
+        {                        
+            std::vector<Animator>                       animators;
+            std::vector<AnimatorRepeat>                 animator_repeat;
+
+            JS_OBJ(animators, animator_repeat);
         };
 
         struct ScenegraphNode
@@ -411,9 +455,11 @@ namespace mage
 
             std::vector<std::string>    rendergraph_parts;
 
-            Animator                    animator;
+            Animator                    animator;           // to be removed
+
+            InstancesFactory            instances_factory;
             
-            JS_OBJ(file, file_args, tags, rendergraph_parts, animator);
+            JS_OBJ(file, file_args, tags, rendergraph_parts, animator, instances_factory);
         };
 
         struct Scenegraph

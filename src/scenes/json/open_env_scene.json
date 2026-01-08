@@ -23,6 +23,76 @@
         "ZdepthChannelScene_Entity"
       ],
 
+      "instances_factory": {
+        "animators": [
+          {
+            "descr": "camera_Entity pos animator",
+
+            "matrix_factory_chain": [
+              {
+                "type": "translation",
+
+                "x_direct_value": {
+                  "descr": "camera_Entity pos in x part I",
+                  "value": -51
+                },
+
+                "y_direct_value": {
+                  "descr": "camera_Entity pos in y part I",
+                  "value": 15
+                },
+
+                "z_direct_value": {
+                  "descr": "camera_Entity pos in z part I",
+                  "value": 1.5
+                }
+              },
+
+              {
+                "type": "translation",
+
+                "x_direct_value": {
+                  "descr": "camera_Entity pos in x part II",
+                  "value": 0
+                },
+
+                "y_datacloud_value": {
+                  "descr": "camera_Entity pos in y part II",
+                  "var_name": "app.groundLevel"
+                },
+
+                "z_direct_value": {
+                  "descr": "camera_Entity pos in z part II",
+                  "value": 0
+                }
+              },
+
+              {
+                "type": "translation",
+
+                "x_direct_value": {
+                  "descr": "camera_Entity pos in x part III",
+                  "value": 0
+                },
+
+                "y_datacloud_value": {
+                  "descr": "camera_Entity pos in y part III",
+                  "var_name": "app.skydomeInnerRadius"
+                },
+
+                "z_direct_value": {
+                  "descr": "camera_Entity pos in z part III",
+                  "value": 0
+                }
+              }
+            ]
+          }
+        ],
+        "animator_repeat": [
+
+        ]
+      },
+
       "animator": {
         "descr": "camera_Entity pos animator",
 
@@ -105,6 +175,56 @@
         "ZdepthChannelScene_Entity"
       ],
 
+      "instances_factory": {
+        "animators": [
+          {
+            "descr": "ground_Entity pos animator",
+
+            "matrix_factory_chain": [
+              {
+                "type": "translation",
+
+                "x_direct_value": {
+                  "descr": "ground_Entity pos in x part I",
+                  "value": 0
+                },
+
+                "y_datacloud_value": {
+                  "descr": "ground_Entity pos in y part I",
+                  "var_name": "app.skydomeInnerRadius"
+                },
+
+                "z_direct_value": {
+                  "descr": "ground_Entity pos in z part I",
+                  "value": 0
+                }
+              },
+              {
+                "type": "translation",
+
+                "x_direct_value": {
+                  "descr": "ground_Entity pos in x part II",
+                  "value": 0
+                },
+
+                "y_datacloud_value": {
+                  "descr": "ground_Entity pos in y part II",
+                  "var_name": "app.groundLevel"
+                },
+
+                "z_direct_value": {
+                  "descr": "ground_Entity pos in z part II",
+                  "value": 0
+                }
+              }
+            ]
+          }
+        ],
+        "animator_repeat": [
+
+        ]
+      },
+
       "animator": {
         "descr": "ground_Entity pos animator",
 
@@ -167,6 +287,56 @@
         "ZdepthChannelScene_Entity"
       ],
 
+      "instances_factory": {
+        "animators": [
+          {
+            "descr": "tree_Entity pos animator",
+
+            "matrix_factory_chain": [
+              {
+                "type": "translation",
+
+                "x_direct_value": {
+                  "descr": "tree_entity pos in x part I",
+                  "value": 0
+                },
+
+                "y_datacloud_value": {
+                  "descr": "tree_entity pos in y part I",
+                  "var_name": "app.skydomeInnerRadius"
+                },
+
+                "z_direct_value": {
+                  "descr": "tree_entity pos in z part I",
+                  "value": 0
+                }
+              },
+              {
+                "type": "translation",
+
+                "x_direct_value": {
+                  "descr": "tree_entity pos in x part II",
+                  "value": 0
+                },
+
+                "y_datacloud_value": {
+                  "descr": "tree_entity pos in y part II",
+                  "var_name": "app.groundLevel"
+                },
+
+                "z_direct_value": {
+                  "descr": "tree_entity pos in z part II",
+                  "value": -30.0
+                }
+              }
+            ]
+          }
+        ],
+        "animator_repeat": [
+
+        ]
+      },
+
       "animator": {
         "descr": "tree_Entity pos animator",
 
@@ -228,6 +398,69 @@
         "TextureChannelScene_Entity",
         "ZdepthChannelScene_Entity"
       ],
+
+      "instances_factory": {
+        "animators": [
+          {
+            "descr": "wall_Entity pos animator",
+
+            "matrix_factory_chain": [
+
+              {
+                "type": "translation",
+
+                "x_direct_value": {
+                  "descr": "wall_Entity pos in x part I",
+                  "value": 0
+                },
+
+                "y_datacloud_value": {
+                  "descr": "wall_Entity pos in y part I",
+                  "var_name": "app.skydomeInnerRadius"
+                },
+
+                "z_direct_value": {
+                  "descr": "wall_Entity pos in z part I",
+                  "value": 0
+                }
+              },
+              {
+                "type": "translation",
+
+                "x_direct_value": {
+                  "descr": "wall_Entity pos in x part II",
+                  "value": -25
+                },
+
+                "y_datacloud_value": {
+                  "descr": "wall_Entity pos in y part II",
+                  "var_name": "app.groundLevel"
+                },
+
+                "z_direct_value": {
+                  "descr": "wall_Entity pos in z part II",
+                  "value": -40
+                }
+              },
+              {
+                "type": "rotationDegrees",
+
+                "xyzw_direct_value": {
+                  "descr": "wall_Entity rot",
+
+                  "x": 0,
+                  "y": 1,
+                  "z": 0,
+                  "w": 90
+                }
+              }
+            ]
+          }
+        ],
+        "animator_repeat": [
+
+        ]
+      },
 
       "animator": {
         "descr": "wall_Entity pos animator",
@@ -302,6 +535,76 @@
       "rendergraph_parts": [
         "TextureChannelScene_Entity"
       ],
+
+      "instances_factory": {
+        "animators": [
+          {
+            "descr": "clouds_Entity pos animator",
+
+            "matrix_factory_chain": [
+
+              {
+                "type": "translation",
+
+                "x_direct_value": {
+                  "descr": "clouds_Entity pos in x part I",
+                  "value": 0
+                },
+
+                "y_datacloud_value": {
+                  "descr": "clouds_Entity pos in y part I",
+                  "var_name": "app.skydomeInnerRadius"
+                },
+
+                "z_direct_value": {
+                  "descr": "clouds_Entity pos in z part I",
+                  "value": 0
+                }
+              },
+              {
+                "type": "translation",
+
+                "x_direct_value": {
+                  "descr": "clouds_Entity pos in x part II",
+                  "value": 0
+                },
+
+                "y_datacloud_value": {
+                  "descr": "clouds_Entity pos in y part II",
+                  "var_name": "app.groundLevel"
+                },
+
+                "z_direct_value": {
+                  "descr": "clouds_Entity pos in z part II",
+                  "value": 0
+                }
+              },
+
+              {
+                "type": "translation",
+
+                "x_direct_value": {
+                  "descr": "clouds_Entity pos in x part III",
+                  "value": 0
+                },
+
+                "y_direct_value": {
+                  "descr": "clouds_Entity pos in y part III",
+                  "value": 400
+                },
+
+                "z_direct_value": {
+                  "descr": "clouds_Entity pos in z part III",
+                  "value": 0
+                }
+              }
+            ]
+          }
+        ],
+        "animator_repeat": [
+
+        ]
+      },
 
       "animator": {
         "descr": "clouds_Entity pos animator",
@@ -383,6 +686,38 @@
       "rendergraph_parts": [
         "TextureChannelScene_Entity"
       ],
+
+      "instances_factory": {
+        "animators": [
+          {
+            "descr": "skydome_Entity pos animator",
+
+            "matrix_factory_chain": [
+              {
+                "type": "scaling",
+
+                "x_datacloud_value": {
+                  "descr": "skydome x scaling",
+                  "var_name": "app.skydomeOuterRadius"
+                },
+
+                "y_datacloud_value": {
+                  "descr": "skydome y scaling",
+                  "var_name": "app.skydomeOuterRadius"
+                },
+
+                "z_datacloud_value": {
+                  "descr": "skydome z scaling",
+                  "var_name": "app.skydomeOuterRadius"
+                }
+              }
+            ]
+          }
+        ],
+        "animator_repeat": [
+
+        ]
+      },
 
       "animator": {
         "descr": "skydome_Entity pos animator",
