@@ -455,11 +455,11 @@ namespace mage
 
             std::vector<std::string>    rendergraph_parts;
 
-            Animator                    animator;           // to be removed
+            //Animator                    animator;           // to be removed
 
             InstancesFactory            instances_factory;
             
-            JS_OBJ(file, file_args, tags, rendergraph_parts, animator, instances_factory);
+            JS_OBJ(file, file_args, tags, rendergraph_parts, /*animator,*/ instances_factory);
         };
 
         struct Scenegraph

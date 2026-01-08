@@ -720,8 +720,25 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
         {
             file_args.emplace(file_arg.key, file_arg.value);
         }
+        
+        int index{ 0 };
+        for (const auto& instance_animator : e.instances_factory.animators)
+        {
+            const auto ext{ std::to_string(index) };
+            if (index > 0)
+            {
+                // extend entity id with index number
+                for (auto& file_arg : file_args)
+                {
+                    file_arg.second += "_clone" + ext;
+                }
+            }
 
-        buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, e.animator, e.tags, p_parentEntityId, p_perspective_projection, file_args);
+            buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_args);
+            index++;
+        }        
+        //buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, e.animator, e.tags, p_parentEntityId, p_perspective_projection, file_args);
+
     }
 }
 
