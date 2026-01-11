@@ -194,13 +194,14 @@ namespace mage
         {
             std::string         type;  // "increment", "rand"
 
+            double              increment_init_value;
             double              increment_step;
 
             double              rand_seed;
             std::string         rand_distribution_type;
             std::vector<double> rand_distribution_arguments;
 
-            JS_OBJ(type, increment_step, rand_seed, rand_distribution_type, rand_distribution_arguments);
+            JS_OBJ(type, increment_init_value, increment_step, rand_seed, rand_distribution_type, rand_distribution_arguments);
         };
 
 
@@ -284,11 +285,6 @@ namespace mage
             SyncVarValueMatrixSource            z_syncvar_value;
             SyncVarValueMatrixSource            w_syncvar_value;
 
-            ValueGeneratorSource                x_generated_value;
-            ValueGeneratorSource                y_generated_value;
-            ValueGeneratorSource                z_generated_value;
-            ValueGeneratorSource                w_generated_value;
-
             Vector4DatacloudValueMatrixSource   xyzw_datacloud_value;
             Vector3DatacloudValueMatrixSource   xyz_datacloud_value;
             ScalarDatacloudValueMatrixSource    x_datacloud_value;
@@ -298,10 +294,17 @@ namespace mage
 
             Vector4DirectValueMatrixSource      xyzw_direct_value;
             Vector3DirectValueMatrixSource      xyz_direct_value;
+
             ScalarDirectValueMatrixSource       x_direct_value;
             ScalarDirectValueMatrixSource       y_direct_value;
             ScalarDirectValueMatrixSource       z_direct_value;
             ScalarDirectValueMatrixSource       w_direct_value;
+
+            ValueGeneratorSource                x_generated_value;
+            ValueGeneratorSource                y_generated_value;
+            ValueGeneratorSource                z_generated_value;
+            ValueGeneratorSource                w_generated_value;
+
 
             JS_OBJ(type, x_syncvar_value, y_syncvar_value, z_syncvar_value, w_syncvar_value,
                          x_generated_value, y_generated_value, z_generated_value, w_generated_value,
@@ -657,6 +660,8 @@ namespace mage
         core::SyncVariable build_syncvariable_fromjson(const json::SyncVariable& p_syncvar);
 
         mage::transform::MatrixFactory process_matrixfactory_fromjson(const json::MatrixFactory& p_json_matrix_factory, mage::core::ComponentContainer& p_world_aspect, mage::core::ComponentContainer& p_time_aspect);
+
+        void init_values_generator_from_matrix_factory(const std::vector<json::MatrixFactory>& p_mfs_chain);
 
         std::string filter_arguments_stack(const std::string p_input, const std::unordered_map<std::string, std::string> p_file_args);
     };

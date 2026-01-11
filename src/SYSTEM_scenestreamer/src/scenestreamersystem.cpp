@@ -720,24 +720,46 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
         {
             file_args.emplace(file_arg.key, file_arg.value);
         }
-        
+                       
         int index{ 0 };
-        for (const auto& instance_animator : e.instances_factory.animators)
-        {
-            const auto ext{ std::to_string(index) };
+        for (const auto& instance_animator : e.instances_factory.animators)        
+        {            
+            auto file_args_1 = file_args;
             if (index > 0)
             {
+                const auto ext{ std::to_string(index) };
                 // extend entity id with index number
-                for (auto& file_arg : file_args)
+                for (auto& file_arg : file_args_1)
                 {
-                    file_arg.second += "_clone" + ext;
+                    file_arg.second += "_clone_" + ext;
                 }
             }
 
-            buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_args);
+            buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_args_1);
             index++;
-        }        
-        //buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, e.animator, e.tags, p_parentEntityId, p_perspective_projection, file_args);
+        }
+
+        for (const auto& instance_animator_repeat : e.instances_factory.animator_repeat)
+        {           
+            for (int i = 0; i < instance_animator_repeat.number; i++)
+            {
+                auto file_args_2 = file_args;
+                if (index > 0)
+                {
+                    const auto ext{ std::to_string(index) };
+                    // extend entity id with index number
+                    for (auto& file_arg : file_args_2)
+                    {
+                        file_arg.second += "_clone_" + ext;
+                    }
+                }
+
+                const auto instance_animator{ instance_animator_repeat.animator };
+
+                buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_args_2);
+                index++;
+            }
+        }
 
     }
 }
@@ -831,6 +853,10 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
                     world_aspect.addComponent<transform::WorldPosition>("position");
 
                     std::vector<mage::transform::MatrixFactory> mf_stack;
+
+                    // TODO : prepare ValueGenerators if needed
+
+                    init_values_generator_from_matrix_factory(p_animator.matrix_factory_chain);
 
                     for (const auto& json_mf : p_animator.matrix_factory_chain)
                     {
@@ -1116,6 +1142,10 @@ mage::transform::MatrixFactory SceneStreamerSystem::process_matrixfactory_fromjs
                 p_world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.x_direct_value.descr, p_json_matrix_factory.x_direct_value.value);
                 matrix_factory.setXSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.x_direct_value.descr)->getPurpose());
             }
+            else if ("" != p_json_matrix_factory.x_generated_value.descr)
+            {
+                // TODO
+            }
 
             // Y
             if ("" != p_json_matrix_factory.y_datacloud_value.descr)
@@ -1138,6 +1168,11 @@ mage::transform::MatrixFactory SceneStreamerSystem::process_matrixfactory_fromjs
                 p_world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.y_direct_value.descr, p_json_matrix_factory.y_direct_value.value);
                 matrix_factory.setYSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.y_direct_value.descr)->getPurpose());
             }
+            else if ("" != p_json_matrix_factory.y_generated_value.descr)
+            {
+                // TODO
+            }
+
 
             // Z
             if ("" != p_json_matrix_factory.z_datacloud_value.descr)
@@ -1160,6 +1195,11 @@ mage::transform::MatrixFactory SceneStreamerSystem::process_matrixfactory_fromjs
                 p_world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.z_direct_value.descr, p_json_matrix_factory.z_direct_value.value);
                 matrix_factory.setZSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.z_direct_value.descr)->getPurpose());
             }
+            else if ("" != p_json_matrix_factory.z_generated_value.descr)
+            {
+                // TODO
+            }
+
 
             // W
             if ("" != p_json_matrix_factory.w_datacloud_value.descr)
@@ -1182,9 +1222,44 @@ mage::transform::MatrixFactory SceneStreamerSystem::process_matrixfactory_fromjs
                 p_world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.w_direct_value.descr, p_json_matrix_factory.w_direct_value.value);
                 matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.w_direct_value.descr)->getPurpose());
             }
+            else if ("" != p_json_matrix_factory.w_generated_value.descr)
+            {
+                // TODO
+            }
+
         }
     }
     return matrix_factory;
+}
+
+void SceneStreamerSystem::init_values_generator_from_matrix_factory(const std::vector<json::MatrixFactory>& p_mfs_chain)
+{
+    for (const auto& json_matrix_factory : p_mfs_chain)
+    {
+        if ("" != json_matrix_factory.x_generated_value.descr)
+        {
+            int a = 0;
+            a++;
+        }
+
+        if ("" != json_matrix_factory.y_generated_value.descr)
+        {
+            int a = 0;
+            a++;
+        }
+
+        if ("" != json_matrix_factory.z_generated_value.descr)
+        {
+            int a = 0;
+            a++;
+        }
+
+        if ("" != json_matrix_factory.w_generated_value.descr)
+        {
+            int a = 0;
+            a++;
+        }
+    }
 }
 
 void SceneStreamerSystem::requestEntityRendering(const std::string& p_entity_id, bool p_render_it)
