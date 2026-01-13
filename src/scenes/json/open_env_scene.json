@@ -271,7 +271,7 @@
         ],
         "animator_repeat": [
           {
-            "number": 2,
+            "number": 25,
 
             "animator": {
               "descr": "tree_Entity pos animator",
@@ -312,8 +312,8 @@
                     "descr": "tree_entity pos in z part II",
                     "value_generator": {
                       "type": "increment",
-                      "increment_init_value": -50.0,
-                      "increment_step": 5.0
+                      "increment_init_value": -80.0,
+                      "increment_step": -25.0
                     }
                   }
                 }

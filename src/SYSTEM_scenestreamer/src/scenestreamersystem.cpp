@@ -709,7 +709,7 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
         const auto errorStr{ parseContext.makeErrorString() };
         _EXCEPTION("Cannot parse scenegraph: " + errorStr);
     }
-
+   
     for (const auto& e : sg.entities)
     {
         mage::core::FileContent<char> entityFileContent("./module_streamed_anims_config/" + e.file + ".json");
@@ -720,6 +720,8 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
         {
             file_args.emplace(file_arg.key, file_arg.value);
         }
+
+        std::unordered_map<std::string, std::unique_ptr<IValueGenerator>> generators;
                        
         int index{ 0 };
         for (const auto& instance_animator : e.instances_factory.animators)        
@@ -735,12 +737,16 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                 }
             }
 
-            buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_args_1);
+            buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_args_1, generators);
             index++;
         }
 
         for (const auto& instance_animator_repeat : e.instances_factory.animator_repeat)
-        {           
+        {              
+            const auto instance_animator{ instance_animator_repeat.animator };
+            
+            init_values_generator_from_matrix_factory(instance_animator.matrix_factory_chain, generators);
+
             for (int i = 0; i < instance_animator_repeat.number; i++)
             {
                 auto file_args_2 = file_args;
@@ -756,7 +762,7 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
 
                 const auto instance_animator{ instance_animator_repeat.animator };
 
-                buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_args_2);
+                buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_args_2, generators);
                 index++;
             }
         }
@@ -769,7 +775,8 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
                                                                                     const std::vector<std::string>& p_tags, 
                                                                                     const std::string& p_parentEntityId, 
                                                                                     const mage::core::maths::Matrix p_perspective_projection,
-                                                                                    const std::unordered_map<std::string, std::string> p_file_args)
+                                                                                    const std::unordered_map<std::string, std::string> p_file_args,
+                                                                                    const std::unordered_map<std::string, std::unique_ptr<IValueGenerator>>& p_generators)
 {
     json::ScenegraphEntitiesCollection sgc;
 
@@ -854,13 +861,11 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
 
                     std::vector<mage::transform::MatrixFactory> mf_stack;
 
-                    // TODO : prepare ValueGenerators if needed
-
-                    init_values_generator_from_matrix_factory(p_animator.matrix_factory_chain);
+                    const auto& generators{ std::move(p_generators) };
 
                     for (const auto& json_mf : p_animator.matrix_factory_chain)
                     {
-                        const auto mf{ process_matrixfactory_fromjson(json_mf, world_aspect, time_aspect) };
+                        const auto mf{ process_matrixfactory_fromjson(json_mf, world_aspect, time_aspect, generators) };
                         mf_stack.push_back(mf);
                     }
 
@@ -1035,7 +1040,10 @@ core::SyncVariable SceneStreamerSystem::build_syncvariable_fromjson(const json::
     return sync_variable;
 }
 
-mage::transform::MatrixFactory SceneStreamerSystem::process_matrixfactory_fromjson(const json::MatrixFactory& p_json_matrix_factory, mage::core::ComponentContainer& p_world_aspect, mage::core::ComponentContainer& p_time_aspect)
+mage::transform::MatrixFactory SceneStreamerSystem::process_matrixfactory_fromjson(const json::MatrixFactory& p_json_matrix_factory, 
+                                                                                    mage::core::ComponentContainer& p_world_aspect, 
+                                                                                    mage::core::ComponentContainer& p_time_aspect,
+                                                                                    const std::unordered_map<std::string, std::unique_ptr<IValueGenerator>>& p_generators)
 {
     mage::transform::MatrixFactory matrix_factory(p_json_matrix_factory.type);
 
@@ -1197,7 +1205,10 @@ mage::transform::MatrixFactory SceneStreamerSystem::process_matrixfactory_fromjs
             }
             else if ("" != p_json_matrix_factory.z_generated_value.descr)
             {
-                // TODO
+                double value = p_generators.at(p_json_matrix_factory.z_generated_value.descr)->generateValue();
+
+                p_world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.z_generated_value.descr, value);
+                matrix_factory.setZSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.z_generated_value.descr)->getPurpose());
             }
 
 
@@ -1232,32 +1243,40 @@ mage::transform::MatrixFactory SceneStreamerSystem::process_matrixfactory_fromjs
     return matrix_factory;
 }
 
-void SceneStreamerSystem::init_values_generator_from_matrix_factory(const std::vector<json::MatrixFactory>& p_mfs_chain)
+void SceneStreamerSystem::init_values_generator_from_matrix_factory(const std::vector<json::MatrixFactory>& p_mfs_chain, std::unordered_map<std::string,std::unique_ptr<IValueGenerator>>& p_generators)
 {
     for (const auto& json_matrix_factory : p_mfs_chain)
     {
         if ("" != json_matrix_factory.x_generated_value.descr)
         {
-            int a = 0;
-            a++;
+            if ("increment" == json_matrix_factory.x_generated_value.value_generator.type)
+            {
+                p_generators[json_matrix_factory.x_generated_value.descr] = std::make_unique<IncrementalValueGenerator>(json_matrix_factory.x_generated_value.value_generator.increment_init_value, json_matrix_factory.x_generated_value.value_generator.increment_step);
+            }
         }
 
         if ("" != json_matrix_factory.y_generated_value.descr)
         {
-            int a = 0;
-            a++;
+            if ("increment" == json_matrix_factory.y_generated_value.value_generator.type)
+            {
+                p_generators[json_matrix_factory.y_generated_value.descr] = std::make_unique<IncrementalValueGenerator>(json_matrix_factory.y_generated_value.value_generator.increment_init_value, json_matrix_factory.y_generated_value.value_generator.increment_step);
+            }
         }
 
         if ("" != json_matrix_factory.z_generated_value.descr)
         {
-            int a = 0;
-            a++;
+            if ("increment" == json_matrix_factory.z_generated_value.value_generator.type)
+            {
+                p_generators[json_matrix_factory.z_generated_value.descr] = std::make_unique<IncrementalValueGenerator>(json_matrix_factory.z_generated_value.value_generator.increment_init_value, json_matrix_factory.z_generated_value.value_generator.increment_step);
+            }
         }
 
         if ("" != json_matrix_factory.w_generated_value.descr)
         {
-            int a = 0;
-            a++;
+            if ("increment" == json_matrix_factory.w_generated_value.value_generator.type)
+            {
+                p_generators[json_matrix_factory.w_generated_value.descr] = std::make_unique<IncrementalValueGenerator>(json_matrix_factory.w_generated_value.value_generator.increment_init_value, json_matrix_factory.w_generated_value.value_generator.increment_step);
+            }
         }
     }
 }

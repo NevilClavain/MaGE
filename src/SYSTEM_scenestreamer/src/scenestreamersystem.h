@@ -404,13 +404,13 @@ namespace mage
 
         struct ScenegraphEntity
         {            
-            std::string                 id;
-            WorldAspect                 world_aspect;
-            ResourceAspect              resource_aspect;
-            std::string                 helper;
-            Channels                    channels;
+            std::string                     id;
+            WorldAspect                     world_aspect;
+            ResourceAspect                  resource_aspect;
+            std::string                     helper;
+            Channels                        channels;
 
-            std::vector<ScenegraphEntity> subs;
+            std::vector<ScenegraphEntity>   subs;
             
             JS_OBJ(id, world_aspect, resource_aspect, helper, channels, subs);
         };
@@ -470,6 +470,40 @@ namespace mage
         };
 
     } // json
+
+    class IValueGenerator
+    {
+    public:
+        virtual double generateValue() = 0;
+    };
+
+    class IncrementalValueGenerator : public IValueGenerator
+    {
+    public:
+
+        IncrementalValueGenerator() = delete;
+
+        IncrementalValueGenerator(double p_initial_value, double p_increment):
+        m_value(p_initial_value),
+        m_increment(p_increment)
+        {
+        }
+
+        double generateValue()
+        {
+            const double value = m_value;
+            m_value += m_increment;
+            return value;
+        }
+
+    private:
+
+        double m_increment{ 0 };
+        double m_value{ 0 };
+
+    };
+
+    // TODO : class RandomValueGenerator
 
     class EntityRendering
     {
@@ -589,7 +623,7 @@ namespace mage
 
 
         void buildScenegraphEntity(const std::string& p_jsonsource, const std::vector<std::string>& p_rendergraph_parts, const json::Animator& p_animator, const std::vector<std::string>& p_tags, const std::string& p_parentEntityId,
-                                    const mage::core::maths::Matrix p_perspective_projection, const std::unordered_map<std::string, std::string> p_file_args);
+                                    const mage::core::maths::Matrix p_perspective_projection, const std::unordered_map<std::string, std::string> p_file_args, const std::unordered_map<std::string, std::unique_ptr<IValueGenerator>>& p_generators);
 
 
         void buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot);
@@ -659,9 +693,12 @@ namespace mage
 
         core::SyncVariable build_syncvariable_fromjson(const json::SyncVariable& p_syncvar);
 
-        mage::transform::MatrixFactory process_matrixfactory_fromjson(const json::MatrixFactory& p_json_matrix_factory, mage::core::ComponentContainer& p_world_aspect, mage::core::ComponentContainer& p_time_aspect);
+        mage::transform::MatrixFactory process_matrixfactory_fromjson(const json::MatrixFactory& p_json_matrix_factory, 
+                                                                        mage::core::ComponentContainer& p_world_aspect, 
+                                                                        mage::core::ComponentContainer& p_time_aspect, 
+                                                                        const std::unordered_map<std::string, std::unique_ptr<IValueGenerator>>& p_generators);
 
-        void init_values_generator_from_matrix_factory(const std::vector<json::MatrixFactory>& p_mfs_chain);
+        void init_values_generator_from_matrix_factory(const std::vector<json::MatrixFactory>& p_mfs_chain, std::unordered_map<std::string, std::unique_ptr<IValueGenerator>>& p_generators);
 
         std::string filter_arguments_stack(const std::string p_input, const std::unordered_map<std::string, std::string> p_file_args);
     };
