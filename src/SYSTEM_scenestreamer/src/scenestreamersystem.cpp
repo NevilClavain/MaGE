@@ -1152,7 +1152,10 @@ mage::transform::MatrixFactory SceneStreamerSystem::process_matrixfactory_fromjs
             }
             else if ("" != p_json_matrix_factory.x_generated_value.descr)
             {
-                // TODO
+                double value = p_generators.at(p_json_matrix_factory.x_generated_value.descr)->generateValue();
+
+                p_world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.x_generated_value.descr, value);
+                matrix_factory.setXSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.x_generated_value.descr)->getPurpose());
             }
 
             // Y
@@ -1178,7 +1181,10 @@ mage::transform::MatrixFactory SceneStreamerSystem::process_matrixfactory_fromjs
             }
             else if ("" != p_json_matrix_factory.y_generated_value.descr)
             {
-                // TODO
+                double value = p_generators.at(p_json_matrix_factory.y_generated_value.descr)->generateValue();
+
+                p_world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.y_generated_value.descr, value);
+                matrix_factory.setYSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.y_generated_value.descr)->getPurpose());
             }
 
 
@@ -1235,7 +1241,10 @@ mage::transform::MatrixFactory SceneStreamerSystem::process_matrixfactory_fromjs
             }
             else if ("" != p_json_matrix_factory.w_generated_value.descr)
             {
-                // TODO
+                double value = p_generators.at(p_json_matrix_factory.w_generated_value.descr)->generateValue();
+
+                p_world_aspect.addComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.w_generated_value.descr, value);
+                matrix_factory.setWSource(&p_world_aspect.getComponent<mage::transform::DirectValueMatrixSource<double>>(p_json_matrix_factory.w_generated_value.descr)->getPurpose());
             }
 
         }
