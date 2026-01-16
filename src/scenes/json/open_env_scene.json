@@ -271,7 +271,7 @@
         ],
         "animator_repeat": [
           {
-            "number": 25,
+            "number": 20,
 
             "animator": {
               "descr": "tree_Entity pos animator",
@@ -301,9 +301,14 @@
                   "x_generated_value": {
                     "descr": "tree_entity pos in x part II",
                     "value_generator": {
-                      "type": "increment",
-                      "increment_init_value": 0.0,
-                      "increment_step": 30.0
+                      "type": "rand",
+                      "rand_seed": 6421245,
+                      "rand_interval_min": 4.0,
+                      "rand_distribution_type": "uniform",
+                      "rand_distribution_arguments": [
+                        -500,
+                        500.0
+                      ]
                     }
                   },
 
@@ -315,9 +320,14 @@
                   "z_generated_value": {
                     "descr": "tree_entity pos in z part II",
                     "value_generator": {
-                      "type": "increment",
-                      "increment_init_value": -80.0,
-                      "increment_step": -25.0
+                      "type": "rand",
+                      "rand_seed": 110394,
+                      "rand_interval_min": 4.0,
+                      "rand_distribution_type": "uniform",
+                      "rand_distribution_arguments": [
+                        -200.0,
+                        200.0
+                      ]
                     }
                   }
                 }

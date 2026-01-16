@@ -30,6 +30,11 @@
 #include <unordered_set>
 #include <string>
 #include <memory>
+#include <algorithm>
+#include <random>
+#include <limits>
+#include <cmath>
+
 
 #include <json_struct/json_struct.h>
 
@@ -197,11 +202,12 @@ namespace mage
             double              increment_init_value;
             double              increment_step;
 
-            double              rand_seed;
+            int                 rand_seed;
+            double              rand_interval_min;
             std::string         rand_distribution_type;
             std::vector<double> rand_distribution_arguments;
 
-            JS_OBJ(type, increment_init_value, increment_step, rand_seed, rand_distribution_type, rand_distribution_arguments);
+            JS_OBJ(type, increment_init_value, increment_step, rand_seed, rand_interval_min, rand_distribution_type, rand_distribution_arguments);
         };
 
 
@@ -489,7 +495,7 @@ namespace mage
         {
         }
 
-        double generateValue()
+        double generateValue() override
         {
             const double value = m_value;
             m_value += m_increment;
@@ -503,7 +509,107 @@ namespace mage
 
     };
 
-    // TODO : class RandomValueGenerator
+    class RandomValueGenerator : public IValueGenerator
+    {
+    public:
+
+        RandomValueGenerator() = delete;
+
+        RandomValueGenerator(int p_seed, double p_interval_min, const std::string& p_distribution_type, const std::vector<double>& p_distribution_arguments)
+            : m_seed(p_seed)
+            , m_interval_min(p_interval_min)
+            , m_distribution_type(p_distribution_type)
+            , m_distribution_arguments(p_distribution_arguments)
+            , m_generator(p_seed)
+        {
+            if (m_distribution_type == "uniform") 
+            {
+                const double a = m_distribution_arguments.size() > 0 ? m_distribution_arguments[0] : 0.0;
+                const double b = m_distribution_arguments.size() > 1 ? m_distribution_arguments[1] : 1.0;
+                m_uniform = std::uniform_real_distribution<double>(a, b);
+            }
+            else if (m_distribution_type == "normal") 
+            {
+                const double mean = m_distribution_arguments.size() > 0 ? m_distribution_arguments[0] : 0.0;
+                const double stddev = m_distribution_arguments.size() > 1 ? m_distribution_arguments[1] : 1.0;
+                m_normal = std::normal_distribution<double>(mean, stddev);
+            }
+            else if (m_distribution_type == "exponential") 
+            {
+                const double lambda = m_distribution_arguments.size() > 0 ? m_distribution_arguments[0] : 1.0;
+                m_exponential = std::exponential_distribution<double>(lambda);
+            }
+            else if (m_distribution_type == "poisson") 
+            {
+                const double mean = m_distribution_arguments.size() > 0 ? m_distribution_arguments[0] : 1.0;
+                m_poisson = std::poisson_distribution<int>(mean);
+            }
+        }
+
+        double generateValue() override
+        {
+            double value = 0.0;
+            bool valid = false;
+            constexpr int max_attempts = 10000;
+
+            for (int attempt = 0; attempt < max_attempts; ++attempt)
+            {
+                if (m_distribution_type == "uniform") 
+                {
+                    value = m_uniform(m_generator);
+                }
+                else if (m_distribution_type == "normal") 
+                {
+                    value = m_normal(m_generator);
+                }
+                else if (m_distribution_type == "exponential") 
+                {
+                    value = m_exponential(m_generator);
+                }
+                else if (m_distribution_type == "poisson") 
+                {
+                    value = static_cast<double>(m_poisson(m_generator));
+                }
+                else 
+                {
+                    value = std::uniform_real_distribution<double>(0.0, 1.0)(m_generator);
+                }
+
+                // Vérifie la distance minimale avec toutes les valeurs déjà générées
+                valid = std::all_of(
+                    m_generated_values.begin(),
+                    m_generated_values.end(),
+                    [&](double v) { return std::abs(value - v) >= m_interval_min; }
+                );
+
+                if (valid) 
+                {
+                    m_generated_values.push_back(value);
+                    return value;
+                }
+            }
+
+            // Si on ne trouve pas de valeur valide, on retourne la dernière générée ou 0
+            if (!m_generated_values.empty())
+                return m_generated_values.back();
+            return 0.0;
+        }
+
+
+    private:
+        double                                      m_seed;
+        double                                      m_interval_min;
+        std::string                                 m_distribution_type;
+        std::vector<double>                         m_distribution_arguments;
+
+        std::default_random_engine                  m_generator;
+        std::uniform_real_distribution<double>      m_uniform;
+        std::normal_distribution<double>            m_normal;
+        std::exponential_distribution<double>       m_exponential;
+        std::poisson_distribution<int>              m_poisson;
+
+        std::vector<double>                         m_generated_values;
+    };
 
     class EntityRendering
     {

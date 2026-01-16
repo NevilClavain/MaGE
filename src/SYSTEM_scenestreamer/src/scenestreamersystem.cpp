@@ -1260,7 +1260,15 @@ void SceneStreamerSystem::init_values_generator_from_matrix_factory(const std::v
         {
             if ("increment" == json_matrix_factory.x_generated_value.value_generator.type)
             {
-                p_generators[json_matrix_factory.x_generated_value.descr] = std::make_unique<IncrementalValueGenerator>(json_matrix_factory.x_generated_value.value_generator.increment_init_value, json_matrix_factory.x_generated_value.value_generator.increment_step);
+                p_generators[json_matrix_factory.x_generated_value.descr] = std::make_unique<IncrementalValueGenerator>(json_matrix_factory.x_generated_value.value_generator.increment_init_value, 
+                                                                                                                        json_matrix_factory.x_generated_value.value_generator.increment_step);
+            }
+            else if ("rand" == json_matrix_factory.x_generated_value.value_generator.type)
+            {                
+                p_generators[json_matrix_factory.x_generated_value.descr] = std::make_unique<RandomValueGenerator>(json_matrix_factory.x_generated_value.value_generator.rand_seed,
+                                                                                                                    json_matrix_factory.x_generated_value.value_generator.rand_interval_min,
+                                                                                                                    json_matrix_factory.x_generated_value.value_generator.rand_distribution_type,
+                                                                                                                    json_matrix_factory.x_generated_value.value_generator.rand_distribution_arguments);
             }
         }
 
@@ -1268,7 +1276,15 @@ void SceneStreamerSystem::init_values_generator_from_matrix_factory(const std::v
         {
             if ("increment" == json_matrix_factory.y_generated_value.value_generator.type)
             {
-                p_generators[json_matrix_factory.y_generated_value.descr] = std::make_unique<IncrementalValueGenerator>(json_matrix_factory.y_generated_value.value_generator.increment_init_value, json_matrix_factory.y_generated_value.value_generator.increment_step);
+                p_generators[json_matrix_factory.y_generated_value.descr] = std::make_unique<IncrementalValueGenerator>(json_matrix_factory.y_generated_value.value_generator.increment_init_value, 
+                                                                                                                        json_matrix_factory.y_generated_value.value_generator.increment_step);
+            }
+            else if ("rand" == json_matrix_factory.y_generated_value.value_generator.type)
+            {
+                p_generators[json_matrix_factory.y_generated_value.descr] = std::make_unique<RandomValueGenerator>(json_matrix_factory.y_generated_value.value_generator.rand_seed,
+                                                                                                                    json_matrix_factory.y_generated_value.value_generator.rand_interval_min,
+                                                                                                                    json_matrix_factory.y_generated_value.value_generator.rand_distribution_type,
+                                                                                                                    json_matrix_factory.y_generated_value.value_generator.rand_distribution_arguments);
             }
         }
 
@@ -1276,7 +1292,15 @@ void SceneStreamerSystem::init_values_generator_from_matrix_factory(const std::v
         {
             if ("increment" == json_matrix_factory.z_generated_value.value_generator.type)
             {
-                p_generators[json_matrix_factory.z_generated_value.descr] = std::make_unique<IncrementalValueGenerator>(json_matrix_factory.z_generated_value.value_generator.increment_init_value, json_matrix_factory.z_generated_value.value_generator.increment_step);
+                p_generators[json_matrix_factory.z_generated_value.descr] = std::make_unique<IncrementalValueGenerator>(json_matrix_factory.z_generated_value.value_generator.increment_init_value, 
+                                                                                                                        json_matrix_factory.z_generated_value.value_generator.increment_step);
+            }
+            else if ("rand" == json_matrix_factory.z_generated_value.value_generator.type)
+            {
+                p_generators[json_matrix_factory.z_generated_value.descr] = std::make_unique<RandomValueGenerator>(json_matrix_factory.z_generated_value.value_generator.rand_seed,
+                                                                                                                    json_matrix_factory.z_generated_value.value_generator.rand_interval_min,
+                                                                                                                    json_matrix_factory.z_generated_value.value_generator.rand_distribution_type,
+                                                                                                                    json_matrix_factory.z_generated_value.value_generator.rand_distribution_arguments);
             }
         }
 
@@ -1284,7 +1308,16 @@ void SceneStreamerSystem::init_values_generator_from_matrix_factory(const std::v
         {
             if ("increment" == json_matrix_factory.w_generated_value.value_generator.type)
             {
-                p_generators[json_matrix_factory.w_generated_value.descr] = std::make_unique<IncrementalValueGenerator>(json_matrix_factory.w_generated_value.value_generator.increment_init_value, json_matrix_factory.w_generated_value.value_generator.increment_step);
+                p_generators[json_matrix_factory.w_generated_value.descr] = std::make_unique<IncrementalValueGenerator>(json_matrix_factory.w_generated_value.value_generator.increment_init_value, 
+                                                                                                                        json_matrix_factory.w_generated_value.value_generator.increment_step);
+            }
+            else if ("rand" == json_matrix_factory.w_generated_value.value_generator.type)
+            {
+                p_generators[json_matrix_factory.w_generated_value.descr] = std::make_unique<RandomValueGenerator>(json_matrix_factory.w_generated_value.value_generator.rand_seed,
+                                                                                                                    json_matrix_factory.w_generated_value.value_generator.rand_interval_min,
+                                                                                                                    json_matrix_factory.w_generated_value.value_generator.rand_distribution_type,
+                                                                                                                    json_matrix_factory.w_generated_value.value_generator.rand_distribution_arguments);
+
             }
         }
     }
