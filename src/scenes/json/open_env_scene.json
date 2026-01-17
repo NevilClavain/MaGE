@@ -271,7 +271,7 @@
         ],
         "animator_repeat": [
           {
-            "number": 20,
+            "number": 40,
 
             "animator": {
               "descr": "tree_Entity pos animator",
@@ -303,11 +303,11 @@
                     "value_generator": {
                       "type": "rand",
                       "rand_seed": 6421245,
-                      "rand_interval_min": 4.0,
+                      "rand_interval_min": 2.0,
                       "rand_distribution_type": "uniform",
                       "rand_distribution_arguments": [
-                        -500,
-                        500.0
+                        -900,
+                        900.0
                       ]
                     }
                   },
@@ -322,11 +322,11 @@
                     "value_generator": {
                       "type": "rand",
                       "rand_seed": 110394,
-                      "rand_interval_min": 4.0,
+                      "rand_interval_min": 2.0,
                       "rand_distribution_type": "uniform",
                       "rand_distribution_arguments": [
-                        -200.0,
-                        200.0
+                        -900.0,
+                        900.0
                       ]
                     }
                   }
