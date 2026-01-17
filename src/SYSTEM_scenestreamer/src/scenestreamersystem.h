@@ -734,8 +734,6 @@ namespace mage
 
         void buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot);
 
-        void setViewgroupMainview(const std::string& p_vg_id, const std::string& p_mainview);
-
         void requestEntityRendering(const std::string& p_entity_id, bool p_render_it);
 
 

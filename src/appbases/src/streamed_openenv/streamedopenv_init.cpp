@@ -211,7 +211,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					SceneStreamerSystem::Configuration ss_config;
 					ss_config.scene_size = 3000.0;
 					ss_config.xtree_max_depth = 6;
-					ss_config.max_neighbourood_depth = 2;
+					ss_config.max_neighbourood_depth = 1;
 					ss_config.object_xtreenode_ratio = 0.1;
 
 					ss_config.xtree_type = SceneStreamerSystem::XtreeType::OCTREE;
@@ -244,7 +244,10 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					
 					sceneStreamerSystemInstance->buildViewgroup(viewgroup_json, Base::renderingQueueSystemSlot);
 
-					sceneStreamerSystemInstance->setViewgroupMainview("openenv_main_graph", "camera_Entity");
+					//sceneStreamerSystemInstance->setViewgroupMainview("openenv_main_graph", "camera_Entity");
+
+					auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(Base::renderingQueueSystemSlot)) };
+					renderingQueueSystemInstance->setViewGroupMainView("openenv_main_graph", "camera_Entity");
 				}
 				break;
 			}

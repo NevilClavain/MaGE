@@ -990,19 +990,6 @@ void SceneStreamerSystem::buildViewgroup(const std::string& p_jsonsource, int p_
     m_renderingQueueSystemSlot = p_renderingQueueSystemSlot;
 }
 
-void SceneStreamerSystem::setViewgroupMainview(const std::string& p_vg_id, const std::string& p_mainview)
-{
-    if (0 == m_rendergraphpart_data.count(p_vg_id))
-    {
-        _EXCEPTION("Unknown view group id " + p_vg_id);
-    }
-
-    auto& rgdata{ m_rendergraphpart_data.at(p_vg_id) };
-
-    auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(m_renderingQueueSystemSlot)) };
-    renderingQueueSystemInstance->setViewGroupMainView(rgdata.viewgroup.name, p_mainview);
-}
-
 core::SyncVariable SceneStreamerSystem::build_syncvariable_fromjson(const json::SyncVariable& p_syncvar)
 {
     std::unordered_map<std::string, core::SyncVariable::State> aig_state
