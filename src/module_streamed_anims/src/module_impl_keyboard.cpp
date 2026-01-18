@@ -62,12 +62,35 @@ void ModuleImpl::onKeyPress(long p_key)
 
 			speed = 60.0;
 		}
+		else if ("camera2_Entity" == mainView)
+		{
+			auto& gblJointEntityNode{ m_entitygraph.node("camera2_GblJoint_Entity") };
+			const auto gblJointEntity{ gblJointEntityNode.data() };
+
+			auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
+
+			double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
+
+			speed = 60.0;
+		}
+
 	}
 	else if ('W' == p_key)
 	{
 		if ("camera_Entity" == mainView)
 		{
 			auto& gblJointEntityNode{ m_entitygraph.node("cameraGblJoint_Entity") };
+			const auto gblJointEntity{ gblJointEntityNode.data() };
+
+			auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
+
+			double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
+
+			speed = -60.0;
+		}
+		else if ("camera2_Entity" == mainView)
+		{
+			auto& gblJointEntityNode{ m_entitygraph.node("camera2_GblJoint_Entity") };
 			const auto gblJointEntity{ gblJointEntityNode.data() };
 
 			auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
@@ -136,6 +159,19 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		}
 	}
 
+	else if (VK_F4 == p_key)
+	{
+		if ("camera_Entity" == mainView)
+		{
+			renderingQueueSystemInstance->setViewGroupMainView("openenv_main_graph", "camera2_Entity");
+		}
+		else if ("camera2_Entity" == mainView)
+		{
+			renderingQueueSystemInstance->setViewGroupMainView("openenv_main_graph", "camera_Entity");
+		}
+	}
+
+
 	else if (VK_F7 == p_key)
 	{
 		auto tc{ TimeControl::getInstance() };
@@ -185,6 +221,18 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 			speed = 0.0;
 		}
+		else if ("camera2_Entity" == mainView)
+		{
+			auto& gblJointEntityNode{ m_entitygraph.node("camera2_GblJoint_Entity") };
+			const auto gblJointEntity{ gblJointEntityNode.data() };
+
+			auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
+
+			double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
+
+			speed = 0.0;
+		}
+
 	}
 
 	else if ('W' == p_key)
@@ -192,6 +240,17 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		if ("camera_Entity" == mainView)
 		{
 			auto& gblJointEntityNode{ m_entitygraph.node("cameraGblJoint_Entity") };
+			const auto gblJointEntity{ gblJointEntityNode.data() };
+
+			auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
+
+			double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
+
+			speed = 0.0;
+		}
+		else if ("camera2_Entity" == mainView)
+		{
+			auto& gblJointEntityNode{ m_entitygraph.node("camera2_GblJoint_Entity") };
 			const auto gblJointEntity{ gblJointEntityNode.data() };
 
 			auto& world_aspect{ gblJointEntity->aspectAccess(core::worldAspect::id) };
