@@ -34,7 +34,7 @@
 
                 "x_direct_value": {
                   "descr": "camera_Entity pos in x part I",
-                  "value": -51
+                  "value": -25
                 },
 
                 "y_direct_value": {
@@ -44,7 +44,7 @@
 
                 "z_direct_value": {
                   "descr": "camera_Entity pos in z part I",
-                  "value": 1.5
+                  "value": -40
                 }
               },
 
@@ -89,7 +89,98 @@
           }
         ],
         "animator_repeat": [
+        ]
+      }
+    },
 
+    {
+      "file": "gblcamera",
+      "file_args": [
+        {
+          "key": "@id_0",
+          "value": "camera2_GblJointBasePos_Entity"
+        },
+        {
+          "key": "@id_1",
+          "value": "camera2_GblJoint_Entity"
+        },
+        {
+          "key": "@id_2",
+          "value": "camera2_Entity"
+        }
+      ],
+
+      "rendergraph_parts": [
+        "TextureChannelScene_Entity",
+        "ZdepthChannelScene_Entity"
+      ],
+
+      "instances_factory": {
+        "animators": [
+          {
+            "descr": "camera_Entity pos animator",
+
+            "matrix_factory_chain": [
+              {
+                "type": "translation",
+
+                "x_direct_value": {
+                  "descr": "camera_Entity pos in x part I",
+                  "value": 380.0
+                },
+
+                "y_direct_value": {
+                  "descr": "camera_Entity pos in y part I",
+                  "value": 15
+                },
+
+                "z_direct_value": {
+                  "descr": "camera_Entity pos in z part I",
+                  "value": -200.0
+                }
+              },
+
+              {
+                "type": "translation",
+
+                "x_direct_value": {
+                  "descr": "camera_Entity pos in x part II",
+                  "value": 0
+                },
+
+                "y_datacloud_value": {
+                  "descr": "camera_Entity pos in y part II",
+                  "var_name": "app.groundLevel"
+                },
+
+                "z_direct_value": {
+                  "descr": "camera_Entity pos in z part II",
+                  "value": 0
+                }
+              },
+
+              {
+                "type": "translation",
+
+                "x_direct_value": {
+                  "descr": "camera_Entity pos in x part III",
+                  "value": 0
+                },
+
+                "y_datacloud_value": {
+                  "descr": "camera_Entity pos in y part III",
+                  "var_name": "app.skydomeInnerRadius"
+                },
+
+                "z_direct_value": {
+                  "descr": "camera_Entity pos in z part III",
+                  "value": 0
+                }
+              }
+            ]
+          }
+        ],
+        "animator_repeat": [
         ]
       }
     },
@@ -453,7 +544,7 @@
 
                 "z_direct_value": {
                   "descr": "wall_Entity pos in z part II",
-                  "value": -90
+                  "value": -200
                 }
               },
               {
@@ -465,7 +556,7 @@
                   "x": 0,
                   "y": 1,
                   "z": 0,
-                  "w": 90
+                  "w": 0
                 }
               }
             ]

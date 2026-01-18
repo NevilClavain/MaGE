@@ -244,10 +244,8 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					
 					sceneStreamerSystemInstance->buildViewgroup(viewgroup_json, Base::renderingQueueSystemSlot);
 
-					//sceneStreamerSystemInstance->setViewgroupMainview("openenv_main_graph", "camera_Entity");
-
 					auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(Base::renderingQueueSystemSlot)) };
-					renderingQueueSystemInstance->setViewGroupMainView("openenv_main_graph", "camera_Entity");
+					renderingQueueSystemInstance->setViewGroupMainView("openenv_main_graph", "camera2_Entity");
 				}
 				break;
 			}
