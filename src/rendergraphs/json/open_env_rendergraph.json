@@ -1,5 +1,5 @@
 {
-  "subs": [
+  "subs_nodes": [
     {
       "target": {
         "descr": "Fog",
@@ -37,13 +37,13 @@
             }
           }
         ],
-        "destination_stage": 0,
-        "subs": [
+        "target_stage": 0,
+        "subs_nodes": [
           {
             "queue": {
               "id": "TextureChannelScene_Entity",
 
-              "rendering_channel_type" : "texture",
+              "rendering_channel_type": "texture",
 
               "target_depth_clear": true,
               "target_clear": true,

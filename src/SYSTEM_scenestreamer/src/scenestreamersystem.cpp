@@ -639,7 +639,7 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
                     p_node.target.shaders.at(0).name,
                     p_node.target.shaders.at(1).name,
                     inputs,
-                    p_node.target.destination_stage);
+                    p_node.target.target_stage);
 
                 // plug shaders args
 
@@ -661,7 +661,7 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
                 }
 
                 // recursive call
-                for (auto& e : p_node.target.subs)
+                for (auto& e : p_node.target.subs_nodes)
                 {
                     browseHierarchy(e, entity_target_name, depth + 1);
                 }
@@ -692,7 +692,7 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
         }
     };
 
-    for (const auto& e : rtc.subs)
+    for (const auto& e : rtc.subs_nodes)
     {
         browseHierarchy(e, p_parentEntityId, 0);
     }
