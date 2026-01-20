@@ -20,6 +20,7 @@
 
       "rendergraph_parts": [
         "TextureChannelScene_Entity",
+        "AmbientLitChannelScene_Entity",
         "ZdepthChannelScene_Entity"
       ],
 
@@ -112,6 +113,7 @@
 
       "rendergraph_parts": [
         "TextureChannelScene_Entity",
+        "AmbientLitChannelScene_Entity",
         "ZdepthChannelScene_Entity"
       ],
 
@@ -200,6 +202,7 @@
 
       "rendergraph_parts": [
         "TextureChannelScene_Entity",
+        "AmbientLitChannelScene_Entity",
         "ZdepthChannelScene_Entity"
       ],
 
@@ -269,6 +272,7 @@
 
       "rendergraph_parts": [
         "TextureChannelScene_Entity",
+        "AmbientLitChannelScene_Entity",
         "ZdepthChannelScene_Entity"
       ],
 
@@ -444,6 +448,7 @@
 
       "rendergraph_parts": [
         "TextureChannelScene_Entity",
+        "AmbientLitChannelScene_Entity",
         "ZdepthChannelScene_Entity"
       ],
 

@@ -132,7 +132,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 
 					dataCloud->registerData<maths::Real4Vector>("std.ambientlight.color");
-					dataCloud->updateDataValue<maths::Real4Vector>("std.ambientlight.color", maths::Real4Vector(0.33, 0.33, 0.33, 1));
+					dataCloud->updateDataValue<maths::Real4Vector>("std.ambientlight.color", maths::Real4Vector(0.99, 0.33, 0.33, 1));
 
 
 
@@ -237,6 +237,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 						"queue_entities":
 						[
 							"TextureChannelScene_Entity",
+							"AmbientLitChannelScene_Entity",
 							"ZdepthChannelScene_Entity"
 						]
 					}

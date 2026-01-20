@@ -37,6 +37,27 @@
           },
 
           {
+            "rendering_channel_type": "ambient_lit",
+
+            "textures_files_list": [
+              {
+                "stage": 0,
+                "filename": "tree2_tex.bmp"
+              }
+            ],
+
+            "vshader": "scene_flatcolor_keycolor_vs",
+            "pshader": "scene_flatcolor_keycolor_ps",
+
+            "rs_list": [
+              {
+                "operation": "SETCULLING",
+                "argument": "none"
+              }
+            ]
+          },
+
+          {
             "rendering_channel_type": "zdepth",
             "textures_files_list": [
               {
@@ -67,6 +88,21 @@
               }
             ]
           },
+
+          {
+            "rendering_channel_type": "ambient_lit",
+            "shaders_params": [
+              {
+                "datacloud_name": "texture_keycolor_ps.key_color",
+                "param_name": "key_color"
+              },
+              {
+                "datacloud_name": "std.ambientlight.color",
+                "param_name": "color"
+              }
+            ]
+          },
+
           {
             "rendering_channel_type": "zdepth",
             "shaders_params": [
