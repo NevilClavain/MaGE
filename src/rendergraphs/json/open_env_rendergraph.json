@@ -5,9 +5,7 @@
         "descr": "Fog",
         "shaders": [
           {
-            "name": "combiner_fog_vs",
-            "args": [
-            ]
+            "name": "combiner_fog_vs"
           },
           {
             "name": "combiner_fog_ps",
@@ -46,14 +44,10 @@
 
               "shaders": [
                 {
-                  "name": "combiner_modulate_vs",
-                  "args": [
-                  ]
+                  "name": "combiner_modulate_vs"
                 },
                 {
-                  "name": "combiner_modulate_ps",
-                  "args": [
-                  ]
+                  "name": "combiner_modulate_ps"
                 }
               ],
               "inputs": [
@@ -91,22 +85,70 @@
                     "target_stage": 0
                   }
                 },
-
                 {
-                  "queue": {
-                    "id": "AmbientLitChannelScene_Entity",
+                  "target": {
+                    "descr": "AddAmbientAndEmissive",
 
-                    "rendering_channel_type": "ambient_lit",
+                    "shaders": [
+                      {
+                        "name": "combiner_accumulate2chan_vs"
+                      },
+                      {
+                        "name": "combiner_accumulate2chan_ps"
+                      }
+                    ],
+                    "inputs": [
+                      {
+                        "stage": 0,
+                        "buffer_texture": {
+                          "format_descr": "TEXTURE_RGB"
+                        }
+                      },
+                      {
+                        "stage": 1,
+                        "buffer_texture": {
+                          "format_descr": "TEXTURE_RGB"
+                        }
+                      }
+                    ],
+                    "target_stage": 1,
 
-                    "target_depth_clear": true,
-                    "target_clear": true,
-                    "target_clear_color": {
-                      "r": 0,
-                      "g": 0,
-                      "b": 0,
-                      "a": 255
-                    },
-                    "target_stage": 1
+                    "subs_nodes": [
+                      {
+                        "queue": {
+                          "id": "AmbientLitChannelScene_Entity",
+
+                          "rendering_channel_type": "ambient_lit",
+
+                          "target_depth_clear": true,
+                          "target_clear": true,
+                          "target_clear_color": {
+                            "r": 0,
+                            "g": 0,
+                            "b": 0,
+                            "a": 255
+                          },
+                          "target_stage": 0
+                        }
+                      },
+                      {
+                        "queue": {
+                          "id": "EmissiveLitChannelScene_Entity",
+
+                          "rendering_channel_type": "emissive_lit",
+
+                          "target_depth_clear": true,
+                          "target_clear": true,
+                          "target_clear_color": {
+                            "r": 0,
+                            "g": 0,
+                            "b": 0,
+                            "a": 255
+                          },
+                          "target_stage": 1
+                        }
+                      }
+                    ]
                   }
                 }
               ]

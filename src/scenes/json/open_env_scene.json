@@ -21,6 +21,7 @@
       "rendergraph_parts": [
         "TextureChannelScene_Entity",
         "AmbientLitChannelScene_Entity",
+        "EmissiveLitChannelScene_Entity",
         "ZdepthChannelScene_Entity"
       ],
 
@@ -114,6 +115,7 @@
       "rendergraph_parts": [
         "TextureChannelScene_Entity",
         "AmbientLitChannelScene_Entity",
+        "EmissiveLitChannelScene_Entity",
         "ZdepthChannelScene_Entity"
       ],
 
@@ -203,6 +205,7 @@
       "rendergraph_parts": [
         "TextureChannelScene_Entity",
         "AmbientLitChannelScene_Entity",
+        "EmissiveLitChannelScene_Entity",
         "ZdepthChannelScene_Entity"
       ],
 
@@ -273,6 +276,7 @@
       "rendergraph_parts": [
         "TextureChannelScene_Entity",
         "AmbientLitChannelScene_Entity",
+        "EmissiveLitChannelScene_Entity",
         "ZdepthChannelScene_Entity"
       ],
 
@@ -449,6 +453,7 @@
       "rendergraph_parts": [
         "TextureChannelScene_Entity",
         "AmbientLitChannelScene_Entity",
+        "EmissiveLitChannelScene_Entity",
         "ZdepthChannelScene_Entity"
       ],
 
@@ -644,7 +649,8 @@
       ],
 
       "rendergraph_parts": [
-        "TextureChannelScene_Entity"
+        "TextureChannelScene_Entity",
+        "EmissiveLitChannelScene_Entity"
       ],
 
       "instances_factory": {
@@ -732,7 +738,8 @@
       ],
 
       "rendergraph_parts": [
-        "TextureChannelScene_Entity"
+        "TextureChannelScene_Entity",
+        "EmissiveLitChannelScene_Entity"
       ],
 
       "instances_factory": {

@@ -54,6 +54,28 @@
             "vshader": "scene_skydome_vs",
             "pshader": "scene_skydome_ps",
             "rendering_order": 900
+          },
+
+          {
+            "rendering_channel_type": "emissive_lit",
+
+
+            "vshader": "scene_flatcolor_vs",
+            "pshader": "scene_flatcolor_ps",
+
+            "rendering_order": 900,
+
+            "rs_list": [
+              {
+                "operation": "SETCULLING",
+                "argument": "ccw"
+              },
+
+              {
+                "operation": "ENABLEZBUFFER",
+                "argument": "false"
+              }
+            ]
           }
         ],
 
@@ -94,6 +116,16 @@
               {
                 "datacloud_name": "scene_skydome_ps.atmo_scattering_flag_5",
                 "param_name": "atmo_scattering_flag_5"
+              }
+            ]
+          },
+
+          {
+            "rendering_channel_type": "emissive_lit",
+            "shaders_params": [
+              {
+                "datacloud_name": "std.white_color",
+                "param_name": "color"
               }
             ]
           }

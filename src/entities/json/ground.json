@@ -49,6 +49,20 @@
           },
 
           {
+            "rendering_channel_type": "emissive_lit",
+
+            "textures_files_list": [
+            ],
+
+            "vshader": "scene_flatcolor_vs",
+            "pshader": "scene_flatcolor_ps",
+
+            "rs_list": [
+            ]
+          },
+
+
+          {
             "rendering_channel_type": "zdepth",
 
             "vshader": "scene_zdepth_vs",
@@ -64,7 +78,18 @@
                 "param_name": "color"
               }
             ]
+          },
+
+          {
+            "rendering_channel_type": "emissive_lit",
+            "shaders_params": [
+              {
+                "datacloud_name": "std.black_color",
+                "param_name": "color"
+              }
+            ]
           }
+
         ]
       }
     }

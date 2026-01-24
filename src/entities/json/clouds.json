@@ -65,7 +65,40 @@
                 "operation": "ALPHABLENDSRC",
                 "argument": "srcalpha"
               }
+            ]
+          },
 
+          {
+            "rendering_channel_type": "emissive_lit",
+
+
+            "vshader": "scene_flatcolor_vs",
+            "pshader": "scene_flatcolor_ps",
+
+            "rendering_order": 999,
+
+            "rs_list": [
+              {
+                "operation": "SETCULLING",
+                "argument": "ccw"
+              },
+
+              {
+                "operation": "ENABLEZBUFFER",
+                "argument": "false"
+              }
+            ]
+          }
+        ],
+
+        "pixel_shaders_params": [
+          {
+            "rendering_channel_type": "emissive_lit",
+            "shaders_params": [
+              {
+                "datacloud_name": "std.white_color",
+                "param_name": "color"
+              }
             ]
           }
         ]
