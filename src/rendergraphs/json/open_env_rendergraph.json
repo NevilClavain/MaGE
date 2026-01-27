@@ -91,10 +91,10 @@
 
                     "shaders": [
                       {
-                        "name": "combiner_accumulate2chan_vs"
+                        "name": "combiner_accumulate3chan_vs"
                       },
                       {
-                        "name": "combiner_accumulate2chan_ps"
+                        "name": "combiner_accumulate3chan_ps"
                       }
                     ],
                     "inputs": [
@@ -106,6 +106,12 @@
                       },
                       {
                         "stage": 1,
+                        "buffer_texture": {
+                          "format_descr": "TEXTURE_RGB"
+                        }
+                      },
+                      {
+                        "stage": 2,
                         "buffer_texture": {
                           "format_descr": "TEXTURE_RGB"
                         }
@@ -146,6 +152,24 @@
                             "a": 255
                           },
                           "target_stage": 1
+                        }
+                      },
+
+                      {
+                        "queue": {
+                          "id": "DirectionalLitChannelScene_Entity",
+
+                          "rendering_channel_type": "directional_lit",
+
+                          "target_depth_clear": true,
+                          "target_clear": true,
+                          "target_clear_color": {
+                            "r": 0,
+                            "g": 0,
+                            "b": 0,
+                            "a": 255
+                          },
+                          "target_stage": 2
                         }
                       }
                     ]

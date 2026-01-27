@@ -70,8 +70,8 @@ public:
 private:
 
 
-    double                                                      m_light_theta { 0 }; // azimutal
-    double                                                      m_light_phi   { - mage::core::maths::pi / 3 }; // elevation
+    double                                                      m_light_theta { /*0*/ -mage::core::maths::pi / 2 }; // azimutal
+    double                                                      m_light_phi   { /*-mage::core::maths::pi / 3*/ -0.70}; // elevation
     double                                                      m_light_ray   { 1000.0 };
 
 

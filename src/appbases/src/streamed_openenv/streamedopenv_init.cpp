@@ -132,7 +132,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 
 					dataCloud->registerData<maths::Real4Vector>("std.ambientlight.color");
-					dataCloud->updateDataValue<maths::Real4Vector>("std.ambientlight.color", maths::Real4Vector(0.33, 0.33, 0.33, 1));
+					dataCloud->updateDataValue<maths::Real4Vector>("std.ambientlight.color", maths::Real4Vector(0.23, 0.23, 0.23, 1));
 
 
 
@@ -144,7 +144,8 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 
 					dataCloud->registerData<maths::Real4Vector>("std.light0.dir");
-					dataCloud->updateDataValue<maths::Real4Vector>("std.light0.dir", maths::Real4Vector(0.6, -0.18, 0.1, 1));
+					
+					
 
 					dataCloud->registerData<maths::Real4Vector>("std.fog.color");
 					dataCloud->updateDataValue<maths::Real4Vector>("std.fog.color", maths::Real4Vector(0.8, 0.9, 1, 1));
@@ -235,6 +236,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 							"TextureChannelScene_Entity",
 							"AmbientLitChannelScene_Entity",
 							"EmissiveLitChannelScene_Entity",
+							"DirectionalLitChannelScene_Entity",
 							"ZdepthChannelScene_Entity"
 						]
 					}

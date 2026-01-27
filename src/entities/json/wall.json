@@ -1,6 +1,5 @@
 {
   "subs": [
-
     {
       "id": "@id",
 
@@ -31,27 +30,22 @@
           {
             "rendering_channel_type": "ambient_lit",
 
-            "textures_files_list": [
-            ],
-
             "vshader": "scene_flatcolor_vs",
-            "pshader": "scene_flatcolor_ps",
-
-            "rs_list": [
-            ]
+            "pshader": "scene_flatcolor_ps"
           },
 
           {
             "rendering_channel_type": "emissive_lit",
 
-            "textures_files_list": [
-            ],
-
             "vshader": "scene_flatcolor_vs",
-            "pshader": "scene_flatcolor_ps",
+            "pshader": "scene_flatcolor_ps"
+          },
 
-            "rs_list": [
-            ]
+          {
+            "rendering_channel_type": "directional_lit",
+
+            "vshader": "scene_lit_vs",
+            "pshader": "scene_lit_ps"
           },
 
           {
@@ -61,6 +55,8 @@
             "pshader": "scene_zdepth_ps"
           }
         ],
+
+
         "pixel_shaders_params": [
           {
             "rendering_channel_type": "ambient_lit",
@@ -78,6 +74,16 @@
               {
                 "datacloud_name": "std.black_color",
                 "param_name": "color"
+              }
+            ]
+          },
+
+          {
+            "rendering_channel_type": "directional_lit",
+            "shaders_params": [
+              {
+                "datacloud_name": "std.light0.dir",
+                "param_name": "light_dir"
               }
             ]
           }

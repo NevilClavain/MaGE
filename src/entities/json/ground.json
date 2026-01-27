@@ -38,29 +38,24 @@
           {
             "rendering_channel_type": "ambient_lit",
 
-            "textures_files_list": [
-            ],
-
             "vshader": "scene_flatcolor_vs",
-            "pshader": "scene_flatcolor_ps",
+            "pshader": "scene_flatcolor_ps"
+          },
 
-            "rs_list": [
-            ]
+          {
+            "rendering_channel_type": "directional_lit",
+
+            "vshader": "scene_lit_vs",
+            "pshader": "scene_lit_ps"
           },
 
           {
             "rendering_channel_type": "emissive_lit",
 
-            "textures_files_list": [
-            ],
-
             "vshader": "scene_flatcolor_vs",
-            "pshader": "scene_flatcolor_ps",
+            "pshader": "scene_flatcolor_ps"
 
-            "rs_list": [
-            ]
           },
-
 
           {
             "rendering_channel_type": "zdepth",
@@ -88,8 +83,17 @@
                 "param_name": "color"
               }
             ]
-          }
+          },
 
+          {
+            "rendering_channel_type": "directional_lit",
+            "shaders_params": [
+              {
+                "datacloud_name": "std.light0.dir",
+                "param_name": "light_dir"
+              }
+            ]
+          }
         ]
       }
     }
