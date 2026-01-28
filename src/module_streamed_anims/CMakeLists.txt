@@ -112,6 +112,7 @@ install(FILES ${CMAKE_SOURCE_DIR}/rendergraphs/json/open_env_rendergraph.json DE
 install(FILES ${CMAKE_SOURCE_DIR}/entities/json/ground.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 install(FILES ${CMAKE_SOURCE_DIR}/entities/json/skydome.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 install(FILES ${CMAKE_SOURCE_DIR}/entities/json/wall.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
+install(FILES ${CMAKE_SOURCE_DIR}/entities/json/rock.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 install(FILES ${CMAKE_SOURCE_DIR}/entities/json/tree.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 install(FILES ${CMAKE_SOURCE_DIR}/entities/json/clouds.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 install(FILES ${CMAKE_SOURCE_DIR}/entities/json/gblcamera.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
