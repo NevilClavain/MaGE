@@ -37,6 +37,13 @@ const char data_0[] = R"json(
 const char data_1[] = R"json(
 {
     "id" : "main",
+    "vec":
+    [
+        0.1,
+        0.2,
+        0.3,
+        0.45555
+    ],
     "keys" : [
         { "key" : 4, "value": 1.0 },
         { "key" : 5, "value": 2.0 },
@@ -82,10 +89,12 @@ struct Data_0
 
 struct Data_1
 {
-    std::string id;
+    std::string         id;
     std::vector<Data_0> keys;
 
-    JS_OBJ(id, keys);
+    double              vec[4];
+
+    JS_OBJ(id, keys, vec);
 };
 
 struct TestEntity
@@ -129,6 +138,7 @@ int main( int argc, char* argv[] )
         std::cout << "json serialisation : \n";
         std::cout << JS::serializeStruct(obj2) << "\n";
     }
+    std::cout << "/////////////////////////////////////////////\n";
 
     //////////////////////////////////////////////////
     {
@@ -146,8 +156,15 @@ int main( int argc, char* argv[] )
         {
             std::cout << e.key << " " << e.value << "\n";
         }
+
+        for (int i = 0; i < 4; i++)
+        {
+            std::cout << obj.vec[i] << " ";
+        }
+        std::cout << "\n";
         
     }
+    std::cout << "/////////////////////////////////////////////\n";
 
     //////////////////////////////////////////////////
 
@@ -164,6 +181,7 @@ int main( int argc, char* argv[] )
         std::cout << "  " << graph.children.at(0).entity_name << "\n";
         std::cout << "    " << graph.children.at(0).children.at(0).entity_name << "\n";
     }
+
 
 
     return 0;

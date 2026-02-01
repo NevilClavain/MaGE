@@ -36,32 +36,29 @@ using namespace mage::core;
 using namespace mage::helpers;
 
 
-void RenderingPasses::registerPass(const std::string& p_queue_entity_id)
+void RenderingChannels::createDefaultChannelConfig(const std::string& p_queue_entity_id, const std::string& p_rendering_channel_type)
 {
-	PassConfig pc;
-	pc.queue_entity_id = p_queue_entity_id;
+	ChannelConfig cc;
+	cc.queue_entity_id = p_queue_entity_id;
+	cc.rendering_channel_type = p_rendering_channel_type;
 
-	m_configs_table.emplace(p_queue_entity_id, pc);
+	m_configs_table.emplace(p_queue_entity_id, cc);
 }
 
-PassConfig RenderingPasses::getPassConfig(const std::string& p_queue_entity_id) const
+ChannelConfig RenderingChannels::getChannelConfig(const std::string& p_queue_entity_id) const
 {
 	return m_configs_table.at(p_queue_entity_id);
 }
 
-std::unordered_map<std::string, Entity*> RenderingPasses::registerToPasses(mage::core::Entitygraph& p_entitygraph,
+std::unordered_map<std::string, Entity*> RenderingChannels::registerToQueues(mage::core::Entitygraph& p_entitygraph,
 									mage::core::Entity* p_entity,					
-									const PassesDescriptors& p_passesdescriptors
-									/*
-									const std::unordered_map<std::string, PassConfig> p_config,
-									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_vertex_shaders_params,
-									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_pixel_shaders_params*/)
+									const ChannelsRendering& p_channelsRendering)
 {
 	std::unordered_map<std::string, core::Entity*> proxy_entities;
 
 	const std::string base_entity_id{ p_entity->getId() };
 
-	for (const auto& e : p_passesdescriptors.configs)
+	for (const auto& e : p_channelsRendering.configs)
 	{
 		std::string proxy_entity_name = base_entity_id + std::string("_") + e.first + std::string("_ProxyEntity");
 
@@ -115,7 +112,7 @@ std::unordered_map<std::string, Entity*> RenderingPasses::registerToPasses(mage:
 
 	///// manage shader args
 
-	for (const auto& e : p_passesdescriptors.vertex_shaders_params)
+	for (const auto& e : p_channelsRendering.vertex_shaders_params)
 	{
 		const std::string channel_id{ e.first };
 
@@ -136,7 +133,7 @@ std::unordered_map<std::string, Entity*> RenderingPasses::registerToPasses(mage:
 		}
 	}
 
-	for (const auto& e : p_passesdescriptors.pixel_shaders_params)
+	for (const auto& e : p_channelsRendering.pixel_shaders_params)
 	{
 		const std::string channel_id{ e.first };
 
@@ -158,4 +155,23 @@ std::unordered_map<std::string, Entity*> RenderingPasses::registerToPasses(mage:
 	}
 
 	return proxy_entities;
+}
+
+void RenderingChannels::unregisterFromQueues(mage::core::Entitygraph& p_entitygraph,
+												mage::core::Entity* p_entity,
+												const std::unordered_map<std::string, Entity*>& p_proxies)
+{
+	for (const auto& rend_proxy_entity : p_proxies)
+	{
+		p_entitygraph.remove(rend_proxy_entity.second->getId());		
+	}
+
+	/////////////////////////////////////////////////////
+	// IF HAS SKINING ANIMATION
+	// if needed, clear vshaders ref on anim aspect of scenegraph entity
+	if (p_entity->hasAspect(core::animationsAspect::id))
+	{
+		auto& entity_animations_aspect{ p_entity->aspectAccess(core::animationsAspect::id) };
+		entity_animations_aspect.getComponent<std::vector<std::pair<std::string, Shader>*>>("target_vshaders")->getPurpose().clear();
+	}
 }

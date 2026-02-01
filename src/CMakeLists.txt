@@ -71,6 +71,7 @@ add_subdirectory(CORE_module)
 add_subdirectory(CORE_maths)
 add_subdirectory(CORE_time)
 add_subdirectory(CORE_services)
+add_subdirectory(CORE_xtree)
 
 add_subdirectory(RENDERING_control)
 add_subdirectory(TRANSFORM_control)
@@ -83,6 +84,7 @@ add_subdirectory(SYSTEM_resource)
 add_subdirectory(SYSTEM_renderingqueue)
 add_subdirectory(SYSTEM_dataprint)
 add_subdirectory(SYSTEM_animations)
+add_subdirectory(SYSTEM_scenestreamer)
 
 add_subdirectory(hlsl40_shaders)
 
@@ -103,10 +105,12 @@ add_subdirectory(console_tests/console_components)
 add_subdirectory(console_tests/console_ecs)
 add_subdirectory(console_tests/console_maths)
 add_subdirectory(console_tests/console_datacloud)
+add_subdirectory(console_tests/console_xtree)
 
 add_subdirectory(module_scene00)
 add_subdirectory(module_sprites)
 add_subdirectory(module_anims)
+add_subdirectory(module_streamed_anims)
 
 
 

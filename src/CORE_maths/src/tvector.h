@@ -28,6 +28,7 @@
 #include <cmath>
 #include <string>
 #include <tuple>
+#include <type_traits>
 
 namespace mage
 {
@@ -38,6 +39,8 @@ namespace mage
             template<typename T = double, int Size = 4>
             class Vector
             {
+                static_assert(std::is_arithmetic<T>::value, "T must be numerical type...");
+
             public:
                 Vector() = default;
 
@@ -196,14 +199,21 @@ namespace mage
                 return sum;
             }
 
+            // Traits
+            template <typename T>
+            struct is_tvector : std::false_type {};
 
-            //Aliases
-            using RGBAColor = Vector<unsigned char, 4>;
-            using RGBColor = Vector<unsigned char, 3>;
-            using IntCoords2D = Vector<int, 2>;
-            using FloatCoords2D = Vector<float, 2>;
-            using Real4Vector = Vector<>;
-            using Real3Vector = Vector<double, 3>;
+            template<typename U, int Size>
+            struct is_tvector<Vector<U, Size>> : std::true_type {};
+
+            // Aliases
+            using RGBAColor         = Vector<unsigned char, 4>;
+            using RGBColor          = Vector<unsigned char, 3>;
+            using IntCoords2D       = Vector<int, 2>;
+            using FloatCoords2D     = Vector<float, 2>;
+            using Real4Vector       = Vector<>;
+            using Real3Vector       = Vector<double, 3>;
+            using Real2Vector       = Vector<double, 2>;
 
             // Constants
             

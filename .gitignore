@@ -138,6 +138,10 @@ ALL_BUILD.vcxproj*
 /src/console_tests/console_datacloud/*.sln
 /src/console_tests/console_datacloud/*.vcxproj*
 
+/src/console_tests/console_xtree/CMakeFiles/
+/src/console_tests/console_xtree/*.sln
+/src/console_tests/console_xtree/*.vcxproj*
+
 /src/module_scene00/CMakeFiles/
 /src/module_scene00/*.sln
 /src/module_scene00/*.vcxproj*
@@ -150,6 +154,9 @@ ALL_BUILD.vcxproj*
 /src/module_anims/*.sln
 /src/module_anims/*.vcxproj*
 
+/src/module_streamed_anims/CMakeFiles/
+/src/module_streamed_anims/*.sln
+/src/module_streamed_anims/*.vcxproj*
 
 /src/rt/CMakeFiles/
 /src/rt/*.sln
@@ -208,6 +215,10 @@ ALL_BUILD.vcxproj*
 /src/CORE_services/*.sln
 /src/CORE_services/*.vcxproj*
 
+/src/CORE_xtree/CMakeFiles/
+/src/CORE_xtree/*.sln
+/src/CORE_xtree/*.vcxproj*
+
 
 /src/RENDERING_control/CMakeFiles/
 /src/RENDERING_control/*.sln
@@ -237,6 +248,10 @@ ALL_BUILD.vcxproj*
 /src/SYSTEM_animations/CMakeFiles/
 /src/SYSTEM_animations/*.sln
 /src/SYSTEM_animations/*.vcxproj*
+
+/src/SYSTEM_scenestreamer/CMakeFiles/
+/src/SYSTEM_scenestreamer/*.sln
+/src/SYSTEM_scenestreamer/*.vcxproj*
 
 
 /src/helpers/CMakeFiles/

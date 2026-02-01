@@ -54,6 +54,8 @@ namespace mage
         void setRenderingQueue(mage::rendering::Queue* p_queue);
 
         void addDatacloudFilter(const std::string& p_filter);
+        void showRenderingQueues(bool p_show);
+        void showSyncVars(bool p_show);
 
     private:
 
@@ -82,6 +84,8 @@ namespace mage
         std::vector<std::string>                m_rq_strings; // rendering queues display
 
         std::set<std::string>                   m_display_filters;
+        bool                                    m_display_renderingqueues{ false };
+        bool                                    m_display_synchronizedvars{ false };
 
         void collectData();
         void print(const std::vector<std::string>& p_list, int p_x_base, int p_y_base, int p_nbCols, int p_nbRows, int p_colWidth, int p_rowHeight);

@@ -140,6 +140,7 @@ namespace mage
 							{ core::resourcesAspect::id,	"resourcesAspect" },
 							{ core::cameraAspect::id,		"cameraAspect" },
 							{ core::worldAspect::id,		"worldAspect" },
+							{ core::tagsAspect::id,			"tagsAspect" },
 						};
 
 						for (const auto& e : aspects_translate)
@@ -345,11 +346,15 @@ namespace mage
 			renderingAspect.addComponent<rendering::Queue>("renderingQueue", p_renderingqueue);
 			auto& stored_rendering_queue{ renderingAspect.getComponent<rendering::Queue>("renderingQueue")->getPurpose() };
 
+			auto& tag_aspect{ renderingQueueNodeEntity->makeAspect(core::tagsAspect::id) };
+			tag_aspect.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::RENDERGRAPH);
+
+
 			return stored_rendering_queue;
 		}
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		rendering::Queue& plugRenderingQuad(mage::core::Entitygraph& p_entitygraph,
+		rendering::Queue& plugRenderingTarget(mage::core::Entitygraph& p_entitygraph,
 											const std::string& p_queue_debug_name,
 											float p_characteristics_v_width, float p_characteristics_v_height,
 											const std::string& p_parentid,
@@ -358,7 +363,7 @@ namespace mage
 											const std::string& p_viewEntityid,
 											const std::string& p_vshader,
 											const std::string& p_pshader,
-											const std::vector<std::pair<size_t, Texture>>& p_renderTargets,
+											const std::vector<std::pair<size_t, Texture>>& p_inputs,
 											size_t p_target_stage)
 		{
 
@@ -388,6 +393,9 @@ namespace mage
 			camera_world_aspect.addComponent<transform::WorldPosition>("camera_position", transform::WorldPosition());
 
 			rendering_queue_ref.setMainView(p_viewEntityid);
+
+			auto& tag_aspect{ cameraEntity->makeAspect(core::tagsAspect::id) };
+			tag_aspect.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::RENDERGRAPH);
 
 			///////////////////////////////////////////////////////////////
 
@@ -436,9 +444,9 @@ namespace mage
 
 			const std::string texture_name_base{ "renderingquad_texture_" };
 
-			for (size_t i = 0; i < p_renderTargets.size(); i++)
+			for (size_t i = 0; i < p_inputs.size(); i++)
 			{
-				quad_resource_aspect.addComponent<std::pair<size_t, Texture>>(texture_name_base + std::to_string(p_renderTargets.at(i).first), p_renderTargets.at(i));
+				quad_resource_aspect.addComponent<std::pair<size_t, Texture>>(texture_name_base + std::to_string(p_inputs.at(i).first), p_inputs.at(i));
 			}
 
 			/////////// Add renderstate
@@ -488,13 +496,15 @@ namespace mage
 			));
 
 			//////////////////////////////////////
+			auto& tag_aspect_2{ screenRenderingQuadEntity->makeAspect(core::tagsAspect::id) };
+			tag_aspect_2.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::RENDERGRAPH);
 
 			return rendering_queue_ref;			
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		void plugCamera(mage::core::Entitygraph& p_entitygraph,
+		core::Entity* plugCamera(mage::core::Entitygraph& p_entitygraph,
 			const core::maths::Matrix& p_projection,
 			const std::string& p_parentid, const std::string& p_entityid)
 		{
@@ -508,6 +518,13 @@ namespace mage
 			auto& camera_world_aspect{ cameraEntity->makeAspect(core::worldAspect::id) };
 
 			camera_world_aspect.addComponent<transform::WorldPosition>("camera_position", transform::WorldPosition());
+
+			///////////////////////////////////////////////
+			auto& tag_aspect{ cameraEntity->makeAspect(core::tagsAspect::id) };
+			tag_aspect.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::SCENEGRAPH);
+
+	
+			return cameraEntity;
 		}
 
 		void updateCameraProjection(mage::core::Entitygraph& p_entitygraph, const std::string& p_entityid, const core::maths::Matrix& p_projection)
@@ -637,6 +654,10 @@ namespace mage
 					wp.local_pos = wp.local_pos * rotationmat * positionmat;
 				}
 			));
+
+			///////////////////////////////////////////////
+			auto& tag_aspect{ sprite2DEntity->makeAspect(core::tagsAspect::id) };
+			tag_aspect.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::HUD);
 
 			return sprite2DEntity;
 		}
@@ -783,6 +804,11 @@ namespace mage
 				}
 			));
 
+			///////////////////////////////////////////////
+			auto& tag_aspect{ sprite2DEntity->makeAspect(core::tagsAspect::id) };
+			tag_aspect.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::HUD);
+
+
 			return sprite2DEntity;
 		}
 
@@ -833,6 +859,10 @@ namespace mage
 
 			// time aspect
 			textEntity->makeAspect(core::timeAspect::id);
+
+			///////////////////////////////////////////////
+			auto& tag_aspect{ textEntity->makeAspect(core::tagsAspect::id) };
+			tag_aspect.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::HUD);
 
 			return textEntity;
 		}
@@ -910,6 +940,10 @@ namespace mage
 			/////////// Rendering Order
 			rendering_aspect.addComponent<int>("renderingOrder", p_rendering_order);
 
+			///////////////////////////////////////////////
+			auto& tag_aspect{ entity->makeAspect(core::tagsAspect::id) };
+			tag_aspect.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::RENDERGRAPH);
+
 			return entity;
 		}
 
@@ -933,6 +967,10 @@ namespace mage
 
 			/////////// render target Texture		
 			resource_aspect.addComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture", p_renderTargetTexture);
+
+			///////////////////////////////////////////////
+			auto& tag_aspect{ entity->makeAspect(core::tagsAspect::id) };
+			tag_aspect.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::RENDERGRAPH);
 
 			return entity;
 		}

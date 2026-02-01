@@ -49,7 +49,7 @@ namespace mage
 		struct ShadowSourceEntity
 		{
 			mage::core::Entity* entity;
-			PassesDescriptors   passesDescriptors;
+			ChannelsRendering   channelsRendering;
 		};
 
 		struct ShadowsRenderingParams

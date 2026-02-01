@@ -107,6 +107,15 @@ void Entitygraph::remove(Node& p_node)
 	m_entites.erase(id);
 }
 
+void Entitygraph::remove(const std::string& p_entity_id)
+{
+	if (!m_nodes.count(p_entity_id))
+	{
+		_EXCEPTION("unknown entity : " + p_entity_id);
+	}
+	remove(*m_nodes.at(p_entity_id));
+}
+
 void Entitygraph::move_subtree(Node& p_parent_dest, Node& p_src)
 {
 	st_tree::tree<core::Entity*> temp_tree;

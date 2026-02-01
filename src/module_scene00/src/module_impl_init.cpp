@@ -57,6 +57,9 @@
 
 #include "entitygraph_helpers.h"
 
+#include "matrix.h"
+#include "matrixfactory.h"
+
 using namespace mage;
 using namespace mage::core;
 
@@ -69,18 +72,6 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 
 	const auto dataSize{ logConfFileContent.getDataSize() };
 	const std::string data(logConfFileContent.getData(), dataSize);
-
-	/*
-	mage::core::Json<> jsonParser;
-	jsonParser.registerSubscriber(logger::Configuration::getInstance()->getCallback());
-
-	const auto logParseStatus{ jsonParser.parse(data) };
-
-	if (logParseStatus < 0)
-	{
-		_EXCEPTION("Cannot parse logging configuration")
-	}
-	*/
 
 	logger::Configuration::getInstance()->applyConfiguration(data);
 
@@ -111,10 +102,51 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	// dataprint system filters
 	const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
 	dataPrintSystem->addDatacloudFilter("resources_event");
+	dataPrintSystem->addDatacloudFilter("std");
+
 
 
 	d3d11_system_events();
 	resource_system_events();
+
+
+	// setup Matrix factories lambdas
+
+	const std::function<core::maths::Matrix(double, double, double, double)> build_translation
+	{
+		[](double p_x, double p_y, double p_z, double p_w) -> core::maths::Matrix
+		{
+			core::maths::Matrix mat;
+			mat.translation(p_x, p_y, p_z);
+
+			return mat;
+		}
+	};
+	mage::transform::MatrixFactory::registerBuildFunc("translation", build_translation);
+
+	const std::function<core::maths::Matrix(double, double, double, double)> build_rotation
+	{
+		[](double p_x, double p_y, double p_z, double p_w) -> core::maths::Matrix
+		{
+			core::maths::Matrix mat;
+			mat.rotation(core::maths::Real3Vector(p_x, p_y, p_z), p_w);
+
+			return mat;
+		}
+	};
+	mage::transform::MatrixFactory::registerBuildFunc("rotation", build_rotation);
+
+	const std::function<core::maths::Matrix(double, double, double, double)> build_scaling
+	{
+		[](double p_x, double p_y, double p_z, double p_w) -> core::maths::Matrix
+		{
+			core::maths::Matrix mat;
+			mat.scale(core::maths::Real4Vector(p_x, p_y, p_z, p_w));
+
+			return mat;
+		}
+	};
+	mage::transform::MatrixFactory::registerBuildFunc("scaling", build_scaling);
 
 	//////////////////////////
 
@@ -275,18 +307,37 @@ void ModuleImpl::d3d11_system_events()
 						gbl_world_aspect.addComponent<double>("gbl_theta", 0);
 						gbl_world_aspect.addComponent<double>("gbl_phi", 0);
 						gbl_world_aspect.addComponent<double>("gbl_speed", 0);
-						gbl_world_aspect.addComponent<maths::Real3Vector>("gbl_pos", maths::Real3Vector(12.0, -4.0, 7.0));
+
+						gbl_world_aspect.addComponent<core::maths::Real3Vector>("gbl_pos", maths::Real3Vector(0.0, 0.0, 0.0));
 
 						gbl_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
 							{
 								// input-output/components keys id mapping
 								{"gimbalLockJointAnim.theta", "gbl_theta"},
 								{"gimbalLockJointAnim.phi", "gbl_phi"},
-								{"gimbalLockJointAnim.position", "gbl_pos"},
+								{"gimbalLockJointAnim.pos", "gbl_pos"},
 								{"gimbalLockJointAnim.speed", "gbl_speed"},
 								{"gimbalLockJointAnim.output", "gbl_output"}
 
-							}, helpers::makeGimbalLockJointAnimator()));
+							}, helpers::makeGimbalLockJointAnimator())
+						);
+
+						gbl_world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
+						(
+							{},
+							[=](const core::ComponentContainer& p_world_aspect,
+								const core::ComponentContainer& p_time_aspect,
+								const transform::WorldPosition&,
+								const std::unordered_map<std::string, std::string>&)
+							{
+
+								maths::Matrix positionmat;
+								positionmat.translation(maths::Real3Vector(2.0, 4.0, 7.0));
+
+								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("gbl_output")->getPurpose() };
+								wp.local_pos = wp.local_pos * positionmat;
+							}
+						));
 
 
 						// add camera to scene
@@ -319,13 +370,15 @@ void ModuleImpl::d3d11_system_events()
 						fullgbl_world_aspect.addComponent<maths::Real3Vector>("rot_axis_y", maths::YAxisVector);
 						fullgbl_world_aspect.addComponent<maths::Real3Vector>("rot_axis_z", maths::ZAxisVector);
 
-						fullgbl_world_aspect.addComponent<maths::Real3Vector>("fullgbl_pos", maths::Real3Vector(0.0, -1.0, 9.0));
+						//fullgbl_world_aspect.addComponent<maths::Real3Vector>("fullgbl_pos", maths::Real3Vector(0.0, -1.0, 9.0));
+						fullgbl_world_aspect.addComponent<maths::Real3Vector>("fullgbl_pos", maths::Real3Vector(0.0, 0.0, 0.0));
+
 						fullgbl_world_aspect.addComponent<maths::Quaternion>("fullgbl_quat");
 
 						fullgbl_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
 							{
 								// input-output/components keys id mapping
-								{"fullGimbalJointAnim.position", "fullgbl_pos"},
+								{"fullGimbalJointAnim.pos", "fullgbl_pos"},
 								{"fullGimbalJointAnim.quat", "fullgbl_quat"},
 								{"fullGimbalJointAnim.speed", "fullgbl_speed"},
 								{"fullGimbalJointAnim.rot_axis_x", "rot_axis_x"},
@@ -336,7 +389,26 @@ void ModuleImpl::d3d11_system_events()
 								{"fullGimbalJointAnim.rot_speed_z", "rspeed_z"},
 								{"fullGimbalJointAnim.output", "fullgbl_output"}
 
-							}, helpers::makeFullGimbalJointAnimator()));
+							}, helpers::makeFreeGimbalJointAnimator())
+						);
+
+						fullgbl_world_aspect.addComponent<transform::Animator>("animator_positioning", transform::Animator
+						(
+							{},
+							[=](const core::ComponentContainer& p_world_aspect,
+								const core::ComponentContainer& p_time_aspect,
+								const transform::WorldPosition&,
+								const std::unordered_map<std::string, std::string>&)
+							{
+
+								maths::Matrix positionmat;
+								positionmat.translation(maths::Real3Vector(0.0, -1.0, 19.0));
+
+								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("fullgbl_output")->getPurpose() };
+								wp.local_pos = wp.local_pos * positionmat;
+							}
+						));
+
 
 						// add camera to scene
 						maths::Matrix projection;
@@ -357,7 +429,7 @@ void ModuleImpl::d3d11_system_events()
 						auto& slider_world_aspect{ sliderJointEntity->makeAspect(core::worldAspect::id) };
 
 
-						slider_world_aspect.addComponent<transform::WorldPosition>("slider_output");
+						slider_world_aspect.addComponent<transform::WorldPosition>("output");
 
 						SyncVariable x_slide_pos(SyncVariable::Type::POSITION, 5.0, SyncVariable::Direction::INC, 0.0);
 						x_slide_pos.state = SyncVariable::State::OFF;
@@ -372,15 +444,35 @@ void ModuleImpl::d3d11_system_events()
 						slider_time_aspect.addComponent<SyncVariable>("y_slide_pos", y_slide_pos);
 						slider_time_aspect.addComponent<SyncVariable>("z_slide_pos", z_slide_pos);
 
-						slider_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
+						slider_world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>("x_slide_pos_matrix_source", &slider_time_aspect.getComponent<SyncVariable>("x_slide_pos")->getPurpose());
+						slider_world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>("y_slide_pos_matrix_source", &slider_time_aspect.getComponent<SyncVariable>("y_slide_pos")->getPurpose());
+						slider_world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>("z_slide_pos_matrix_source", &slider_time_aspect.getComponent<SyncVariable>("z_slide_pos")->getPurpose());
+
+
+						mage::transform::MatrixFactory slider_matrix_factory("translation");
+
+						slider_matrix_factory.setXSource(&slider_world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>("x_slide_pos_matrix_source")->getPurpose());
+						slider_matrix_factory.setYSource(&slider_world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>("y_slide_pos_matrix_source")->getPurpose());
+						slider_matrix_factory.setZSource(&slider_world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>("z_slide_pos_matrix_source")->getPurpose());
+
+						slider_world_aspect.addComponent<mage::transform::MatrixFactory>("slider_matrix_factory", slider_matrix_factory);
+
+						slider_world_aspect.addComponent<transform::Animator>("slider", transform::Animator
+						(
+							{},
+							[=](const core::ComponentContainer& p_world_aspect,
+								const core::ComponentContainer& p_time_aspect,
+								const transform::WorldPosition&,
+								const std::unordered_map<std::string, std::string>&)
 							{
-								{"xyzSliderJointAnim.x_pos", "x_slide_pos"},
-								{"xyzSliderJointAnim.y_pos", "y_slide_pos"},
-								{"xyzSliderJointAnim.z_pos", "z_slide_pos"},
-								{"xyzSliderJointAnim.output", "slider_output"}
+								auto& mf{ p_world_aspect.getComponent<mage::transform::MatrixFactory>("slider_matrix_factory")->getPurpose() };
 
-							}, helpers::makeXYZSliderJointAnimator()));
+								const auto rotation_mat{ mf.getResult() };
 
+								transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("output")->getPurpose() };
+								wp.local_pos = wp.local_pos * rotation_mat;
+							}
+						));
 
 						auto& lookatJointEntityNode{ m_entitygraph.add(sliderJointEntityNode, "lookatJointEntity") };
 

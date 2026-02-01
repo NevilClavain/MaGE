@@ -471,6 +471,7 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 				}
 				delete importer;
 
+				p_mesheInfos.computeSize();
 				p_mesheInfos.computeResourceUID();
 
 				_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> RESOURCE_MESHE_LOAD_SUCCESS : " + filename);

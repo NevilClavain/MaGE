@@ -45,9 +45,11 @@ namespace mage
 
 	namespace helpers
 	{
-		struct PassConfig
+		struct ChannelConfig
 		{
 			std::string	queue_entity_id;
+			std::string rendering_channel_type;
+
 			std::vector<rendering::RenderState>	rs_list
 			{
 				{ rendering::RenderState::Operation::SETCULLING, "cw" },
@@ -66,36 +68,41 @@ namespace mage
 			std::string pshader;
 		};
 
-		struct PassesDescriptors
+		struct ChannelsRendering // all required channels rendering : combination of channels configs and shaders args for each channel
 		{
-			std::unordered_map< std::string, PassConfig>										configs;
+			std::unordered_map< std::string, ChannelConfig>										configs;
 			std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>	vertex_shaders_params;
 			std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>	pixel_shaders_params;
 		};
 
 		// rendering passes helper struct
-		struct RenderingPasses : public property::Singleton<RenderingPasses>
+		struct RenderingChannels : public property::Singleton<RenderingChannels>
 		{
 		public:
-			RenderingPasses() = default;
-			~RenderingPasses() = default;
+			RenderingChannels() = default;
+			~RenderingChannels() = default;
 
-			void registerPass(const std::string& p_queue_entity_id);
+			void createDefaultChannelConfig(const std::string& p_queue_entity_id, const std::string& p_rendering_channel_type);
 
-			PassConfig getPassConfig(const std::string& p_queue_entity_id) const;
+			ChannelConfig getChannelConfig(const std::string& p_queue_entity_id) const;
 
-			std::unordered_map<std::string, core::Entity*> registerToPasses(mage::core::Entitygraph& p_entitygraph,
+			const std::unordered_map<std::string, ChannelConfig>& getPassConfigsList() const
+			{
+				return m_configs_table;
+			}
+
+			std::unordered_map<std::string, core::Entity*> registerToQueues(mage::core::Entitygraph& p_entitygraph,
 									mage::core::Entity* p_entity, 
-									const PassesDescriptors& p_passesdescriptors
+									const ChannelsRendering& p_channelsRendering);
 
-									/*
-									const std::unordered_map< std::string, PassConfig> p_config,
-									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_vertex_shaders_params,
-									const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>>& p_pixel_shaders_params*/);
+
+			void unregisterFromQueues(mage::core::Entitygraph& p_entitygraph, 
+										mage::core::Entity* p_entity, 
+										const std::unordered_map<std::string, mage::core::Entity*>& p_proxies);
 
 		private:
 
-			std::unordered_map<std::string, PassConfig> m_configs_table;
+			std::unordered_map<std::string, ChannelConfig> m_configs_table;
 
 		};
 	}

@@ -33,58 +33,13 @@
 #include "quaternion.h"
 #include "syncvariable.h"
 #include "timecontrol.h"
+#include "animatorfunc.h"
+
 
 namespace mage
 {
 	namespace helpers
 	{
-		auto makeYRotationJointAnimator()
-		{
-			const auto animator
-			{
-				[](const core::ComponentContainer& p_world_aspect,
-					const core::ComponentContainer& p_time_aspect,
-					const transform::WorldPosition& p_parent_pos,
-					const std::unordered_map<std::string, std::string>& p_keys)
-				{
-					const auto& y_rotation_angle{ p_time_aspect.getComponent<core::SyncVariable>(p_keys.at("yRotJointAnim.angle"))->getPurpose()};
-
-					core::maths::Matrix rotation_mat;
-					rotation_mat.rotation(core::maths::Real3Vector(0.0, 1.0, 0.0), y_rotation_angle.value);
-
-					transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>(p_keys.at("yRotJointAnim.output"))->getPurpose() };
-					wp.local_pos = wp.local_pos * rotation_mat;
-				}
-			};
-
-			return animator;
-		}
-
-		auto makeXYZSliderJointAnimator()
-		{
-			const auto animator
-			{
-				[](const core::ComponentContainer& p_world_aspect,
-					const core::ComponentContainer& p_time_aspect,
-					const transform::WorldPosition& p_parent_pos,
-					const std::unordered_map<std::string, std::string>& p_keys)
-				{
-					const auto& x_pos{ p_time_aspect.getComponent<core::SyncVariable>(p_keys.at("xyzSliderJointAnim.x_pos"))->getPurpose()};
-					const auto& y_pos{ p_time_aspect.getComponent<core::SyncVariable>(p_keys.at("xyzSliderJointAnim.y_pos"))->getPurpose()};
-					const auto& z_pos{ p_time_aspect.getComponent<core::SyncVariable>(p_keys.at("xyzSliderJointAnim.z_pos"))->getPurpose() };
-
-					core::maths::Matrix translation_mat;
-					translation_mat.translation(x_pos.value, y_pos.value, z_pos.value);
-
-					transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>(p_keys.at("xyzSliderJointAnim.output"))->getPurpose() };
-					wp.local_pos = wp.local_pos * translation_mat;
-				}
-			};
-
-			return animator;
-		}
-
-
 		auto makeGimbalLockJointAnimator()
 		{
 			const auto animator
@@ -96,12 +51,15 @@ namespace mage
 				{
 
 					const double theta{ p_world_aspect.getComponent<double>(p_keys.at("gimbalLockJointAnim.theta"))->getPurpose() };
-					const double phi{ p_world_aspect.getComponent<double>(p_keys.at("gimbalLockJointAnim.phi"))->getPurpose() }; // to be continued...
+					const double phi{ p_world_aspect.getComponent<double>(p_keys.at("gimbalLockJointAnim.phi"))->getPurpose() }; 
 						
 
-					auto& pos{ p_world_aspect.getComponent<core::maths::Real3Vector>(p_keys.at("gimbalLockJointAnim.position"))->getPurpose() };
+					//auto& curr_pos{ p_world_aspect.getComponent<core::maths::Matrix>(p_keys.at("gimbalLockJointAnim.pos"))->getPurpose() };
+
+					auto& pos{ p_world_aspect.getComponent<core::maths::Real3Vector>(p_keys.at("gimbalLockJointAnim.pos"))->getPurpose() };
 					core::maths::Matrix positionmat;
 					positionmat.translation(pos);
+
 				
 					core::maths::Quaternion		    qyaw;
 					core::maths::Quaternion		    qpitch;
@@ -132,9 +90,9 @@ namespace mage
 						core::maths::Real4Vector global_speed;
 
 						orientation.transform(&local_speed, &global_speed);
-
-						core::maths::Real3Vector global_speed3(global_speed[0], global_speed[1], global_speed[2]);
 						
+						core::maths::Real3Vector global_speed3(global_speed[0], global_speed[1], global_speed[2]);
+
 						pos = pos + global_speed3;
 					}
 				}
@@ -143,7 +101,7 @@ namespace mage
 			return animator;								
 		}
 
-		auto makeFullGimbalJointAnimator()
+		auto makeFreeGimbalJointAnimator()
 		{
 			const auto animator
 			{
@@ -153,7 +111,7 @@ namespace mage
 					const std::unordered_map<std::string, std::string>& p_keys)
 				{
 						
-					auto& pos{ p_world_aspect.getComponent<core::maths::Real3Vector>(p_keys.at("fullGimbalJointAnim.position"))->getPurpose() };
+					auto& pos{ p_world_aspect.getComponent<core::maths::Real3Vector>(p_keys.at("fullGimbalJointAnim.pos"))->getPurpose() };
 					core::maths::Matrix positionmat;
 					positionmat.translation(pos);
 
@@ -328,6 +286,5 @@ namespace mage
 
 			return animator;
 		}
-
 	}
 }

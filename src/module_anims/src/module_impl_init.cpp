@@ -29,8 +29,9 @@
 #include <unordered_map>
 #include <utility>
 #include <list>
-
 #include <chrono>
+
+#include <json_struct/json_struct.h>
 
 #include "aspects.h"
 
@@ -69,13 +70,15 @@
 #include "entitygraph_helpers.h"
 #include "renderingpasses_helpers.h"
 
+#include "exceptions.h"
+
 using namespace mage;
 using namespace mage::core;
 using namespace mage::rendering;
 
 void ModuleImpl::init(const std::string p_appWindowsEntityName)
 {
-	SamplesOpenEnv::init(p_appWindowsEntityName);
+	OpenEnv::init(p_appWindowsEntityName);
 
 	/////////// logging conf
 
@@ -84,18 +87,6 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 
 	const auto dataSize{ logConfFileContent.getDataSize() };
 	const std::string data(logConfFileContent.getData(), dataSize);
-
-	/*
-	mage::core::Json<> jsonParser;
-	jsonParser.registerSubscriber(logger::Configuration::getInstance()->getCallback());
-
-	const auto logParseStatus{ jsonParser.parse(data) };
-
-	if (logParseStatus < 0)
-	{
-		_EXCEPTION("Cannot parse logging configuration")
-	}
-	*/
 
 	logger::Configuration::getInstance()->applyConfiguration(data);
 
@@ -113,8 +104,6 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	dataCloud->registerData<double>("current_animation.ticks_duration");
 	dataCloud->registerData<double>("current_animation.seconds_duration");
 
-
-
 	auto sysEngine{ SystemEngine::getInstance() };
 
 	// dataprint system filters
@@ -122,6 +111,7 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	dataPrintSystem->addDatacloudFilter("resources_event");
 	dataPrintSystem->addDatacloudFilter("current_animation");
 	dataPrintSystem->addDatacloudFilter("debug");
+	dataPrintSystem->addDatacloudFilter("std");
 
 	///////////////////////////
 
@@ -296,33 +286,33 @@ void ModuleImpl::d3d11_system_events()
 					///////////////////////////////////////////////////////////////////////////////////////////////////////////
 					// RENDERGRAPH
 
-					const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
+					const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
 
 					// raptor rendering
 					{
-						auto textures_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_TexturesChannel_Queue_Entity") };
+						auto textures_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_TexturesChannel_Queue_Entity") };
 						textures_channel_config.vshader = "scene_texture1stage_skinning_vs";
 						textures_channel_config.pshader = "scene_texture1stage_skinning_ps";
 						textures_channel_config.textures_files_list = { std::make_pair(Texture::STAGE_0, std::make_pair("raptorDif2.png", Texture())) };
 
 
-						auto zdepth_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
+						auto zdepth_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_ZDepthChannel_Queue_Entity") };
 						zdepth_channel_config.vshader = "scene_zdepth_skinning_vs";
 						zdepth_channel_config.pshader = "scene_zdepth_skinning_ps";
 
-						auto ambientlight_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_AmbientLightChannel_Queue_Entity") };
+						auto ambientlight_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_AmbientLightChannel_Queue_Entity") };
 						ambientlight_channel_config.vshader = "scene_flatcolor_skinning_vs";
 						ambientlight_channel_config.pshader = "scene_flatcolor_skinning_ps";
 
-						auto lit_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_LitChannel_Queue_Entity") };
+						auto lit_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_LitChannel_Queue_Entity") };
 						lit_channel_config.vshader = "scene_lit_skinning_vs";
 						lit_channel_config.pshader = "scene_lit_skinning_ps";
 
-						auto em_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
+						auto em_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_EmissiveChannel_Queue_Entity") };
 						em_channel_config.vshader = "scene_flatcolor_skinning_vs";
 						em_channel_config.pshader = "scene_flatcolor_skinning_ps";
 
-						helpers::PassesDescriptors passesDescriptors =
+						helpers::ChannelsRendering channelsRendering =
 						{
 							// config
 							{
@@ -356,7 +346,7 @@ void ModuleImpl::d3d11_system_events()
 							}
 						};
 
-						renderingHelper->registerToPasses(m_entitygraph, m_raptorEntity, passesDescriptors);
+						renderingHelper->registerToQueues(m_entitygraph, m_raptorEntity, channelsRendering);
 					}
 
 					// SETUP SHADOWS
@@ -382,6 +372,11 @@ void ModuleImpl::complete_scenegraph(const std::string& p_mainWindowsEntityId)
 
 	const float characteristics_v_width{ mainwindows_rendering_aspect.getComponent<float>("eg.std.viewportWidth")->getPurpose() };
 	const float characteristics_v_height{ mainwindows_rendering_aspect.getComponent<float>("eg.std.viewportHeight")->getPurpose() };
+
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	const auto groundLevel{ dataCloud->readDataValue<double>("app.groundLevel") };
+	const auto skydomeInnerRadius{ dataCloud->readDataValue<double>("app.skydomeInnerRadius") };
+
 	
 	{
 		auto& entityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "raptor_Entity") };
@@ -450,26 +445,26 @@ void ModuleImpl::complete_install_shadows_renderer_objects()
 	auto& sm_resource_aspect{ shadowmap_texture_entity->aspectAccess(core::resourcesAspect::id) };
 	std::pair<size_t, Texture>* sm_texture_ptr{ &sm_resource_aspect.getComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture")->getPurpose() };
 
-	const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
+	const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
 
-	renderingHelper->registerPass("bufferRendering_Scene_ShadowsChannel_Queue_Entity");
-	renderingHelper->registerPass("bufferRendering_Scene_ShadowMapChannel_Queue_Entity");
+	renderingHelper->createDefaultChannelConfig("bufferRendering_Scene_ShadowsChannel_Queue_Entity", "shadow_mask");
+	renderingHelper->createDefaultChannelConfig("bufferRendering_Scene_ShadowMapChannel_Queue_Entity", "shadow_map");
 
 	
 	// raptor shadows rendering
 	{
-		auto shadows_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
+		auto shadows_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_ShadowsChannel_Queue_Entity") };
 		shadows_channel_config.vshader = "scene_shadowsmask_skinning_vs";
 		shadows_channel_config.pshader = "scene_shadowsmask_skinning_ps";
 		shadows_channel_config.textures_ptr_list = { sm_texture_ptr };
 
-		auto shadowmap_channel_config{ renderingHelper->getPassConfig("bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
+		auto shadowmap_channel_config{ renderingHelper->getChannelConfig("bufferRendering_Scene_ShadowMapChannel_Queue_Entity") };
 		shadowmap_channel_config.vshader = "scene_zdepth_skinning_vs";
 		shadowmap_channel_config.pshader = "scene_zdepth_skinning_ps";
 		shadowmap_channel_config.rs_list.at(0).setOperation(RenderState::Operation::SETCULLING);
 		shadowmap_channel_config.rs_list.at(0).setArg("ccw");
 
-		helpers::PassesDescriptors passesDescriptors =
+		helpers::ChannelsRendering channelsRendering =
 		{
 			// config
 			{
@@ -492,7 +487,7 @@ void ModuleImpl::complete_install_shadows_renderer_objects()
 			}
 		};
 
-		renderingHelper->registerToPasses(m_entitygraph, m_raptorEntity, passesDescriptors);
+		renderingHelper->registerToQueues(m_entitygraph, m_raptorEntity, channelsRendering);
 	}
 	
 }

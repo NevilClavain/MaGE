@@ -1,0 +1,136 @@
+{
+  "subs": [
+
+    {
+      "id": "@id",
+
+      "resource_aspect": {
+        "meshe": {
+          "descr": "skydome_Entity_meshe",
+          "filename": "skydome.ac",
+          "meshe_id": "sphere"
+        }
+      },
+
+      "channels": {
+        "configs": [
+          {
+            "rendering_channel_type": "texture",
+
+            "rs_list": [
+              {
+                "operation": "SETCULLING",
+                "argument": "ccw"
+              },
+
+              {
+                "operation": "ENABLEZBUFFER",
+                "argument": "false"
+              },
+
+              {
+                "operation": "ALPHABLENDENABLE",
+                "argument": "true"
+              },
+
+              {
+                "operation": "ALPHABLENDOP",
+                "argument": "add"
+              },
+              {
+                "operation": "ALPHABLENDFUNC",
+                "argument": "always"
+              },
+              {
+                "operation": "ALPHABLENDDEST",
+                "argument": "invsrcalpha"
+              },
+              {
+                "operation": "ALPHABLENDSRC",
+                "argument": "srcalpha"
+              }
+            ],
+
+            "vshader": "scene_skydome_vs",
+            "pshader": "scene_skydome_ps",
+            "rendering_order": 900
+          },
+
+          {
+            "rendering_channel_type": "emissive_lit",
+
+
+            "vshader": "scene_flatcolor_vs",
+            "pshader": "scene_flatcolor_ps",
+
+            "rendering_order": 900,
+
+            "rs_list": [
+              {
+                "operation": "SETCULLING",
+                "argument": "ccw"
+              },
+
+              {
+                "operation": "ENABLEZBUFFER",
+                "argument": "false"
+              }
+            ]
+          }
+        ],
+
+        "pixel_shaders_params": [
+          {
+            "rendering_channel_type": "texture",
+            "shaders_params": [
+              {
+                "datacloud_name": "std.light0.dir",
+                "param_name": "light0_dir"
+              },
+
+              {
+                "datacloud_name": "scene_skydome_ps.atmo_scattering_flag_0",
+                "param_name": "atmo_scattering_flag_0"
+              },
+
+              {
+                "datacloud_name": "scene_skydome_ps.atmo_scattering_flag_1",
+                "param_name": "atmo_scattering_flag_1"
+              },
+
+              {
+                "datacloud_name": "scene_skydome_ps.atmo_scattering_flag_2",
+                "param_name": "atmo_scattering_flag_2"
+              },
+
+              {
+                "datacloud_name": "scene_skydome_ps.atmo_scattering_flag_3",
+                "param_name": "atmo_scattering_flag_3"
+              },
+
+              {
+                "datacloud_name": "scene_skydome_ps.atmo_scattering_flag_4",
+                "param_name": "atmo_scattering_flag_4"
+              },
+
+              {
+                "datacloud_name": "scene_skydome_ps.atmo_scattering_flag_5",
+                "param_name": "atmo_scattering_flag_5"
+              }
+            ]
+          },
+
+          {
+            "rendering_channel_type": "emissive_lit",
+            "shaders_params": [
+              {
+                "datacloud_name": "std.white_color",
+                "param_name": "color"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

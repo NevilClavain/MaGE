@@ -28,14 +28,14 @@
 #include <string>
 #include <random>
 
-#include "samplesbase.h"
+#include "base.h"
 
 #include "entity.h"
 #include "entitygraph.h"
 #include "renderingqueue.h"
 #include "texture.h"
 
-class ModuleImpl : public mage::SamplesBase
+class ModuleImpl : public mage::Base
 {
 public:
     ModuleImpl() = default;

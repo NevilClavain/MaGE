@@ -26,7 +26,7 @@
 #pragma once
 
 #include "maths_helpers.h"
-#include "samplesopenenv.h"
+#include "openenv.h"
 
 #include <unordered_map>
 #include <random>
@@ -37,7 +37,7 @@
 
 #include "animations.h"
 
-class ModuleImpl : public mage::SamplesOpenEnv
+class ModuleImpl : public mage::OpenEnv
 {
 public:
     ModuleImpl() = default;

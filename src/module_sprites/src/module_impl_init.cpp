@@ -70,7 +70,7 @@ using namespace mage::rendering;
 
 void ModuleImpl::init(const std::string p_appWindowsEntityName)
 {
-	SamplesBase::init(p_appWindowsEntityName);
+	Base::init(p_appWindowsEntityName);
 
 	/////////// logging conf
 
@@ -80,17 +80,6 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	const auto dataSize{ logConfFileContent.getDataSize() };
 	const std::string data(logConfFileContent.getData(), dataSize);
 
-	/*
-	mage::core::Json<> jsonParser;
-	jsonParser.registerSubscriber(logger::Configuration::getInstance()->getCallback());
-
-	const auto logParseStatus{ jsonParser.parse(data) };
-
-	if (logParseStatus < 0)
-	{
-		_EXCEPTION("Cannot parse logging configuration")
-	}
-	*/
 
 	logger::Configuration::getInstance()->applyConfiguration(data);
 
@@ -109,6 +98,8 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	// dataprint system filters
 	const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
 	dataPrintSystem->addDatacloudFilter("resources_event");
+	dataPrintSystem->addDatacloudFilter("std");
+
 
 
 	d3d11_system_events();
@@ -217,7 +208,7 @@ void ModuleImpl::d3d11_system_events()
 					const auto rendering_quad_textures_channnel{ Texture(Texture::Format::TEXTURE_RGB, w_width, w_height) };
 
 
-					mage::helpers::plugRenderingQuad(m_entitygraph,
+					mage::helpers::plugRenderingTarget(m_entitygraph,
 						"fog_queue",
 						characteristics_v_width, characteristics_v_height,
 						"screenRendering_Filter_DirectForward_Quad_Entity",

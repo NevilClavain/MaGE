@@ -26,6 +26,8 @@
 #include <md5.h>
 #include "trianglemeshe.h"
 
+#include "tvector.h"
+
 
 using namespace mage;
 using namespace mage::core::maths;
@@ -303,7 +305,7 @@ void TriangleMeshe::computeResourceUID()
 	const std::string hash_smooth_norm_gen{ md5.digestMemory((BYTE*)&m_smooth_normales_generations, (int)(sizeof(m_smooth_normales_generations))) };
 
 	std::string hash_bones;
-	for (int i = 0; i < m_animation_bones.size(); i++)
+	for (size_t i = 0; i < m_animation_bones.size(); i++)
 	{
 		const double* content_array{ m_animation_bones.at(i).offset_matrix.getArray() };
 		const std::string hash_bone{ md5.digestMemory((BYTE*)&content_array, (int)(16 * sizeof(double))) };
@@ -390,4 +392,32 @@ void TriangleMeshe::setSmoothNormalesGeneration(bool p_smoothNormalesGenerations
 bool TriangleMeshe::hasSmoothNormalesGeneration() const
 {
 	return m_smooth_normales_generations;
+}
+
+void TriangleMeshe::computeSize()
+{
+	double meshe_ray{ 0 };
+	if (m_vertices.size() > 0)
+	{
+		core::maths::Real3Vector v0(m_vertices.at(0).x, m_vertices.at(0).y, m_vertices.at(0).z);
+
+		meshe_ray = v0.length();
+		if (m_vertices.size() > 1)
+		{
+			for (size_t i = 1; i < m_vertices.size(); i++)
+			{
+				core::maths::Real3Vector v(m_vertices.at(i).x, m_vertices.at(i).y, m_vertices.at(i).z);
+				if (v.length() > meshe_ray)
+				{
+					meshe_ray = v.length();
+				}
+			}
+		}
+	}
+	m_meshe_size = 2.0 * meshe_ray;
+}
+
+double TriangleMeshe::getSize() const
+{
+	return m_meshe_size;
 }

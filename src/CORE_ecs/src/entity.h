@@ -58,7 +58,8 @@ namespace mage
 			{
 				if (m_aspects.count(p_aspect))
 				{
-					_EXCEPTION("Aspect already registered: " + std::to_string(p_aspect))
+					//_EXCEPTION("Aspect already registered: " + std::to_string(p_aspect))
+					return m_aspects.at(p_aspect);
 				}
 				m_aspects[p_aspect]; // instantiate entry
 				return m_aspects.at(p_aspect);

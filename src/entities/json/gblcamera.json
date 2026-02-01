@@ -1,0 +1,26 @@
+{
+  "subs": [
+    {
+      "id": "@id_0",
+
+      "subs": [
+        {
+          "id": "@id_1",
+
+          "world_aspect": {
+            "animator": {
+              "descr": "camera gimbalLock Joint animator",
+              "helper": "gimbalLockJoin"
+            }
+          },
+          "subs": [
+            {
+              "id": "@id_2",
+              "helper": "plugCamera"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

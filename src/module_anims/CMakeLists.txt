@@ -34,6 +34,7 @@ include_directories(${CMAKE_SOURCE_DIR}/CORE_time/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_threads/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_filesystem/src)
 include_directories(${CMAKE_SOURCE_DIR}/CORE_services/src)
+include_directories(${CMAKE_SOURCE_DIR}/CORE_xtree/src)
 
 include_directories(${CMAKE_SOURCE_DIR}/RENDERING_control/src)
 include_directories(${CMAKE_SOURCE_DIR}/TRANSFORM_control/src)
@@ -47,8 +48,8 @@ include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_dataprint/src)
 include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_animations/src)
 
 include_directories(${CMAKE_SOURCE_DIR}/helpers)
-include_directories(${CMAKE_SOURCE_DIR}/appbases/src/samples_base)
-include_directories(${CMAKE_SOURCE_DIR}/appbases/src/samples_openenv)
+include_directories(${CMAKE_SOURCE_DIR}/appbases/src/base)
+include_directories(${CMAKE_SOURCE_DIR}/appbases/src/openenv)
 
 include_directories(${st_tree_include_dir})
 include_directories(${jsonstruct_include_dir})
@@ -62,9 +63,9 @@ file(
         source_files
 		${CMAKE_SOURCE_DIR}/module_anims/src/*.h
         ${CMAKE_SOURCE_DIR}/module_anims/src/*.cpp
+		${CMAKE_SOURCE_DIR}/module_anims/json/*.json
 		
 )
-
 
 add_library(module_anims SHARED ${source_files})
 
@@ -92,6 +93,7 @@ target_link_libraries(module_anims
 										SYSTEM_world 
 										SYSTEM_dataprint 
 										SYSTEM_animations 
+										SYSTEM_scenestreamer
 										d3d11 
 										d3dcompiler 
 										DirectXTK)
@@ -101,6 +103,8 @@ install(TARGETS module_anims CONFIGURATIONS Release RUNTIME DESTINATION ${CMAKE_
 install(TARGETS module_anims CONFIGURATIONS RelWithDebInfo RUNTIME DESTINATION ${CMAKE_SOURCE_DIR}/apps/RelWithDebInfo)
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/config_deployment/module_anims_config DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>)
+
+install(FILES ${CMAKE_SOURCE_DIR}/module_anims/json/datacloud.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_anims_config)
 
 
 

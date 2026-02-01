@@ -52,13 +52,6 @@ namespace mage
 	namespace rendering
 	{
 		class RenderState;
-
-		/*
-		struct Queue
-		{
-			struct Text;
-		};
-		*/
 	}
 
 	class Texture;
@@ -82,7 +75,7 @@ namespace mage
 												const rendering::Queue& p_renderingqueue,
 												const std::string& p_parentid, const std::string& p_entityid);
 
-		rendering::Queue& plugRenderingQuad( mage::core::Entitygraph& p_entitygraph,
+		rendering::Queue& plugRenderingTarget( mage::core::Entitygraph& p_entitygraph,
 										const std::string& p_queue_debug_name,
 										float p_characteristics_v_width, float p_characteristics_v_height, 
 										const std::string& p_parentid,
@@ -91,10 +84,10 @@ namespace mage
 										const std::string& p_viewEntityid,
 										const std::string& p_vshader,
 										const std::string& p_pshader,
-										const std::vector<std::pair<size_t, Texture>>& p_renderTargets,
+										const std::vector<std::pair<size_t, Texture>>& p_inputs,
 										size_t p_target_stage);
 
-		void plugCamera(mage::core::Entitygraph& p_entitygraph,
+		core::Entity* plugCamera(mage::core::Entitygraph& p_entitygraph,
 						const core::maths::Matrix& p_projection,
 						const std::string& p_parentid, const std::string& p_entityid);
 

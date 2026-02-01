@@ -81,7 +81,7 @@ void mage::helpers::installShadowsRendererQueues(mage::core::Entitygraph& p_enti
 	const auto combiner_modulatelitshadows_inputA_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
 	const auto combiner_modulatelitshadows_inputB_channnel{ Texture(Texture::Format::TEXTURE_RGB, p_w_width, p_w_height) };
 
-	mage::helpers::plugRenderingQuad(p_entitygraph,
+	mage::helpers::plugRenderingTarget(p_entitygraph,
 		"mod_lit_shadows_queue",
 		p_characteristics_v_width, p_characteristics_v_height,
 		p_rootpass_queue,
@@ -193,7 +193,7 @@ void mage::helpers::installShadowsRendering(mage::core::Entitygraph& p_entitygra
 	/////// III : entities in rendering graph
 
 
-	const auto renderingHelper{ mage::helpers::RenderingPasses::getInstance() };
+	const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
 
 	auto& shadowMapNode{ p_entitygraph.node(p_shadows_rendering_params.shadowmap_target_entity_id) };
 	const auto shadowmap_texture_entity{ shadowMapNode.data() };
@@ -203,11 +203,11 @@ void mage::helpers::installShadowsRendering(mage::core::Entitygraph& p_entitygra
 
 	for (auto& shadowSourceEntity : p_shadows_rendering_params.shadow_source_entites)
 	{
-		for (auto& config : shadowSourceEntity.passesDescriptors.configs)
+		for (auto& config : shadowSourceEntity.channelsRendering.configs)
 		{
 			config.second.textures_ptr_list.push_back(sm_texture_ptr);
 		}
 
-		renderingHelper->registerToPasses(p_entitygraph, shadowSourceEntity.entity, shadowSourceEntity.passesDescriptors);
+		renderingHelper->registerToQueues(p_entitygraph, shadowSourceEntity.entity, shadowSourceEntity.channelsRendering);
 	}
 }

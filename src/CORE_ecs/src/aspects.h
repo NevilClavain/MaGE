@@ -34,6 +34,19 @@ namespace mage
 			static constexpr int id{ 0x6000 };
 		};
 
+		struct tagsAspect
+		{
+			static constexpr int id{ 0x1000 };
+
+			enum class GraphDomain
+			{
+				UNDEFINED,
+				SCENEGRAPH,
+				RENDERGRAPH,
+				HUD
+			};
+		};
+
 		struct renderingAspect
 		{
 			static constexpr int id{ 0x0001 };
@@ -68,6 +81,6 @@ namespace mage
 		struct animationsAspect
 		{
 			static constexpr int id{ 0x0006 };
-		};
+		};		
 	}
 }
