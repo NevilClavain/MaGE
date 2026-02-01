@@ -834,15 +834,6 @@ namespace mage
             auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
             const auto global_pos = entity_worldposition.global_pos;
 
-            //if (check_tag(entity, "#alwaysRendered"))
-            //{
-            //    if (!m_entity_renderings.at(entity->getId()).m_rendered)
-            //    {
-            //        m_entity_renderings.at(entity->getId()).m_request_rendering = true;
-            //    }
-            //    continue;
-            //}
-
             ///////////////////////////////////////////////
 
             if (!p_hasnode_func(xe.second))
