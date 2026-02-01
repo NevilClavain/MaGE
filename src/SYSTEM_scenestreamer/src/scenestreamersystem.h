@@ -768,6 +768,10 @@ namespace mage
                             const json::ViewGroup& p_viewgroup, 
                             const std::function<XTreeType* (const SceneStreamerSystem::XTreeEntity&)>& p_get_node_func);
 
+
+        bool check_tag(core::Entity* p_entity, const std::string& p_tag);
+
+
         bool                                                                                    m_enabled{ false };
 
         mutable mage::core::logger::Sink                                                        m_localLogger;
@@ -831,20 +835,13 @@ namespace mage
             const auto global_pos = entity_worldposition.global_pos;
 
             // check tags
-
-            const auto& tagsAspect{ entity->aspectAccess(mage::core::tagsAspect::id) };
-            const auto& str_tags_list{ tagsAspect.getComponentsByType<std::unordered_set<std::string>>() };
-            if (str_tags_list.size())
+            if (check_tag(entity, "#alwaysRendered"))
             {
-                const auto str_tags{ str_tags_list.at(0)->getPurpose() };
-                if (str_tags.count("#alwaysRendered"))
+                if (!m_entity_renderings.at(entity->getId()).m_rendered)
                 {
-                    if (!m_entity_renderings.at(entity->getId()).m_rendered)
-                    {
-                        m_entity_renderings.at(entity->getId()).m_request_rendering = true;
-                    }
-                    continue;
+                    m_entity_renderings.at(entity->getId()).m_request_rendering = true;
                 }
+                continue;
             }
 
             ///////////////////////////////////////////////

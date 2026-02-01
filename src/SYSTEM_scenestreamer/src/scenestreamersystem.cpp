@@ -279,9 +279,8 @@ void SceneStreamerSystem::run()
             }
 
             const auto& tagsAspect{ p_entity->aspectAccess(mage::core::tagsAspect::id)};
-
             const auto& entity_domains_list{ tagsAspect.getComponentsByType<mage::core::tagsAspect::GraphDomain>() };
-            const auto& str_tags_list{ tagsAspect.getComponentsByType<std::unordered_set<std::string>>() };
+            //const auto& str_tags_list{ tagsAspect.getComponentsByType<std::unordered_set<std::string>>() };
 
             if (0 == entity_domains_list.size())
             {
@@ -309,15 +308,12 @@ void SceneStreamerSystem::run()
                                 XTreeEntity xtreeEnt;
                                 xtreeEnt.entity = p_entity;
 
-                                 if (str_tags_list.size() > 0)
-                                 {
-                                    const auto str_tags{ str_tags_list.at(0)->getPurpose() };
-                                    if (str_tags.count("#static"))
-                                    {
-                                        xtreeEnt.is_static = true;
-                                    }
-                                 }
-                                 rgpd.second.xtree_entities[p_entity->getId()] = xtreeEnt;
+                                if (check_tag(p_entity, "#static"))
+                                {
+                                    xtreeEnt.is_static = true;
+                                }
+
+                                rgpd.second.xtree_entities[p_entity->getId()] = xtreeEnt;
                             }
                         }
                     }
@@ -1618,4 +1614,19 @@ std::string SceneStreamerSystem::filter_arguments_stack(const std::string p_inpu
     {
         return p_file_args.at(p_input);
     }
+}
+
+bool SceneStreamerSystem::check_tag(core::Entity* p_entity, const std::string& p_tag)
+{
+    const auto& tagsAspect{ p_entity->aspectAccess(mage::core::tagsAspect::id) };
+    const auto& str_tags_list{ tagsAspect.getComponentsByType<std::unordered_set<std::string>>() };
+    if (str_tags_list.size())
+    {
+        const auto str_tags{ str_tags_list.at(0)->getPurpose() };
+        if (str_tags.count(p_tag))
+        {
+            return true;
+        }
+    }
+    return false;
 }
