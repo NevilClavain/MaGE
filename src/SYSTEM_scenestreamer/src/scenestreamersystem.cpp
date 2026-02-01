@@ -292,34 +292,44 @@ void SceneStreamerSystem::run()
                 return;
             }
 
-            if (m_scene_entities_rg_parts.count(p_entity->getId()))
+            if (check_tag(p_entity, "#alwaysRendered"))
             {
-                const std::unordered_set<std::string> scene_entity_rg_parts{ m_scene_entities_rg_parts.at(p_entity->getId()) };
-
-                for (auto& rgpd : m_rendergraphpart_data)
+                // render it directly, and no need to add it in rgpd xtree_entities list
+                if (!m_entity_renderings.at(p_entity->getId()).m_rendered)
                 {
-                    for (const std::string& rendering_queue_id : rgpd.second.viewgroup.queue_entities)
+                    m_entity_renderings.at(p_entity->getId()).m_request_rendering = true;
+                }
+            }
+            else
+            {
+                if (m_scene_entities_rg_parts.count(p_entity->getId()))
+                {
+                    const std::unordered_set<std::string> scene_entity_rg_parts{ m_scene_entities_rg_parts.at(p_entity->getId()) };
+
+                    for (auto& rgpd : m_rendergraphpart_data)
                     {
-                        if (scene_entity_rg_parts.count(rendering_queue_id))
+                        for (const std::string& rendering_queue_id : rgpd.second.viewgroup.queue_entities)
                         {
-                            // can add this entity in this viewgroup/rgpd xtree
-                            if (!rgpd.second.xtree_entities.count(p_entity->getId()))
+                            if (scene_entity_rg_parts.count(rendering_queue_id))
                             {
-                                XTreeEntity xtreeEnt;
-                                xtreeEnt.entity = p_entity;
-
-                                if (check_tag(p_entity, "#static"))
+                                // can add this entity in this viewgroup/rgpd xtree
+                                if (!rgpd.second.xtree_entities.count(p_entity->getId()))
                                 {
-                                    xtreeEnt.is_static = true;
-                                }
+                                    XTreeEntity xtreeEnt;
+                                    xtreeEnt.entity = p_entity;
 
-                                rgpd.second.xtree_entities[p_entity->getId()] = xtreeEnt;
+                                    if (check_tag(p_entity, "#static"))
+                                    {
+                                        xtreeEnt.is_static = true;
+                                    }
+
+                                    rgpd.second.xtree_entities[p_entity->getId()] = xtreeEnt;
+                                }
                             }
                         }
                     }
                 }
             }
-
         }
     };
     mage::helpers::extractAspectsTopDown<mage::core::worldAspect>(m_entitygraph, forEachWorldAspect);
