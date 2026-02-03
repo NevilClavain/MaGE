@@ -264,6 +264,87 @@ void SceneStreamerSystem::run()
         return;
     }
 
+
+
+    /////////////////////////////////////////////////////////////////////////////////
+    // place 3D object in appropriate xtree leaf : utility lambda
+
+    const std::function<void(core::QuadTreeNode<SceneQuadTreeNode>*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> place_obj_on_quadtree_leaf
+    {
+        [&](core::QuadTreeNode<SceneQuadTreeNode>* p_current_node, double p_obj_size, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
+        {
+            if (p_current_node->isLeaf())
+            {
+                // leaf reached, cannt go beyond, so place it anyway
+                p_current_node->dataAccess().entities.insert(p_entity);
+                p_xtreeEntity.quadtree_node = p_current_node;
+            }
+            else
+            {
+                if (SceneStreamerSystem::is_inside_quadtreenode(p_current_node->getData(), p_global_pos))
+                {
+                    const double node_size{ p_current_node->getData().side_length };
+
+                    if (p_obj_size / node_size > m_configuration.object_xtreenode_ratio)
+                    {
+                        //place it
+                        p_current_node->dataAccess().entities.insert(p_entity);
+                        p_xtreeEntity.quadtree_node = p_current_node;
+                    }
+                    else
+                    {
+                        for (int i = 0; i < core::QuadTreeNode<SceneQuadTreeNode>::ChildCount; i++)
+                        {
+                            auto child{ p_current_node->getChild(i) };
+                            place_obj_on_quadtree_leaf(child, p_obj_size, p_global_pos, p_entity, p_xtreeEntity);
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////
+    // place 3D object in appropriate xtree leaf : utility lambda
+
+    const std::function<void(core::OctreeNode<SceneOctreeNode>*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> place_obj_on_octree_leaf
+    {
+        [&](core::OctreeNode<SceneOctreeNode>* p_current_node, double p_obj_size, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
+        {
+            if (p_current_node->isLeaf())
+            {
+                // leaf reached, cannt go beyond, so place it anyway
+                p_current_node->dataAccess().entities.insert(p_entity);
+                p_xtreeEntity.octree_node = p_current_node;
+            }
+            else
+            {
+                if (SceneStreamerSystem::is_inside_octreenode(p_current_node->getData(), p_global_pos))
+                {
+                    const double node_size{ p_current_node->getData().side_length };
+
+                    if (p_obj_size / node_size > m_configuration.object_xtreenode_ratio)
+                    {
+                        //place it
+                        p_current_node->dataAccess().entities.insert(p_entity);
+                        p_xtreeEntity.octree_node = p_current_node;
+                    }
+                    else
+                    {
+                        for (int i = 0; i < core::OctreeNode<SceneOctreeNode>::ChildCount; i++)
+                        {
+                            auto child{ p_current_node->getChild(i) };
+                            place_obj_on_octree_leaf(child, p_obj_size, p_global_pos, p_entity, p_xtreeEntity);
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+
+
+
     /////////////////////////////////////////////////////////
     // detect new entities to insert in the XTree
     const auto forEachWorldAspect
@@ -318,12 +399,49 @@ void SceneStreamerSystem::run()
                                     XTreeEntity xtreeEnt;
                                     xtreeEnt.entity = p_entity;
 
+                                    //if (check_tag(p_entity, "#static"))
+                                    //{
+                                    //    xtreeEnt.is_static = true;
+                                    //}
+
                                     if (check_tag(p_entity, "#static"))
                                     {
-                                        xtreeEnt.is_static = true;
-                                    }
+                                        // place it on xtree once for all
+                                        const auto& resources_aspect{ p_entity->aspectAccess(resourcesAspect::id) };
 
-                                    rgpd.second.xtree_entities[p_entity->getId()] = xtreeEnt;
+                                        const auto meshes_list{ resources_aspect.getComponentsByType<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>() };
+                                        if (meshes_list.size() > 0)
+                                        {
+                                            auto& meshe_descr{ meshes_list.at(0)->getPurpose() };
+                                            TriangleMeshe& meshe{ meshe_descr.second };
+
+                                            if (TriangleMeshe::State::RENDERERLOADED == meshe.getState())
+                                            {
+                                                const double meshe_size{ meshe.getSize() };
+
+                                                const auto& world_aspect{ p_entity->aspectAccess(worldAspect::id) };
+
+                                                const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
+                                                auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
+                                                const auto global_pos = entity_worldposition.global_pos;
+
+
+                                                if (XtreeType::QUADTREE == m_configuration.xtree_type)
+                                                {
+                                                    place_obj_on_quadtree_leaf(rgpd.second.quadtree_root.get(), meshe_size, global_pos, p_entity, xtreeEnt);
+                                                }
+                                                else // XtreeType::OCTREE
+                                                {
+                                                    place_obj_on_octree_leaf(rgpd.second.octree_root.get(), meshe_size, global_pos, p_entity, xtreeEnt);
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        rgpd.second.xtree_entities[p_entity->getId()] = xtreeEnt;
+                                    }                                    
                                 }
                             }
                         }
@@ -370,44 +488,6 @@ void SceneStreamerSystem::run()
             };
             /////////////////////////////////////////////////////////////////////////////////
 
-            /////////////////////////////////////////////////////////////////////////////////
-            // place 3D object in appropriate xtree leaf : utility lambda
-
-            const std::function<void(core::QuadTreeNode<SceneQuadTreeNode>*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> place_obj_on_leaf
-            {
-                [&](core::QuadTreeNode<SceneQuadTreeNode>* p_current_node, double p_obj_size, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
-                {
-                    if (p_current_node->isLeaf())
-                    {
-                        // leaf reached, cannt go beyond, so place it anyway
-                        p_current_node->dataAccess().entities.insert(p_entity);
-                        p_xtreeEntity.quadtree_node = p_current_node;
-                    }
-                    else
-                    {
-                        if (SceneStreamerSystem::is_inside_quadtreenode(p_current_node->getData(), p_global_pos))
-                        {
-                            const double node_size{ p_current_node->getData().side_length };
-
-                            if (p_obj_size / node_size > m_configuration.object_xtreenode_ratio)
-                            {
-                                //place it
-                                p_current_node->dataAccess().entities.insert(p_entity);
-                                p_xtreeEntity.quadtree_node = p_current_node;
-                            }
-                            else
-                            {
-                                for (int i = 0; i < core::QuadTreeNode<SceneQuadTreeNode>::ChildCount; i++)
-                                {
-                                    auto child{ p_current_node->getChild(i) };
-                                    place_obj_on_leaf(child, p_obj_size, p_global_pos, p_entity, p_xtreeEntity);
-                                }
-                            }
-                        }
-                    }
-                }
-            };
-            /////////////////////////////////////////////////////////////////////////////////
 
             const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> has_node
             {
@@ -427,7 +507,7 @@ void SceneStreamerSystem::run()
                 }
             };
 
-            update_XTree<SceneQuadTreeNode, core::QuadTreeNode<SceneQuadTreeNode>>(rgpd_data.quadtree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, place_obj_on_leaf, has_node, is_inside);
+            update_XTree<SceneQuadTreeNode, core::QuadTreeNode<SceneQuadTreeNode>>(rgpd_data.quadtree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, place_obj_on_quadtree_leaf, has_node, is_inside);
         }
         else // XtreeType::OCTREE
         {           
@@ -460,44 +540,6 @@ void SceneStreamerSystem::run()
             /////////////////////////////////////////////////////////////////////////////////
 
 
-            /////////////////////////////////////////////////////////////////////////////////
-            // place 3D object in appropriate xtree leaf : utility lambda
-
-            const std::function<void(core::OctreeNode<SceneOctreeNode>*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> place_obj_on_leaf
-            {
-                [&](core::OctreeNode<SceneOctreeNode>* p_current_node, double p_obj_size, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
-                {
-                    if (p_current_node->isLeaf())
-                    {
-                        // leaf reached, cannt go beyond, so place it anyway
-                        p_current_node->dataAccess().entities.insert(p_entity);
-                        p_xtreeEntity.octree_node = p_current_node;
-                    }
-                    else
-                    {
-                        if (SceneStreamerSystem::is_inside_octreenode(p_current_node->getData(), p_global_pos))
-                        {
-                            const double node_size{ p_current_node->getData().side_length };
-
-                            if (p_obj_size / node_size > m_configuration.object_xtreenode_ratio)
-                            {
-                                //place it
-                                p_current_node->dataAccess().entities.insert(p_entity);
-                                p_xtreeEntity.octree_node = p_current_node;
-                            }
-                            else
-                            {
-                                for (int i = 0; i < core::OctreeNode<SceneOctreeNode>::ChildCount; i++)
-                                {
-                                    auto child{ p_current_node->getChild(i) };
-                                    place_obj_on_leaf(child, p_obj_size, p_global_pos, p_entity, p_xtreeEntity);                                    
-                                }
-                            }
-                        }
-                    }
-                }
-            };
-            /////////////////////////////////////////////////////////////////////////////////
 
             const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> has_node
             {
@@ -518,7 +560,7 @@ void SceneStreamerSystem::run()
             };
 
 
-            update_XTree<SceneOctreeNode, core::OctreeNode<SceneOctreeNode>>(rgpd_data.octree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, place_obj_on_leaf, has_node, is_inside);
+            update_XTree<SceneOctreeNode, core::OctreeNode<SceneOctreeNode>>(rgpd_data.octree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, place_obj_on_octree_leaf, has_node, is_inside);
         }
     }
 

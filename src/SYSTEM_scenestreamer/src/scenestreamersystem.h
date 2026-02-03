@@ -667,7 +667,7 @@ namespace mage
             core::Entity* entity{ nullptr };
             core::QuadTreeNode<SceneQuadTreeNode>*              quadtree_node{ nullptr };
             core::OctreeNode<SceneOctreeNode>*                  octree_node{ nullptr };
-            bool is_static{ false };
+            //bool is_static{ false };
         };
 
 
@@ -877,7 +877,7 @@ namespace mage
                         p_place_cam_on_leaf_func(p_xtree_root, global_pos, entity, xe.second);
                     }
                 }
-                else if (entity->hasAspect(resourcesAspect::id) && !xe.second.is_static)
+                else if (entity->hasAspect(resourcesAspect::id) /* && !xe.second.is_static */)
                 {
                     const bool is_inside{ p_is_inside_func(xe.second, global_pos) };
 
