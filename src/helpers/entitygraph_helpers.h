@@ -4,7 +4,7 @@
 /*
 *
 * MaGE rendering framework
-* Emmanuel Chaumont Copyright (c) 2013-2025
+* Emmanuel Chaumont Copyright (c) 2013-2026
 *
 * This file is part of MaGE.
 *
