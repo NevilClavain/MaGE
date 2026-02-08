@@ -92,8 +92,6 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 		}
 	) };
 
-	_MAGE_DEBUG(m_localLogger, "Pushing to runner number : " + std::to_string(m_runnerIndex));
-
 	m_runner[m_runnerIndex].get()->m_mailbox_in.push(task);
 
 	m_runnerIndex++;

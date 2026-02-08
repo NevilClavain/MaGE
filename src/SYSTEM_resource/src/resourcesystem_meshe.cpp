@@ -118,45 +118,45 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 				const aiScene* scene{ importer->ReadFileFromMemory(meshe_text.getData(), meshe_text.getDataSize(), flags)};
 				if (scene)
 				{
-					_MAGE_DEBUG(m_localLoggerRunner, std::string("************************************SCENE INFOS BEGIN***********************************"));
-					_MAGE_DEBUG(m_localLoggerRunner, "file = " + meshe_path);
+					_MAGE_TRACE(m_localLoggerRunner, std::string("************************************SCENE INFOS BEGIN***********************************"));
+					_MAGE_TRACE(m_localLoggerRunner, "file = " + meshe_path);
 
-					_MAGE_DEBUG(m_localLoggerRunner, "scene HasMeshes " + std::to_string(scene->HasMeshes()));
-					_MAGE_DEBUG(m_localLoggerRunner, "scene mNumMeshes " + std::to_string(scene->mNumMeshes));
+					_MAGE_TRACE(m_localLoggerRunner, "scene HasMeshes " + std::to_string(scene->HasMeshes()));
+					_MAGE_TRACE(m_localLoggerRunner, "scene mNumMeshes " + std::to_string(scene->mNumMeshes));
 
-					_MAGE_DEBUG(m_localLoggerRunner, "scene HasTextures " + std::to_string(scene->HasTextures()));
-					_MAGE_DEBUG(m_localLoggerRunner, "scene mNumTextures " + std::to_string(scene->mNumTextures));
+					_MAGE_TRACE(m_localLoggerRunner, "scene HasTextures " + std::to_string(scene->HasTextures()));
+					_MAGE_TRACE(m_localLoggerRunner, "scene mNumTextures " + std::to_string(scene->mNumTextures));
 
-					_MAGE_DEBUG(m_localLoggerRunner, "scene HasMaterials " + std::to_string(scene->HasMaterials()));
-					_MAGE_DEBUG(m_localLoggerRunner, "scene mNumMaterials " + std::to_string(scene->mNumMaterials));
+					_MAGE_TRACE(m_localLoggerRunner, "scene HasMaterials " + std::to_string(scene->HasMaterials()));
+					_MAGE_TRACE(m_localLoggerRunner, "scene mNumMaterials " + std::to_string(scene->mNumMaterials));
 
-					_MAGE_DEBUG(m_localLoggerRunner, "scene HasLights " + std::to_string(scene->HasLights()));
-					_MAGE_DEBUG(m_localLoggerRunner, "scene mNumLights " + std::to_string(scene->mNumLights));
+					_MAGE_TRACE(m_localLoggerRunner, "scene HasLights " + std::to_string(scene->HasLights()));
+					_MAGE_TRACE(m_localLoggerRunner, "scene mNumLights " + std::to_string(scene->mNumLights));
 
-					_MAGE_DEBUG(m_localLoggerRunner, "scene HasCameras " + std::to_string(scene->HasCameras()));
-					_MAGE_DEBUG(m_localLoggerRunner, "scene mNumCameras " + std::to_string(scene->mNumCameras));
+					_MAGE_TRACE(m_localLoggerRunner, "scene HasCameras " + std::to_string(scene->HasCameras()));
+					_MAGE_TRACE(m_localLoggerRunner, "scene mNumCameras " + std::to_string(scene->mNumCameras));
 
-					_MAGE_DEBUG(m_localLoggerRunner, "scene HasAnimations " + std::to_string(scene->HasAnimations()));
-					_MAGE_DEBUG(m_localLoggerRunner, "scene mNumAnimations " + std::to_string(scene->mNumAnimations));
+					_MAGE_TRACE(m_localLoggerRunner, "scene HasAnimations " + std::to_string(scene->HasAnimations()));
+					_MAGE_TRACE(m_localLoggerRunner, "scene mNumAnimations " + std::to_string(scene->mNumAnimations));
 
-					_MAGE_DEBUG(m_localLoggerRunner, std::string("************************************SCENE INFOS END***********************************"));
+					_MAGE_TRACE(m_localLoggerRunner, std::string("************************************SCENE INFOS END***********************************"));
 
 					const auto root{ scene->mRootNode };
 
-					_MAGE_DEBUG(m_localLoggerRunner, std::string("************************************NODE HIERARCHY BEGIN***********************************"));
+					_MAGE_TRACE(m_localLoggerRunner, std::string("************************************NODE HIERARCHY BEGIN***********************************"));
 
 					const std::function<void(aiNode*, int)> dumpAssimpSceneNode
 					{
 						[&](aiNode* p_ai_node, int depth)
 						{
 							std::string spacing(depth, ' ');
-							_MAGE_DEBUG(m_localLoggerRunner, spacing + std::string("node : ") + p_ai_node->mName.C_Str() + std::string(" nb children : ") + std::to_string(p_ai_node->mNumChildren));
-							_MAGE_DEBUG(m_localLoggerRunner, spacing + std::string("nb meshes : ") + std::to_string(p_ai_node->mNumMeshes));
+							_MAGE_TRACE(m_localLoggerRunner, spacing + std::string("node : ") + p_ai_node->mName.C_Str() + std::string(" nb children : ") + std::to_string(p_ai_node->mNumChildren));
+							_MAGE_TRACE(m_localLoggerRunner, spacing + std::string("nb meshes : ") + std::to_string(p_ai_node->mNumMeshes));
 
-							_MAGE_DEBUG(m_localLoggerRunner, spacing + std::string("  -> ") << p_ai_node->mTransformation.a1 << " " << p_ai_node->mTransformation.b1 << " " << p_ai_node->mTransformation.c1 << " " << p_ai_node->mTransformation.d1)
-							_MAGE_DEBUG(m_localLoggerRunner, spacing + std::string("  -> ") << p_ai_node->mTransformation.a2 << " " << p_ai_node->mTransformation.b2 << " " << p_ai_node->mTransformation.c2 << " " << p_ai_node->mTransformation.d2)
-							_MAGE_DEBUG(m_localLoggerRunner, spacing + std::string("  -> ") << p_ai_node->mTransformation.a3 << " " << p_ai_node->mTransformation.b3 << " " << p_ai_node->mTransformation.c3 << " " << p_ai_node->mTransformation.d3)
-							_MAGE_DEBUG(m_localLoggerRunner, spacing + std::string("  -> ") << p_ai_node->mTransformation.a4 << " " << p_ai_node->mTransformation.b4 << " " << p_ai_node->mTransformation.c4 << " " << p_ai_node->mTransformation.d4)
+							_MAGE_TRACE(m_localLoggerRunner, spacing + std::string("  -> ") << p_ai_node->mTransformation.a1 << " " << p_ai_node->mTransformation.b1 << " " << p_ai_node->mTransformation.c1 << " " << p_ai_node->mTransformation.d1)
+							_MAGE_TRACE(m_localLoggerRunner, spacing + std::string("  -> ") << p_ai_node->mTransformation.a2 << " " << p_ai_node->mTransformation.b2 << " " << p_ai_node->mTransformation.c2 << " " << p_ai_node->mTransformation.d2)
+							_MAGE_TRACE(m_localLoggerRunner, spacing + std::string("  -> ") << p_ai_node->mTransformation.a3 << " " << p_ai_node->mTransformation.b3 << " " << p_ai_node->mTransformation.c3 << " " << p_ai_node->mTransformation.d3)
+							_MAGE_TRACE(m_localLoggerRunner, spacing + std::string("  -> ") << p_ai_node->mTransformation.a4 << " " << p_ai_node->mTransformation.b4 << " " << p_ai_node->mTransformation.c4 << " " << p_ai_node->mTransformation.d4)
 
 
 							for (size_t i = 0; i < p_ai_node->mNumChildren; i++)
@@ -168,7 +168,7 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 
 					dumpAssimpSceneNode(root, 1);
 
-					_MAGE_DEBUG(m_localLoggerRunner, std::string("************************************NODE HIERARCHY END***********************************"));
+					_MAGE_TRACE(m_localLoggerRunner, std::string("************************************NODE HIERARCHY END***********************************"));
 
 
 					//// record scene nodes hierarchy
@@ -206,14 +206,14 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 					{
 						//_DSTRACE((*rs_logger), dsstring("Animation ") << i);
 
-						_MAGE_DEBUG(m_localLoggerRunner, std::string("Animation : ") + std::to_string(i));
+						_MAGE_TRACE(m_localLoggerRunner, std::string("Animation : ") + std::to_string(i));
 
 						const auto animation{ scene->mAnimations[i] };
 
-						_MAGE_DEBUG(m_localLoggerRunner, std::string("	Name = ") + animation->mName.C_Str());
-						_MAGE_DEBUG(m_localLoggerRunner, std::string("	TicksPerSeconds = ") + std::to_string(animation->mTicksPerSecond));
-						_MAGE_DEBUG(m_localLoggerRunner, std::string("	Duration (ticks) = ") + std::to_string(animation->mDuration));
-						_MAGE_DEBUG(m_localLoggerRunner, std::string("	Num Channels = ") + std::to_string(animation->mNumChannels));
+						_MAGE_TRACE(m_localLoggerRunner, std::string("	Name = ") + animation->mName.C_Str());
+						_MAGE_TRACE(m_localLoggerRunner, std::string("	TicksPerSeconds = ") + std::to_string(animation->mTicksPerSecond));
+						_MAGE_TRACE(m_localLoggerRunner, std::string("	Duration (ticks) = ") + std::to_string(animation->mDuration));
+						_MAGE_TRACE(m_localLoggerRunner, std::string("	Num Channels = ") + std::to_string(animation->mNumChannels));
 
 						/////////////////////////////////////////
 
@@ -274,11 +274,11 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 					const auto nb_meshes{ meshe_node->mNumMeshes };
 
 
-					_MAGE_DEBUG(m_localLoggerRunner, std::string("************************************MESHE INFOS BEGIN***********************************"));
+					_MAGE_TRACE(m_localLoggerRunner, std::string("************************************MESHE INFOS BEGIN***********************************"));
 
 					const auto name{ meshe_node->mName.C_Str() };
-					_MAGE_DEBUG(m_localLoggerRunner, std::string("owner node = ") + name);
-					_MAGE_DEBUG(m_localLoggerRunner, std::string("nb_meshes = ") << nb_meshes);
+					_MAGE_TRACE(m_localLoggerRunner, std::string("owner node = ") + name);
+					_MAGE_TRACE(m_localLoggerRunner, std::string("nb_meshes = ") << nb_meshes);
 
 					p_mesheInfos.clearAnimationBones();
 					const auto indexes{ meshe_node->mMeshes };
@@ -286,42 +286,42 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 					{
 						const auto meshe{ meshes[indexes[i]] };
 
-						_MAGE_DEBUG(m_localLoggerRunner, std::string(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>MESHE ") << i);
-						_MAGE_DEBUG(m_localLoggerRunner, std::string("name = ") << meshe->mName.C_Str());
-						_MAGE_DEBUG(m_localLoggerRunner, std::string("meshe HasPositions ") << meshe->HasPositions());
-						_MAGE_DEBUG(m_localLoggerRunner, std::string("meshe HasFaces ") << meshe->HasFaces());
-						_MAGE_DEBUG(m_localLoggerRunner, std::string("meshe HasNormals ") << meshe->HasNormals());
-						_MAGE_DEBUG(m_localLoggerRunner, std::string("meshe HasTangentsAndBitangents ") << meshe->HasTangentsAndBitangents());
-						_MAGE_DEBUG(m_localLoggerRunner, std::string("meshe NumUVChannels ") << meshe->GetNumUVChannels());
-						_MAGE_DEBUG(m_localLoggerRunner, std::string("meshe HasBones ") << meshe->HasBones());
-						_MAGE_DEBUG(m_localLoggerRunner, std::string("meshe NumBones ") << meshe->mNumBones);
-						_MAGE_DEBUG(m_localLoggerRunner, std::string("meshe NumFaces ") << meshe->mNumFaces);
-						_MAGE_DEBUG(m_localLoggerRunner, std::string("meshe NumVertices ") << meshe->mNumVertices);
+						_MAGE_TRACE(m_localLoggerRunner, std::string(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>MESHE ") << i);
+						_MAGE_TRACE(m_localLoggerRunner, std::string("name = ") << meshe->mName.C_Str());
+						_MAGE_TRACE(m_localLoggerRunner, std::string("meshe HasPositions ") << meshe->HasPositions());
+						_MAGE_TRACE(m_localLoggerRunner, std::string("meshe HasFaces ") << meshe->HasFaces());
+						_MAGE_TRACE(m_localLoggerRunner, std::string("meshe HasNormals ") << meshe->HasNormals());
+						_MAGE_TRACE(m_localLoggerRunner, std::string("meshe HasTangentsAndBitangents ") << meshe->HasTangentsAndBitangents());
+						_MAGE_TRACE(m_localLoggerRunner, std::string("meshe NumUVChannels ") << meshe->GetNumUVChannels());
+						_MAGE_TRACE(m_localLoggerRunner, std::string("meshe HasBones ") << meshe->HasBones());
+						_MAGE_TRACE(m_localLoggerRunner, std::string("meshe NumBones ") << meshe->mNumBones);
+						_MAGE_TRACE(m_localLoggerRunner, std::string("meshe NumFaces ") << meshe->mNumFaces);
+						_MAGE_TRACE(m_localLoggerRunner, std::string("meshe NumVertices ") << meshe->mNumVertices);
 
 						for (size_t j = 0; j < meshe->mNumBones; j++)
 						{
 							const auto bone{ meshe->mBones[j] };
 
-							_MAGE_DEBUG(m_localLoggerRunner, std::string("Bone ") << j);
-							_MAGE_DEBUG(m_localLoggerRunner, std::string("  -> name = ") << bone->mName.C_Str());
-							_MAGE_DEBUG(m_localLoggerRunner, std::string("  -> offsetMatrx"));
+							_MAGE_TRACE(m_localLoggerRunner, std::string("Bone ") << j);
+							_MAGE_TRACE(m_localLoggerRunner, std::string("  -> name = ") << bone->mName.C_Str());
+							_MAGE_TRACE(m_localLoggerRunner, std::string("  -> offsetMatrx"));
 
-							_MAGE_DEBUG(m_localLoggerRunner, std::string("  -> ") << bone->mOffsetMatrix.a1 << " " << bone->mOffsetMatrix.b1 << " " << bone->mOffsetMatrix.c1 << " " << bone->mOffsetMatrix.d1);
-							_MAGE_DEBUG(m_localLoggerRunner, std::string("  -> ") << bone->mOffsetMatrix.a2 << " " << bone->mOffsetMatrix.b2 << " " << bone->mOffsetMatrix.c2 << " " << bone->mOffsetMatrix.d2);
-							_MAGE_DEBUG(m_localLoggerRunner, std::string("  -> ") << bone->mOffsetMatrix.a3 << " " << bone->mOffsetMatrix.b3 << " " << bone->mOffsetMatrix.c3 << " " << bone->mOffsetMatrix.d3);
-							_MAGE_DEBUG(m_localLoggerRunner, std::string("  -> ") << bone->mOffsetMatrix.a4 << " " << bone->mOffsetMatrix.b4 << " " << bone->mOffsetMatrix.c4 << " " << bone->mOffsetMatrix.d4);
+							_MAGE_TRACE(m_localLoggerRunner, std::string("  -> ") << bone->mOffsetMatrix.a1 << " " << bone->mOffsetMatrix.b1 << " " << bone->mOffsetMatrix.c1 << " " << bone->mOffsetMatrix.d1);
+							_MAGE_TRACE(m_localLoggerRunner, std::string("  -> ") << bone->mOffsetMatrix.a2 << " " << bone->mOffsetMatrix.b2 << " " << bone->mOffsetMatrix.c2 << " " << bone->mOffsetMatrix.d2);
+							_MAGE_TRACE(m_localLoggerRunner, std::string("  -> ") << bone->mOffsetMatrix.a3 << " " << bone->mOffsetMatrix.b3 << " " << bone->mOffsetMatrix.c3 << " " << bone->mOffsetMatrix.d3);
+							_MAGE_TRACE(m_localLoggerRunner, std::string("  -> ") << bone->mOffsetMatrix.a4 << " " << bone->mOffsetMatrix.b4 << " " << bone->mOffsetMatrix.c4 << " " << bone->mOffsetMatrix.d4);
 
-							_MAGE_DEBUG(m_localLoggerRunner, std::string("  -> weights"));
+							_MAGE_TRACE(m_localLoggerRunner, std::string("  -> weights"));
 
 							/*
 							for (size_t k = 0; k < bone->mNumWeights; k++)
 							{
-								_MAGE_DEBUG(m_localLoggerRunner, std::string("  -> vertex ") << bone->mWeights[k].mVertexId << " weight " << bone->mWeights[k].mWeight );
+								_MAGE_TRACE(m_localLoggerRunner, std::string("  -> vertex ") << bone->mWeights[k].mVertexId << " weight " << bone->mWeights[k].mWeight );
 							}
 							*/
 						}
 					}
-					_MAGE_DEBUG(m_localLoggerRunner, std::string("************************************MESHE INFOS END***********************************"));
+					_MAGE_TRACE(m_localLoggerRunner, std::string("************************************MESHE INFOS END***********************************"));
 
 
 					p_mesheInfos.clearTriangles();
@@ -492,9 +492,7 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 			}
 		}
 	) };
-
-	_MAGE_DEBUG(m_localLogger, "Pushing to runner number : " + std::to_string(m_runnerIndex));
-
+	
 	m_runner[m_runnerIndex].get()->m_mailbox_in.push(task);
 
 	m_runnerIndex++;
