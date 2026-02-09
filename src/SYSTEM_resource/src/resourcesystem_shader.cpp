@@ -53,9 +53,7 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 			currentIndex = m_runnerIndex,
 			filename = p_filename
 		]()
-		{
-			_MAGE_DEBUG(m_localLoggerRunner, std::string("loading ") + filename + " shader type = " + std::to_string(shaderType));
-
+		{		
 			// build full path
 			const auto shader_path{ m_shadersBasePath + "/" + filename + ".hlsl"};
 			const auto shader_metadata_path{ m_shadersBasePath + "/" + filename + ".json" };
@@ -69,6 +67,8 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 				p_shaderInfos.setContent(shader_src_content.getData());
 				p_shaderInfos.m_source_id = filename;
 				p_shaderInfos.compute_resource_uid();
+
+				_MAGE_DEBUG(m_localLoggerRunner, std::string("loading shader ") + filename + " type = " + std::to_string(shaderType) + ", resource uid = " + p_shaderInfos.getResourceUID());
 
 				const auto shaderCacheDirectory{ m_shadersCachePath + "/" + filename };
 

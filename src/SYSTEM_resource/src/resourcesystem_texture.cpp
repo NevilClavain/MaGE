@@ -46,9 +46,7 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 			currentIndex = m_runnerIndex,
 			filename = p_filename
 		]()
-		{
-			_MAGE_DEBUG(m_localLoggerRunner, std::string("loading texture ") + filename);
-
+		{		
 			// build full path
 			const auto texture_path{ m_texturesBasePath + "/" + filename };
 
@@ -59,6 +57,8 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 				p_textureInfos.m_source = Texture::Source::CONTENT_FROM_FILE;
 				p_textureInfos.m_source_id = filename;
 				p_textureInfos.compute_resource_uid();
+
+				_MAGE_DEBUG(m_localLoggerRunner, std::string("loading texture ") + filename + ", resource uid = " + p_textureInfos.getResourceUID());
 
 				_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> RESOURCE_TEXTURE_LOAD_BEGIN : " + filename);
 				for (const auto& call : m_callbacks)

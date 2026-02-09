@@ -141,5 +141,5 @@ void Shader::compute_resource_uid()
 {
     MD5 md5;
     const std::string hash{ md5.digestMemory((BYTE*)m_content.c_str(), m_contentSize)};
-    m_resource_uid = hash;
+    m_resource_uid = m_source_id + "_" + hash;
 }
