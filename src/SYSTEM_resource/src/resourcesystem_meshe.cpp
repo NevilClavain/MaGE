@@ -78,7 +78,6 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 			meshe_id = p_mesheid
 		]()
 		{
-			_MAGE_DEBUG(m_localLoggerRunner, std::string("loading meshe ") + filename);
 
 			// build full path
 			const auto meshe_path{ m_meshesBasePath + "/" + filename };
@@ -88,7 +87,7 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 				auto& eventsLogger{ services::LoggerSharing::getInstance()->getLogger("Events") };
 
 				p_mesheInfos.m_source = TriangleMeshe::Source::CONTENT_FROM_FILE;
-				p_mesheInfos.m_source_id = filename;
+				p_mesheInfos.m_source_id = meshe_id + "@" + filename;
 
 				_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> RESOURCE_MESHE_LOAD_BEGIN : " + filename);
 				for (const auto& call : m_callbacks)
@@ -473,6 +472,8 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 
 				p_mesheInfos.computeSize();
 				p_mesheInfos.computeResourceUID();
+
+				_MAGE_DEBUG(m_localLoggerRunner, std::string("loading meshe ") + p_mesheInfos.m_source_id + ", resource uid = " + p_mesheInfos.getResourceUID());
 
 				_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> RESOURCE_MESHE_LOAD_SUCCESS : " + filename);
 				for (const auto& call : m_callbacks)
