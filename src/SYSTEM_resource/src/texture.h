@@ -31,9 +31,6 @@
 #include "matrix.h"
 #include "textures_service.h"
 
-
-
-
 //fwd decl
 class D3D11SystemImpl;
 
