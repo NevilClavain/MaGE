@@ -27,6 +27,7 @@
 
 #include <mutex>
 #include <map>
+#include <unordered_map>
 #include <string>
 #include <vector>
 
@@ -44,6 +45,8 @@
 #include "buffer.h"
 #include "matrix.h"
 #include "component.h"
+
+#include "buffer.h"
 
 namespace mage
 {
@@ -115,22 +118,25 @@ namespace mage
         size_t getNbBusyRunners() const;
 
     private:
-        mage::core::logger::Sink                            m_localLogger;
-        mage::core::logger::Sink                            m_localLoggerRunner;
-        const std::string                                   m_shadersBasePath{ "./shaders/resources" };
-        const std::string                                   m_texturesBasePath{ "./textures" };
-        const std::string                                   m_meshesBasePath{ "./meshes" };
-        const std::string                                   m_shadersCachePath{ "./bc_cache" };
+        mage::core::logger::Sink                                        m_localLogger;
+        mage::core::logger::Sink                                        m_localLoggerRunner;
+        const std::string                                               m_shadersBasePath{ "./shaders/resources" };
+        const std::string                                               m_texturesBasePath{ "./textures" };
+        const std::string                                               m_meshesBasePath{ "./meshes" };
+        const std::string                                               m_shadersCachePath{ "./bc_cache" };
 
-        //mage::core::Json<Shader>::Callback	                m_jsonparser_cb;
-        std::mutex                                          m_jsonparser_mutex;
+        //mage::core::Json<Shader>::Callback	                        m_jsonparser_cb;
+        std::mutex                                                      m_jsonparser_mutex;
 
-        static constexpr unsigned int                       nbRunners{ 2 };
+        static constexpr unsigned int                                   nbRunners{ 2 };
 
-        std::vector<std::unique_ptr<mage::core::Runner>>    m_runner;
-        int                                                 m_runnerIndex{ 0 };
+        std::vector<std::unique_ptr<mage::core::Runner>>                m_runner;
+        int                                                             m_runnerIndex{ 0 };
 
-        bool                                                m_forceAllShadersRegeneration{ false };
+        bool                                                            m_forceAllShadersRegeneration{ false };
+
+        std::mutex	                                                    m_texturesBlobCache_mutex;
+        std::unordered_map<std::string, core::Buffer<unsigned char>>    m_texturesBlobCache;
        
         void handleShader(const std::string& p_filename, Shader& p_shaderInfos);
         void handleTexture(const std::string& p_filename, Texture& p_textureInfos );

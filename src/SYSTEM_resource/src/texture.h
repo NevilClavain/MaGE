@@ -71,7 +71,7 @@ namespace mage
         enum class State
         {
             INIT,
-            BLOBLOADING,
+            //BLOBLOADING,
             BLOBLOADED,
             RENDERERLOADING,
             RENDERERLOADED,
@@ -129,7 +129,10 @@ namespace mage
 
         ContentAccessMode                   getContentAccessMode() const;
 
-        const core::Buffer<unsigned char>&  getFileContent() const;
+        //const core::Buffer<unsigned char>&  getFileContent() const;
+
+        unsigned char*                      getFileContent() const;
+        size_t                              getFileContentSize() const;
 
         std::string                         getResourceUID() const;
 
@@ -147,7 +150,10 @@ namespace mage
         std::string                         m_source_id;        
 
 
-        core::Buffer<unsigned char>         m_file_content;
+        //core::Buffer<unsigned char>         m_file_content;
+
+        unsigned char*                      m_file_content{ nullptr }; // ptr to core::Buffer data in resource system textures cache
+        size_t                              m_file_content_size{ 0 };
 
         int                                 m_width             { 0 };
         int                                 m_height            { 0 };

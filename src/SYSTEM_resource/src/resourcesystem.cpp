@@ -131,8 +131,8 @@ void ResourceSystem::run()
 				const auto state{ texture.getState() };
 				if (Texture::State::INIT == state)
 				{
-					handleTexture(filename, texture);
 					texture.setState(Texture::State::BLOBLOADING);
+					handleTexture(filename, texture);					
 				}
 			}
 

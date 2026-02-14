@@ -202,14 +202,14 @@ bool D3D11SystemImpl::createTexture(mage::Texture& p_texture)
             ID3D11Resource*             d3dt11{ nullptr };
             ID3D11ShaderResourceView*   textureResourceView{ nullptr };
 
-            const auto& file_content{ p_texture.getFileContent()};
+            const unsigned char*        file_content{ p_texture.getFileContent() };
 
             D3D11_USAGE usage{ D3D11_USAGE_DEFAULT };
 
             unsigned int bindFlags{ D3D11_BIND_SHADER_RESOURCE };
             unsigned int cpuAccessFlags{ 0 };
 
-            hRes = DirectX::CreateWICTextureFromMemoryEx(m_lpd3ddevice, file_content.getData(), file_content.getDataSize(), 0, 
+            hRes = DirectX::CreateWICTextureFromMemoryEx(m_lpd3ddevice, file_content, p_texture.getFileContentSize(), 0,
                                                             usage, //D3D11_USAGE
                                                             bindFlags, //bindFlags
                                                             cpuAccessFlags, //cpuAccessFlags
