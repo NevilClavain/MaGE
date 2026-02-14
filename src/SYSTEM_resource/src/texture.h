@@ -71,7 +71,7 @@ namespace mage
         enum class State
         {
             INIT,
-            //BLOBLOADING,
+            BLOBLOADING,
             BLOBLOADED,
             RENDERERLOADING,
             RENDERERLOADED,

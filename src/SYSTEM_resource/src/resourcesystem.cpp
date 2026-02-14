@@ -116,8 +116,8 @@ void ResourceSystem::run()
 				const auto state{ shader.getState() };
 				if (Shader::State::INIT == state)
 				{
-					handleShader(filename, shader);
 					shader.setState(Shader::State::BLOBLOADING);
+					handleShader(filename, shader);					
 				}
 			}
 			////// Handle textures ///////////
@@ -153,8 +153,8 @@ void ResourceSystem::run()
 				const auto state{ meshe.getState() };
 				if (TriangleMeshe::State::INIT == state)
 				{
-					handleSceneFile(file_path, meshe_id, meshe, nodes_list);
 					meshe.setState(TriangleMeshe::State::BLOBLOADING);
+					handleSceneFile(file_path, meshe_id, meshe, nodes_list);					
 				}
 			}
 		}
