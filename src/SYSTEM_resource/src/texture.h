@@ -129,8 +129,6 @@ namespace mage
 
         ContentAccessMode                   getContentAccessMode() const;
 
-        //const core::Buffer<unsigned char>&  getFileContent() const;
-
         unsigned char*                      getFileContent() const;
         size_t                              getFileContentSize() const;
 
@@ -148,9 +146,6 @@ namespace mage
         Source                              m_source            { Source::CONTENT_FROM_FILE };
 
         std::string                         m_source_id;        
-
-
-        //core::Buffer<unsigned char>         m_file_content;
 
         unsigned char*                      m_file_content{ nullptr }; // ptr to core::Buffer data in resource system textures cache
         size_t                              m_file_content_size{ 0 };

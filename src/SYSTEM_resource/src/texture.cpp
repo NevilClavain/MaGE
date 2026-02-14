@@ -112,12 +112,6 @@ void Texture::compute_resource_uid()
     }
 }
 
-//const core::Buffer<unsigned char>& Texture::getFileContent() const
-//{
-//    return m_file_content;
-//}
-
-
 unsigned char* Texture::getFileContent() const
 {
     return m_file_content;
