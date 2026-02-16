@@ -22,7 +22,6 @@
 */
 /* -*-LIC_END-*- */
 
-#include <md5.h>
 #include "texture.h"
 
 using namespace mage;
@@ -44,6 +43,7 @@ Texture::Texture(const Texture& p_other)
     m_height = p_other.m_height;
     m_format = p_other.m_format;
     m_file_content = p_other.m_file_content;
+    m_file_content_size = p_other.m_file_content_size;
     m_content_access_mode = p_other.m_content_access_mode;
 
     m_state_mutex.lock();
@@ -100,8 +100,6 @@ void Texture::setState(Texture::State p_state)
 
 void Texture::compute_resource_uid()
 {
-    MD5 md5;
-
     if (Source::CONTENT_FROM_FILE == m_source)
     {
         m_resource_uid = std::string("CONTENT_FROM_FILE_") + m_source_id;

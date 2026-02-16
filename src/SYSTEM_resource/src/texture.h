@@ -108,6 +108,7 @@ namespace mage
             m_height = p_other.m_height;
             m_format = p_other.m_format;
             m_file_content = p_other.m_file_content;
+            m_file_content_size = p_other.m_file_content_size;
             m_content_access_mode = p_other.m_content_access_mode;
 
             m_state_mutex.lock();
