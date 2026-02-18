@@ -147,8 +147,8 @@ public:
                                     std::unique_ptr<char[]>& p_shaderBytes,
                                     size_t& p_shaderBytesLength);
 
-    bool createVertexShader(const std::string& p_resource_uid, const mage::core::Buffer<char>& p_code);
-    bool createPixelShader(const std::string& p_resource_uid, const mage::core::Buffer<char>& p_code);
+    bool createVertexShader(const std::string& p_resource_uid, char* p_code, size_t p_codeSize);
+    bool createPixelShader(const std::string& p_resource_uid, char* p_code, size_t p_codeSize);
           
     void setVertexShader(const std::string& p_resource_uid);
     void setPixelShader(const std::string& p_resource_uid);

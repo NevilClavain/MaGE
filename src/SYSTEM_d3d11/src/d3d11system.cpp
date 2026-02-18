@@ -1016,11 +1016,11 @@ void D3D11System::handleShaderCreation(Shader& p_shaderInfos, int p_shaderType)
 
 				if (0 == shaderType)
 				{
-					status = d3dimpl->createVertexShader(p_shaderInfos.m_resource_uid, p_shaderInfos.getCode());
+					status = d3dimpl->createVertexShader(p_shaderInfos.m_resource_uid, p_shaderInfos.getCode(), p_shaderInfos.getCodeSize());
 				}
 				else if (1 == shaderType)
 				{
-					status = d3dimpl->createPixelShader(p_shaderInfos.m_resource_uid, p_shaderInfos.getCode());
+					status = d3dimpl->createPixelShader(p_shaderInfos.m_resource_uid, p_shaderInfos.getCode(), p_shaderInfos.getCodeSize());
 				}
 
 				if (!status)

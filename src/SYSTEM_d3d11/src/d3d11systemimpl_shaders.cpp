@@ -148,7 +148,7 @@ HRESULT D3D11SystemImpl::compileShaderFromMem(void* p_data, int p_size, LPCTSTR 
     return hr;
 }
 
-bool D3D11SystemImpl::createVertexShader(const std::string& p_resource_uid, const mage::core::Buffer<char>& p_code)
+bool D3D11SystemImpl::createVertexShader(const std::string& p_resource_uid, char* p_code, size_t p_codeSize)
 {
     DECLARE_D3D11ASSERT_VARS
     _MAGE_DEBUG(m_localLogger, "Vertex Shader loading : " + p_resource_uid);
@@ -176,8 +176,8 @@ bool D3D11SystemImpl::createVertexShader(const std::string& p_resource_uid, cons
     }
     else
     {
-        const char* shader_bc           { p_code.getData() };
-        const size_t shader_bc_length   { p_code.getDataSize() };
+        const char* shader_bc           { p_code };
+        const size_t shader_bc_length   { p_codeSize };
 
         ID3D11VertexShader* vs{ nullptr };
         hRes = m_lpd3ddevice->CreateVertexShader(shader_bc, shader_bc_length, nullptr, &vs);
@@ -194,7 +194,7 @@ bool D3D11SystemImpl::createVertexShader(const std::string& p_resource_uid, cons
     return true;
 }
 
-bool D3D11SystemImpl::createPixelShader(const std::string& p_resource_uid, const mage::core::Buffer<char>& p_code)
+bool D3D11SystemImpl::createPixelShader(const std::string& p_resource_uid, char* p_code, size_t p_codeSize)
 {
     DECLARE_D3D11ASSERT_VARS
     _MAGE_DEBUG(m_localLogger, "Pixel Shader loading : " + p_resource_uid);
@@ -222,8 +222,8 @@ bool D3D11SystemImpl::createPixelShader(const std::string& p_resource_uid, const
     }
     else
     {
-        const char* shader_bc{ p_code.getData() };
-        const size_t shader_bc_length{ p_code.getDataSize() };
+        const char* shader_bc{ p_code };
+        const size_t shader_bc_length{ p_codeSize };
 
         ID3D11PixelShader* ps{ nullptr };
         hRes = m_lpd3ddevice->CreatePixelShader(shader_bc, shader_bc_length, nullptr, &ps);

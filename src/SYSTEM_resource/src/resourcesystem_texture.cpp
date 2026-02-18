@@ -52,7 +52,8 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 			[&,
 				textureAction = textureAction,
 				currentIndex = m_runnerIndex,
-				filename = p_filename
+				filename = p_filename,
+				resourceUID = resourceUID
 			]()
 			{
 				// build full path
@@ -62,7 +63,7 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 				{
 					auto& eventsLogger{ services::LoggerSharing::getInstance()->getLogger("Events") };
 
-					_MAGE_DEBUG(m_localLoggerRunner, std::string("loading texture ") + filename + ", resource uid = " + p_textureInfos.getResourceUID());
+					_MAGE_DEBUG(m_localLoggerRunner, std::string("loading texture ") + filename + ", resource uid = " + resourceUID);
 
 					_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> RESOURCE_TEXTURE_LOAD_BEGIN : " + filename);
 					for (const auto& call : m_callbacks)
@@ -74,12 +75,11 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 					texture_content.load();
 
 					m_texturesBlobCache_mutex.lock();
-					m_texturesBlobCache[p_textureInfos.getResourceUID()].fill(texture_content.getData(), texture_content.getDataSize());
+					m_texturesBlobCache[resourceUID].fill(texture_content.getData(), texture_content.getDataSize());
 					m_texturesBlobCache_mutex.unlock();
 
-					p_textureInfos.m_file_content = m_texturesBlobCache.at(p_textureInfos.getResourceUID()).getData();
-					p_textureInfos.m_file_content_size = m_texturesBlobCache.at(p_textureInfos.getResourceUID()).getDataSize();
-
+					p_textureInfos.m_file_content = m_texturesBlobCache.at(resourceUID).getData();
+					p_textureInfos.m_file_content_size = m_texturesBlobCache.at(resourceUID).getDataSize();
 
 					_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> RESOURCE_TEXTURE_LOAD_SUCCESS : " + filename);
 					for (const auto& call : m_callbacks)
