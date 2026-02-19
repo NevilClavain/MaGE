@@ -48,6 +48,8 @@
 
 #include "buffer.h"
 
+#include "shader.h"
+
 namespace mage
 {
     // fwd decls
@@ -104,6 +106,15 @@ namespace mage
         };
     }
 
+    struct ShaderCacheEntry
+    {
+        std::string                                 shader_source;
+        core::Buffer<char>                          shader_code;
+
+        std::vector<Shader::GenericArgument>        generic_arguments;
+        std::vector<Shader::VectorArrayArgument>    vectorarray_arguments;
+    };
+
     class ResourceSystem : public core::System, public mage::property::EventSource<ResourceSystemEvent, const std::string&>
     {
     public:
@@ -137,8 +148,10 @@ namespace mage
         std::mutex	                                                                    m_texturesBlobCache_mutex;
         std::unordered_map<std::string, core::Buffer<unsigned char>>                    m_texturesBlobCache;
 
-        std::mutex	                                                                    m_shadersBlobCache_mutex;
-        std::unordered_map<std::string, std::pair<std::string, core::Buffer<char>>>     m_shadersBlobCache;
+        std::mutex	                                                                    m_shadersCache_mutex;
+
+
+        std::unordered_map<std::string, ShaderCacheEntry>                               m_shadersCache;
 
 
        
