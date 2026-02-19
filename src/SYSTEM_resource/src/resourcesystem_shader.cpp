@@ -51,7 +51,7 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 
 	const auto resourceUID{ p_shaderInfos.getResourceUID() };
 
-	if (true/*!m_shadersCache.count(resourceUID)*/)
+	if (!m_shadersCache.count(resourceUID))
 	{
 
 		const auto task{ new mage::core::SimpleAsyncTask<>(shaderAction, p_filename,
