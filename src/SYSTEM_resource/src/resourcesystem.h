@@ -106,6 +106,11 @@ namespace mage
         };
     }
 
+    struct TextureCacheEntry
+    {
+        core::Buffer<unsigned char> texture_content;
+    };
+
     struct ShaderCacheEntry
     {
         std::string                                 shader_source;
@@ -138,7 +143,7 @@ namespace mage
 
         std::mutex                                                                      m_jsonparser_mutex;
 
-        static constexpr unsigned int                                                   nbRunners{ 2 };
+        static constexpr unsigned int                                                   nbRunners{ 1 };
 
         std::vector<std::unique_ptr<mage::core::Runner>>                                m_runner;
         int                                                                             m_runnerIndex{ 0 };
@@ -146,7 +151,7 @@ namespace mage
         bool                                                                            m_forceAllShadersRegeneration{ false };
 
         std::mutex	                                                                    m_texturesBlobCache_mutex;
-        std::unordered_map<std::string, core::Buffer<unsigned char>>                    m_texturesBlobCache;
+        std::unordered_map<std::string, TextureCacheEntry>                              m_texturesBlobCache;
 
         std::mutex	                                                                    m_shadersCache_mutex;
 
