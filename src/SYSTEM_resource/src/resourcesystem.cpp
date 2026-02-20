@@ -103,9 +103,7 @@ void ResourceSystem::run()
 	{
 		[&](Entity* p_entity, const ComponentContainer& p_resource_components)
 		{
-
 			////// Handle shaders ///////////
-			//const auto shaders_list{ p_resource_aspect.getComponentsByType<Shader>() };
 
 			const auto shaders_list{ p_resource_components.getComponentsByType<std::pair<std::string, Shader>>() };
 			for (auto& e : shaders_list)
@@ -129,7 +127,7 @@ void ResourceSystem::run()
 				const auto filename{ staged_texture.second.first };
 					
 				const auto state{ texture.getState() };
-				if (Texture::State::INIT == state)
+				if (Texture::State::INIT == state || Texture::State::BLOBLOADING == state)
 				{
 					texture.setState(Texture::State::BLOBLOADING);
 					handleTexture(filename, texture);					

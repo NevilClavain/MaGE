@@ -108,7 +108,16 @@ namespace mage
 
     struct TextureCacheEntry
     {
-        core::Buffer<unsigned char> texture_content;
+        enum class State
+        {
+            INIT,
+            BLOBLOADING,
+            BLOBLOADED
+        };
+
+        core::Buffer<unsigned char>     texture_content;
+
+        State                           state{ State::INIT };
     };
 
     struct ShaderCacheEntry

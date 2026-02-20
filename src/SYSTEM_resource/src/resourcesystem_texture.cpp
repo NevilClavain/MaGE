@@ -48,6 +48,11 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 
 	if (!m_texturesBlobCache.count(resourceUID))
 	{
+		m_texturesBlobCache_mutex.lock();
+		m_texturesBlobCache[resourceUID]; // to create entry
+		m_texturesBlobCache[resourceUID].state = TextureCacheEntry::State::BLOBLOADING;
+		m_texturesBlobCache_mutex.unlock();
+
 		const auto task{ new mage::core::SimpleAsyncTask<>(textureAction, p_filename,
 			[&,
 				textureAction = textureAction,
@@ -75,7 +80,7 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 					texture_content.load();
 
 					m_texturesBlobCache_mutex.lock();
-					m_texturesBlobCache[resourceUID].texture_content.fill(texture_content.getData(), texture_content.getDataSize());
+					m_texturesBlobCache.at(resourceUID).texture_content.fill(texture_content.getData(), texture_content.getDataSize());
 					m_texturesBlobCache_mutex.unlock();
 
 					p_textureInfos.m_file_content = m_texturesBlobCache.at(resourceUID).texture_content.getData();
@@ -87,6 +92,12 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 						call(ResourceSystemEvent::RESOURCE_TEXTURE_LOAD_SUCCESS, filename);
 					}
 					p_textureInfos.setState(Texture::State::BLOBLOADED);
+
+					m_texturesBlobCache_mutex.lock();
+					m_texturesBlobCache[resourceUID].state = TextureCacheEntry::State::BLOBLOADED;
+					m_texturesBlobCache_mutex.unlock();
+
+
 				}
 				catch (const std::exception& e)
 				{
@@ -109,8 +120,15 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 	}
 	else
 	{
-		p_textureInfos.m_file_content = m_texturesBlobCache.at(resourceUID).texture_content.getData();
-		p_textureInfos.m_file_content_size = m_texturesBlobCache.at(resourceUID).texture_content.getDataSize();
-		p_textureInfos.setState(Texture::State::BLOBLOADED);
+		m_texturesBlobCache_mutex.lock();
+		const auto texture_state{ m_texturesBlobCache[resourceUID].state };
+		m_texturesBlobCache_mutex.unlock();
+
+		if (TextureCacheEntry::State::BLOBLOADED == texture_state)
+		{
+			p_textureInfos.m_file_content = m_texturesBlobCache.at(resourceUID).texture_content.getData();
+			p_textureInfos.m_file_content_size = m_texturesBlobCache.at(resourceUID).texture_content.getDataSize();
+			p_textureInfos.setState(Texture::State::BLOBLOADED);
+		}
 	}
 }
