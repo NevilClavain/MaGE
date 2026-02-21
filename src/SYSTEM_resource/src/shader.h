@@ -69,9 +69,16 @@ namespace mage
         {
             m_source_id = p_other.m_source_id;
             m_resource_uid = p_other.m_resource_uid;
-            m_content = p_other.m_content;
-            m_contentSize = p_other.m_contentSize;
+
+            //m_content = p_other.m_content;
+            //m_contentSize = p_other.m_contentSize;
+
+            m_file_content = p_other.m_file_content;
+            m_file_content_size = p_other.m_file_content_size;
+
             m_code = p_other.m_code;
+            m_code_size = p_other.m_code_size;
+
             m_type = p_other.m_type;
 
             m_state_mutex.lock();
@@ -95,20 +102,20 @@ namespace mage
             RENDERERLOADED,
         };
 
-        std::string getContent() const;
-        void setContent(const std::string& p_content);
-
         std::string getResourceUID() const;
 
         std::string getSourceID() const;
 
-        size_t getContentSize() const;
-        void setContentSize(size_t p_contentSize);
+        const char* getFileContent() const;
+        size_t getFileContentSize() const;
+
+        char* getCode() const;
+        size_t getCodeSize() const;
+
+
         State getState() const;
         
         int getType() const;
-
-        const core::Buffer<char>& getCode() const;
         
         void addGenericArgument(const GenericArgument& p_arg);
         std::vector<GenericArgument> getGenericArguments() const;
@@ -122,13 +129,17 @@ namespace mage
         
         std::string                         m_resource_uid;       // shader content source unique identifier
         std::string                         m_source_id;
-        std::string                         m_content;
-
-        size_t                              m_contentSize{ 0 };
 
         int                                 m_type; //0 = vertex shader, 1 = pixel shader
 
-        core::Buffer<char>                  m_code;
+
+        const char*                         m_file_content{ nullptr };
+        size_t                              m_file_content_size{ 0 };
+        
+        //core::Buffer<char>                  m_code;
+
+        char*                               m_code{ nullptr }; // shader compiled code
+        size_t                              m_code_size;
 
         mutable std::mutex	                m_state_mutex;
         State                               m_state{ State::INIT };
@@ -139,10 +150,7 @@ namespace mage
         // IF NEW MEMBERS HERE :
         // UPDATE COPY CTOR AND OPERATOR !!!!!!
 
-
-
         void setState(State p_state);
-        void setCode(const core::Buffer<char>& p_code);
 
         void compute_resource_uid();
 

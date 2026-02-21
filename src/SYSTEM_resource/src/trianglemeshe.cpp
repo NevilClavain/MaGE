@@ -315,7 +315,14 @@ void TriangleMeshe::computeResourceUID()
 
 	std::string hash{ hash_v + hash_t + hash_smooth_norm_gen + hash_bones};
 
-	m_resource_uid = hash;
+	if (m_source_id != "")
+	{
+		m_resource_uid = m_source_id + "_" + hash;
+	}
+	else
+	{
+		m_resource_uid = hash;
+	}	
 }
 
 std::string TriangleMeshe::getResourceUID() const

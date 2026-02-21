@@ -23,7 +23,7 @@
 */
 /* -*-LIC_END-*- */
 
-#include <md5.h>
+
 #include "shader.h"
 
 using namespace mage;
@@ -37,9 +37,16 @@ Shader::Shader(const Shader& p_other)
 {
     m_source_id = p_other.m_source_id;
     m_resource_uid = p_other.m_resource_uid;
-    m_content = p_other.m_content;
-    m_contentSize = p_other.m_contentSize;
+    
+    //m_content = p_other.m_content;
+    //m_contentSize = p_other.m_contentSize;
+
+    m_file_content = p_other.m_file_content;
+    m_file_content_size = p_other.m_file_content_size;
+
     m_code = p_other.m_code;
+    m_code_size = p_other.m_code_size;
+
     m_type = p_other.m_type;
 
     m_state_mutex.lock();
@@ -52,16 +59,6 @@ Shader::Shader(const Shader& p_other)
     m_vectorarray_arguments = p_other.m_vectorarray_arguments;
 }
 
-std::string Shader::getContent() const
-{
-    return m_content;
-}
-
-void Shader::setContent(const std::string& p_content)
-{
-    m_content = p_content;
-}
-
 std::string Shader::getResourceUID() const
 {
     return m_resource_uid;
@@ -72,14 +69,24 @@ std::string Shader::getSourceID() const
     return m_source_id;
 }
 
-size_t Shader::getContentSize() const
+const char* Shader::getFileContent() const
 {
-    return m_contentSize;
+    return m_file_content;
 }
 
-void Shader::setContentSize(size_t p_contentSize)
+size_t Shader::getFileContentSize() const
 {
-    m_contentSize = p_contentSize;
+    return m_file_content_size;
+}
+
+char* Shader::getCode() const
+{
+    return m_code;
+}
+
+size_t Shader::getCodeSize() const
+{
+    return m_code_size;
 }
 
 Shader::State Shader::getState() const
@@ -95,16 +102,6 @@ void Shader::setState(State p_state)
     m_state_mutex.lock();
     m_state = p_state;
     m_state_mutex.unlock();
-}
-
-const core::Buffer<char>& Shader::getCode() const
-{
-    return m_code;
-}
-
-void Shader::setCode(const core::Buffer<char>& p_code)
-{
-    m_code = p_code;
 }
 
 int Shader::getType() const
@@ -139,7 +136,5 @@ const std::vector<Shader::VectorArrayArgument>& Shader::getVectorArrayArguments(
 
 void Shader::compute_resource_uid()
 {
-    MD5 md5;
-    const std::string hash{ md5.digestMemory((BYTE*)m_content.c_str(), m_contentSize)};
-    m_resource_uid = hash;
+    m_resource_uid = std::string("CONTENT_FROM_FILE_") + m_source_id;
 }

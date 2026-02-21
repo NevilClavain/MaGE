@@ -132,7 +132,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 
 					dataCloud->registerData<maths::Real4Vector>("std.ambientlight.color");
-					dataCloud->updateDataValue<maths::Real4Vector>("std.ambientlight.color", maths::Real4Vector(0.23, 0.23, 0.23, 1));
+					dataCloud->updateDataValue<maths::Real4Vector>("std.ambientlight.color", maths::Real4Vector(0.21, 0.21, 0.21, 1));
 
 
 

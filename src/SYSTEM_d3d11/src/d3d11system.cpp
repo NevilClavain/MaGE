@@ -336,8 +336,8 @@ void D3D11System::manageResources()
 							call(D3D11SystemEvent::D3D11_SHADER_CREATION_BEGIN, shader.m_source_id);
 						}
 
-						handleShaderCreation(shader, shader.getType());
 						shader.setState(Shader::State::RENDERERLOADING);
+						handleShaderCreation(shader, shader.getType());						
 					}
 				}
 			}
@@ -356,8 +356,8 @@ void D3D11System::manageResources()
 						call(D3D11SystemEvent::D3D11_LINEMESHE_CREATION_BEGIN, lm.getSourceID());
 					}
 
-					handleLinemesheCreation(lm);
 					lm.setState(LineMeshe::State::RENDERERLOADING);
+					handleLinemesheCreation(lm);					
 				}			
 			}
 
@@ -376,8 +376,8 @@ void D3D11System::manageResources()
 						call(D3D11SystemEvent::D3D11_TRIANGLEMESHE_CREATION_BEGIN, tm.getSourceID());
 					}
 
-					handleTrianglemesheCreation(tm);
 					tm.setState(TriangleMeshe::State::RENDERERLOADING);
+					handleTrianglemesheCreation(tm);					
 				}
 			}
 
@@ -398,8 +398,8 @@ void D3D11System::manageResources()
 						call(D3D11SystemEvent::D3D11_TRIANGLEMESHE_CREATION_BEGIN, tm.getSourceID());
 					}
 
-					handleTrianglemesheCreation(tm);
 					tm.setState(TriangleMeshe::State::RENDERERLOADING);
+					handleTrianglemesheCreation(tm);					
 				}
 			}
 
@@ -421,8 +421,8 @@ void D3D11System::manageResources()
 							call(D3D11SystemEvent::D3D11_TEXTURE_CREATION_BEGIN, texture.m_source_id);
 						}
 
-						handleTextureCreation(texture);
-						texture.setState(Texture::State::RENDERERLOADING);						
+						texture.setState(Texture::State::RENDERERLOADING);
+						handleTextureCreation(texture);						
 					}
 				}
 			}
@@ -447,8 +447,8 @@ void D3D11System::manageResources()
 							call(D3D11SystemEvent::D3D11_TEXTURE_CREATION_BEGIN, texture.m_source_id);
 						}
 
-						handleTextureCreation(texture);
 						texture.setState(Texture::State::RENDERERLOADING);
+						handleTextureCreation(texture);						
 					}
 				}
 			}
@@ -1016,11 +1016,11 @@ void D3D11System::handleShaderCreation(Shader& p_shaderInfos, int p_shaderType)
 
 				if (0 == shaderType)
 				{
-					status = d3dimpl->createVertexShader(p_shaderInfos.m_resource_uid, p_shaderInfos.getCode());
+					status = d3dimpl->createVertexShader(p_shaderInfos.m_resource_uid, p_shaderInfos.getCode(), p_shaderInfos.getCodeSize());
 				}
 				else if (1 == shaderType)
 				{
-					status = d3dimpl->createPixelShader(p_shaderInfos.m_resource_uid, p_shaderInfos.getCode());
+					status = d3dimpl->createPixelShader(p_shaderInfos.m_resource_uid, p_shaderInfos.getCode(), p_shaderInfos.getCodeSize());
 				}
 
 				if (!status)

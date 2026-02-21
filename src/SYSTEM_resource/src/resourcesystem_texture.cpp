@@ -36,69 +36,97 @@ using namespace mage::core;
 
 void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_textureInfos)
 {
-	_MAGE_DEBUG(m_localLogger, std::string("Handle Texture ") + p_filename);
-
 	const std::string textureAction{ "load_texture" };
 
-	const auto task{ new mage::core::SimpleAsyncTask<>(textureAction, p_filename,
-		[&,
-			textureAction = textureAction,
-			currentIndex = m_runnerIndex,
-			filename = p_filename
-		]()
-		{
-			_MAGE_DEBUG(m_localLoggerRunner, std::string("loading texture ") + filename);
+	p_textureInfos.m_source = Texture::Source::CONTENT_FROM_FILE;
+	p_textureInfos.m_source_id = p_filename;
+	p_textureInfos.compute_resource_uid();
 
-			// build full path
-			const auto texture_path{ m_texturesBasePath + "/" + filename };
+	const auto resourceUID{ p_textureInfos.getResourceUID() };
 
-			try
-			{
-				auto& eventsLogger{ services::LoggerSharing::getInstance()->getLogger("Events") };
-
-				p_textureInfos.m_source = Texture::Source::CONTENT_FROM_FILE;
-				p_textureInfos.m_source_id = filename;
-				p_textureInfos.compute_resource_uid();
-
-				_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> RESOURCE_TEXTURE_LOAD_BEGIN : " + filename);
-				for (const auto& call : m_callbacks)
-				{
-					call(ResourceSystemEvent::RESOURCE_TEXTURE_LOAD_BEGIN, filename);
-				}
-
-				mage::core::FileContent<unsigned char> texture_content(texture_path);
-				texture_content.load();
-
-				// transfer file content to p_textureInfos buffer
-				core::Buffer<unsigned char> textureBytes;
-				textureBytes.fill(texture_content.getData(), texture_content.getDataSize());
-				p_textureInfos.m_file_content = textureBytes;
-
-				_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> RESOURCE_TEXTURE_LOAD_SUCCESS : " + filename);
-				for (const auto& call : m_callbacks)
-				{
-					call(ResourceSystemEvent::RESOURCE_TEXTURE_LOAD_SUCCESS, filename);
-				}
-				p_textureInfos.setState(Texture::State::BLOBLOADED);
-			}
-			catch (const std::exception& e)
-			{
-				_MAGE_ERROR(m_localLoggerRunner, std::string("failed to manage ") + texture_path + " : reason = " + e.what());
-
-				// send error status to main thread and let terminate
-				const Runner::TaskReport report{ RunnerEvent::TASK_ERROR, filename, textureAction };
-				m_runner[currentIndex].get()->m_mailbox_out.push(report);
-			}
-		}
-	) };
-
-	_MAGE_DEBUG(m_localLogger, "Pushing to runner number : " + std::to_string(m_runnerIndex));
-
-	m_runner[m_runnerIndex].get()->m_mailbox_in.push(task);
-
-	m_runnerIndex++;
-	if (m_runnerIndex == nbRunners)
+	if (!m_texturesBlobCache.count(resourceUID))
 	{
-		m_runnerIndex = 0;
+		m_texturesBlobCache_mutex.lock();
+		m_texturesBlobCache[resourceUID]; // to create entry
+		m_texturesBlobCache[resourceUID].state = TextureCacheEntry::State::BLOBLOADING;
+		m_texturesBlobCache_mutex.unlock();
+
+		const auto task{ new mage::core::SimpleAsyncTask<>(textureAction, p_filename,
+			[&,
+				textureAction = textureAction,
+				currentIndex = m_runnerIndex,
+				filename = p_filename,
+				resourceUID = resourceUID
+			]()
+			{
+				// build full path
+				const auto texture_path{ m_texturesBasePath + "/" + filename };
+
+				try
+				{
+					auto& eventsLogger{ services::LoggerSharing::getInstance()->getLogger("Events") };
+
+					_MAGE_DEBUG(m_localLoggerRunner, std::string("loading texture ") + filename + ", resource uid = " + resourceUID);
+
+					_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> RESOURCE_TEXTURE_LOAD_BEGIN : " + filename);
+					for (const auto& call : m_callbacks)
+					{
+						call(ResourceSystemEvent::RESOURCE_TEXTURE_LOAD_BEGIN, filename);
+					}
+
+					mage::core::FileContent<unsigned char> texture_content(texture_path);
+					texture_content.load();
+
+					m_texturesBlobCache_mutex.lock();
+					m_texturesBlobCache.at(resourceUID).texture_content.fill(texture_content.getData(), texture_content.getDataSize());
+					m_texturesBlobCache_mutex.unlock();
+
+					p_textureInfos.m_file_content = m_texturesBlobCache.at(resourceUID).texture_content.getData();
+					p_textureInfos.m_file_content_size = m_texturesBlobCache.at(resourceUID).texture_content.getDataSize();
+
+					_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> RESOURCE_TEXTURE_LOAD_SUCCESS : " + filename);
+					for (const auto& call : m_callbacks)
+					{
+						call(ResourceSystemEvent::RESOURCE_TEXTURE_LOAD_SUCCESS, filename);
+					}
+					p_textureInfos.setState(Texture::State::BLOBLOADED);
+
+					m_texturesBlobCache_mutex.lock();
+					m_texturesBlobCache.at(resourceUID).state = TextureCacheEntry::State::BLOBLOADED;
+					m_texturesBlobCache_mutex.unlock();
+
+
+				}
+				catch (const std::exception& e)
+				{
+					_MAGE_ERROR(m_localLoggerRunner, std::string("failed to manage ") + texture_path + " : reason = " + e.what());
+
+					// send error status to main thread and let terminate
+					const Runner::TaskReport report{ RunnerEvent::TASK_ERROR, filename, textureAction };
+					m_runner[currentIndex].get()->m_mailbox_out.push(report);
+				}
+			}
+		) };
+
+		m_runner[m_runnerIndex].get()->m_mailbox_in.push(task);
+
+		m_runnerIndex++;
+		if (m_runnerIndex == nbRunners)
+		{
+			m_runnerIndex = 0;
+		}
+	}
+	else
+	{
+		m_texturesBlobCache_mutex.lock();
+		const auto texture_state{ m_texturesBlobCache.at(resourceUID).state };
+		m_texturesBlobCache_mutex.unlock();
+
+		if (TextureCacheEntry::State::BLOBLOADED == texture_state)
+		{
+			p_textureInfos.m_file_content = m_texturesBlobCache.at(resourceUID).texture_content.getData();
+			p_textureInfos.m_file_content_size = m_texturesBlobCache.at(resourceUID).texture_content.getDataSize();
+			p_textureInfos.setState(Texture::State::BLOBLOADED);
+		}
 	}
 }

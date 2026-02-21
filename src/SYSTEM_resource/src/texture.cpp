@@ -22,7 +22,6 @@
 */
 /* -*-LIC_END-*- */
 
-#include <md5.h>
 #include "texture.h"
 
 using namespace mage;
@@ -44,6 +43,7 @@ Texture::Texture(const Texture& p_other)
     m_height = p_other.m_height;
     m_format = p_other.m_format;
     m_file_content = p_other.m_file_content;
+    m_file_content_size = p_other.m_file_content_size;
     m_content_access_mode = p_other.m_content_access_mode;
 
     m_state_mutex.lock();
@@ -100,35 +100,24 @@ void Texture::setState(Texture::State p_state)
 
 void Texture::compute_resource_uid()
 {
-    MD5 md5;
-
     if (Source::CONTENT_FROM_FILE == m_source)
     {
-        const std::string hash_source{ md5.digestMemory((BYTE*)&m_source, (int)(sizeof(m_source))) };
-        const std::string hash_source_uid{ md5.digestMemory((BYTE*)&m_source_id, (int)(sizeof(m_source_id))) };
-        std::string hash{ hash_source + hash_source_uid };
-
-        m_resource_uid = hash;
+        m_resource_uid = std::string("CONTENT_FROM_FILE_") + m_source_id;
     }
     else
     {
-        const std::string hash_source{ md5.digestMemory((BYTE*)&m_source, (int)(sizeof(m_source))) };
-        const std::string hash_source_uid{ md5.digestMemory((BYTE*)&m_source_id, (int)(sizeof(m_source_id))) };
-
-        const std::string hash_source_width{ md5.digestMemory((BYTE*)&m_width, (int)(sizeof(m_width))) };
-        const std::string hash_source_height{ md5.digestMemory((BYTE*)&m_height, (int)(sizeof(m_height))) };
-        const std::string hash_source_format{ md5.digestMemory((BYTE*)&m_format, (int)(sizeof(m_format))) };
-
-        const std::string hash_source_content_access_mode{ md5.digestMemory((BYTE*)&m_content_access_mode, (int)(sizeof(m_content_access_mode))) };
-
-        std::string hash{ hash_source + hash_source_uid + hash_source_width + hash_source_height + hash_source_format + hash_source_content_access_mode };
-        m_resource_uid = hash;
+        m_resource_uid = std::string("CONTENT_FROM_RENDERINGQUEUE_") + m_source_id;
     }
 }
 
-const core::Buffer<unsigned char>& Texture::getFileContent() const
+unsigned char* Texture::getFileContent() const
 {
     return m_file_content;
+}
+
+size_t Texture::getFileContentSize() const
+{
+    return m_file_content_size;
 }
 
 std::string Texture::getSourceID() const

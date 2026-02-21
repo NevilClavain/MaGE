@@ -31,9 +31,6 @@
 #include "matrix.h"
 #include "textures_service.h"
 
-
-
-
 //fwd decl
 class D3D11SystemImpl;
 
@@ -111,6 +108,7 @@ namespace mage
             m_height = p_other.m_height;
             m_format = p_other.m_format;
             m_file_content = p_other.m_file_content;
+            m_file_content_size = p_other.m_file_content_size;
             m_content_access_mode = p_other.m_content_access_mode;
 
             m_state_mutex.lock();
@@ -132,7 +130,8 @@ namespace mage
 
         ContentAccessMode                   getContentAccessMode() const;
 
-        const core::Buffer<unsigned char>&  getFileContent() const;
+        unsigned char*                      getFileContent() const;
+        size_t                              getFileContentSize() const;
 
         std::string                         getResourceUID() const;
 
@@ -149,8 +148,8 @@ namespace mage
 
         std::string                         m_source_id;        
 
-
-        core::Buffer<unsigned char>         m_file_content;
+        unsigned char*                      m_file_content{ nullptr }; // ptr to core::Buffer data in resource system textures cache
+        size_t                              m_file_content_size{ 0 };
 
         int                                 m_width             { 0 };
         int                                 m_height            { 0 };

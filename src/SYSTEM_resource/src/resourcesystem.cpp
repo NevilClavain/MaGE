@@ -103,9 +103,7 @@ void ResourceSystem::run()
 	{
 		[&](Entity* p_entity, const ComponentContainer& p_resource_components)
 		{
-
 			////// Handle shaders ///////////
-			//const auto shaders_list{ p_resource_aspect.getComponentsByType<Shader>() };
 
 			const auto shaders_list{ p_resource_components.getComponentsByType<std::pair<std::string, Shader>>() };
 			for (auto& e : shaders_list)
@@ -114,10 +112,10 @@ void ResourceSystem::run()
 				const auto filename{ e->getPurpose().first};
 
 				const auto state{ shader.getState() };
-				if (Shader::State::INIT == state)
+				if (Shader::State::INIT == state || Shader::State::BLOBLOADING == state)
 				{
-					handleShader(filename, shader);
 					shader.setState(Shader::State::BLOBLOADING);
+					handleShader(filename, shader);					
 				}
 			}
 			////// Handle textures ///////////
@@ -129,10 +127,10 @@ void ResourceSystem::run()
 				const auto filename{ staged_texture.second.first };
 					
 				const auto state{ texture.getState() };
-				if (Texture::State::INIT == state)
+				if (Texture::State::INIT == state || Texture::State::BLOBLOADING == state)
 				{
-					handleTexture(filename, texture);
 					texture.setState(Texture::State::BLOBLOADING);
+					handleTexture(filename, texture);					
 				}
 			}
 
@@ -153,8 +151,8 @@ void ResourceSystem::run()
 				const auto state{ meshe.getState() };
 				if (TriangleMeshe::State::INIT == state)
 				{
-					handleSceneFile(file_path, meshe_id, meshe, nodes_list);
 					meshe.setState(TriangleMeshe::State::BLOBLOADING);
+					handleSceneFile(file_path, meshe_id, meshe, nodes_list);					
 				}
 			}
 		}
