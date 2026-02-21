@@ -550,7 +550,7 @@
 
         "animator_repeat": [
           {
-            "number": 2,
+            "number": 500,
 
             "animator": {
               "descr": "g_grass_Entity pos animator",
@@ -585,8 +585,8 @@
                       "rand_interval_min": 0.1,
                       "rand_distribution_type": "uniform",
                       "rand_distribution_arguments": [
-                        -30,
-                        30.0
+                        -2000,
+                        2000.0
                       ]
                     }
                   },
@@ -604,8 +604,8 @@
                       "rand_interval_min": 0.1,
                       "rand_distribution_type": "uniform",
                       "rand_distribution_arguments": [
-                        -90.0,
-                        90.0
+                        -2000.0,
+                        2000.0
                       ]
                     }
                   }

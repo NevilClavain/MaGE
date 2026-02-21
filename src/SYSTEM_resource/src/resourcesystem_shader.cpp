@@ -42,8 +42,6 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 {
 	const auto shaderType{ p_shaderInfos.getType() };
 
-	_MAGE_DEBUG(m_localLogger, std::string("Handle shader ") + p_filename + std::string(" shader type ") + std::to_string(shaderType));
-
 	const std::string shaderAction{ "load_shader" };
 
 	p_shaderInfos.m_source_id = p_filename;
@@ -53,6 +51,10 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 
 	if (!m_shadersCache.count(resourceUID))
 	{
+		m_shadersCache_mutex.lock();
+		m_shadersCache[resourceUID]; // to create entry
+		m_shadersCache[resourceUID].state = ShaderCacheEntry::State::BLOBLOADING;
+		m_shadersCache_mutex.unlock();
 
 		const auto task{ new mage::core::SimpleAsyncTask<>(shaderAction, p_filename,
 			[&,
@@ -72,7 +74,7 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 					shader_src_content.load();
 
 					m_shadersCache_mutex.lock();
-					m_shadersCache[resourceUID].shader_source = std::string(shader_src_content.getData(), shader_src_content.getDataSize());
+					m_shadersCache.at(resourceUID).shader_source = std::string(shader_src_content.getData(), shader_src_content.getDataSize());
 					m_shadersCache_mutex.unlock();
 
 					p_shaderInfos.m_file_content = m_shadersCache.at(resourceUID).shader_source.c_str();
@@ -216,7 +218,7 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 							shader_md5_content.save(shaderMD5.c_str(), shaderMD5.length());
 
 							m_shadersCache_mutex.lock();
-							m_shadersCache[resourceUID].shader_code.fill(shaderBytes.get(), shaderBytesLength);
+							m_shadersCache.at(resourceUID).shader_code.fill(shaderBytes.get(), shaderBytesLength);
 							m_shadersCache_mutex.unlock();
 
 							p_shaderInfos.m_code = m_shadersCache.at(resourceUID).shader_code.getData();
@@ -250,7 +252,7 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 						cache_code_content.load();
 
 						m_shadersCache_mutex.lock();
-						m_shadersCache[resourceUID].shader_code.fill(cache_code_content.getData(), cache_code_content.getDataSize());
+						m_shadersCache.at(resourceUID).shader_code.fill(cache_code_content.getData(), cache_code_content.getDataSize());
 						m_shadersCache_mutex.unlock();
 
 						p_shaderInfos.m_code = m_shadersCache.at(resourceUID).shader_code.getData();
@@ -317,6 +319,11 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 					////////////////////////////////
 
 					p_shaderInfos.setState(Shader::State::BLOBLOADED);
+
+					m_shadersCache_mutex.lock();
+					m_shadersCache.at(resourceUID).state = ShaderCacheEntry::State::BLOBLOADED;
+					m_shadersCache_mutex.unlock();
+
 				}
 				catch (const std::exception& e)
 				{
@@ -339,22 +346,29 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 	}
 	else
 	{
-		p_shaderInfos.m_file_content = m_shadersCache.at(resourceUID).shader_source.c_str();
-		p_shaderInfos.m_file_content_size = m_shadersCache.at(resourceUID).shader_source.size();
+		m_shadersCache_mutex.lock();
+		const auto shader_state{ m_shadersCache.at(resourceUID).state };
+		m_shadersCache_mutex.unlock();
 
-		p_shaderInfos.m_code = m_shadersCache.at(resourceUID).shader_code.getData();
-		p_shaderInfos.m_code_size = m_shadersCache.at(resourceUID).shader_code.getDataSize();
-
-		for (const auto& e : m_shadersCache.at(resourceUID).generic_arguments)
+		if (ShaderCacheEntry::State::BLOBLOADED == shader_state)
 		{
-			p_shaderInfos.addGenericArgument(e);
-		}
+			p_shaderInfos.m_file_content = m_shadersCache.at(resourceUID).shader_source.c_str();
+			p_shaderInfos.m_file_content_size = m_shadersCache.at(resourceUID).shader_source.size();
 
-		for (const auto& e : m_shadersCache.at(resourceUID).vectorarray_arguments)
-		{
-			p_shaderInfos.addVectorArrayArgument(e);
-		}
+			p_shaderInfos.m_code = m_shadersCache.at(resourceUID).shader_code.getData();
+			p_shaderInfos.m_code_size = m_shadersCache.at(resourceUID).shader_code.getDataSize();
 
-		p_shaderInfos.setState(Shader::State::BLOBLOADED);
+			for (const auto& e : m_shadersCache.at(resourceUID).generic_arguments)
+			{
+				p_shaderInfos.addGenericArgument(e);
+			}
+
+			for (const auto& e : m_shadersCache.at(resourceUID).vectorarray_arguments)
+			{
+				p_shaderInfos.addVectorArrayArgument(e);
+			}
+
+			p_shaderInfos.setState(Shader::State::BLOBLOADED);
+		}
 	}
 }

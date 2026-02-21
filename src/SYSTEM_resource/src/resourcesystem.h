@@ -122,11 +122,20 @@ namespace mage
 
     struct ShaderCacheEntry
     {
+        enum class State
+        {
+            INIT,
+            BLOBLOADING,
+            BLOBLOADED
+        };
+
         std::string                                 shader_source;
         core::Buffer<char>                          shader_code;
 
         std::vector<Shader::GenericArgument>        generic_arguments;
         std::vector<Shader::VectorArrayArgument>    vectorarray_arguments;
+
+        State                                       state{ State::INIT };
     };
 
     class ResourceSystem : public core::System, public mage::property::EventSource<ResourceSystemEvent, const std::string&>

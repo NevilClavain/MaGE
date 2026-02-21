@@ -36,8 +36,6 @@ using namespace mage::core;
 
 void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_textureInfos)
 {
-	_MAGE_DEBUG(m_localLogger, std::string("Handle Texture ") + p_filename);
-
 	const std::string textureAction{ "load_texture" };
 
 	p_textureInfos.m_source = Texture::Source::CONTENT_FROM_FILE;
@@ -94,7 +92,7 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 					p_textureInfos.setState(Texture::State::BLOBLOADED);
 
 					m_texturesBlobCache_mutex.lock();
-					m_texturesBlobCache[resourceUID].state = TextureCacheEntry::State::BLOBLOADED;
+					m_texturesBlobCache.at(resourceUID).state = TextureCacheEntry::State::BLOBLOADED;
 					m_texturesBlobCache_mutex.unlock();
 
 
@@ -121,7 +119,7 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 	else
 	{
 		m_texturesBlobCache_mutex.lock();
-		const auto texture_state{ m_texturesBlobCache[resourceUID].state };
+		const auto texture_state{ m_texturesBlobCache.at(resourceUID).state };
 		m_texturesBlobCache_mutex.unlock();
 
 		if (TextureCacheEntry::State::BLOBLOADED == texture_state)

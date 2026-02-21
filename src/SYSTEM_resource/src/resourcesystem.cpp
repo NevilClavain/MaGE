@@ -112,7 +112,7 @@ void ResourceSystem::run()
 				const auto filename{ e->getPurpose().first};
 
 				const auto state{ shader.getState() };
-				if (Shader::State::INIT == state)
+				if (Shader::State::INIT == state || Shader::State::BLOBLOADING == state)
 				{
 					shader.setState(Shader::State::BLOBLOADING);
 					handleShader(filename, shader);					
