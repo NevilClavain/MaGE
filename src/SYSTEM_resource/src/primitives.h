@@ -25,6 +25,9 @@
 #pragma once
 
 #include <array>
+#include "matrix.h"
+
+
 namespace mage
 {
     static constexpr int nbUVCoordsPerVertex = 9;
@@ -103,5 +106,15 @@ namespace mage
 
     template<typename T>
     using LinePrimitive = std::array<T, 2>;
+
+    struct Transformers
+    {
+        core::maths::Matrix world;
+        core::maths::Matrix view;
+        core::maths::Matrix proj;
+
+        core::maths::Matrix view_secondary;
+        core::maths::Matrix proj_secondary;
+    };
 
 } // mage

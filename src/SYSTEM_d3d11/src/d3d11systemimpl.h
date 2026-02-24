@@ -101,6 +101,16 @@ struct d3d11vertex
     DirectX::XMFLOAT3 binormale;
 };
 
+struct d3d11transformers
+{
+    DirectX::XMMATRIX world;
+    DirectX::XMMATRIX view;
+    DirectX::XMMATRIX proj;
+
+    DirectX::XMMATRIX view_secondary;
+    DirectX::XMMATRIX proj_secondary;
+};
+
 struct D3D10Include : public ID3D10Include
 {
 public:
@@ -158,6 +168,10 @@ public:
 
     void destroyVertexShader(const std::string& p_resource_uid);
     void destroyPixelShader(const std::string& p_resource_uid);
+
+
+    bool createTransformersBuffer(const std::string& p_resource_uid, size_t p_instancesCount);
+
 
     bool createLineMeshe(const mage::LineMeshe& p_lm);
     void setLineMeshe(const std::string& p_resource_uid);
@@ -287,6 +301,11 @@ private:
         size_t        nb_primitives         { 0 };
     };
 
+    struct BufferData
+    {
+        ID3D11Buffer* buffer                { nullptr };
+    };
+
     using RSCache =                 std::unordered_map<std::string, RSCacheEntry>;
     using BSCache =                 std::unordered_map<std::string, BSCacheEntry>;
 
@@ -295,6 +314,8 @@ private:
 
     using MesheList =               std::unordered_map<std::string, MesheData>;
     using TextureList =             std::unordered_map<std::string, TextureData>;
+
+    using BuffersList =             std::unordered_map<std::string, BufferData>;
 
 
     mage::core::logger::Sink                        m_localLogger;
@@ -352,6 +373,9 @@ private:
     MesheList                                           m_triangles;
 
     TextureList                                         m_textures;
+
+
+    BuffersList                                         m_buffers;
 
 
     ////////////////////////////////////////////////////////
