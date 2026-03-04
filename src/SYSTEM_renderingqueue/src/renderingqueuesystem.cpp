@@ -155,8 +155,159 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 
 			const rendering::Queue::RenderingOrderChannel rendering_channel{ qnode.second };
 
-			for (const auto& vshader : rendering_channel.list)
+			//for (const auto& vshader : rendering_channel.list)
+
+			for(const auto& shaders : rendering_channel.list)
 			{
+				const mage::rendering::Queue::ShadersPayload shader_payload{ shaders.second };
+				const std::vector<std::string>& shaders_id{ shader_payload.shaders_ids };
+
+				for (const std::string& id : shaders_id)
+				{
+					_MAGE_DEBUG(m_localLogger, "\t\t-> shader D3D resource id: " + id);
+				}
+
+				for (const auto& rs : shader_payload.list)
+				{
+					_MAGE_DEBUG(m_localLogger, "\t\t\t-> renderstate : " + rs.first);
+
+					for (const auto& linemeshe : rs.second.linemeshes_list)
+					{
+						const auto linemeshe_id{ linemeshe.first };
+						_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> line meshe D3D resource id: " + linemeshe_id);
+
+						for (const auto& drawing : linemeshe.second.drawing_list)
+						{
+							const auto drawing_id{ drawing.first };
+							_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t-> linemeshe drawing : " + drawing_id);
+
+							const auto drawing_body{ drawing.second };
+
+							if (drawing_body.world)
+							{
+								_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t-> world :\n" + drawing_body.world->dump());
+							}
+							else
+							{
+								_MAGE_WARN(m_localLogger, "\t\t\t\t\t\t-> world : nullptr\n");
+							}
+
+							_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t-> vshaders params datacloud connexions :");
+							for (const auto& cnx : drawing_body.vshaders_map_cnx)
+							{
+								_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t-> datacloud var '" + cnx.first + "' mapped on shader input '"
+									+ cnx.second.argument_id
+									+ "' (" + cnx.second.argument_type
+									+ ") for register " + std::to_string(cnx.second.shader_register));
+							}
+
+							_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t-> pshaders params datacloud connexions :");
+							for (const auto& cnx : drawing_body.pshaders_map_cnx)
+							{
+								_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t-> datacloud var '" + cnx.first + "' mapped on shader input '"
+									+ cnx.second.argument_id
+									+ "' (" + cnx.second.argument_type
+									+ ") for register " + std::to_string(cnx.second.shader_register));
+							}
+
+						}
+					}
+
+					for (const auto& trianglemeshe : rs.second.trianglemeshes_list)
+					{
+						const auto triangle_id{ trianglemeshe.first };
+						_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> triangle meshe D3D resource id: " + triangle_id);
+
+						for (const auto& drawing : trianglemeshe.second.drawing_list)
+						{
+							const auto drawing_id{ drawing.first };
+							_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t-> trianglemeshe drawing : " + drawing_id);
+
+							const auto drawing_body{ drawing.second };
+
+							if (drawing_body.world)
+							{
+								_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t-> world :\n" + drawing_body.world->dump());
+							}
+							else
+							{
+								_MAGE_WARN(m_localLogger, "\t\t\t\t\t\t-> world : nullptr\n");
+							}
+
+							_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t-> vshaders params datacloud connexions :");
+							for (const auto& cnx : drawing_body.vshaders_map_cnx)
+							{
+								_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t-> datacloud var '" + cnx.first + "' mapped on shader input '"
+									+ cnx.second.argument_id
+									+ "' (" + cnx.second.argument_type
+									+ ") for register " + std::to_string(cnx.second.shader_register));
+							}
+
+							_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t-> pshaders params datacloud connexions :");
+							for (const auto& cnx : drawing_body.pshaders_map_cnx)
+							{
+								_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t-> datacloud var '" + cnx.first + "' mapped on shader input '"
+									+ cnx.second.argument_id
+									+ "' (" + cnx.second.argument_type
+									+ ") for register " + std::to_string(cnx.second.shader_register));
+							}
+
+						}
+
+						for (const auto& texture_set_list : trianglemeshe.second.textures_set_list)
+						{
+							const rendering::Queue::TextureSetPayload textureSetPayload{ texture_set_list.second };
+
+							for (const auto& staged_texture : textureSetPayload.textures)
+							{
+								const size_t	stage{ staged_texture.first };
+								const auto		texture_resource_uid{ staged_texture.second };
+
+								_MAGE_WARN(m_localLogger, "\t\t\t\t\t\t\t-> texture : stage " + std::to_string(stage) + " " + texture_resource_uid);
+
+								for (const auto& drawing : textureSetPayload.drawing_list)
+								{
+									const auto drawing_id{ drawing.first };
+									_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t-> trianglemeshe drawing : " + drawing_id);
+
+									const auto drawing_body{ drawing.second };
+
+									if (drawing_body.world)
+									{
+										_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t-> world :\n" + drawing_body.world->dump());
+									}
+									else
+									{
+										_MAGE_WARN(m_localLogger, "\t\t\t\t\t\t\t-> world : nullptr\n");
+									}
+
+									_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t-> vshaders params datacloud connexions :");
+									for (const auto& cnx : drawing_body.vshaders_map_cnx)
+									{
+										_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t\t-> datacloud var '" + cnx.first + "' mapped on shader input '"
+											+ cnx.second.argument_id
+											+ "' (" + cnx.second.argument_type
+											+ ") for register " + std::to_string(cnx.second.shader_register));
+									}
+
+									_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t-> pshaders params datacloud connexions :");
+									for (const auto& cnx : drawing_body.pshaders_map_cnx)
+									{
+										_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t\t-> datacloud var '" + cnx.first + "' mapped on shader input '"
+											+ cnx.second.argument_id
+											+ "' (" + cnx.second.argument_type
+											+ ") for register " + std::to_string(cnx.second.shader_register));
+									}
+
+								}
+							}
+						}
+					}
+				}
+
+
+
+				/*
 				const auto vshader_id{ vshader.first };
 				_MAGE_DEBUG(m_localLogger, "\t\t-> vshader D3D resource id: " + vshader_id);
 
@@ -167,6 +318,7 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 
 					for (const auto& rs : pshader.second.list)
 					{
+
 						_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> renderstate : " + rs.first);
 
 						for (const auto& linemeshe : rs.second.linemeshes_list)
@@ -303,6 +455,7 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 						}
 					}
 				}
+				*/
 			}
 		}
 	}
@@ -799,19 +952,19 @@ rendering::Queue::RenderStatePayload build_RenderStatePayloadWithTriangleMeshePa
 	return renderStatePayload;
 }
 
-static rendering::Queue::PixelShaderPayload build_pixelShaderPayload(mage::core::logger::Sink& p_localLogger, 
-																		const std::vector<mage::rendering::RenderState>& p_rs_list, 
-																		const rendering::Queue::RenderStatePayload& p_renderStatePayload)
-{
-	rendering::Queue::PixelShaderPayload pixelShaderPayload;
-
-	const auto rs_id{ build_rs_list_id(p_rs_list) };
-	pixelShaderPayload.list[rs_id] = p_renderStatePayload;
-
-	_MAGE_DEBUG(p_localLogger, "build new PixelShaderPayload with renderstate list id " + rs_id)
-
-	return pixelShaderPayload;
-}
+//static rendering::Queue::PixelShaderPayload build_pixelShaderPayload(mage::core::logger::Sink& p_localLogger, 
+//																		const std::vector<mage::rendering::RenderState>& p_rs_list, 
+//																		const rendering::Queue::RenderStatePayload& p_renderStatePayload)
+//{
+//	rendering::Queue::PixelShaderPayload pixelShaderPayload;
+//
+//	const auto rs_id{ build_rs_list_id(p_rs_list) };
+//	pixelShaderPayload.list[rs_id] = p_renderStatePayload;
+//
+//	_MAGE_DEBUG(p_localLogger, "build new PixelShaderPayload with renderstate list id " + rs_id)
+//
+//	return pixelShaderPayload;
+//}
 
 void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, const mage::core::ComponentContainer& p_resourceAspect,
 												const mage::core::ComponentContainer& p_renderingAspect, 
@@ -966,7 +1119,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 				rendering_channel = rocs.at(0)->getPurpose();
 			}
 
-
 			if (1 < shaders.size())
 			{
 				const auto& vshader{ shaders.at(vertexShader)->getPurpose().second };
@@ -1035,478 +1187,426 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 							queueNodes[rendering_channel] = renderingOrderChannel;
 						}
 
-						if (queueNodes.at(rendering_channel).list.count(vshader.getResourceUID()))
+						const std::string shaders_pair_id{ vshader.getResourceUID() + "//" + pshader.getResourceUID()};
+
+						if (queueNodes.at(rendering_channel).list.count(shaders_pair_id))
 						{
-							// vshader entry exists
+							// shaders pair entry exists
 
 							_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
 								+ " updated with new entity : " + p_entity_id
-								+ " : adding under existing vshader branch : " + vshader.getSourceID())
+								+ " : adding under existing shaders branch : " + vshader.getSourceID() + " " + pshader.getSourceID())
 
-							auto& vertexShaderPayload{ queueNodes.at(rendering_channel).list.at(vshader.getResourceUID()) };
+							auto& shaderPayload{ queueNodes.at(rendering_channel).list.at(shaders_pair_id) };
 
-							if (vertexShaderPayload.list.count(pshader.getResourceUID()))
+							const auto rs_list_id{ build_rs_list_id(rsStates.at(0)->getPurpose()) };
+
+							if(shaderPayload.list.count(rs_list_id))
 							{
-								// pshader entry exists
+								// renderstates list entry exists
 
 								_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
 									+ " updated with new entity : " + p_entity_id
-									+ " : adding under existing pshader branch : " + pshader.getSourceID())
+									+ " : adding under existing renderstates branch : " + rs_list_id)
 
-								auto& pixelShaderPayload{ vertexShaderPayload.list.at(pshader.getResourceUID())};
+								mage::rendering::Queue::RenderStatePayload& renderStatePayload{ shaderPayload.list.at(rs_list_id) };
 
-								const auto rs_list_id{ build_rs_list_id(rsStates.at(0)->getPurpose()) };
-								if (pixelShaderPayload.list.count(rs_list_id))
-								{
-									// renderstates list entry exists
+								if (line_meshe_ref)
+								{											
+									if (renderStatePayload.linemeshes_list.count(line_meshe_ref->getResourceUID()))
+									{
+										// linemeshe entry exists
 
-									_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
-										+ " updated with new entity : " + p_entity_id
-										+ " : adding under existing renderstates branch : " + rs_list_id)
-
-									auto& renderStatePayload{ pixelShaderPayload.list.at(rs_list_id) };
-
-									if (line_meshe_ref)
-									{											
-										if (renderStatePayload.linemeshes_list.count(line_meshe_ref->getResourceUID()))
-										{
-											// linemeshe entry exists
-
-											_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
-												+ " updated with new entity : " + p_entity_id
-												+ " : adding under existing linemeshe branch : " + line_meshe_ref->getResourceUID())
+										_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
+											+ " updated with new entity : " + p_entity_id
+											+ " : adding under existing linemeshe branch : " + line_meshe_ref->getResourceUID())
 									
-											auto& lineMeshePayload{ renderStatePayload.linemeshes_list.at(line_meshe_ref->getResourceUID())};
+										auto& lineMeshePayload{ renderStatePayload.linemeshes_list.at(line_meshe_ref->getResourceUID())};
 
-											for (const auto& dc : drawingControls)
-											{
-												auto& linesDrawingControl{ dc->getPurpose() };
-												linesDrawingControl.ready = true;
-
-												rendering::QueueDrawingControl linesQueueDrawingControl;
-												linesQueueDrawingControl.owner_entity_id = linesDrawingControl.owner_entity_id;
-												linesQueueDrawingControl.world = &linesDrawingControl.world;
-												linesQueueDrawingControl.setup = &linesDrawingControl.setup;
-												linesQueueDrawingControl.teardown = &linesDrawingControl.teardown;
-
-												connect_shaders_args(m_localLogger, linesDrawingControl, linesQueueDrawingControl, vshader, pshader);
-
-												/////////////// HERE manage vector array for shaders
-												linesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
-												linesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
-												////////////////////////////////////////////////////
-
-												linesQueueDrawingControl.draw = &linesDrawingControl.draw;
-
-												lineMeshePayload.drawing_list[linesDrawingControl.owner_entity_id] = linesQueueDrawingControl;
-
-												_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
-													+ " updated with new entity : " + p_entity_id
-													+ " : adding linesDrawingControl of entity: " + linesDrawingControl.owner_entity_id)
-
-												for (const auto& call : m_callbacks)
-												{
-													call(RenderingQueueSystemEvent::LINEDRAWING_ADDED, linesDrawingControl.owner_entity_id);
-												}
-											}
-										}
-										else
+										for (const auto& dc : drawingControls)
 										{
-											// new linemeshe and below elements to add
+											auto& linesDrawingControl{ dc->getPurpose() };
+											linesDrawingControl.ready = true;
+
+											rendering::QueueDrawingControl linesQueueDrawingControl;
+											linesQueueDrawingControl.owner_entity_id = linesDrawingControl.owner_entity_id;
+											linesQueueDrawingControl.world = &linesDrawingControl.world;
+											linesQueueDrawingControl.setup = &linesDrawingControl.setup;
+											linesQueueDrawingControl.teardown = &linesDrawingControl.teardown;
+
+											connect_shaders_args(m_localLogger, linesDrawingControl, linesQueueDrawingControl, vshader, pshader);
+
+											/////////////// HERE manage vector array for shaders
+											linesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
+											linesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
+											////////////////////////////////////////////////////
+
+											linesQueueDrawingControl.draw = &linesDrawingControl.draw;
+
+											lineMeshePayload.drawing_list[linesDrawingControl.owner_entity_id] = linesQueueDrawingControl;
 
 											_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
 												+ " updated with new entity : " + p_entity_id
-												+ " : adding new linemeshe branch : " + line_meshe_ref->getResourceUID())
+												+ " : adding linesDrawingControl of entity: " + linesDrawingControl.owner_entity_id)
 
-											const auto lineMeshePayload{ build_LineMeshePayload(m_callbacks, m_localLogger, drawingControls, vshader, pshader) };
-											renderStatePayload.linemeshes_list[line_meshe_ref->getResourceUID()] = lineMeshePayload;
-										}
-									}
-									else if (triangle_meshe_ref)
-									{
-										if (renderStatePayload.trianglemeshes_list.count(triangle_meshe_ref->getResourceUID()))
-										{
-											// trianglemeshe entry exists
-											auto& triangleMeshePayload{ renderStatePayload.trianglemeshes_list.at(triangle_meshe_ref->getResourceUID()) };
-
-											if (0 == texturesSet.size())
+											for (const auto& call : m_callbacks)
 											{
-												// no textures associated, add directly new drawing control
-
-												_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
-													+ " updated with new entity : " + p_entity_id
-													+ " : adding under existing trianglemeshe branch : " + triangle_meshe_ref->getResourceUID())
-													
-												for (const auto& dc : drawingControls)
-												{
-													auto& trianglesDrawingControl{ dc->getPurpose() };
-													trianglesDrawingControl.ready = true;
-
-													rendering::QueueDrawingControl trianglesQueueDrawingControl;
-													trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
-													trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
-													trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
-													trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
-													trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
-													connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
-													/////////////// HERE manage vector array for shaders
-													trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
-													trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
-													////////////////////////////////////////////////////
-
-													trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
-
-													triangleMeshePayload.drawing_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
-
-													_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
-														+ " updated with new entity : " + p_entity_id
-														+ " : adding trianglesDrawingControl of entity: " + trianglesDrawingControl.owner_entity_id)
-
-													for (const auto& call : m_callbacks)
-													{
-														call(RenderingQueueSystemEvent::TRIANGLEDRAWING_ADDED, trianglesDrawingControl.owner_entity_id);
-													}
-												}
-											}
-											else
-											{
-												// textureset signature
-												std::string textureset_signature;
-												for (const auto& e : texturesSet)
-												{
-													const auto& staged_texture{ e->getPurpose() };
-
-													const size_t stage{ staged_texture.first };
-													const Texture& texture{ staged_texture.second };
-													textureset_signature += texture.getSourceID() + "." + std::to_string(stage) + "/";
-												}
-
-												// does this textureSet signature exists ?
-												if (triangleMeshePayload.textures_set_list.count(textureset_signature))
-												{
-													// add new drawing control under this textureSet
-
-													auto& textureSetPayload{ triangleMeshePayload.textures_set_list.at(textureset_signature)};
-
-													for (const auto& dc : drawingControls)
-													{
-														auto& trianglesDrawingControl{ dc->getPurpose() };
-														trianglesDrawingControl.ready = true;
-
-														rendering::QueueDrawingControl trianglesQueueDrawingControl;
-														trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
-														trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
-														trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
-														trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
-														trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
-
-														connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
-														/////////////// HERE manage vector array for shaders
-														trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
-														trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
-														////////////////////////////////////////////////////
-
-														trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
-
-														textureSetPayload.drawing_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
-
-														_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
-															+ " updated with new entity : " + p_entity_id
-															+ " : adding trianglesDrawingControl of entity: " + trianglesDrawingControl.owner_entity_id)
-
-														for (const auto& call : m_callbacks)
-														{
-															call(RenderingQueueSystemEvent::TRIANGLEDRAWING_ADDED, trianglesDrawingControl.owner_entity_id);
-														}
-													}
-												}
-												else
-												{
-													// add this new textureset + drawing control under new textureset
-
-													rendering::Queue::TextureSetPayload textureSetPayload;
-
-													for (const auto& e : texturesSet)
-													{
-														const auto& staged_texture{ e->getPurpose() };
-
-														const size_t stage{ staged_texture.first };
-														const Texture& texture{ staged_texture.second };
-														textureSetPayload.textures[stage] = texture.getResourceUID();
-													}
-
-													for (const auto& dc : drawingControls)
-													{
-														auto& trianglesDrawingControl{ dc->getPurpose() };
-														trianglesDrawingControl.ready = true;
-
-														rendering::QueueDrawingControl trianglesQueueDrawingControl;
-														trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
-														trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
-														trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
-														trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
-														trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
-
-														connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
-														/////////////// HERE manage vector array for shaders
-														trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
-														trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
-														////////////////////////////////////////////////////
-
-														trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
-
-														textureSetPayload.drawing_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
-
-														_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
-															+ " updated with new entity : " + p_entity_id
-															+ " : adding trianglesDrawingControl of entity: " + trianglesDrawingControl.owner_entity_id)
-
-														for (const auto& call : m_callbacks)
-														{
-															call(RenderingQueueSystemEvent::TRIANGLEDRAWING_ADDED, trianglesDrawingControl.owner_entity_id);
-														}
-													}
-
-													triangleMeshePayload.textures_set_list[textureset_signature] = textureSetPayload;
-												}
+												call(RenderingQueueSystemEvent::LINEDRAWING_ADDED, linesDrawingControl.owner_entity_id);
 											}
 										}
-										else
-										{
-											// new trianglemeshe and below elements to add
-
-											_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
-												+ " updated with new entity : " + p_entity_id
-												+ " : adding new trianglemeshe branch : " + triangle_meshe_ref->getResourceUID())
-
-											const auto triangleMeshePayload{ build_TriangleMesheAndTexturesPayload(m_callbacks, m_localLogger, drawingControls, texturesSet, vshader, pshader) };
-											renderStatePayload.trianglemeshes_list[triangle_meshe_ref->getResourceUID()] = triangleMeshePayload;
-										}
-									}
-									else if (file_triangle_meshe_ref)
-									{
-										if (renderStatePayload.trianglemeshes_list.count(file_triangle_meshe_ref->second.getResourceUID()))
-										{
-											// triangle meshe entry exists
-											auto& triangleMeshePayload{ renderStatePayload.trianglemeshes_list.at(file_triangle_meshe_ref->second.getResourceUID()) };
-
-											if (0 == texturesSet.size())
-											{
-												// no textures associated, add directly new drawing control
-
-												_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
-													+ " updated with new entity : " + p_entity_id
-													+ " : adding under existing trianglemeshe branch : " + file_triangle_meshe_ref->second.getResourceUID())
-
-
-												for (const auto& dc : drawingControls)
-												{
-													auto& trianglesDrawingControl{ dc->getPurpose() };
-													trianglesDrawingControl.ready = true;
-
-													rendering::QueueDrawingControl trianglesQueueDrawingControl;
-													trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
-													trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
-													trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
-													trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
-													trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
-
-													connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
-													/////////////// HERE manage vector array for shaders
-													trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
-													trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
-													////////////////////////////////////////////////////
-
-													trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
-
-													triangleMeshePayload.drawing_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
-
-													_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
-														+ " updated with new entity : " + p_entity_id
-														+ " : adding trianglesDrawingControl of entity: " + trianglesDrawingControl.owner_entity_id)
-
-													for (const auto& call : m_callbacks)
-													{
-														call(RenderingQueueSystemEvent::TRIANGLEDRAWING_ADDED, trianglesDrawingControl.owner_entity_id);
-													}
-												}
-											}
-											else
-											{
-												// textureset signature
-												std::string textureset_signature;
-												for (const auto& e : texturesSet)
-												{
-													const auto& staged_texture{ e->getPurpose() };
-
-													const size_t stage{ staged_texture.first };
-													const Texture& texture{ staged_texture.second };
-													textureset_signature += texture.getSourceID() + "." + std::to_string(stage) + "/";
-												}
-
-												// does this textureSet signature exists ?
-												if (triangleMeshePayload.textures_set_list.count(textureset_signature))
-												{
-													// add new drawing control under this textureSet
-
-													auto& textureSetPayload{ triangleMeshePayload.textures_set_list.at(textureset_signature) };
-
-													for (const auto& dc : drawingControls)
-													{
-														auto& trianglesDrawingControl{ dc->getPurpose() };
-														trianglesDrawingControl.ready = true;
-
-														rendering::QueueDrawingControl trianglesQueueDrawingControl;
-														trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
-														trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
-														trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
-														trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
-														trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
-
-														connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
-														/////////////// HERE manage vector array for shaders
-														trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
-														trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
-														////////////////////////////////////////////////////
-
-														trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
-
-														textureSetPayload.drawing_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
-
-														_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
-															+ " updated with new entity : " + p_entity_id
-															+ " : adding trianglesDrawingControl of entity: " + trianglesDrawingControl.owner_entity_id)
-
-														for (const auto& call : m_callbacks)
-														{
-															call(RenderingQueueSystemEvent::TRIANGLEDRAWING_ADDED, trianglesDrawingControl.owner_entity_id);
-														}
-													}
-												}
-												else
-												{
-													// add this new textureset + drawing control under new texturset
-
-													rendering::Queue::TextureSetPayload textureSetPayload;
-
-													for (const auto& e : texturesSet)
-													{
-														const auto& staged_texture{ e->getPurpose() };
-
-														const size_t stage{ staged_texture.first };
-														const Texture& texture{ staged_texture.second };
-														textureSetPayload.textures[stage] = texture.getResourceUID();
-													}
-
-													for (const auto& dc : drawingControls)
-													{
-														auto& trianglesDrawingControl{ dc->getPurpose() };
-														trianglesDrawingControl.ready = true;
-
-														rendering::QueueDrawingControl trianglesQueueDrawingControl;
-														trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
-														trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
-														trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
-														trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
-														trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
-
-														connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
-														/////////////// HERE manage vector array for shaders
-														trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
-														trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
-														////////////////////////////////////////////////////
-
-														trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
-
-														textureSetPayload.drawing_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
-
-														_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
-															+ " updated with new entity : " + p_entity_id
-															+ " : adding trianglesDrawingControl of entity: " + trianglesDrawingControl.owner_entity_id)
-
-															for (const auto& call : m_callbacks)
-															{
-																call(RenderingQueueSystemEvent::TRIANGLEDRAWING_ADDED, trianglesDrawingControl.owner_entity_id);
-															}
-													}
-
-													triangleMeshePayload.textures_set_list[textureset_signature] = textureSetPayload;
-												}
-											}
-										}
-										else
-										{
-											// new trianglemeshe and below elements to add
-											_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
-												+ " updated with new entity : " + p_entity_id
-												+ " : adding new trianglemeshe branch : " + file_triangle_meshe_ref->second.getResourceUID())
-
-
-											const auto triangleMeshePayload{ build_TriangleMesheAndTexturesPayload(m_callbacks, m_localLogger, drawingControls, texturesSet, vshader, pshader) };
-
-											renderStatePayload.trianglemeshes_list[file_triangle_meshe_ref->second.getResourceUID()] = triangleMeshePayload;
-										}
-									}
-								}
-								else
-								{
-									// new renderstate and below elements to add
-
-									_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
-										+ " updated with new entity : " + p_entity_id
-										+ " : adding new renderstate branch : " + rs_list_id)
-
-									rendering::Queue::RenderStatePayload renderStatePayload;
-									bool renderStatePayloadSet{ false };
-
-									if (line_meshe_ref)
-									{											
-										const auto lineMeshePayload{ build_LineMeshePayload(m_callbacks, m_localLogger, drawingControls, vshader, pshader) };
-										renderStatePayload = build_RenderStatePayloadWithLineMeshePayload(m_localLogger, line_meshe_ref->getResourceUID(), lineMeshePayload, rsStates.at(0)->getPurpose());
-
-										renderStatePayloadSet = true;
-									}
-									else if (triangle_meshe_ref)
-									{
-										const auto triangleMeshePayload{ build_TriangleMesheAndTexturesPayload(m_callbacks, m_localLogger, drawingControls, texturesSet, vshader, pshader) };
-										renderStatePayload = build_RenderStatePayloadWithTriangleMeshePayload(m_localLogger, triangle_meshe_ref->getResourceUID(), triangleMeshePayload, rsStates.at(0)->getPurpose());
-
-										renderStatePayloadSet = true;
-									}
-									else if (file_triangle_meshe_ref)
-									{
-										const auto triangleMeshePayload{ build_TriangleMesheAndTexturesPayload(m_callbacks, m_localLogger, drawingControls, texturesSet, vshader, pshader) };
-										renderStatePayload = build_RenderStatePayloadWithTriangleMeshePayload(m_localLogger, file_triangle_meshe_ref->second.getResourceUID(), triangleMeshePayload, rsStates.at(0)->getPurpose());
-
-										renderStatePayloadSet = true;
-									}
-
-									if (renderStatePayloadSet)
-									{
-										pixelShaderPayload.list[rs_list_id] = renderStatePayload;
 									}
 									else
 									{
-										_EXCEPTION("Cannot update queue : no linemeshe or trianglemeshe provided with entity : " + p_entity_id)
+										// new linemeshe and below elements to add
+
+										_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
+											+ " updated with new entity : " + p_entity_id
+											+ " : adding new linemeshe branch : " + line_meshe_ref->getResourceUID())
+
+										const auto lineMeshePayload{ build_LineMeshePayload(m_callbacks, m_localLogger, drawingControls, vshader, pshader) };
+										renderStatePayload.linemeshes_list[line_meshe_ref->getResourceUID()] = lineMeshePayload;
+									}
+								}
+								else if (triangle_meshe_ref)
+								{
+									if (renderStatePayload.trianglemeshes_list.count(triangle_meshe_ref->getResourceUID()))
+									{
+										// trianglemeshe entry exists
+										auto& triangleMeshePayload{ renderStatePayload.trianglemeshes_list.at(triangle_meshe_ref->getResourceUID()) };
+
+										if (0 == texturesSet.size())
+										{
+											// no textures associated, add directly new drawing control
+
+											_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
+												+ " updated with new entity : " + p_entity_id
+												+ " : adding under existing trianglemeshe branch : " + triangle_meshe_ref->getResourceUID())
+													
+											for (const auto& dc : drawingControls)
+											{
+												auto& trianglesDrawingControl{ dc->getPurpose() };
+												trianglesDrawingControl.ready = true;
+
+												rendering::QueueDrawingControl trianglesQueueDrawingControl;
+												trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
+												trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
+												trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
+												trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
+												trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
+												connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
+												/////////////// HERE manage vector array for shaders
+												trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
+												trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
+												////////////////////////////////////////////////////
+
+												trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
+
+												triangleMeshePayload.drawing_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
+
+												_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
+													+ " updated with new entity : " + p_entity_id
+													+ " : adding trianglesDrawingControl of entity: " + trianglesDrawingControl.owner_entity_id)
+
+												for (const auto& call : m_callbacks)
+												{
+													call(RenderingQueueSystemEvent::TRIANGLEDRAWING_ADDED, trianglesDrawingControl.owner_entity_id);
+												}
+											}
+										}
+										else
+										{
+											// textureset signature
+											std::string textureset_signature;
+											for (const auto& e : texturesSet)
+											{
+												const auto& staged_texture{ e->getPurpose() };
+
+												const size_t stage{ staged_texture.first };
+												const Texture& texture{ staged_texture.second };
+												textureset_signature += texture.getSourceID() + "." + std::to_string(stage) + "/";
+											}
+
+											// does this textureSet signature exists ?
+											if (triangleMeshePayload.textures_set_list.count(textureset_signature))
+											{
+												// add new drawing control under this textureSet
+
+												auto& textureSetPayload{ triangleMeshePayload.textures_set_list.at(textureset_signature)};
+
+												for (const auto& dc : drawingControls)
+												{
+													auto& trianglesDrawingControl{ dc->getPurpose() };
+													trianglesDrawingControl.ready = true;
+
+													rendering::QueueDrawingControl trianglesQueueDrawingControl;
+													trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
+													trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
+													trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
+													trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
+													trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
+
+													connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
+													/////////////// HERE manage vector array for shaders
+													trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
+													trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
+													////////////////////////////////////////////////////
+
+													trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
+
+													textureSetPayload.drawing_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
+
+													_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
+														+ " updated with new entity : " + p_entity_id
+														+ " : adding trianglesDrawingControl of entity: " + trianglesDrawingControl.owner_entity_id)
+
+													for (const auto& call : m_callbacks)
+													{
+														call(RenderingQueueSystemEvent::TRIANGLEDRAWING_ADDED, trianglesDrawingControl.owner_entity_id);
+													}
+												}
+											}
+											else
+											{
+												// add this new textureset + drawing control under new textureset
+
+												rendering::Queue::TextureSetPayload textureSetPayload;
+
+												for (const auto& e : texturesSet)
+												{
+													const auto& staged_texture{ e->getPurpose() };
+
+													const size_t stage{ staged_texture.first };
+													const Texture& texture{ staged_texture.second };
+													textureSetPayload.textures[stage] = texture.getResourceUID();
+												}
+
+												for (const auto& dc : drawingControls)
+												{
+													auto& trianglesDrawingControl{ dc->getPurpose() };
+													trianglesDrawingControl.ready = true;
+
+													rendering::QueueDrawingControl trianglesQueueDrawingControl;
+													trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
+													trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
+													trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
+													trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
+													trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
+
+													connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
+													/////////////// HERE manage vector array for shaders
+													trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
+													trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
+													////////////////////////////////////////////////////
+
+													trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
+
+													textureSetPayload.drawing_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
+
+													_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
+														+ " updated with new entity : " + p_entity_id
+														+ " : adding trianglesDrawingControl of entity: " + trianglesDrawingControl.owner_entity_id)
+
+													for (const auto& call : m_callbacks)
+													{
+														call(RenderingQueueSystemEvent::TRIANGLEDRAWING_ADDED, trianglesDrawingControl.owner_entity_id);
+													}
+												}
+
+												triangleMeshePayload.textures_set_list[textureset_signature] = textureSetPayload;
+											}
+										}
+									}
+									else
+									{
+										// new trianglemeshe and below elements to add
+
+										_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
+											+ " updated with new entity : " + p_entity_id
+											+ " : adding new trianglemeshe branch : " + triangle_meshe_ref->getResourceUID())
+
+										const auto triangleMeshePayload{ build_TriangleMesheAndTexturesPayload(m_callbacks, m_localLogger, drawingControls, texturesSet, vshader, pshader) };
+										renderStatePayload.trianglemeshes_list[triangle_meshe_ref->getResourceUID()] = triangleMeshePayload;
+									}
+								}
+								else if (file_triangle_meshe_ref)
+								{
+									if (renderStatePayload.trianglemeshes_list.count(file_triangle_meshe_ref->second.getResourceUID()))
+									{
+										// triangle meshe entry exists
+										auto& triangleMeshePayload{ renderStatePayload.trianglemeshes_list.at(file_triangle_meshe_ref->second.getResourceUID()) };
+
+										if (0 == texturesSet.size())
+										{
+											// no textures associated, add directly new drawing control
+
+											_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
+												+ " updated with new entity : " + p_entity_id
+												+ " : adding under existing trianglemeshe branch : " + file_triangle_meshe_ref->second.getResourceUID())
+
+
+											for (const auto& dc : drawingControls)
+											{
+												auto& trianglesDrawingControl{ dc->getPurpose() };
+												trianglesDrawingControl.ready = true;
+
+												rendering::QueueDrawingControl trianglesQueueDrawingControl;
+												trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
+												trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
+												trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
+												trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
+												trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
+
+												connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
+												/////////////// HERE manage vector array for shaders
+												trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
+												trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
+												////////////////////////////////////////////////////
+
+												trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
+
+												triangleMeshePayload.drawing_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
+
+												_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
+													+ " updated with new entity : " + p_entity_id
+													+ " : adding trianglesDrawingControl of entity: " + trianglesDrawingControl.owner_entity_id)
+
+												for (const auto& call : m_callbacks)
+												{
+													call(RenderingQueueSystemEvent::TRIANGLEDRAWING_ADDED, trianglesDrawingControl.owner_entity_id);
+												}
+											}
+										}
+										else
+										{
+											// textureset signature
+											std::string textureset_signature;
+											for (const auto& e : texturesSet)
+											{
+												const auto& staged_texture{ e->getPurpose() };
+
+												const size_t stage{ staged_texture.first };
+												const Texture& texture{ staged_texture.second };
+												textureset_signature += texture.getSourceID() + "." + std::to_string(stage) + "/";
+											}
+
+											// does this textureSet signature exists ?
+											if (triangleMeshePayload.textures_set_list.count(textureset_signature))
+											{
+												// add new drawing control under this textureSet
+
+												auto& textureSetPayload{ triangleMeshePayload.textures_set_list.at(textureset_signature) };
+
+												for (const auto& dc : drawingControls)
+												{
+													auto& trianglesDrawingControl{ dc->getPurpose() };
+													trianglesDrawingControl.ready = true;
+
+													rendering::QueueDrawingControl trianglesQueueDrawingControl;
+													trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
+													trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
+													trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
+													trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
+													trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
+
+													connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
+													/////////////// HERE manage vector array for shaders
+													trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
+													trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
+													////////////////////////////////////////////////////
+
+													trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
+
+													textureSetPayload.drawing_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
+
+													_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
+														+ " updated with new entity : " + p_entity_id
+														+ " : adding trianglesDrawingControl of entity: " + trianglesDrawingControl.owner_entity_id)
+
+													for (const auto& call : m_callbacks)
+													{
+														call(RenderingQueueSystemEvent::TRIANGLEDRAWING_ADDED, trianglesDrawingControl.owner_entity_id);
+													}
+												}
+											}
+											else
+											{
+												// add this new textureset + drawing control under new texturset
+
+												rendering::Queue::TextureSetPayload textureSetPayload;
+
+												for (const auto& e : texturesSet)
+												{
+													const auto& staged_texture{ e->getPurpose() };
+
+													const size_t stage{ staged_texture.first };
+													const Texture& texture{ staged_texture.second };
+													textureSetPayload.textures[stage] = texture.getResourceUID();
+												}
+
+												for (const auto& dc : drawingControls)
+												{
+													auto& trianglesDrawingControl{ dc->getPurpose() };
+													trianglesDrawingControl.ready = true;
+
+													rendering::QueueDrawingControl trianglesQueueDrawingControl;
+													trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
+													trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
+													trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
+													trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
+													trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
+
+													connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
+													/////////////// HERE manage vector array for shaders
+													trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
+													trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
+													////////////////////////////////////////////////////
+
+													trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
+
+													textureSetPayload.drawing_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
+
+													_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
+														+ " updated with new entity : " + p_entity_id
+														+ " : adding trianglesDrawingControl of entity: " + trianglesDrawingControl.owner_entity_id)
+
+														for (const auto& call : m_callbacks)
+														{
+															call(RenderingQueueSystemEvent::TRIANGLEDRAWING_ADDED, trianglesDrawingControl.owner_entity_id);
+														}
+												}
+
+												triangleMeshePayload.textures_set_list[textureset_signature] = textureSetPayload;
+											}
+										}
+									}
+									else
+									{
+										// new trianglemeshe and below elements to add
+										_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
+											+ " updated with new entity : " + p_entity_id
+											+ " : adding new trianglemeshe branch : " + file_triangle_meshe_ref->second.getResourceUID())
+
+
+										const auto triangleMeshePayload{ build_TriangleMesheAndTexturesPayload(m_callbacks, m_localLogger, drawingControls, texturesSet, vshader, pshader) };
+
+										renderStatePayload.trianglemeshes_list[file_triangle_meshe_ref->second.getResourceUID()] = triangleMeshePayload;
 									}
 								}
 							}
 							else
 							{
-								// new pshader and below elements to add
+								// new renderstate and below elements to add
 
 								_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
 									+ " updated with new entity : " + p_entity_id
-									+ " : adding new pshader branch : " + pshader.getSourceID())
+									+ " : adding new renderstate branch : " + rs_list_id)
 
 								rendering::Queue::RenderStatePayload renderStatePayload;
 								bool renderStatePayloadSet{ false };
 
 								if (line_meshe_ref)
-								{
+								{											
 									const auto lineMeshePayload{ build_LineMeshePayload(m_callbacks, m_localLogger, drawingControls, vshader, pshader) };
-
-									// consider only one std::vector<RenderState> per entity -> rsStates.at(0)
 									renderStatePayload = build_RenderStatePayloadWithLineMeshePayload(m_localLogger, line_meshe_ref->getResourceUID(), lineMeshePayload, rsStates.at(0)->getPurpose());
 
 									renderStatePayloadSet = true;
@@ -1514,8 +1614,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								else if (triangle_meshe_ref)
 								{
 									const auto triangleMeshePayload{ build_TriangleMesheAndTexturesPayload(m_callbacks, m_localLogger, drawingControls, texturesSet, vshader, pshader) };
-
-									// consider only one std::vector<RenderState> per entity -> rsStates.at(0)
 									renderStatePayload = build_RenderStatePayloadWithTriangleMeshePayload(m_localLogger, triangle_meshe_ref->getResourceUID(), triangleMeshePayload, rsStates.at(0)->getPurpose());
 
 									renderStatePayloadSet = true;
@@ -1523,8 +1621,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								else if (file_triangle_meshe_ref)
 								{
 									const auto triangleMeshePayload{ build_TriangleMesheAndTexturesPayload(m_callbacks, m_localLogger, drawingControls, texturesSet, vshader, pshader) };
-
-									// consider only one std::vector<RenderState> per entity -> rsStates.at(0)
 									renderStatePayload = build_RenderStatePayloadWithTriangleMeshePayload(m_localLogger, file_triangle_meshe_ref->second.getResourceUID(), triangleMeshePayload, rsStates.at(0)->getPurpose());
 
 									renderStatePayloadSet = true;
@@ -1532,23 +1628,21 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 
 								if (renderStatePayloadSet)
 								{
-									const auto pixelShaderPayload{ build_pixelShaderPayload(m_localLogger, rsStates.at(0)->getPurpose(), renderStatePayload) };
-									vertexShaderPayload.list[pshader.getResourceUID()] = pixelShaderPayload;
+									shaderPayload.list[rs_list_id] = renderStatePayload;
 								}
 								else
 								{
 									_EXCEPTION("Cannot update queue : no linemeshe or trianglemeshe provided with entity : " + p_entity_id)
 								}
-
 							}
 						}
 						else
 						{
-							// new vshader and below elements to add
+							//new shaders pair and below elements to add
 
 							_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName()
 								+ " updated with new entity : " + p_entity_id
-								+ " : adding new vshader branch : " + vshader.getSourceID())
+								+ " : adding new shaders branch : " + vshader.getSourceID() + " " + pshader.getSourceID())
 
 							rendering::Queue::RenderStatePayload renderStatePayload;
 							bool renderStatePayloadSet{ false };
@@ -1584,13 +1678,16 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								
 							if (renderStatePayloadSet)
 							{
-								const auto pixelShaderPayload{ build_pixelShaderPayload(m_localLogger, rsStates.at(0)->getPurpose(), renderStatePayload) };
+								const auto rs_id{ build_rs_list_id(rsStates.at(0)->getPurpose()) };
+								mage::rendering::Queue::ShadersPayload shaders_payload;
+								shaders_payload.list[rs_id] = renderStatePayload;
 
-								rendering::Queue::VertexShaderPayload vertexShaderPayload;
-								vertexShaderPayload.list[pshader.getResourceUID()] = pixelShaderPayload;
+								shaders_payload.shaders_ids.push_back(vshader.getResourceUID());
+								shaders_payload.shaders_ids.push_back(pshader.getResourceUID());
 
-								_MAGE_DEBUG(m_localLogger, "build new vertexShaderPayload with pixel shader id " + pshader.getSourceID())
-								queueNodes.at(rendering_channel).list[vshader.getResourceUID()] = vertexShaderPayload;
+								_MAGE_DEBUG(m_localLogger, "build new ShadersPayload with renderstate list id " + rs_id)
+
+								queueNodes.at(rendering_channel).list[vshader.getResourceUID() + "//" + pshader.getResourceUID()] = shaders_payload;
 							}
 							else
 							{
@@ -1605,6 +1702,7 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 	}	
 }
 
+
 void RenderingQueueSystem::removeFromRenderingQueue(const std::string& p_entity_id, mage::rendering::Queue& p_renderingQueue)
 {
 	auto queueNodes{ p_renderingQueue.getQueueNodes() };
@@ -1615,71 +1713,95 @@ void RenderingQueueSystem::removeFromRenderingQueue(const std::string& p_entity_
 	{
 		rendering::Queue::RenderingOrderChannel& rendering_channel{ qnode.second };
 
-		std::vector<std::string> vs_to_remove;
-		for (auto& vs : rendering_channel.list)
+		std::vector<std::string> shaders_pair_to_remove;
+		for (auto& shaders : rendering_channel.list)
 		{
-			std::vector<std::string> ps_to_remove;
+			std::vector<std::string> rs_to_remove;
 
-			for (auto& ps : vs.second.list)
+			for (auto& rs : shaders.second.list)
 			{
-				std::vector<std::string> rs_to_remove;
+				//// line meshes
+				std::vector<std::string> lm_to_remove;
 
-				for (auto& rs : ps.second.list)
+				for (auto& lm : rs.second.linemeshes_list)
 				{
-					//// line meshes
-					std::vector<std::string> lm_to_remove;
+					std::vector<std::string> ldc_to_remove;
 
-					for (auto& lm : rs.second.linemeshes_list)
+					for (const auto& ldc : lm.second.drawing_list)
 					{
-						std::vector<std::string> ldc_to_remove;
-
-						for (const auto& ldc : lm.second.drawing_list)
+						if (ldc.second.owner_entity_id == p_entity_id)
 						{
-							if (ldc.second.owner_entity_id == p_entity_id)
-							{
-								_MAGE_DEBUG(m_localLogger, "remove lines drawingControl of entity " + p_entity_id)
-								// remove this ldc
-								ldc_to_remove.push_back(p_entity_id);
+							_MAGE_DEBUG(m_localLogger, "remove lines drawingControl of entity " + p_entity_id)
+							// remove this ldc
+							ldc_to_remove.push_back(p_entity_id);
 
-								for (const auto& call : m_callbacks)
-								{
-									call(RenderingQueueSystemEvent::LINEDRAWING_REMOVED, p_entity_id);
-								}
+							for (const auto& call : m_callbacks)
+							{
+								call(RenderingQueueSystemEvent::LINEDRAWING_REMOVED, p_entity_id);
 							}
 						}
+					}
 
-						for (const std::string& id : ldc_to_remove)
-						{
-							lm.second.drawing_list.erase(id);
-						}
+					for (const std::string& id : ldc_to_remove)
+					{
+						lm.second.drawing_list.erase(id);
+					}
 
-						if (0 == lm.second.drawing_list.size())
+					if (0 == lm.second.drawing_list.size())
+					{
+						_MAGE_DEBUG(m_localLogger, "linemeshe payload is now empty, remove linemeshe id : " + lm.first)
+						lm_to_remove.push_back(lm.first);
+					}
+				}
+
+				for (const std::string& id : lm_to_remove)
+				{
+					rs.second.linemeshes_list.erase(id);
+				}
+				////////////////////
+
+				//// triangle meshes
+				std::vector<std::string> tm_to_remove;
+
+				for (auto& tm : rs.second.trianglemeshes_list)
+				{
+					std::vector<std::string> tdc_to_remove;
+
+					for (const auto& tdc : tm.second.drawing_list)
+					{
+						if (tdc.second.owner_entity_id == p_entity_id)
 						{
-							_MAGE_DEBUG(m_localLogger, "linemeshe payload is now empty, remove linemeshe id : " + lm.first)
-							lm_to_remove.push_back(lm.first);
+							_MAGE_DEBUG(m_localLogger, "remove triangles drawingControl of entity " + p_entity_id)
+							// remove this triangle dc
+							tdc_to_remove.push_back(p_entity_id);
+
+							for (const auto& call : m_callbacks)
+							{
+								call(RenderingQueueSystemEvent::TRIANGLEDRAWING_REMOVED, p_entity_id);
+							}
 						}
 					}
 
-					for (const std::string& id : lm_to_remove)
+					for (const std::string& id : tdc_to_remove)
 					{
-						rs.second.linemeshes_list.erase(id);
+						tm.second.drawing_list.erase(id);
 					}
-					////////////////////
 
-					//// triangle meshes
-					std::vector<std::string> tm_to_remove;
+					/////////// about textures set
 
-					for (auto& tm : rs.second.trianglemeshes_list)
+					std::vector<std::string> tsl_to_remove;
+
+					for (auto& tsl : tm.second.textures_set_list)
 					{
-						std::vector<std::string> tdc_to_remove;
+						std::vector<std::string> tdc_to_remove_2;
 
-						for (const auto& tdc : tm.second.drawing_list)
+						for (const auto& tdc : tsl.second.drawing_list)
 						{
 							if (tdc.second.owner_entity_id == p_entity_id)
 							{
 								_MAGE_DEBUG(m_localLogger, "remove triangles drawingControl of entity " + p_entity_id)
 								// remove this triangle dc
-								tdc_to_remove.push_back(p_entity_id);
+								tdc_to_remove_2.push_back(p_entity_id);
 
 								for (const auto& call : m_callbacks)
 								{
@@ -1688,98 +1810,61 @@ void RenderingQueueSystem::removeFromRenderingQueue(const std::string& p_entity_
 							}
 						}
 
-						for (const std::string& id : tdc_to_remove)
+						for (const std::string& id : tdc_to_remove_2)
 						{
-							tm.second.drawing_list.erase(id);
+							tsl.second.drawing_list.erase(id);
 						}
 
-						/////////// about textures set
-
-						std::vector<std::string> tsl_to_remove;
-
-						for (auto& tsl : tm.second.textures_set_list)
+						if (0 == tsl.second.drawing_list.size())
 						{
-							std::vector<std::string> tdc_to_remove_2;
-
-							for (const auto& tdc : tsl.second.drawing_list)
-							{
-								if (tdc.second.owner_entity_id == p_entity_id)
-								{
-									_MAGE_DEBUG(m_localLogger, "remove triangles drawingControl of entity " + p_entity_id)
-									// remove this triangle dc
-									tdc_to_remove_2.push_back(p_entity_id);
-
-									for (const auto& call : m_callbacks)
-									{
-										call(RenderingQueueSystemEvent::TRIANGLEDRAWING_REMOVED, p_entity_id);
-									}
-								}
-							}
-
-							for (const std::string& id : tdc_to_remove_2)
-							{
-								tsl.second.drawing_list.erase(id);
-							}
-
-							if (0 == tsl.second.drawing_list.size())
-							{
-								_MAGE_DEBUG(m_localLogger, "textureSet payload is now empty, remove textureSet id : " + tsl.first)
-								tsl_to_remove.push_back(tsl.first);
-							}
-						}
-
-						for (const std::string& id : tsl_to_remove)
-						{
-							tm.second.textures_set_list.erase(id);
-						}
-
-						//////////////
-
-						if (0 == tm.second.drawing_list.size() && 0 == tm.second.textures_set_list.size())
-						{
-							_MAGE_DEBUG(m_localLogger, "trianglemeshe payload is now empty, remove trianglemeshe id : " + tm.first)
-							tm_to_remove.push_back(tm.first);
+							_MAGE_DEBUG(m_localLogger, "textureSet payload is now empty, remove textureSet id : " + tsl.first)
+							tsl_to_remove.push_back(tsl.first);
 						}
 					}
 
-					for (const std::string& id : tm_to_remove)
+					for (const std::string& id : tsl_to_remove)
 					{
-						rs.second.trianglemeshes_list.erase(id);
+						tm.second.textures_set_list.erase(id);
 					}
 
-					////////////////////
+					//////////////
 
-					if (0 == rs.second.linemeshes_list.size() && 0 == rs.second.trianglemeshes_list.size())
+					if (0 == tm.second.drawing_list.size() && 0 == tm.second.textures_set_list.size())
 					{
-						_MAGE_DEBUG(m_localLogger, "renderstate payload is now empty, remove renderstate id : " + rs.first)
-						rs_to_remove.push_back(rs.first);
+						_MAGE_DEBUG(m_localLogger, "trianglemeshe payload is now empty, remove trianglemeshe id : " + tm.first)
+						tm_to_remove.push_back(tm.first);
 					}
 				}
 
-				for (const std::string& id : rs_to_remove)
+				for (const std::string& id : tm_to_remove)
 				{
-					ps.second.list.erase(id);
+					rs.second.trianglemeshes_list.erase(id);
 				}
 
-				if (0 == ps.second.list.size())
+				////////////////////
+
+				if (0 == rs.second.linemeshes_list.size() && 0 == rs.second.trianglemeshes_list.size())
 				{
-					_MAGE_DEBUG(m_localLogger, "pixelshader payload is now empty, remove pixelshader id : " + ps.first)
-					ps_to_remove.push_back(ps.first);
+					_MAGE_DEBUG(m_localLogger, "renderstate payload is now empty, remove renderstate id : " + rs.first)
+					rs_to_remove.push_back(rs.first);
 				}
 			}
 
-			for (const std::string& id : ps_to_remove)
+			for (const std::string& id : rs_to_remove)
 			{
-				vs.second.list.erase(id);
+				//ps.second.list.erase(id);
+				shaders.second.list.erase(id);
 			}
 
-			if (0 == vs.second.list.size())
+			if (0 == shaders.second.list.size())
 			{
-				_MAGE_DEBUG(m_localLogger, "vertexshader payload is now empty, remove vertexshader id : " + vs.first)
-				vs_to_remove.push_back(vs.first);
+				_MAGE_DEBUG(m_localLogger, "vertexshader payload is now empty, remove shaders id : " + shaders.first)
+					shaders_pair_to_remove.push_back(shaders.first);
 			}
+
 		}
-		for (const std::string& id : vs_to_remove)
+
+		for (const std::string& id : shaders_pair_to_remove)
 		{
 			rendering_channel.list.erase(id);
 		}

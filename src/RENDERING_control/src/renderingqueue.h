@@ -186,22 +186,18 @@ namespace mage
 				std::unordered_map<std::string, LineMeshePayload>		linemeshes_list;
 			};
 
-			struct PixelShaderPayload
-			{
+			struct ShadersPayload
+			{ 
+				std::vector<std::string> shaders_ids; // ALWAYS 2 entries for now (vertex shader, pixel shader)
+
 				// key = renderstate set strings dump concatenation (RenderState::toString())
 				std::unordered_map<std::string, RenderStatePayload> list;
 			};
 
-			struct VertexShaderPayload
-			{
-				// key = pixel shader D3D11 id
-				std::unordered_map<std::string, PixelShaderPayload> list;
-			};
-
 			struct RenderingOrderChannel
 			{
-				// key = vertex shader D3D11 id
-				std::unordered_map<std::string, VertexShaderPayload> list;
+				// key = shaders id concatenation
+				std::unordered_map<std::string, ShadersPayload> list; 
 			};
 
 			using QueueNodes = std::map<int, RenderingOrderChannel>;  // RenderingOrderChannel are rendered following order given by int key
