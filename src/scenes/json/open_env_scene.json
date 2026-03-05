@@ -90,8 +90,6 @@
               }
             ]
           }
-        ],
-        "animator_repeat": [
         ]
       }
     },
@@ -185,8 +183,6 @@
               }
             ]
           }
-        ],
-        "animator_repeat": [
         ]
       }
     },
@@ -228,17 +224,17 @@
 
                 "x_direct_value": {
                   "descr": "camera_Entity pos in x part I",
-                  "value": -25
+                  "value": 120
                 },
 
                 "y_direct_value": {
                   "descr": "camera_Entity pos in y part I",
-                  "value": 89
+                  "value": 35
                 },
 
                 "z_direct_value": {
                   "descr": "camera_Entity pos in z part I",
-                  "value": -40
+                  "value": 20
                 }
               },
 
@@ -281,8 +277,6 @@
               }
             ]
           }
-        ],
-        "animator_repeat": [
         ]
       }
     },

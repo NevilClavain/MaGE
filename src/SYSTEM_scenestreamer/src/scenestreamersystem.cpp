@@ -905,7 +905,6 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
 
                 else if ("lookatJoin" == p_animator.helper)
                 {
-
                     world_aspect.addComponent<transform::WorldPosition>("lookat_output");
                     world_aspect.addComponent<core::maths::Real3Vector>("lookat_dest", core::maths::Real3Vector(-246.0, 68000.0, -40.0));
                     world_aspect.addComponent<core::maths::Real3Vector>("lookat_localpos", core::maths::Real3Vector(0.0, 0.0, 0.0));
