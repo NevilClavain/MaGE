@@ -162,10 +162,7 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 				const mage::rendering::Queue::ShadersPayload shader_payload{ shaders.second };
 				const std::vector<std::string>& shaders_id{ shader_payload.shaders_ids };
 
-				for (const std::string& id : shaders_id)
-				{
-					_MAGE_DEBUG(m_localLogger, "\t\t-> shader D3D resource id: " + id);
-				}
+				_MAGE_DEBUG(m_localLogger, "\t\t-> shader D3D resource id: " + shaders_id.at(0) + " " + shaders_id.at(1));
 
 				for (const auto& rs : shader_payload.list)
 				{
@@ -182,7 +179,7 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 							_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t-> linemeshe drawing : " + drawing_id);
 
 							const auto drawing_body{ drawing.second };
-
+							/*
 							if (drawing_body.world)
 							{
 								_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t-> world :\n" + drawing_body.world->dump());
@@ -191,6 +188,7 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 							{
 								_MAGE_WARN(m_localLogger, "\t\t\t\t\t\t-> world : nullptr\n");
 							}
+							*/
 
 							_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t-> vshaders params datacloud connexions :");
 							for (const auto& cnx : drawing_body.vshaders_map_cnx)
@@ -225,6 +223,7 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 
 							const auto drawing_body{ drawing.second };
 
+							/*
 							if (drawing_body.world)
 							{
 								_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t-> world :\n" + drawing_body.world->dump());
@@ -233,6 +232,7 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 							{
 								_MAGE_WARN(m_localLogger, "\t\t\t\t\t\t-> world : nullptr\n");
 							}
+							*/
 
 							_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t-> vshaders params datacloud connexions :");
 							for (const auto& cnx : drawing_body.vshaders_map_cnx)
@@ -272,6 +272,7 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 
 									const auto drawing_body{ drawing.second };
 
+									/*
 									if (drawing_body.world)
 									{
 										_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t-> world :\n" + drawing_body.world->dump());
@@ -280,6 +281,7 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 									{
 										_MAGE_WARN(m_localLogger, "\t\t\t\t\t\t\t-> world : nullptr\n");
 									}
+									*/
 
 									_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t-> vshaders params datacloud connexions :");
 									for (const auto& cnx : drawing_body.vshaders_map_cnx)
@@ -304,158 +306,6 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 						}
 					}
 				}
-
-
-
-				/*
-				const auto vshader_id{ vshader.first };
-				_MAGE_DEBUG(m_localLogger, "\t\t-> vshader D3D resource id: " + vshader_id);
-
-				for (const auto& pshader : vshader.second.list)
-				{
-					const auto pshader_id{ pshader.first };
-					_MAGE_DEBUG(m_localLogger, "\t\t\t-> pshader D3D resource id: " + pshader_id);
-
-					for (const auto& rs : pshader.second.list)
-					{
-
-						_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> renderstate : " + rs.first);
-
-						for (const auto& linemeshe : rs.second.linemeshes_list)
-						{
-							const auto linemeshe_id{ linemeshe.first };
-							_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t-> line meshe D3D resource id: " + linemeshe_id);
-
-							for (const auto& drawing : linemeshe.second.drawing_list)
-							{
-								const auto drawing_id{ drawing.first };
-								_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t-> linemeshe drawing : " + drawing_id);
-
-								const auto drawing_body{ drawing.second };
-
-								if (drawing_body.world)
-								{
-									_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t-> world :\n" + drawing_body.world->dump());
-								}
-								else
-								{
-									_MAGE_WARN(m_localLogger, "\t\t\t\t\t\t\t-> world : nullptr\n");
-								}
-
-								_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t-> vshaders params datacloud connexions :");
-								for (const auto& cnx : drawing_body.vshaders_map_cnx)
-								{
-									_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t\t-> datacloud var '" + cnx.first + "' mapped on shader input '"
-										+ cnx.second.argument_id
-										+ "' (" + cnx.second.argument_type
-										+ ") for register " + std::to_string(cnx.second.shader_register));
-								}
-
-								_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t-> pshaders params datacloud connexions :");
-								for (const auto& cnx : drawing_body.pshaders_map_cnx)
-								{
-									_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t\t-> datacloud var '" + cnx.first + "' mapped on shader input '"
-										+ cnx.second.argument_id
-										+ "' (" + cnx.second.argument_type
-										+ ") for register " + std::to_string(cnx.second.shader_register));
-								}
-
-							}
-						}
-
-						for (const auto& trianglemeshe : rs.second.trianglemeshes_list)
-						{
-							const auto triangle_id{ trianglemeshe.first };
-							_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t-> triangle meshe D3D resource id: " + triangle_id);
-
-							for (const auto& drawing : trianglemeshe.second.drawing_list)
-							{
-								const auto drawing_id{ drawing.first };
-								_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t-> trianglemeshe drawing : " + drawing_id);
-
-								const auto drawing_body{ drawing.second };
-
-								if (drawing_body.world)
-								{
-									_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t-> world :\n" + drawing_body.world->dump());
-								}
-								else
-								{
-									_MAGE_WARN(m_localLogger, "\t\t\t\t\t\t\t-> world : nullptr\n");
-								}
-
-								_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t-> vshaders params datacloud connexions :");
-								for (const auto& cnx : drawing_body.vshaders_map_cnx)
-								{
-									_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t\t-> datacloud var '" + cnx.first + "' mapped on shader input '"
-										+ cnx.second.argument_id
-										+ "' (" + cnx.second.argument_type
-										+ ") for register " + std::to_string(cnx.second.shader_register));
-								}
-
-								_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t-> pshaders params datacloud connexions :");
-								for (const auto& cnx : drawing_body.pshaders_map_cnx)
-								{
-									_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t\t-> datacloud var '" + cnx.first + "' mapped on shader input '"
-										+ cnx.second.argument_id
-										+ "' (" + cnx.second.argument_type
-										+ ") for register " + std::to_string(cnx.second.shader_register));
-								}
-
-							}
-
-							for (const auto& texture_set_list : trianglemeshe.second.textures_set_list)
-							{
-								const rendering::Queue::TextureSetPayload textureSetPayload{ texture_set_list.second };
-
-								for (const auto& staged_texture : textureSetPayload.textures)
-								{
-									const size_t	stage{ staged_texture.first };
-									const auto		texture_resource_uid{ staged_texture.second };
-
-									_MAGE_WARN(m_localLogger, "\t\t\t\t\t\t\t\t-> texture : stage " + std::to_string(stage) + " " + texture_resource_uid);
-
-									for (const auto& drawing : textureSetPayload.drawing_list)
-									{
-										const auto drawing_id{ drawing.first };
-										_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t-> trianglemeshe drawing : " + drawing_id);
-
-										const auto drawing_body{ drawing.second };
-
-										if (drawing_body.world)
-										{
-											_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t\t-> world :\n" + drawing_body.world->dump());
-										}
-										else
-										{
-											_MAGE_WARN(m_localLogger, "\t\t\t\t\t\t\t\t-> world : nullptr\n");
-										}
-
-										_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t\t-> vshaders params datacloud connexions :");
-										for (const auto& cnx : drawing_body.vshaders_map_cnx)
-										{
-											_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t\t\t-> datacloud var '" + cnx.first + "' mapped on shader input '"
-												+ cnx.second.argument_id
-												+ "' (" + cnx.second.argument_type
-												+ ") for register " + std::to_string(cnx.second.shader_register));
-										}
-
-										_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t\t-> pshaders params datacloud connexions :");
-										for (const auto& cnx : drawing_body.pshaders_map_cnx)
-										{
-											_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t\t\t\t\t-> datacloud var '" + cnx.first + "' mapped on shader input '"
-												+ cnx.second.argument_id
-												+ "' (" + cnx.second.argument_type
-												+ ") for register " + std::to_string(cnx.second.shader_register));
-										}
-
-									}
-								}
-							}
-						}
-					}
-				}
-				*/
 			}
 		}
 	}
