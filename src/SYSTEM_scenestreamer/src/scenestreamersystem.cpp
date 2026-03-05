@@ -902,6 +902,23 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
                         }, helpers::makeGimbalLockJointAnimator())
                     );
                 }
+
+                else if ("lookatJoin" == p_animator.helper)
+                {
+
+                    world_aspect.addComponent<transform::WorldPosition>("lookat_output");
+                    world_aspect.addComponent<core::maths::Real3Vector>("lookat_dest", core::maths::Real3Vector(-246.0, 68000.0, -40.0));
+                    world_aspect.addComponent<core::maths::Real3Vector>("lookat_localpos", core::maths::Real3Vector(0.0, 0.0, 0.0));
+
+                    world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
+                        {
+                            {"lookatJointAnim.output", "lookat_output"},
+                            {"lookatJointAnim.dest", "lookat_dest"},
+                            {"lookatJointAnim.localpos", "lookat_localpos"},
+                        }, helpers::makeLookatJointAnimator())
+                    );
+                }
+
                 // if no helper, decode matrix_factory
                 else if ("" == p_animator.helper)
                 {

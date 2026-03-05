@@ -167,6 +167,10 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		}
 		else if ("camera2_Entity" == mainView)
 		{
+			renderingQueueSystemInstance->setViewGroupMainView("openenv_main_graph", "camera3_Entity");
+		}
+		else if ("camera3_Entity" == mainView)
+		{
 			renderingQueueSystemInstance->setViewGroupMainView("openenv_main_graph", "camera_Entity");
 		}
 	}
