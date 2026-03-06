@@ -212,3 +212,8 @@ Entitygraph::PostIterator Entitygraph::postEnd()
 {
 	return m_tree.df_post_end();
 }
+
+bool Entitygraph::hasNode(const std::string& p_entity_id)
+{
+	return (m_nodes.count(p_entity_id) > 0);
+}

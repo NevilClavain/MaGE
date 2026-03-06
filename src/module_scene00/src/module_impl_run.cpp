@@ -351,32 +351,6 @@ void ModuleImpl::run(void)
 
 		/////////// Add trianglemeshe
 
-		/*
-		TriangleMeshe square;
-
-		square.push(Vertex(-0.9, -0.5, 0.0, 0.0f, 1.0f));
-		square.push(Vertex(0.9, -0.5, 0.0, 1.0f, 1.0f));
-		square.push(Vertex(0.9, 0.5, 0.0, 1.0f, 0.0f));
-		square.push(Vertex(-0.9, 0.5, 0.0, 0.0f, 0.0f));
-
-		const TrianglePrimitive<unsigned int> t1{ 0, 1, 2 };
-		square.push(t1);
-
-		const TrianglePrimitive<unsigned int> t2{ 0, 2, 3 };
-		square.push(t2);
-
-		square.computeNormales();
-		square.computeTB();
-
-		square.setState(TriangleMeshe::State::BLOBLOADED);
-
-		square.computeResourceUID();
-		square.setSourceID("quadEntity2");
-		square.setSource(TriangleMeshe::Source::CONTENT_DYNAMIC_INIT);
-
-		quad_resource_aspect.addComponent<TriangleMeshe>("square", square);
-		*/
-
 		quad_resource_aspect.addComponent< std::pair<std::pair<std::string,std::string>, TriangleMeshe>>("cube", std::make_pair(std::make_pair("box", "tech.ac") , TriangleMeshe()));
 
 		

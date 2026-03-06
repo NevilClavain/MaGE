@@ -72,6 +72,9 @@ namespace mage
 			Node&			node(const std::string& p_entity_id);
 
 
+			bool			hasNode(const std::string& p_entity_id);
+
+
 			PreIterator		preBegin();
 			PreIterator		preEnd();
 
