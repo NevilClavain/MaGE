@@ -210,6 +210,8 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 		//sceneStreamerSystemInstance->dumpXTreeEntities();
 		//sceneStreamerSystemInstance->dumpXTree();
+
+		::MessageBox(0, "Log dump done", "Mage", MB_OK | MB_ICONINFORMATION);
 	}
 
 	else if ('Q' == p_key)
