@@ -906,14 +906,40 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
                 else if ("lookatJoin" == p_animator.helper)
                 {
                     world_aspect.addComponent<transform::WorldPosition>("lookat_output");
-                    world_aspect.addComponent<core::maths::Real3Vector>("lookat_dest", core::maths::Real3Vector(-246.0, 68000.0, -40.0));
                     world_aspect.addComponent<core::maths::Real3Vector>("lookat_localpos", core::maths::Real3Vector(0.0, 0.0, 0.0));
+
+
+                    world_aspect.addComponent<std::function<core::maths::Real3Vector(const std::string&)>>("lookat_gettargetpos",
+                        [this](const std::string& p_entityid) -> core::maths::Real3Vector
+                        {
+                            if (!m_entitygraph.hasNode(p_entityid))
+                            {
+                                return core::maths::Real3Vector(0, 0, 0);
+                            }
+
+                            auto& targetNode{ m_entitygraph.node(p_entityid) };
+                            const auto targetEntity{ targetNode.data() };
+
+                            const auto& worldAspect{ targetEntity->aspectAccess(core::worldAspect::id) };
+                            const auto& entity_worldposition_list{ worldAspect.getComponentsByType<transform::WorldPosition>() };
+
+                            const transform::WorldPosition& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
+
+                            core::maths::Real3Vector pos(entity_worldposition.global_pos(3, 0),
+                                entity_worldposition.global_pos(3, 1),
+                                entity_worldposition.global_pos(3, 2));
+                            return pos;
+                        }
+                    );
+
 
                     world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
                         {
                             {"lookatJointAnim.output", "lookat_output"},
-                            {"lookatJointAnim.dest", "lookat_dest"},
                             {"lookatJointAnim.localpos", "lookat_localpos"},
+                            {"lookatJointAnim.target", "tree_Entity"}, // TODO
+                            {"lookatJointAnim.gettargetpos", "lookat_gettargetpos"},
+
                         }, helpers::makeLookatJointAnimator())
                     );
                 }
