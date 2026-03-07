@@ -321,11 +321,13 @@ namespace mage
         struct Animator
         {            
             std::string                 descr;
+
             std::string                 helper;
+            std::vector<std::string>    helper_strings_args; // if animator needs string arguments
 
             std::vector<MatrixFactory>  matrix_factory_chain;
-
-            JS_OBJ(descr, helper, matrix_factory_chain);
+            
+            JS_OBJ(descr, helper, matrix_factory_chain, helper_strings_args);
         };
 
         struct WorldAspect

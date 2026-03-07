@@ -10,7 +10,10 @@
           "world_aspect": {
             "animator": {
               "descr": "camera lookat Joint animator",
-              "helper": "lookatJoin"
+              "helper": "lookatJoin",
+              "helper_strings_args": [
+                "wall_Entity"
+              ]
             }
           },
           "subs": [

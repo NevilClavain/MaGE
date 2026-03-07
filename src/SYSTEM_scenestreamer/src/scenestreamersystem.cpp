@@ -937,7 +937,7 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
                         {
                             {"lookatJointAnim.output", "lookat_output"},
                             {"lookatJointAnim.localpos", "lookat_localpos"},
-                            {"lookatJointAnim.target", "tree_Entity"}, // TODO
+                            {"lookatJointAnim.target", p_animator.helper_strings_args.at(0)},
                             {"lookatJointAnim.gettargetpos", "lookat_gettargetpos"},
 
                         }, helpers::makeLookatJointAnimator())
