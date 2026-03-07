@@ -68,7 +68,7 @@ namespace mage
 			std::string									shadowmap_lookatJoint_entity_id;
 			std::string									shadowmap_camera_entity_id;
 			
-			mage::core::maths::Real3Vector				shadowmap_camerajoint_lookat_dest;
+			std::string									shadowmap_camerajoint_lookat_dest;
 			mage::core::maths::Real3Vector				shadowmap_camerajoint_lookat_localpos_base;
 
 			std::string									shadows_viewgroup_name;

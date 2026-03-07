@@ -1297,7 +1297,7 @@ void OpenEnv::enable_shadows()
 		"shadowmap_lookatJoint_Entity",
 		"shadowmap_camera_Entity",
 
-		core::maths::Real3Vector(0.0, skydomeInnerRadius + groundLevel, 0.0),
+		"ground_Entity",
 		core::maths::Real3Vector(0.0, skydomeInnerRadius + groundLevel, 0.0),
 
 		"player_camera_2",
