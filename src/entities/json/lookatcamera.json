@@ -12,7 +12,7 @@
               "descr": "camera lookat Joint animator",
               "helper": "lookatJoin",
               "helper_strings_args": [
-                "wall_Entity"
+                "@id_3"
               ]
             }
           },

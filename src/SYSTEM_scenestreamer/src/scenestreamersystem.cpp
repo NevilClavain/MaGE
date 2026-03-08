@@ -932,12 +932,13 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
                         }
                     );
 
+                    const std::string target_entity_id{ filter_arguments_stack(p_animator.helper_strings_args.at(0), p_file_args) };
 
                     world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
                         {
                             {"lookatJointAnim.output", "lookat_output"},
                             {"lookatJointAnim.localpos", "lookat_localpos"},
-                            {"lookatJointAnim.target", p_animator.helper_strings_args.at(0)},
+                            {"lookatJointAnim.target", target_entity_id},
                             {"lookatJointAnim.gettargetpos", "lookat_gettargetpos"},
 
                         }, helpers::makeLookatJointAnimator())
