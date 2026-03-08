@@ -187,24 +187,27 @@
       }
     },
 
-
     {
       "file": "lookatcamera",
       "file_args": [
         {
           "key": "@id_0",
-          "value": "cameraLookatJointBasePos_Entity"
+          "value": "camera3_LookatJointBasePos_Entity"
         },
         {
           "key": "@id_1",
-          "value": "cameraLookatJoint_Entity"
+          "value": "camera3_SliderJoint_Entity"
         },
         {
           "key": "@id_2",
-          "value": "camera3_Entity"
+          "value": "camera3_LookatJoint_Entity"
         },
         {
           "key": "@id_3",
+          "value": "camera3_Entity"
+        },
+        {
+          "key": "@id_4",
           "value": "tree_Entity"
         }
       ],

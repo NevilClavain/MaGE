@@ -945,6 +945,54 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
                     );
                 }
 
+                else if ("sliderJoin" == p_animator.helper)
+                {
+                    world_aspect.addComponent<transform::WorldPosition>("slider_output");
+
+                    SyncVariable x_slide_pos(SyncVariable::Type::POSITION, 15.0, SyncVariable::Direction::INC, 0.0);
+                    x_slide_pos.state = SyncVariable::State::OFF;
+
+                    SyncVariable y_slide_pos(SyncVariable::Type::POSITION, 15.0, SyncVariable::Direction::INC, 0.0);
+                    y_slide_pos.state = SyncVariable::State::OFF;
+
+                    SyncVariable z_slide_pos(SyncVariable::Type::POSITION, 15.0, SyncVariable::Direction::INC, 0.0);
+                    z_slide_pos.state = SyncVariable::State::OFF;
+
+                    time_aspect.addComponent<SyncVariable>("x_slide_pos", x_slide_pos);
+                    time_aspect.addComponent<SyncVariable>("y_slide_pos", y_slide_pos);
+                    time_aspect.addComponent<SyncVariable>("z_slide_pos", z_slide_pos);
+
+                    world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>("x_slide_pos_matrix_source", &time_aspect.getComponent<SyncVariable>("x_slide_pos")->getPurpose());
+                    world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>("y_slide_pos_matrix_source", &time_aspect.getComponent<SyncVariable>("y_slide_pos")->getPurpose());
+                    world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>("z_slide_pos_matrix_source", &time_aspect.getComponent<SyncVariable>("z_slide_pos")->getPurpose());
+
+                    mage::transform::MatrixFactory slider_matrix_factory("translation");
+
+                    slider_matrix_factory.setXSource(&world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>("x_slide_pos_matrix_source")->getPurpose());
+                    slider_matrix_factory.setYSource(&world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>("y_slide_pos_matrix_source")->getPurpose());
+                    slider_matrix_factory.setZSource(&world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>("z_slide_pos_matrix_source")->getPurpose());
+
+                    world_aspect.addComponent<mage::transform::MatrixFactory>("slider_matrix_factory", slider_matrix_factory);
+
+                    world_aspect.addComponent<transform::Animator>("slider", transform::Animator
+                    (
+                        {
+                            // TODO
+                        },
+                        [=](const core::ComponentContainer& p_world_aspect,
+                            const core::ComponentContainer& p_time_aspect,
+                            const transform::WorldPosition&,
+                            const std::unordered_map<std::string, std::string>&)
+                        {
+                            auto& mf{ p_world_aspect.getComponent<mage::transform::MatrixFactory>("slider_matrix_factory")->getPurpose() };
+                            const auto rotation_mat{ mf.getResult() };
+
+                            transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("slider_output")->getPurpose() };
+                            wp.local_pos = wp.local_pos * rotation_mat;
+                        }
+                    ));
+                }
+
                 // if no helper, decode matrix_factory
                 else if ("" == p_animator.helper)
                 {

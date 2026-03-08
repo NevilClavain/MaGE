@@ -4,22 +4,35 @@
       "id": "@id_0",
 
       "subs": [
+
         {
           "id": "@id_1",
 
           "world_aspect": {
             "animator": {
-              "descr": "camera lookat Joint animator",
-              "helper": "lookatJoin",
-              "helper_strings_args": [
-                "@id_3"
-              ]
+              "descr": "camera slider Joint animator",
+              "helper": "sliderJoin"
             }
           },
           "subs": [
             {
               "id": "@id_2",
-              "helper": "plugCamera"
+
+              "world_aspect": {
+                "animator": {
+                  "descr": "camera lookat Joint animator",
+                  "helper": "lookatJoin",
+                  "helper_strings_args": [
+                    "@id_4"
+                  ]
+                }
+              },
+              "subs": [
+                {
+                  "id": "@id_3",
+                  "helper": "plugCamera"
+                }
+              ]
             }
           ]
         }
