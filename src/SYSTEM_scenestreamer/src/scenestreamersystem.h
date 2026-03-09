@@ -318,16 +318,26 @@ namespace mage
                          xyzw_direct_value, xyz_direct_value, x_direct_value, y_direct_value, z_direct_value, w_direct_value);
         };
 
+        struct Real3Vector
+        {
+            double x;
+            double y;
+            double z;
+
+            JS_OBJ(x, y, z);
+        };
+
         struct Animator
         {            
             std::string                 descr;
 
             std::string                 helper;
             std::vector<std::string>    helper_strings_args; // if animator needs string arguments
+            std::vector<Real3Vector>    helper_realvector3_args; // if animator needs Real3Vector arguments
 
             std::vector<MatrixFactory>  matrix_factory_chain;
             
-            JS_OBJ(descr, helper, matrix_factory_chain, helper_strings_args);
+            JS_OBJ(descr, helper, matrix_factory_chain, helper_strings_args, helper_realvector3_args);
         };
 
         struct WorldAspect

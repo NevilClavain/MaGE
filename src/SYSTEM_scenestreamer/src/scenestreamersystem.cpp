@@ -949,13 +949,13 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
                 {
                     world_aspect.addComponent<transform::WorldPosition>("slider_output");
 
-                    SyncVariable x_slide_pos(SyncVariable::Type::POSITION, 15.0, SyncVariable::Direction::INC, 0.0);
+                    SyncVariable x_slide_pos(SyncVariable::Type::POSITION, p_animator.helper_realvector3_args.at(0).x, SyncVariable::Direction::INC, 0.0);
                     x_slide_pos.state = SyncVariable::State::OFF;
 
-                    SyncVariable y_slide_pos(SyncVariable::Type::POSITION, 15.0, SyncVariable::Direction::INC, 0.0);
+                    SyncVariable y_slide_pos(SyncVariable::Type::POSITION, p_animator.helper_realvector3_args.at(0).y, SyncVariable::Direction::INC, 0.0);
                     y_slide_pos.state = SyncVariable::State::OFF;
 
-                    SyncVariable z_slide_pos(SyncVariable::Type::POSITION, 15.0, SyncVariable::Direction::INC, 0.0);
+                    SyncVariable z_slide_pos(SyncVariable::Type::POSITION, p_animator.helper_realvector3_args.at(0).z, SyncVariable::Direction::INC, 0.0);
                     z_slide_pos.state = SyncVariable::State::OFF;
 
                     time_aspect.addComponent<SyncVariable>("x_slide_pos", x_slide_pos);

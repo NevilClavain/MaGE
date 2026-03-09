@@ -11,7 +11,14 @@
           "world_aspect": {
             "animator": {
               "descr": "camera slider Joint animator",
-              "helper": "sliderJoin"
+              "helper": "sliderJoin",
+              "helper_realvector3_args": [
+                {
+                  "x": 0.0,
+                  "y": 0.0,
+                  "z": 60.0
+                }
+              ]
             }
           },
           "subs": [
