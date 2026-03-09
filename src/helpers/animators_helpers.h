@@ -34,7 +34,7 @@
 #include "syncvariable.h"
 #include "timecontrol.h"
 #include "animatorfunc.h"
-
+#include "matrixfactory.h"
 
 namespace mage
 {
@@ -250,6 +250,26 @@ namespace mage
 					transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>(p_keys.at("lookatJointAnim.output"))->getPurpose() };
 					wp.composition_operation = transform::WorldPosition::TransformationComposition::TRANSFORMATION_ABSOLUTE;
 					wp.local_pos = wp.local_pos * orientation * translation_from_current_local * translation_from_parent;
+				}
+			};
+
+			return animator;
+		}
+
+		auto makeSliderJointAnimator()
+		{
+			const auto animator
+			{
+				[](const core::ComponentContainer& p_world_aspect,
+					const core::ComponentContainer& p_time_aspect,
+					const transform::WorldPosition& p_parent_pos,
+					const std::unordered_map<std::string, std::string>& p_keys)
+				{
+					auto& mf{ p_world_aspect.getComponent<mage::transform::MatrixFactory>(p_keys.at("sliderJointAnim.matrixFactory"))->getPurpose() };
+					const auto rotation_mat{ mf.getResult() };
+
+					transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>(p_keys.at("sliderJointAnim.output"))->getPurpose() };
+					wp.local_pos = wp.local_pos * rotation_mat;						
 				}
 			};
 

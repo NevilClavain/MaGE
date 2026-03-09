@@ -977,20 +977,11 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
                     world_aspect.addComponent<transform::Animator>("slider", transform::Animator
                     (
                         {
-                            // TODO
+                            {"sliderJointAnim.output", "slider_output"},
+                            {"sliderJointAnim.matrixFactory", "slider_matrix_factory"},
                         },
-                        [=](const core::ComponentContainer& p_world_aspect,
-                            const core::ComponentContainer& p_time_aspect,
-                            const transform::WorldPosition&,
-                            const std::unordered_map<std::string, std::string>&)
-                        {
-                            auto& mf{ p_world_aspect.getComponent<mage::transform::MatrixFactory>("slider_matrix_factory")->getPurpose() };
-                            const auto rotation_mat{ mf.getResult() };
-
-                            transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>("slider_output")->getPurpose() };
-                            wp.local_pos = wp.local_pos * rotation_mat;
-                        }
-                    ));
+                        helpers::makeSliderJointAnimator())
+                    );
                 }
 
                 // if no helper, decode matrix_factory
