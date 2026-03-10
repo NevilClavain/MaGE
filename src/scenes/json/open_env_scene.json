@@ -3,7 +3,7 @@
 
     {
       "file": "gblcamera",
-      "file_args": [
+      "file_string_args": [
         {
           "key": "@id_0",
           "value": "cameraGblJointBasePos_Entity"
@@ -96,7 +96,7 @@
 
     {
       "file": "gblcamera",
-      "file_args": [
+      "file_string_args": [
         {
           "key": "@id_0",
           "value": "camera2_GblJointBasePos_Entity"
@@ -189,7 +189,7 @@
 
     {
       "file": "lookatcamera",
-      "file_args": [
+      "file_string_args": [
         {
           "key": "@id_0",
           "value": "camera3_LookatJointBasePos_Entity"
@@ -291,7 +291,7 @@
 
     {
       "file": "ground",
-      "file_args": [
+      "file_string_args": [
         {
           "key": "@id",
           "value": "ground_Entity"
@@ -363,7 +363,7 @@
 
     {
       "file": "tree",
-      "file_args": [
+      "file_string_args": [
         {
           "key": "@id",
           "value": "tree_Entity"
@@ -434,7 +434,7 @@
 
     {
       "file": "rock",
-      "file_args": [
+      "file_string_args": [
         {
           "key": "@id",
           "value": "rock_Entity"
@@ -516,7 +516,7 @@
 
     {
       "file": "wall",
-      "file_args": [
+      "file_string_args": [
         {
           "key": "@id",
           "value": "wall_Entity"
@@ -602,7 +602,7 @@
 
     {
       "file": "clouds",
-      "file_args": [
+      "file_string_args": [
         {
           "key": "@id",
           "value": "clouds_Entity"
@@ -691,7 +691,7 @@
 
     {
       "file": "skydome",
-      "file_args": [
+      "file_string_args": [
         {
           "key": "@id",
           "value": "skydome_Entity"

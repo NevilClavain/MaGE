@@ -763,10 +763,10 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
         mage::core::FileContent<char> entityFileContent("./module_streamed_anims_config/" + e.file + ".json");
         entityFileContent.load();
 
-        std::unordered_map<std::string, std::string> file_args;
-        for (const json::FileArgument& file_arg : e.file_args)
+        std::unordered_map<std::string, std::string> file_string_args;
+        for (const json::FileStringArgument& file_string_arg : e.file_string_args)
         {
-            file_args.emplace(file_arg.key, file_arg.value);
+            file_string_args.emplace(file_string_arg.key, file_string_arg.value);
         }
 
         std::unordered_map<std::string, std::unique_ptr<IValueGenerator>> generators;
@@ -774,18 +774,18 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
         int index{ 0 };
         for (const auto& instance_animator : e.instances_factory.animators)        
         {            
-            auto file_args_1 = file_args;
+            auto file_string_args_1 = file_string_args;
             if (index > 0)
             {
                 const auto ext{ std::to_string(index) };
                 // extend entity id with index number
-                for (auto& file_arg : file_args_1)
+                for (auto& file_str_arg : file_string_args_1)
                 {
-                    file_arg.second += "_clone_" + ext;
+                    file_str_arg.second += "_clone_" + ext;
                 }
             }
 
-            buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_args_1, generators);
+            buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_string_args_1, generators);
             index++;
         }
 
@@ -797,20 +797,20 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
 
             for (int i = 0; i < instance_animator_repeat.number; i++)
             {
-                auto file_args_2 = file_args;
+                auto file_string_args_2 = file_string_args;
                 if (index > 0)
                 {
                     const auto ext{ std::to_string(index) };
                     // extend entity id with index number
-                    for (auto& file_arg : file_args_2)
+                    for (auto& file_str_arg : file_string_args_2)
                     {
-                        file_arg.second += "_clone_" + ext;
+                        file_str_arg.second += "_clone_" + ext;
                     }
                 }
 
                 const auto instance_animator{ instance_animator_repeat.animator };
 
-                buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_args_2, generators);
+                buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_string_args_2, generators);
                 index++;
             }
         }

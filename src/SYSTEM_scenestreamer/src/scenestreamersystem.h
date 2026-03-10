@@ -442,7 +442,7 @@ namespace mage
 
         ///////////////////////////////////
 
-        struct FileArgument
+        struct FileStringArgument
         {
             std::string                                 key;
             std::string                                 value;
@@ -468,17 +468,17 @@ namespace mage
 
         struct ScenegraphNode
         {
-            std::string                 file;
+            std::string                         file;
 
-            std::vector<FileArgument>   file_args;
+            std::vector<FileStringArgument>     file_string_args;
 
-            std::vector<std::string>    tags;
+            std::vector<std::string>            tags;
 
-            std::vector<std::string>    rendergraph_parts;
+            std::vector<std::string>            rendergraph_parts;
 
-            InstancesFactory            instances_factory;
+            InstancesFactory                    instances_factory;
             
-            JS_OBJ(file, file_args, tags, rendergraph_parts, /*animator,*/ instances_factory);
+            JS_OBJ(file, file_string_args, tags, rendergraph_parts, instances_factory);
         };
 
         struct Scenegraph
