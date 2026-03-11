@@ -785,7 +785,7 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
                 }
             }
 
-            buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_string_args_1, generators);
+            buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_string_args_1, e.file_realvector3_args, generators);
             index++;
         }
 
@@ -810,7 +810,7 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
 
                 const auto instance_animator{ instance_animator_repeat.animator };
 
-                buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_string_args_2, generators);
+                buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_string_args_2, e.file_realvector3_args, generators);
                 index++;
             }
         }
@@ -824,6 +824,7 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
                                                                                     const std::string& p_parentEntityId, 
                                                                                     const mage::core::maths::Matrix p_perspective_projection,
                                                                                     const std::unordered_map<std::string, std::string> p_file_args,
+                                                                                    const std::vector<json::Real3Vector>& p_file_realvector3_args,
                                                                                     const std::unordered_map<std::string, std::unique_ptr<IValueGenerator>>& p_generators)
 {
     json::ScenegraphEntitiesCollection sgc;
@@ -949,13 +950,31 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
                 {
                     world_aspect.addComponent<transform::WorldPosition>("slider_output");
 
-                    SyncVariable x_slide_pos(SyncVariable::Type::POSITION, p_animator.helper_realvector3_args.at(0).x, SyncVariable::Direction::INC, 0.0);
+                    double speed_x;
+                    double speed_y;
+                    double speed_z;
+
+                    // if vector3 arg provided to file
+                    if (p_file_realvector3_args.size())
+                    {
+                        speed_x = p_file_realvector3_args.at(0).x;
+                        speed_y = p_file_realvector3_args.at(0).y;
+                        speed_z = p_file_realvector3_args.at(0).z;
+                    }
+                    else
+                    {
+                        speed_x = p_animator.helper_realvector3_args.at(0).x;
+                        speed_y = p_animator.helper_realvector3_args.at(0).y;
+                        speed_z = p_animator.helper_realvector3_args.at(0).z;
+                    }
+
+                    SyncVariable x_slide_pos(SyncVariable::Type::POSITION, speed_x, SyncVariable::Direction::INC, 0.0);
                     x_slide_pos.state = SyncVariable::State::OFF;
 
-                    SyncVariable y_slide_pos(SyncVariable::Type::POSITION, p_animator.helper_realvector3_args.at(0).y, SyncVariable::Direction::INC, 0.0);
+                    SyncVariable y_slide_pos(SyncVariable::Type::POSITION, speed_y, SyncVariable::Direction::INC, 0.0);
                     y_slide_pos.state = SyncVariable::State::OFF;
 
-                    SyncVariable z_slide_pos(SyncVariable::Type::POSITION, p_animator.helper_realvector3_args.at(0).z, SyncVariable::Direction::INC, 0.0);
+                    SyncVariable z_slide_pos(SyncVariable::Type::POSITION, speed_z, SyncVariable::Direction::INC, 0.0);
                     z_slide_pos.state = SyncVariable::State::OFF;
 
                     time_aspect.addComponent<SyncVariable>("x_slide_pos", x_slide_pos);
