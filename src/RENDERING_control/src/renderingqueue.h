@@ -75,8 +75,6 @@ namespace mage
 
 			bool                projected_z_neg{ false }; // for objects that takes their pos from projected position (some 2d sprites...)
 
-			std::function<void()> setup{ [] {} };
-			std::function<void()> teardown{ [] {} };
 
 			//shaders params mapping description
 			// dataCloud variable id / shader argument section id in shader json
@@ -101,9 +99,6 @@ namespace mage
 			core::maths::Matrix* world{ nullptr };
 
 			bool* projected_z_neg{ nullptr };
-
-			std::function<void()>* setup{ nullptr };
-			std::function<void()>* teardown{ nullptr };
 			
 			// shaders generic params to apply
 			// dataCloud variable id/shader argument

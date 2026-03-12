@@ -651,9 +651,6 @@ static rendering::Queue::TriangleMeshePayload build_TriangleMesheAndTexturesPayl
 
 			trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
 
-			trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
-			trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
-
 			connect_shaders_args(p_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, p_vshader, p_pshader);
 
 			/////////////// HERE manage vector array for shaders
@@ -701,8 +698,6 @@ static rendering::Queue::TriangleMeshePayload build_TriangleMesheAndTexturesPayl
 			trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
 			trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
 			trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
-			trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
-			trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
 
 			connect_shaders_args(p_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, p_vshader, p_pshader);
 
@@ -745,8 +740,6 @@ static rendering::Queue::LineMeshePayload build_LineMeshePayload(const std::vect
 		rendering::QueueDrawingControl linesQueueDrawingControl;
 		linesQueueDrawingControl.owner_entity_id = linesDrawingControl.owner_entity_id;
 		linesQueueDrawingControl.world = &linesDrawingControl.world;
-		linesQueueDrawingControl.setup = &linesDrawingControl.setup;
-		linesQueueDrawingControl.teardown = &linesDrawingControl.teardown;
 
 		connect_shaders_args(p_localLogger, linesDrawingControl, linesQueueDrawingControl, p_vshader, p_pshader);
 
@@ -801,20 +794,6 @@ rendering::Queue::RenderStatePayload build_RenderStatePayloadWithTriangleMeshePa
 
 	return renderStatePayload;
 }
-
-//static rendering::Queue::PixelShaderPayload build_pixelShaderPayload(mage::core::logger::Sink& p_localLogger, 
-//																		const std::vector<mage::rendering::RenderState>& p_rs_list, 
-//																		const rendering::Queue::RenderStatePayload& p_renderStatePayload)
-//{
-//	rendering::Queue::PixelShaderPayload pixelShaderPayload;
-//
-//	const auto rs_id{ build_rs_list_id(p_rs_list) };
-//	pixelShaderPayload.list[rs_id] = p_renderStatePayload;
-//
-//	_MAGE_DEBUG(p_localLogger, "build new PixelShaderPayload with renderstate list id " + rs_id)
-//
-//	return pixelShaderPayload;
-//}
 
 void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, const mage::core::ComponentContainer& p_resourceAspect,
 												const mage::core::ComponentContainer& p_renderingAspect, 
@@ -1081,8 +1060,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 											rendering::QueueDrawingControl linesQueueDrawingControl;
 											linesQueueDrawingControl.owner_entity_id = linesDrawingControl.owner_entity_id;
 											linesQueueDrawingControl.world = &linesDrawingControl.world;
-											linesQueueDrawingControl.setup = &linesDrawingControl.setup;
-											linesQueueDrawingControl.teardown = &linesDrawingControl.teardown;
 
 											connect_shaders_args(m_localLogger, linesDrawingControl, linesQueueDrawingControl, vshader, pshader);
 
@@ -1141,8 +1118,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 												trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
 												trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
 												trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
-												trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
-												trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
 												connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
 												/////////////// HERE manage vector array for shaders
 												trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
@@ -1192,9 +1167,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 													trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
 													trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
 													trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
-													trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
-													trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
-
 													connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
 													/////////////// HERE manage vector array for shaders
 													trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
@@ -1239,9 +1211,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 													trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
 													trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
 													trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
-													trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
-													trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
-
 													connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
 													/////////////// HERE manage vector array for shaders
 													trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
@@ -1303,9 +1272,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 												trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
 												trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
 												trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
-												trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
-												trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
-
 												connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
 												/////////////// HERE manage vector array for shaders
 												trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
@@ -1355,9 +1321,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 													trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
 													trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
 													trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
-													trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
-													trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
-
 													connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
 													/////////////// HERE manage vector array for shaders
 													trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
@@ -1402,9 +1365,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 													trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
 													trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
 													trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
-													trianglesQueueDrawingControl.setup = &trianglesDrawingControl.setup;
-													trianglesQueueDrawingControl.teardown = &trianglesDrawingControl.teardown;
-
 													connect_shaders_args(m_localLogger, trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
 													/////////////// HERE manage vector array for shaders
 													trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();

@@ -689,10 +689,6 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 							{
 								if (*tdc.second.draw)
 								{
-									//////
-									const auto setup_func{ *tdc.second.setup };
-									setup_func();
-
 									////// Apply shaders params
 
 									for (const auto& e : tdc.second.vshaders_map_cnx)
@@ -755,11 +751,6 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 									{
 										d3dimpl->drawTriangleMeshe(*tdc.second.world, current_mainview_view, current_mainview_proj, current_secondaryiew_view, current_secondaryview_proj);
 									}
-
-									//////
-
-									const auto teardown_func{ *tdc.second.setup };
-									teardown_func();
 								}
 							}
 						}
@@ -794,9 +785,6 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 							{
 								if (*tdc.second.draw)
 								{
-									//////
-									const auto setup_func{ *tdc.second.setup };
-									setup_func();
 
 									////// Apply shaders params
 
@@ -861,9 +849,6 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 										d3dimpl->drawTriangleMeshe(*tdc.second.world, current_mainview_view, current_mainview_proj, current_secondaryiew_view, current_secondaryview_proj);
 									}
 
-									//////
-									const auto teardown_func{ *tdc.second.setup };
-									teardown_func();
 								}
 							}
 						}
@@ -888,10 +873,6 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 						{
 							if (*ldc.second.draw)
 							{
-								//////
-								const auto setup_func{ *ldc.second.setup };
-								setup_func();
-
 								////// Apply shaders params
 
 								for (const auto& e : ldc.second.vshaders_map_cnx)
@@ -921,9 +902,6 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 								//////
 								d3dimpl->drawLineMeshe(*ldc.second.world, current_mainview_view, current_mainview_proj);
 
-								//////
-								const auto teardown_func{ *ldc.second.setup };
-								teardown_func();
 							}
 						}
 					}
