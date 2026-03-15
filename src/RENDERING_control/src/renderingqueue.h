@@ -114,6 +114,70 @@ namespace mage
 			bool* draw{ nullptr };
 		};
 
+		
+
+		struct QueueTrianglesDrawingControl
+		{
+		public:
+			QueueTrianglesDrawingControl() = default;
+			~QueueTrianglesDrawingControl() = default;
+
+			// meshe to set
+			std::string						meshe_id;
+
+			// textures stages to set
+
+			std::map<size_t, std::string>	textures; // stage/texture id
+
+			// transformations to apply;
+			core::maths::Matrix* world{ nullptr };
+
+			bool* projected_z_neg{ nullptr };
+
+			// shaders generic params to apply
+			// dataCloud variable id/shader argument
+			std::vector<std::pair<std::string, mage::Shader::GenericArgument>>	vshaders_map_cnx; // computed from vshaders_map and the queue current vshader
+			std::vector<std::pair<std::string, mage::Shader::GenericArgument>>	pshaders_map_cnx; // computed from pshaders_map and the queue current pshader
+
+			// shaders vector arrays to apply
+			const std::vector<mage::Shader::VectorArrayArgument>* vshaders_vector_array{ nullptr };
+			const std::vector<mage::Shader::VectorArrayArgument>* pshaders_vector_array{ nullptr };
+
+			std::string owner_entity_id;
+
+			bool* draw{ nullptr };
+		};
+
+		// TO BE CONTINUED
+
+		struct QueueLinesDrawingControl
+		{
+			QueueLinesDrawingControl() = default;
+			~QueueLinesDrawingControl() = default;
+
+			// meshe to set
+			std::string						meshe_id;
+
+			// transformations to apply;
+			core::maths::Matrix* world{ nullptr };
+
+			bool* projected_z_neg{ nullptr };
+
+			// shaders generic params to apply
+			// dataCloud variable id/shader argument
+			std::vector<std::pair<std::string, mage::Shader::GenericArgument>>	vshaders_map_cnx; // computed from vshaders_map and the queue current vshader
+			std::vector<std::pair<std::string, mage::Shader::GenericArgument>>	pshaders_map_cnx; // computed from pshaders_map and the queue current pshader
+
+			// shaders vector arrays to apply
+			const std::vector<mage::Shader::VectorArrayArgument>* vshaders_vector_array{ nullptr };
+			const std::vector<mage::Shader::VectorArrayArgument>* pshaders_vector_array{ nullptr };
+
+			std::string owner_entity_id;
+
+			bool* draw{ nullptr };
+		};
+
+
 		struct Queue
 		{
 		public:
