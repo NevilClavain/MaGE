@@ -671,104 +671,26 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 
 					///////////// TriangleMeshes BEGIN
 
-					if (renderStatesInfo.second.trianglemeshes_list.size() > 0)
+					
+					if (renderStatesInfo.second.triangles_dc_list.size() > 0)
 					{
 						d3dimpl->setTriangleListTopology();
 					}
 
-					for (const auto& triangleMesheInfo : renderStatesInfo.second.trianglemeshes_list)
+					for (const auto& triangleMesheInfo : renderStatesInfo.second.triangles_dc_list)
 					{
-						const auto& triangleMesheId{ triangleMesheInfo.first };
-						d3dimpl->setTriangleMeshe(triangleMesheId);
+						const mage::rendering::QueueTrianglesDrawingControl tdc{ triangleMesheInfo.second };
 
-						// nodes without textures
+						if (*tdc.draw)
 						{
-							const auto& triangleQueueDrawingControls{ triangleMesheInfo.second.drawing_list };
+							d3dimpl->setTriangleMeshe(tdc.meshe_id);
 
-							for (const auto& tdc : triangleQueueDrawingControls)
-							{
-								if (*tdc.second.draw)
-								{
-									////// Apply shaders params
-
-									for (const auto& e : tdc.second.vshaders_map_cnx)
-									{
-										const auto& datacloud_data_id{ e.first };
-										const auto& shader_param{ e.second };
-
-										if ("Real4Vector" == shader_param.argument_type)
-										{
-											const maths::Real4Vector rvector{ { dataCloud->readDataValue<maths::Real4Vector>(datacloud_data_id) } };
-											d3dimpl->setVertexshaderConstantsVec(shader_param.shader_register, rvector);
-										}
-									}
-
-									for (const auto& e : tdc.second.pshaders_map_cnx)
-									{
-										const auto& datacloud_data_id{ e.first };
-										const auto& shader_param{ e.second };
-
-										if ("Real4Vector" == shader_param.argument_type)
-										{
-											const maths::Real4Vector rvector{ { dataCloud->readDataValue<maths::Real4Vector>(datacloud_data_id) } };
-											d3dimpl->setPixelshaderConstantsVec(shader_param.shader_register, rvector);
-										}
-									}
-
-									if (tdc.second.vshaders_vector_array)
-									{
-										for (int i = 0; i < tdc.second.vshaders_vector_array->size(); i++)
-										{
-											const mage::Shader::VectorArrayArgument& arg{ tdc.second.vshaders_vector_array->at(i) };
-											int curr_register{ arg.start_shader_register };
-
-											for (int j = 0; j < arg.array.size(); j++)
-											{
-												d3dimpl->setVertexshaderConstantsVec(curr_register, arg.array[j]);
-												curr_register++;
-											}
-										}
-									}
-
-									if (tdc.second.pshaders_vector_array)
-									{
-										for (int i = 0; i < tdc.second.pshaders_vector_array->size(); i++)
-										{
-											const mage::Shader::VectorArrayArgument& arg{ tdc.second.pshaders_vector_array->at(i) };
-											int curr_register{ arg.start_shader_register };
-
-											for (int j = 0; j < arg.array.size(); j++)
-											{
-												d3dimpl->setPixelshaderConstantsVec(curr_register, arg.array[j]);
-												curr_register++;
-											}
-										}
-									}
-
-									//////
-
-									if (!(*tdc.second.projected_z_neg))
-									{
-										d3dimpl->drawTriangleMeshe(*tdc.second.world, current_mainview_view, current_mainview_proj, current_secondaryiew_view, current_secondaryview_proj);
-									}
-								}
-							}
-						}
-
-						// nodes with textures
-						const auto& textures_set_list{ triangleMesheInfo.second.textures_set_list };
-
-						for (const auto& textures_set_entry : textures_set_list)
-						{
-							// Set textures stages
-
-							const auto& textures_set{ textures_set_entry.second };
 							for (int i = 0; i < mage::nbUVCoordsPerVertex; i++)
 							{
-								if (textures_set.textures.count(i))
+								if (tdc.textures.count(i))
 								{
 									// texture stage defined with an id
-									const auto& texture_id{ textures_set.textures.at(i) };
+									const auto& texture_id{ tdc.textures.at(i) };
 									d3dimpl->bindTextureStage(texture_id, i);
 								}
 								else
@@ -777,79 +699,67 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 								}
 							}
 
-							/////
+							////// Apply shaders params
 
-							const auto& triangleQueueDrawingControls{ textures_set_entry.second.drawing_list };
-
-							for (const auto& tdc : triangleQueueDrawingControls)
+							for (const auto& e : tdc.vshaders_map_cnx)
 							{
-								if (*tdc.second.draw)
+								const auto& datacloud_data_id{ e.first };
+								const auto& shader_param{ e.second };
+
+								if ("Real4Vector" == shader_param.argument_type)
 								{
-
-									////// Apply shaders params
-
-									for (const auto& e : tdc.second.vshaders_map_cnx)
-									{
-										const auto& datacloud_data_id{ e.first };
-										const auto& shader_param{ e.second };
-
-										if ("Real4Vector" == shader_param.argument_type)
-										{
-											const maths::Real4Vector rvector{ { dataCloud->readDataValue<maths::Real4Vector>(datacloud_data_id) } };
-											d3dimpl->setVertexshaderConstantsVec(shader_param.shader_register, rvector);
-										}
-									}
-
-									for (const auto& e : tdc.second.pshaders_map_cnx)
-									{
-										const auto& datacloud_data_id{ e.first };
-										const auto& shader_param{ e.second };
-
-										if ("Real4Vector" == shader_param.argument_type)
-										{
-											const maths::Real4Vector rvector{ { dataCloud->readDataValue<maths::Real4Vector>(datacloud_data_id) } };
-											d3dimpl->setPixelshaderConstantsVec(shader_param.shader_register, rvector);
-										}
-									}
-
-									if (tdc.second.vshaders_vector_array)
-									{
-										for (int i = 0; i < tdc.second.vshaders_vector_array->size(); i++)
-										{
-											const mage::Shader::VectorArrayArgument& arg{ tdc.second.vshaders_vector_array->at(i) };
-											int curr_register{ arg.start_shader_register };
-
-											for (int j = 0; j < arg.array.size(); j++)
-											{
-												d3dimpl->setVertexshaderConstantsVec(curr_register, arg.array[j]);
-												curr_register++;
-											}
-										}
-									}
-
-									if (tdc.second.pshaders_vector_array)
-									{
-										for (int i = 0; i < tdc.second.pshaders_vector_array->size(); i++)
-										{
-											const mage::Shader::VectorArrayArgument& arg{ tdc.second.pshaders_vector_array->at(i) };
-											int curr_register{ arg.start_shader_register };
-
-											for (int j = 0; j < arg.array.size(); j++)
-											{
-												d3dimpl->setPixelshaderConstantsVec(curr_register, arg.array[j]);
-												curr_register++;
-											}
-										}
-									}
-
-									//////
-
-									if (!(*tdc.second.projected_z_neg))
-									{
-										d3dimpl->drawTriangleMeshe(*tdc.second.world, current_mainview_view, current_mainview_proj, current_secondaryiew_view, current_secondaryview_proj);
-									}
-
+									const maths::Real4Vector rvector{ { dataCloud->readDataValue<maths::Real4Vector>(datacloud_data_id) } };
+									d3dimpl->setVertexshaderConstantsVec(shader_param.shader_register, rvector);
 								}
+							}
+
+							for (const auto& e : tdc.pshaders_map_cnx)
+							{
+								const auto& datacloud_data_id{ e.first };
+								const auto& shader_param{ e.second };
+
+								if ("Real4Vector" == shader_param.argument_type)
+								{
+									const maths::Real4Vector rvector{ { dataCloud->readDataValue<maths::Real4Vector>(datacloud_data_id) } };
+									d3dimpl->setPixelshaderConstantsVec(shader_param.shader_register, rvector);
+								}
+							}
+
+							if (tdc.vshaders_vector_array)
+							{
+								for (int i = 0; i < tdc.vshaders_vector_array->size(); i++)
+								{
+									const mage::Shader::VectorArrayArgument& arg{ tdc.vshaders_vector_array->at(i) };
+									int curr_register{ arg.start_shader_register };
+
+									for (int j = 0; j < arg.array.size(); j++)
+									{
+										d3dimpl->setVertexshaderConstantsVec(curr_register, arg.array[j]);
+										curr_register++;
+									}
+								}
+							}
+
+							if (tdc.pshaders_vector_array)
+							{
+								for (int i = 0; i < tdc.pshaders_vector_array->size(); i++)
+								{
+									const mage::Shader::VectorArrayArgument& arg{ tdc.pshaders_vector_array->at(i) };
+									int curr_register{ arg.start_shader_register };
+
+									for (int j = 0; j < arg.array.size(); j++)
+									{
+										d3dimpl->setPixelshaderConstantsVec(curr_register, arg.array[j]);
+										curr_register++;
+									}
+								}
+							}
+
+							//////
+
+							if (!(*tdc.projected_z_neg))
+							{
+								d3dimpl->drawTriangleMeshe(*tdc.world, current_mainview_view, current_mainview_proj, current_secondaryiew_view, current_secondaryview_proj);
 							}
 						}
 					}
@@ -858,51 +768,46 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 
 					///////////// LineMeshes BEGIN
 
-					if (renderStatesInfo.second.linemeshes_list.size() > 0)
+					if (renderStatesInfo.second.lines_dc_list.size() > 0)
 					{
 						d3dimpl->setLineListTopology();
 					}
 
-					for (const auto& lineMesheInfo : renderStatesInfo.second.linemeshes_list)
-					{
-						const auto& lineMesheId{ lineMesheInfo.first };
-						d3dimpl->setLineMeshe(lineMesheId);
+					for (const auto& lineMesheInfo : renderStatesInfo.second.lines_dc_list)
+					{						
+						const mage::rendering::QueueLinesDrawingControl ldc{ lineMesheInfo.second };
 
-						const auto& lineDrawingControls{ lineMesheInfo.second.drawing_list };
-						for (const auto& ldc : lineDrawingControls)
+						if (*(ldc.draw))
 						{
-							if (*ldc.second.draw)
+							d3dimpl->setLineMeshe(ldc.meshe_id);
+
+							////// Apply shaders params
+
+							for (const auto& e : ldc.vshaders_map_cnx)
 							{
-								////// Apply shaders params
+								const auto& datacloud_data_id{ e.first };
+								const auto& shader_param{ e.second };
 
-								for (const auto& e : ldc.second.vshaders_map_cnx)
+								if ("Real4Vector" == shader_param.argument_type)
 								{
-									const auto& datacloud_data_id{ e.first };
-									const auto& shader_param{ e.second };
-
-									if ("Real4Vector" == shader_param.argument_type)
-									{
-										const maths::Real4Vector rvector{ { dataCloud->readDataValue<maths::Real4Vector>(datacloud_data_id) } };
-										d3dimpl->setVertexshaderConstantsVec(shader_param.shader_register, rvector);
-									}
+									const maths::Real4Vector rvector{ { dataCloud->readDataValue<maths::Real4Vector>(datacloud_data_id) } };
+									d3dimpl->setVertexshaderConstantsVec(shader_param.shader_register, rvector);
 								}
-
-								for (const auto& e : ldc.second.pshaders_map_cnx)
-								{
-									const auto& datacloud_data_id{ e.first };
-									const auto& shader_param{ e.second };
-
-									if ("Real4Vector" == shader_param.argument_type)
-									{
-										const maths::Real4Vector rvector{ { dataCloud->readDataValue<maths::Real4Vector>(datacloud_data_id) } };
-										d3dimpl->setPixelshaderConstantsVec(shader_param.shader_register, rvector);
-									}
-								}
-
-								//////
-								d3dimpl->drawLineMeshe(*ldc.second.world, current_mainview_view, current_mainview_proj);
-
 							}
+
+							for (const auto& e : ldc.pshaders_map_cnx)
+							{
+								const auto& datacloud_data_id{ e.first };
+								const auto& shader_param{ e.second };
+
+								if ("Real4Vector" == shader_param.argument_type)
+								{
+									const maths::Real4Vector rvector{ { dataCloud->readDataValue<maths::Real4Vector>(datacloud_data_id) } };
+									d3dimpl->setPixelshaderConstantsVec(shader_param.shader_register, rvector);
+								}
+							}
+
+							d3dimpl->drawLineMeshe(*ldc.world, current_mainview_view, current_mainview_proj);
 						}
 					}
 

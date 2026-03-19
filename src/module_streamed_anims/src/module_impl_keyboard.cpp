@@ -225,7 +225,8 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
 		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
 
-		renderingQueueSystemInstance->requestRenderingqueueLogging("TextureChannelScene_Entity");
+		//renderingQueueSystemInstance->requestRenderingqueueLogging("TextureChannelScene_Entity");
+		renderingQueueSystemInstance->requestRenderingqueueLogging("screenRendering_Filter_DirectForward_Queue_Entity");
 		
 
 		//auto sceneStreamerSystem{ SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot) };

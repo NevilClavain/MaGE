@@ -89,17 +89,38 @@ namespace mage
 		};
 
 		/// 'DrawingControl' EQUIVALENT IN BUILT RENDERING QUEUE
+		//struct QueueDrawingControl
+		//{
+		//public:
+		//	QueueDrawingControl() = default;
+		//	~QueueDrawingControl() = default;
+
+		//	// transformations to apply;
+		//	core::maths::Matrix* world{ nullptr };
+
+		//	bool* projected_z_neg{ nullptr };
+		//	
+		//	// shaders generic params to apply
+		//	// dataCloud variable id/shader argument
+		//	std::vector<std::pair<std::string, mage::Shader::GenericArgument>>	vshaders_map_cnx; // computed from vshaders_map and the queue current vshader
+		//	std::vector<std::pair<std::string, mage::Shader::GenericArgument>>	pshaders_map_cnx; // computed from pshaders_map and the queue current pshader
+
+		//	// shaders vector arrays to apply
+		//	const std::vector<mage::Shader::VectorArrayArgument>* vshaders_vector_array{ nullptr };
+		//	const std::vector<mage::Shader::VectorArrayArgument>* pshaders_vector_array{ nullptr };
+		//
+		//	std::string owner_entity_id;
+
+		//	bool* draw{ nullptr };
+		//};
+
 		struct QueueDrawingControl
 		{
-		public:
-			QueueDrawingControl() = default;
-			~QueueDrawingControl() = default;
-
 			// transformations to apply;
 			core::maths::Matrix* world{ nullptr };
 
 			bool* projected_z_neg{ nullptr };
-			
+
 			// shaders generic params to apply
 			// dataCloud variable id/shader argument
 			std::vector<std::pair<std::string, mage::Shader::GenericArgument>>	vshaders_map_cnx; // computed from vshaders_map and the queue current vshader
@@ -108,19 +129,16 @@ namespace mage
 			// shaders vector arrays to apply
 			const std::vector<mage::Shader::VectorArrayArgument>* vshaders_vector_array{ nullptr };
 			const std::vector<mage::Shader::VectorArrayArgument>* pshaders_vector_array{ nullptr };
-		
+
 			std::string owner_entity_id;
 
 			bool* draw{ nullptr };
 		};
 
-		
 
-		struct QueueTrianglesDrawingControl
+		struct QueueTrianglesDrawingControl : public QueueDrawingControl
 		{
 		public:
-			QueueTrianglesDrawingControl() = default;
-			~QueueTrianglesDrawingControl() = default;
 
 			// meshe to set
 			std::string						meshe_id;
@@ -128,53 +146,12 @@ namespace mage
 			// textures stages to set
 
 			std::map<size_t, std::string>	textures; // stage/texture id
-
-			// transformations to apply;
-			core::maths::Matrix* world{ nullptr };
-
-			bool* projected_z_neg{ nullptr };
-
-			// shaders generic params to apply
-			// dataCloud variable id/shader argument
-			std::vector<std::pair<std::string, mage::Shader::GenericArgument>>	vshaders_map_cnx; // computed from vshaders_map and the queue current vshader
-			std::vector<std::pair<std::string, mage::Shader::GenericArgument>>	pshaders_map_cnx; // computed from pshaders_map and the queue current pshader
-
-			// shaders vector arrays to apply
-			const std::vector<mage::Shader::VectorArrayArgument>* vshaders_vector_array{ nullptr };
-			const std::vector<mage::Shader::VectorArrayArgument>* pshaders_vector_array{ nullptr };
-
-			std::string owner_entity_id;
-
-			bool* draw{ nullptr };
 		};
 
-		// TO BE CONTINUED
-
-		struct QueueLinesDrawingControl
+		struct QueueLinesDrawingControl : public QueueDrawingControl
 		{
-			QueueLinesDrawingControl() = default;
-			~QueueLinesDrawingControl() = default;
-
 			// meshe to set
 			std::string						meshe_id;
-
-			// transformations to apply;
-			core::maths::Matrix* world{ nullptr };
-
-			bool* projected_z_neg{ nullptr };
-
-			// shaders generic params to apply
-			// dataCloud variable id/shader argument
-			std::vector<std::pair<std::string, mage::Shader::GenericArgument>>	vshaders_map_cnx; // computed from vshaders_map and the queue current vshader
-			std::vector<std::pair<std::string, mage::Shader::GenericArgument>>	pshaders_map_cnx; // computed from pshaders_map and the queue current pshader
-
-			// shaders vector arrays to apply
-			const std::vector<mage::Shader::VectorArrayArgument>* vshaders_vector_array{ nullptr };
-			const std::vector<mage::Shader::VectorArrayArgument>* pshaders_vector_array{ nullptr };
-
-			std::string owner_entity_id;
-
-			bool* draw{ nullptr };
 		};
 
 
@@ -208,30 +185,30 @@ namespace mage
 
 			/////////////////////////////////////////////////////////////////////////////////////////
 
-			struct TextureSetPayload
-			{
-				std::map<size_t, std::string>						 textures; // stage/texture id
+			//struct TextureSetPayload
+			//{
+			//	std::map<size_t, std::string>						 textures; // stage/texture id
 
-				// key = entity id
-				std::unordered_map<std::string, QueueDrawingControl> drawing_list;
-			};
+			//	// key = entity id
+			//	std::unordered_map<std::string, QueueDrawingControl> drawing_list;
+			//};
 			
-			struct TriangleMeshePayload
-			{
-				// drawing without textures
-				// key = entity id
-				std::unordered_map<std::string, QueueDrawingControl> drawing_list;
+			//struct TriangleMeshePayload
+			//{
+			//	// drawing without textures
+			//	// key = entity id
+			//	std::unordered_map<std::string, QueueDrawingControl> drawing_list;
 
-				// drawing under textures set
-				// key = texture set signatures : "<name>.<stagenumber>/..."
-				std::unordered_map<std::string, TextureSetPayload> textures_set_list;
-			};
+			//	// drawing under textures set
+			//	// key = texture set signatures : "<name>.<stagenumber>/..."
+			//	std::unordered_map<std::string, TextureSetPayload> textures_set_list;
+			//};
 
-			struct LineMeshePayload
-			{
-				// key = entity id
-				std::unordered_map<std::string, QueueDrawingControl> drawing_list;
-			};
+			//struct LineMeshePayload
+			//{
+			//	// key = entity id
+			//	std::unordered_map<std::string, QueueDrawingControl> drawing_list;
+			//};
 
 			struct RenderStatePayload
 			{
@@ -239,10 +216,17 @@ namespace mage
 				std::vector<RenderState>								description;
 
 				// key = triangleMeshe D3D11 id
-				std::unordered_map<std::string, TriangleMeshePayload>	trianglemeshes_list;
+				//std::unordered_map<std::string, TriangleMeshePayload>	trianglemeshes_list;
 
 				// key = lineMeshe D3D11 id
-				std::unordered_map<std::string, LineMeshePayload>		linemeshes_list;
+				//std::unordered_map<std::string, LineMeshePayload>		linemeshes_list;
+
+				// key = QueueTrianglesDrawingControl unique id
+				std::unordered_map<std::string, QueueTrianglesDrawingControl>	triangles_dc_list;
+
+				// key = QueueLinesDrawingControl unique id
+				std::unordered_map<std::string, QueueLinesDrawingControl>		lines_dc_list;
+
 			};
 
 			struct ShadersPayload
