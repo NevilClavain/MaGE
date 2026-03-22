@@ -1082,7 +1082,7 @@ void D3D11System::handleTrianglemesheCreation(TriangleMeshe& p_tm)
 
 	m_runner.m_mailbox_in.push(task);
 }
-
+/*
 void D3D11System::handleTrianglemesheRelease(TriangleMeshe& p_tm)
 {
 	_MAGE_DEBUG(d3dimpl->logger(), std::string("Handle triangle meshe release ") + p_tm.getSourceID());
@@ -1112,7 +1112,7 @@ void D3D11System::handleTrianglemesheRelease(TriangleMeshe& p_tm)
 
 	m_runner.m_mailbox_in.push(task);
 }
-
+*/
 void D3D11System::handleTextureCreation(Texture& p_texture)
 {
 	_MAGE_DEBUG(d3dimpl->logger(), std::string("Handle texture creation ") + p_texture.m_source_id);

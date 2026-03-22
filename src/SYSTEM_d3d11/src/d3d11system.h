@@ -106,7 +106,7 @@ namespace mage
         void    handleLinemesheRelease(LineMeshe& p_lm);
 
         void    handleTrianglemesheCreation(TriangleMeshe& p_tm);
-        void    handleTrianglemesheRelease(TriangleMeshe& p_tm);
+        //void    handleTrianglemesheRelease(TriangleMeshe& p_tm);
 
         void    handleTextureCreation(Texture& p_texture);
 

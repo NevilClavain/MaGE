@@ -179,7 +179,7 @@ public:
 
     bool createTriangleMeshe(const mage::TriangleMeshe& p_tm);
     void setTriangleMeshe(const std::string& p_resource_uid);
-    void destroyTriangleMeshe(const std::string& p_resource_uid);
+    //void destroyTriangleMeshe(const std::string& p_resource_uid);
 
     void forceCurrentMeshe();
 

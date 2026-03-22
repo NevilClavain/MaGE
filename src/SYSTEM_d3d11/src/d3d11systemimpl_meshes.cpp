@@ -315,6 +315,7 @@ void D3D11SystemImpl::setTriangleMeshe(const std::string& p_resource_uid)
     }
 }
 
+/*
 void D3D11SystemImpl::destroyTriangleMeshe(const std::string& p_resource_uid)
 {
     if (!m_triangles.count(p_resource_uid))
@@ -329,6 +330,7 @@ void D3D11SystemImpl::destroyTriangleMeshe(const std::string& p_resource_uid)
     m_triangles.erase(p_resource_uid);
     _MAGE_DEBUG(m_localLogger, "Triangle meshe release SUCCESS : " + p_resource_uid);
 }
+*/
 
 
 void D3D11SystemImpl::forceCurrentMeshe()
