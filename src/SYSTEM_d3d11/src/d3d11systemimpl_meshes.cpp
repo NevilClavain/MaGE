@@ -51,6 +51,7 @@ bool D3D11SystemImpl::createLineMeshe(const mage::LineMeshe& p_lm)
 
         ID3D11Buffer* vertex_buffer{ nullptr };
         ID3D11Buffer* index_buffer{ nullptr };
+        ID3D11Buffer* transformer_buffer{ nullptr };
 
         {
             // vertex buffer creation
@@ -127,7 +128,23 @@ bool D3D11SystemImpl::createLineMeshe(const mage::LineMeshe& p_lm)
             delete[] t;
         }
 
-        m_lines[resource_uid] = { vertex_buffer, index_buffer, nb_vertices, nb_lines };
+        // TRANSFORMERS buffer creation
+        {
+            D3D11_BUFFER_DESC transformersBufferDesc = { 0 };
+
+            transformersBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+
+            // 1 -> TEMPORAIRE !
+            transformersBufferDesc.ByteWidth = 1 * sizeof(d3d11transformers);
+            transformersBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+            transformersBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+            transformersBufferDesc.MiscFlags = 0;
+
+            hRes = m_lpd3ddevice->CreateBuffer(&transformersBufferDesc, nullptr, &transformer_buffer);
+            D3D11_CHECK(CreateBuffer)
+        }
+
+        m_lines[resource_uid] = { vertex_buffer, transformer_buffer, index_buffer, nb_vertices, nb_lines };
     }
 
     _MAGE_DEBUG(m_localLogger, "Line meshe loading SUCCESS : " + resource_uid);
@@ -145,10 +162,11 @@ void D3D11SystemImpl::setLineMeshe(const std::string& p_md5)
     {
         const auto lmData{ m_lines.at(p_md5) };
 
-        const UINT stride{ sizeof(d3d11vertex) };
-        const UINT offset = 0;
+        UINT strides[2] = { sizeof(d3d11vertex), sizeof(d3d11transformers) };
+        UINT offsets[2] = { 0, 0 };
+        ID3D11Buffer* buffers[2] = { lmData.vertex_buffer, lmData.transforms_buffer };
+        m_lpd3ddevcontext->IASetVertexBuffers(0, 2, buffers, strides, offsets);
 
-        m_lpd3ddevcontext->IASetVertexBuffers(0, 1, &lmData.vertex_buffer, &stride, &offset);
         m_lpd3ddevcontext->IASetIndexBuffer(lmData.index_buffer, DXGI_FORMAT_R32_UINT, 0);
 
         m_next_nbvertices = lmData.nb_vertices;
@@ -194,6 +212,7 @@ bool D3D11SystemImpl::createTriangleMeshe(const mage::TriangleMeshe& p_tm)
 
         ID3D11Buffer* vertex_buffer{ nullptr };
         ID3D11Buffer* index_buffer{ nullptr };
+        ID3D11Buffer* transformer_buffer{ nullptr };
 
         {
             // vertex buffer creation
@@ -283,7 +302,23 @@ bool D3D11SystemImpl::createTriangleMeshe(const mage::TriangleMeshe& p_tm)
             delete[] t;
         }
 
-        m_triangles[resource_uid] = { vertex_buffer, index_buffer, nb_vertices, nb_triangles };
+        // TRANSFORMERS buffer creation
+        {
+            D3D11_BUFFER_DESC transformersBufferDesc = { 0 };
+
+            transformersBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+
+            // 1 -> TEMPORAIRE !
+            transformersBufferDesc.ByteWidth = 1 * sizeof(d3d11transformers);
+            transformersBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+            transformersBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+            transformersBufferDesc.MiscFlags = 0;
+
+            hRes = m_lpd3ddevice->CreateBuffer(&transformersBufferDesc, nullptr, &transformer_buffer);
+            D3D11_CHECK(CreateBuffer)
+        }
+
+        m_triangles[resource_uid] = { vertex_buffer, transformer_buffer, index_buffer, nb_vertices, nb_triangles };
     }
 
     _MAGE_DEBUG(m_localLogger, "Triangle meshe loading SUCCESS : " + resource_uid);
@@ -302,10 +337,14 @@ void D3D11SystemImpl::setTriangleMeshe(const std::string& p_resource_uid)
     {
         const auto tmData{ m_triangles.at(p_resource_uid) };
 
-        const UINT stride{ sizeof(d3d11vertex) };
-        const UINT offset = 0;
 
-        m_lpd3ddevcontext->IASetVertexBuffers(0, 1, &tmData.vertex_buffer, &stride, &offset);
+
+        UINT strides[2] = { sizeof(d3d11vertex), sizeof(d3d11transformers) };
+        UINT offsets[2] = { 0, 0 };
+        ID3D11Buffer* buffers[2] = { tmData.vertex_buffer, tmData.transforms_buffer };
+        m_lpd3ddevcontext->IASetVertexBuffers(0, 2, buffers, strides, offsets);
+
+
         m_lpd3ddevcontext->IASetIndexBuffer(tmData.index_buffer, DXGI_FORMAT_R32_UINT, 0);
 
         m_next_nbvertices = tmData.nb_vertices;
@@ -339,10 +378,11 @@ void D3D11SystemImpl::forceCurrentMeshe()
     {
         const auto tmData{ m_triangles.at(m_currentMeshe) };
 
-        const UINT stride{ sizeof(d3d11vertex) };
-        const UINT offset = 0;
+        UINT strides[2] = { sizeof(d3d11vertex), sizeof(d3d11transformers) };
+        UINT offsets[2] = { 0, 0 };
+        ID3D11Buffer* buffers[2] = { tmData.vertex_buffer, tmData.transforms_buffer };
+        m_lpd3ddevcontext->IASetVertexBuffers(0, 2, buffers, strides, offsets);
 
-        m_lpd3ddevcontext->IASetVertexBuffers(0, 1, &tmData.vertex_buffer, &stride, &offset);
         m_lpd3ddevcontext->IASetIndexBuffer(tmData.index_buffer, DXGI_FORMAT_R32_UINT, 0);
 
         m_next_nbvertices = tmData.nb_vertices;
@@ -352,10 +392,11 @@ void D3D11SystemImpl::forceCurrentMeshe()
     {
         const auto lmData{ m_lines.at(m_currentMeshe) };
 
-        const UINT stride{ sizeof(d3d11vertex) };
-        const UINT offset = 0;
+        UINT strides[2] = { sizeof(d3d11vertex), sizeof(d3d11transformers) };
+        UINT offsets[2] = { 0, 0 };
+        ID3D11Buffer* buffers[2] = { lmData.vertex_buffer, lmData.transforms_buffer };
+        m_lpd3ddevcontext->IASetVertexBuffers(0, 2, buffers, strides, offsets);
 
-        m_lpd3ddevcontext->IASetVertexBuffers(0, 1, &lmData.vertex_buffer, &stride, &offset);
         m_lpd3ddevcontext->IASetIndexBuffer(lmData.index_buffer, DXGI_FORMAT_R32_UINT, 0);
 
         m_next_nbvertices = lmData.nb_vertices;

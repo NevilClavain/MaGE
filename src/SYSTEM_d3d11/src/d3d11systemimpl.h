@@ -104,11 +104,6 @@ struct d3d11vertex
 struct d3d11transformers
 {
     DirectX::XMMATRIX world;
-    DirectX::XMMATRIX view;
-    DirectX::XMMATRIX proj;
-
-    DirectX::XMMATRIX view_secondary;
-    DirectX::XMMATRIX proj_secondary;
 };
 
 struct D3D10Include : public ID3D10Include
@@ -296,7 +291,9 @@ private:
     struct MesheData
     {
         ID3D11Buffer* vertex_buffer         { nullptr };
+        ID3D11Buffer* transforms_buffer     { nullptr };
         ID3D11Buffer* index_buffer          { nullptr };
+
         size_t        nb_vertices           { 0 };
         size_t        nb_primitives         { 0 };
     };
