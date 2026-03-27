@@ -759,6 +759,8 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 
 							if (!(*tdc.projected_z_neg))
 							{
+								d3dimpl->updateTriangleMesheTransformers(tdc.meshe_id);
+
 								d3dimpl->drawTriangleMeshe(*tdc.world, current_mainview_view, current_mainview_proj, current_secondaryiew_view, current_secondaryview_proj);
 							}
 						}
@@ -807,6 +809,7 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 								}
 							}
 
+							d3dimpl->updateLineMesheTransformers(ldc.meshe_id);
 							d3dimpl->drawLineMeshe(*ldc.world, current_mainview_view, current_mainview_proj);
 						}
 					}
@@ -1008,6 +1011,7 @@ void D3D11System::handleLinemesheCreation(LineMeshe& p_lm)
 	m_runner.m_mailbox_in.push(task);
 }
 
+/*
 void D3D11System::handleLinemesheRelease(LineMeshe& p_lm)
 {
 	_MAGE_DEBUG(d3dimpl->logger(), std::string("Handle line meshe release ") + p_lm.getSourceID());
@@ -1037,6 +1041,7 @@ void D3D11System::handleLinemesheRelease(LineMeshe& p_lm)
 
 	m_runner.m_mailbox_in.push(task);
 }
+*/
 
 void D3D11System::handleTrianglemesheCreation(TriangleMeshe& p_tm)
 {

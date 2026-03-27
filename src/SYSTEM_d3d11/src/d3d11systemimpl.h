@@ -170,10 +170,16 @@ public:
 
     bool createLineMeshe(const mage::LineMeshe& p_lm);
     void setLineMeshe(const std::string& p_resource_uid);
-    void destroyLineMeshe(const std::string& p_resource_uid);
+    bool updateLineMesheTransformers(const std::string& p_resource_uid);
+
+    //void destroyLineMeshe(const std::string& p_resource_uid);
 
     bool createTriangleMeshe(const mage::TriangleMeshe& p_tm);
+
     void setTriangleMeshe(const std::string& p_resource_uid);
+    bool updateTriangleMesheTransformers(const std::string& p_resource_uid);
+
+
     //void destroyTriangleMeshe(const std::string& p_resource_uid);
 
     void forceCurrentMeshe();

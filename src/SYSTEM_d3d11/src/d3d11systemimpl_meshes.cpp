@@ -176,20 +176,38 @@ void D3D11SystemImpl::setLineMeshe(const std::string& p_md5)
     }
 }
 
-void D3D11SystemImpl::destroyLineMeshe(const std::string& p_md5)
+bool D3D11SystemImpl::updateLineMesheTransformers(const std::string& p_resource_uid)
 {
-    if (!m_lines.count(p_md5))
+    DECLARE_D3D11ASSERT_VARS
+
+    if (!m_lines.count(p_resource_uid))
     {
-        _EXCEPTION("unknown line meshe :" + p_md5)
+        _EXCEPTION("unknown line meshes :" + p_resource_uid)
     }
-    const auto lmData{ m_lines.at(p_md5) };
 
-    lmData.vertex_buffer->Release();
-    lmData.index_buffer->Release();
+    const auto lmData{ m_lines.at(p_resource_uid) };
 
-    m_lines.erase(p_md5);
-    _MAGE_DEBUG(m_localLogger, "Line meshe release SUCCESS : " + p_md5);
+    D3D11_MAPPED_SUBRESOURCE mapped = {};
+    hRes = m_lpd3ddevcontext->Map(lmData.transforms_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+    D3D11_CHECK(Map)
+
+    m_lpd3ddevcontext->Unmap(lmData.transforms_buffer, 0);
 }
+
+//void D3D11SystemImpl::destroyLineMeshe(const std::string& p_md5)
+//{
+//    if (!m_lines.count(p_md5))
+//    {
+//        _EXCEPTION("unknown line meshe :" + p_md5)
+//    }
+//    const auto lmData{ m_lines.at(p_md5) };
+//
+//    lmData.vertex_buffer->Release();
+//    lmData.index_buffer->Release();
+//
+//    m_lines.erase(p_md5);
+//    _MAGE_DEBUG(m_localLogger, "Line meshe release SUCCESS : " + p_md5);
+//}
 
 bool D3D11SystemImpl::createTriangleMeshe(const mage::TriangleMeshe& p_tm)
 {
@@ -337,8 +355,6 @@ void D3D11SystemImpl::setTriangleMeshe(const std::string& p_resource_uid)
     {
         const auto tmData{ m_triangles.at(p_resource_uid) };
 
-
-
         UINT strides[2] = { sizeof(d3d11vertex), sizeof(d3d11transformers) };
         UINT offsets[2] = { 0, 0 };
         ID3D11Buffer* buffers[2] = { tmData.vertex_buffer, tmData.transforms_buffer };
@@ -352,6 +368,24 @@ void D3D11SystemImpl::setTriangleMeshe(const std::string& p_resource_uid)
 
         m_currentMeshe = p_resource_uid;
     }
+}
+
+bool D3D11SystemImpl::updateTriangleMesheTransformers(const std::string& p_resource_uid)
+{
+    DECLARE_D3D11ASSERT_VARS
+
+    if (!m_triangles.count(p_resource_uid))
+    {
+        _EXCEPTION("unknown triangle meshes :" + p_resource_uid)
+    }
+
+    const auto tmData{ m_triangles.at(p_resource_uid) };
+
+    D3D11_MAPPED_SUBRESOURCE mapped = {};
+    hRes = m_lpd3ddevcontext->Map(tmData.transforms_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+    D3D11_CHECK(Map)
+
+    m_lpd3ddevcontext->Unmap(tmData.transforms_buffer, 0);
 }
 
 /*
