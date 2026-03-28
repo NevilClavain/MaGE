@@ -103,7 +103,8 @@ struct d3d11vertex
 
 struct d3d11transformers
 {
-    DirectX::XMMATRIX world;
+    DirectX::XMMATRIX wvp;
+    DirectX::XMMATRIX w;
 };
 
 struct D3D10Include : public ID3D10Include
@@ -118,7 +119,7 @@ public:
 
 private:
     mage::core::FileContent<const char>*    m_fc{ nullptr };
-    const std::string                           m_basepath;
+    const std::string                       m_basepath;
     mage::core::logger::Sink&               m_logger;
 };
 
