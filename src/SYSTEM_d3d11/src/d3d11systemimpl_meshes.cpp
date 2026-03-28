@@ -176,7 +176,7 @@ void D3D11SystemImpl::setLineMeshe(const std::string& p_md5)
     }
 }
 
-bool D3D11SystemImpl::updateLineMesheTransformers(const std::string& p_resource_uid)
+bool D3D11SystemImpl::updateLineMesheTransformers(const std::string& p_resource_uid, const mage::core::maths::Matrix& p_wvp, const mage::core::maths::Matrix& p_w)
 {
     DECLARE_D3D11ASSERT_VARS
 
@@ -370,7 +370,7 @@ void D3D11SystemImpl::setTriangleMeshe(const std::string& p_resource_uid)
     }
 }
 
-bool D3D11SystemImpl::updateTriangleMesheTransformers(const std::string& p_resource_uid)
+bool D3D11SystemImpl::updateTriangleMesheTransformers(const std::string& p_resource_uid, const mage::core::maths::Matrix& p_wvp, const mage::core::maths::Matrix& p_w)
 {
     DECLARE_D3D11ASSERT_VARS
 
