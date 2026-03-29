@@ -214,7 +214,8 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 
 							// create cache md5 file
 							mage::core::FileContent<const char> shader_md5_content(shaderCacheDirectory + "/bc.md5");
-							const std::string shaderMD5{ p_shaderInfos.m_resource_uid };
+
+							const std::string shaderMD5{ p_shaderInfos.m_content_hash };
 							shader_md5_content.save(shaderMD5.c_str(), shaderMD5.length());
 
 							m_shadersCache_mutex.lock();
