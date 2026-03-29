@@ -103,8 +103,8 @@ struct d3d11vertex
 
 struct d3d11transformers
 {
-    DirectX::XMMATRIX wvp;
-    DirectX::XMMATRIX w;
+    DirectX::XMFLOAT4X4 wordlViewProj;
+    DirectX::XMFLOAT4X4 view;
 };
 
 struct D3D10Include : public ID3D10Include
@@ -171,14 +171,14 @@ public:
 
     bool createLineMeshe(const mage::LineMeshe& p_lm);
     void setLineMeshe(const std::string& p_resource_uid);
-    bool updateLineMesheTransformers(const std::string& p_resource_uid, const mage::core::maths::Matrix& p_wvp, const mage::core::maths::Matrix& p_w);
+    bool updateLineMesheTransformers(const std::string& p_resource_uid, const mage::core::maths::Matrix& p_wvp, const mage::core::maths::Matrix& p_view);
 
     //void destroyLineMeshe(const std::string& p_resource_uid);
 
     bool createTriangleMeshe(const mage::TriangleMeshe& p_tm);
 
     void setTriangleMeshe(const std::string& p_resource_uid);
-    bool updateTriangleMesheTransformers(const std::string& p_resource_uid, const mage::core::maths::Matrix& p_wvp, const mage::core::maths::Matrix& p_w);
+    bool updateTriangleMesheTransformers(const std::string& p_resource_uid, const mage::core::maths::Matrix& p_wvp, const mage::core::maths::Matrix& p_view);
 
 
     //void destroyTriangleMeshe(const std::string& p_resource_uid);
@@ -225,6 +225,8 @@ public:
     void setPixelshaderConstantsVec(int p_startreg, const mage::core::maths::Real4Vector& p_vec);
     void setVertexshaderConstantsMat(int p_startreg, const mage::core::maths::Matrix& p_mat);
     void setPixelshaderConstantsMat(int p_startreg, const mage::core::maths::Matrix& p_mat);
+
+    DirectX::XMFLOAT4X4 convertMatrixToXMFloat44(const mage::core::maths::Matrix& p_mat);
 
 
 

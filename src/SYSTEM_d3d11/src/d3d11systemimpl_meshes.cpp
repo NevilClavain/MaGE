@@ -176,7 +176,7 @@ void D3D11SystemImpl::setLineMeshe(const std::string& p_md5)
     }
 }
 
-bool D3D11SystemImpl::updateLineMesheTransformers(const std::string& p_resource_uid, const mage::core::maths::Matrix& p_wvp, const mage::core::maths::Matrix& p_w)
+bool D3D11SystemImpl::updateLineMesheTransformers(const std::string& p_resource_uid, const mage::core::maths::Matrix& p_wvp, const mage::core::maths::Matrix& p_view)
 {
     DECLARE_D3D11ASSERT_VARS
 
@@ -185,11 +185,20 @@ bool D3D11SystemImpl::updateLineMesheTransformers(const std::string& p_resource_
         _EXCEPTION("unknown line meshes :" + p_resource_uid)
     }
 
+    d3d11transformers tr;
+    tr.wordlViewProj = convertMatrixToXMFloat44(p_wvp);
+    tr.view = convertMatrixToXMFloat44(p_view);
+
+    std::vector<d3d11transformers> instances; // TEMP : later, many entries here ;-)
+    instances.push_back(tr);
+
     const auto lmData{ m_lines.at(p_resource_uid) };
 
     D3D11_MAPPED_SUBRESOURCE mapped = {};
     hRes = m_lpd3ddevcontext->Map(lmData.transforms_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
     D3D11_CHECK(Map)
+
+    memcpy(mapped.pData, instances.data(), sizeof(d3d11transformers) * instances.size());
 
     m_lpd3ddevcontext->Unmap(lmData.transforms_buffer, 0);
 }
@@ -370,7 +379,7 @@ void D3D11SystemImpl::setTriangleMeshe(const std::string& p_resource_uid)
     }
 }
 
-bool D3D11SystemImpl::updateTriangleMesheTransformers(const std::string& p_resource_uid, const mage::core::maths::Matrix& p_wvp, const mage::core::maths::Matrix& p_w)
+bool D3D11SystemImpl::updateTriangleMesheTransformers(const std::string& p_resource_uid, const mage::core::maths::Matrix& p_wvp, const mage::core::maths::Matrix& p_view)
 {
     DECLARE_D3D11ASSERT_VARS
 
@@ -379,11 +388,20 @@ bool D3D11SystemImpl::updateTriangleMesheTransformers(const std::string& p_resou
         _EXCEPTION("unknown triangle meshes :" + p_resource_uid)
     }
 
+    d3d11transformers tr;
+    tr.wordlViewProj = convertMatrixToXMFloat44(p_wvp);
+    tr.view = convertMatrixToXMFloat44(p_view);
+
+    std::vector<d3d11transformers> instances; // TEMP : later, many entries here ;-)
+    instances.push_back(tr);
+
     const auto tmData{ m_triangles.at(p_resource_uid) };
 
     D3D11_MAPPED_SUBRESOURCE mapped = {};
     hRes = m_lpd3ddevcontext->Map(tmData.transforms_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
     D3D11_CHECK(Map)
+
+    memcpy(mapped.pData, instances.data(), sizeof(d3d11transformers) * instances.size());
 
     m_lpd3ddevcontext->Unmap(tmData.transforms_buffer, 0);
 }

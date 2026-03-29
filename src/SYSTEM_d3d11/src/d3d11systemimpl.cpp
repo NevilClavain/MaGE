@@ -34,3 +34,30 @@ mage::core::logger::Sink& D3D11SystemImpl::logger()
 {
 	return m_localLogger;
 }
+
+DirectX::XMFLOAT4X4 D3D11SystemImpl::convertMatrixToXMFloat44(const mage::core::maths::Matrix& p_mat)
+{
+	DirectX::XMFLOAT4X4 xm_mat;
+
+    xm_mat._11 = p_mat(0, 0);
+    xm_mat._12 = p_mat(0, 1);
+    xm_mat._13 = p_mat(0, 2);
+    xm_mat._14 = p_mat(0, 3);
+
+    xm_mat._21 = p_mat(1, 0);
+    xm_mat._22 = p_mat(1, 1);
+    xm_mat._23 = p_mat(1, 2);
+    xm_mat._24 = p_mat(1, 3);
+
+    xm_mat._31 = p_mat(2, 0);
+    xm_mat._32 = p_mat(2, 1);
+    xm_mat._33 = p_mat(2, 2);
+    xm_mat._34 = p_mat(2, 3);
+
+    xm_mat._41 = p_mat(3, 0);
+    xm_mat._42 = p_mat(3, 1);
+    xm_mat._43 = p_mat(3, 2);
+    xm_mat._44 = p_mat(3, 3);
+
+	return xm_mat;
+}

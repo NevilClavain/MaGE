@@ -351,53 +351,11 @@ void D3D11SystemImpl::setPixelshaderConstantsVec(int p_startreg, const mage::cor
 void D3D11SystemImpl::setVertexshaderConstantsMat(int p_startreg, const mage::core::maths::Matrix& p_mat)
 {
     auto& dest{ m_vertexshader_args.matrix[p_startreg] };
-
-    
-    dest._11 = p_mat(0, 0);
-    dest._12 = p_mat(0, 1);
-    dest._13 = p_mat(0, 2);
-    dest._14 = p_mat(0, 3);
-
-    dest._21 = p_mat(1, 0);
-    dest._22 = p_mat(1, 1);
-    dest._23 = p_mat(1, 2);
-    dest._24 = p_mat(1, 3);
-
-    dest._31 = p_mat(2, 0);
-    dest._32 = p_mat(2, 1);
-    dest._33 = p_mat(2, 2);
-    dest._34 = p_mat(2, 3);
-
-    dest._41 = p_mat(3, 0);
-    dest._42 = p_mat(3, 1);
-    dest._43 = p_mat(3, 2);
-    dest._44 = p_mat(3, 3);
-    
+    dest = convertMatrixToXMFloat44(p_mat);
 }
 
 void D3D11SystemImpl::setPixelshaderConstantsMat(int p_startreg, const mage::core::maths::Matrix& p_mat)
 {
-    auto& dest{ m_pixelshader_args.matrix[p_startreg] };
-
-    
-    dest._11 = p_mat(0, 0);
-    dest._12 = p_mat(0, 1);
-    dest._13 = p_mat(0, 2);
-    dest._14 = p_mat(0, 3);
-
-    dest._21 = p_mat(1, 0);
-    dest._22 = p_mat(1, 1);
-    dest._23 = p_mat(1, 2);
-    dest._24 = p_mat(1, 3);
-
-    dest._31 = p_mat(2, 0);
-    dest._32 = p_mat(2, 1);
-    dest._33 = p_mat(2, 2);
-    dest._34 = p_mat(2, 3);
-
-    dest._41 = p_mat(3, 0);
-    dest._42 = p_mat(3, 1);
-    dest._43 = p_mat(3, 2);
-    dest._44 = p_mat(3, 3);
-    
+    auto& dest{ m_pixelshader_args.matrix[p_startreg] };    
+    dest = convertMatrixToXMFloat44(p_mat);
 }
