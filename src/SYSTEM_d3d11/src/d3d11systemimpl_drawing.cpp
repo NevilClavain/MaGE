@@ -29,7 +29,7 @@
 using namespace mage::core::maths;
 using namespace mage::transform;
 
-void D3D11SystemImpl::drawLineMeshe(const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj)
+void D3D11SystemImpl::drawLineMeshe(const std::string& p_meshe_id, const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj)
 {   
     // setting transformation    
     Matrix inv;    
@@ -43,6 +43,8 @@ void D3D11SystemImpl::drawLineMeshe(const mage::core::maths::Matrix& p_world, co
     chain.pushMatrix(p_world);
     chain.buildResult();
     auto result{ chain.getResultTransform() };
+    const auto result_not_transposed{ result };
+
     result.transpose();
 
     setVertexshaderConstantsMat(0, result);
@@ -87,6 +89,10 @@ void D3D11SystemImpl::drawLineMeshe(const mage::core::maths::Matrix& p_world, co
     setVertexshaderConstantsMat(20, proj);
     setPixelshaderConstantsMat(20, proj);
 
+    ///////////////////////////////////////////////////////////////////////
+
+    updateLineMesheTransformers(p_meshe_id, result_not_transposed, world);
+
     // update des shaders legacy constants buffers...
 
     m_lpd3ddevcontext->UpdateSubresource(m_vertexShaderArgsBuffer, 0, nullptr, &m_vertexshader_args, 0, 0);
@@ -99,7 +105,8 @@ void D3D11SystemImpl::drawLineMeshe(const mage::core::maths::Matrix& p_world, co
     m_lpd3ddevcontext->DrawIndexed(m_next_nblines * 2, 0, 0);
 }
 
-void D3D11SystemImpl::drawTriangleMeshe(const mage::core::maths::Matrix& p_world, 
+void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
+                                        const mage::core::maths::Matrix& p_world, 
                                         const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
                                         const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj)
 {
@@ -115,11 +122,12 @@ void D3D11SystemImpl::drawTriangleMeshe(const mage::core::maths::Matrix& p_world
     chain.pushMatrix(p_world);
     chain.buildResult();
     auto result{ chain.getResultTransform() };
+    const auto result_not_transposed{ result };
     result.transpose();
 
     setVertexshaderConstantsMat(0, result);
     setPixelshaderConstantsMat(0, result);
-
+    
     //////////////////////////////////////////////////////////////////////
 
     Matrix worldview{ p_world * p_view };
@@ -143,7 +151,7 @@ void D3D11SystemImpl::drawTriangleMeshe(const mage::core::maths::Matrix& p_world
     setVertexshaderConstantsMat(8, world);
     setVertexshaderConstantsMat(12, view);
 
-
+   
     //////////////////////////////////////////////////////////////////////
 
     auto cam{ p_view };
@@ -213,6 +221,8 @@ void D3D11SystemImpl::drawTriangleMeshe(const mage::core::maths::Matrix& p_world
 
 
     //////////////////////////////////////////////////////////////////////
+
+    updateTriangleMesheTransformers(p_meshe_id, result_not_transposed, world);
 
     // update des shaders legacy constants buffers...
 

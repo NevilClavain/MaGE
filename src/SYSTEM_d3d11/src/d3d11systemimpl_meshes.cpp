@@ -176,7 +176,7 @@ void D3D11SystemImpl::setLineMeshe(const std::string& p_md5)
     }
 }
 
-bool D3D11SystemImpl::updateLineMesheTransformers(const std::string& p_resource_uid, const mage::core::maths::Matrix& p_wvp, const mage::core::maths::Matrix& p_view)
+bool D3D11SystemImpl::updateLineMesheTransformers(const std::string& p_resource_uid, const mage::core::maths::Matrix& p_wvp, const mage::core::maths::Matrix& p_world)
 {
     DECLARE_D3D11ASSERT_VARS
 
@@ -187,7 +187,6 @@ bool D3D11SystemImpl::updateLineMesheTransformers(const std::string& p_resource_
 
     d3d11transformers tr;
     tr.wordlViewProj = convertMatrixToXMFloat44(p_wvp);
-    tr.view = convertMatrixToXMFloat44(p_view);
 
     std::vector<d3d11transformers> instances; // TEMP : later, many entries here ;-)
     instances.push_back(tr);
@@ -379,7 +378,7 @@ void D3D11SystemImpl::setTriangleMeshe(const std::string& p_resource_uid)
     }
 }
 
-bool D3D11SystemImpl::updateTriangleMesheTransformers(const std::string& p_resource_uid, const mage::core::maths::Matrix& p_wvp, const mage::core::maths::Matrix& p_view)
+bool D3D11SystemImpl::updateTriangleMesheTransformers(const std::string& p_resource_uid, const mage::core::maths::Matrix& p_wvp, const mage::core::maths::Matrix& p_world)
 {
     DECLARE_D3D11ASSERT_VARS
 
@@ -390,7 +389,7 @@ bool D3D11SystemImpl::updateTriangleMesheTransformers(const std::string& p_resou
 
     d3d11transformers tr;
     tr.wordlViewProj = convertMatrixToXMFloat44(p_wvp);
-    tr.view = convertMatrixToXMFloat44(p_view);
+    
 
     std::vector<d3d11transformers> instances; // TEMP : later, many entries here ;-)
     instances.push_back(tr);

@@ -104,7 +104,7 @@ struct d3d11vertex
 struct d3d11transformers
 {
     DirectX::XMFLOAT4X4 wordlViewProj;
-    DirectX::XMFLOAT4X4 view;
+    //DirectX::XMFLOAT4X4 world;
 };
 
 struct D3D10Include : public ID3D10Include
@@ -217,8 +217,11 @@ public:
 
     void forceCurrentTopology();
 
-    void drawLineMeshe(const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj);
-    void drawTriangleMeshe(const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
+    void drawLineMeshe(const std::string& p_meshe_id, 
+                        const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj);
+
+    void drawTriangleMeshe(const std::string& p_meshe_id,
+                            const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
                             const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj);
 
     void setVertexshaderConstantsVec(int p_startreg, const mage::core::maths::Real4Vector& p_vec);

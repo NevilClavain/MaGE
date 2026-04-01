@@ -762,22 +762,7 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 
 							if (!(*tdc.projected_z_neg))
 							{
-								core::maths::Matrix inv;
-								inv.identity();
-								inv(2, 2) = -1.0;
-								const auto final_view{ current_mainview_proj * inv };
-
-								MatrixChain chain;
-								chain.pushMatrix(current_mainview_proj);
-								chain.pushMatrix(final_view);
-								chain.pushMatrix(*tdc.world);
-								chain.buildResult();
-								auto wvp{ chain.getResultTransform() };
-								//result.transpose();
-
-								d3dimpl->updateTriangleMesheTransformers(tdc.meshe_id, wvp, *tdc.world);
-
-								d3dimpl->drawTriangleMeshe(*tdc.world, current_mainview_view, current_mainview_proj, current_secondaryiew_view, current_secondaryview_proj);
+								d3dimpl->drawTriangleMeshe(tdc.meshe_id, *tdc.world, current_mainview_view, current_mainview_proj, current_secondaryiew_view, current_secondaryview_proj);
 							}
 						}
 					}
@@ -827,20 +812,7 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 
 							/////////////////////////
 
-							core::maths::Matrix inv;
-							inv.identity();
-							inv(2, 2) = -1.0;
-							const auto final_view{ current_mainview_proj * inv };
-
-							MatrixChain chain;
-							chain.pushMatrix(current_mainview_proj);
-							chain.pushMatrix(final_view);
-							chain.pushMatrix(*ldc.world);
-							chain.buildResult();
-							auto wvp{ chain.getResultTransform() };
-
-							d3dimpl->updateLineMesheTransformers(ldc.meshe_id, wvp, *ldc.world);
-							d3dimpl->drawLineMeshe(*ldc.world, current_mainview_view, current_mainview_proj);
+							d3dimpl->drawLineMeshe(ldc.meshe_id, *ldc.world, current_mainview_view, current_mainview_proj);
 						}
 					}
 
