@@ -95,8 +95,16 @@ void D3D11SystemImpl::drawLineMeshe(const std::string& p_meshe_id, const mage::c
 
     // update des shaders legacy constants buffers...
 
-    m_lpd3ddevcontext->UpdateSubresource(m_vertexShaderArgsBuffer, 0, nullptr, &m_vertexshader_args, 0, 0);
-    m_lpd3ddevcontext->UpdateSubresource(m_pixelShaderArgsBuffer, 0, nullptr, &m_pixelshader_args, 0, 0);
+    D3D11_MAPPED_SUBRESOURCE mapped = {};
+
+    auto hRes = m_lpd3ddevcontext->Map(m_vertexShaderArgsBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+    memcpy(mapped.pData, &m_vertexshader_args, sizeof(m_vertexshader_args));
+    m_lpd3ddevcontext->Unmap(m_vertexShaderArgsBuffer, 0);
+
+    hRes = m_lpd3ddevcontext->Map(m_pixelShaderArgsBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+    memcpy(mapped.pData, &m_pixelshader_args, sizeof(m_pixelshader_args));
+    m_lpd3ddevcontext->Unmap(m_pixelShaderArgsBuffer, 0);
+
 
     ///////////////
 
@@ -226,8 +234,15 @@ void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
 
     // update des shaders legacy constants buffers...
 
-    m_lpd3ddevcontext->UpdateSubresource(m_vertexShaderArgsBuffer, 0, nullptr, &m_vertexshader_args, 0, 0);
-    m_lpd3ddevcontext->UpdateSubresource(m_pixelShaderArgsBuffer, 0, nullptr, &m_pixelshader_args, 0, 0);
+    D3D11_MAPPED_SUBRESOURCE mapped = {};
+
+    auto hRes = m_lpd3ddevcontext->Map(m_vertexShaderArgsBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+    memcpy(mapped.pData, &m_vertexshader_args, sizeof(m_vertexshader_args));
+    m_lpd3ddevcontext->Unmap(m_vertexShaderArgsBuffer, 0);
+        
+    hRes = m_lpd3ddevcontext->Map(m_pixelShaderArgsBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+    memcpy(mapped.pData, &m_pixelshader_args, sizeof(m_pixelshader_args));
+    m_lpd3ddevcontext->Unmap(m_pixelShaderArgsBuffer, 0);
 
     ///////////////
 
