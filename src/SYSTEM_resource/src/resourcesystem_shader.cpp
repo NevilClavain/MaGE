@@ -80,6 +80,8 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 					p_shaderInfos.m_file_content = m_shadersCache.at(resourceUID).shader_source.c_str();
 					p_shaderInfos.m_file_content_size = m_shadersCache.at(resourceUID).shader_source.size();
 
+					p_shaderInfos.compute_content_hash();
+
 					_MAGE_DEBUG(m_localLoggerRunner, std::string("loading shader ") + filename + " type = " + std::to_string(shaderType) + ", resource uid = " + resourceUID);
 
 					const auto shaderCacheDirectory{ m_shadersCachePath + "/" + filename };
@@ -162,7 +164,7 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 
 							// check if md5 are equals
 
-							if (std::string(cache_md5_content.getData(), cache_md5_content.getDataSize()) != p_shaderInfos.m_resource_uid)
+							if (std::string(cache_md5_content.getData(), cache_md5_content.getDataSize()) != p_shaderInfos.m_content_hash)
 							{
 								_MAGE_TRACE(m_localLoggerRunner, std::string("MD5 not matching ! : ") + filename);
 								generate_cache_entry = true;
@@ -355,6 +357,8 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 		{
 			p_shaderInfos.m_file_content = m_shadersCache.at(resourceUID).shader_source.c_str();
 			p_shaderInfos.m_file_content_size = m_shadersCache.at(resourceUID).shader_source.size();
+
+			p_shaderInfos.compute_content_hash();
 
 			p_shaderInfos.m_code = m_shadersCache.at(resourceUID).shader_code.getData();
 			p_shaderInfos.m_code_size = m_shadersCache.at(resourceUID).shader_code.getDataSize();

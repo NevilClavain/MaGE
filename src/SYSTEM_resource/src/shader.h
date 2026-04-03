@@ -154,6 +154,8 @@ namespace mage
 
         void compute_resource_uid();
 
+        void compute_content_hash();
+
         friend class mage::ResourceSystem;
         friend class mage::D3D11System;
     };
