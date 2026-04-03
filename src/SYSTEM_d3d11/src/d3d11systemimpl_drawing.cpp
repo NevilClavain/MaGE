@@ -91,7 +91,7 @@ void D3D11SystemImpl::drawLineMeshe(const std::string& p_meshe_id, const mage::c
 
     ///////////////////////////////////////////////////////////////////////
 
-    updateLineMesheTransformers(p_meshe_id, result_not_transposed, world);
+    updateLineMesheTransformers(p_meshe_id, result_not_transposed, p_world);
 
     // update des shaders legacy constants buffers...
 
@@ -230,7 +230,7 @@ void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
 
     //////////////////////////////////////////////////////////////////////
 
-    updateTriangleMesheTransformers(p_meshe_id, result_not_transposed, world);
+    updateTriangleMesheTransformers(p_meshe_id, result_not_transposed, p_world);
 
     // update des shaders legacy constants buffers...
 

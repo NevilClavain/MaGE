@@ -104,7 +104,7 @@ struct d3d11vertex
 struct d3d11transformers
 {
     DirectX::XMFLOAT4X4 wordlViewProj;
-    //DirectX::XMFLOAT4X4 world;
+    DirectX::XMFLOAT4X4 world;
 };
 
 struct D3D10Include : public ID3D10Include

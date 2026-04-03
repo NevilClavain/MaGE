@@ -187,6 +187,7 @@ bool D3D11SystemImpl::updateLineMesheTransformers(const std::string& p_resource_
 
     d3d11transformers tr;
     tr.wordlViewProj = convertMatrixToXMFloat44(p_wvp);
+    tr.world = convertMatrixToXMFloat44(p_world);
 
     std::vector<d3d11transformers> instances; // TEMP : later, many entries here ;-)
     instances.push_back(tr);
@@ -389,6 +390,7 @@ bool D3D11SystemImpl::updateTriangleMesheTransformers(const std::string& p_resou
 
     d3d11transformers tr;
     tr.wordlViewProj = convertMatrixToXMFloat44(p_wvp);
+    tr.world = convertMatrixToXMFloat44(p_world);
     
 
     std::vector<d3d11transformers> instances; // TEMP : later, many entries here ;-)
