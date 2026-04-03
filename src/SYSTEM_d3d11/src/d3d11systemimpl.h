@@ -310,11 +310,6 @@ private:
         size_t        nb_primitives         { 0 };
     };
 
-    struct BufferData
-    {
-        ID3D11Buffer* buffer                { nullptr };
-    };
-
     using RSCache =                 std::unordered_map<std::string, RSCacheEntry>;
     using BSCache =                 std::unordered_map<std::string, BSCacheEntry>;
 
@@ -324,10 +319,9 @@ private:
     using MesheList =               std::unordered_map<std::string, MesheData>;
     using TextureList =             std::unordered_map<std::string, TextureData>;
 
-    using BuffersList =             std::unordered_map<std::string, BufferData>;
 
 
-    mage::core::logger::Sink                        m_localLogger;
+    mage::core::logger::Sink                            m_localLogger;
 
     size_t                                              m_next_nbvertices{ 0 };
     size_t                                              m_next_nbtriangles{ 0 };
@@ -382,9 +376,6 @@ private:
     MesheList                                           m_triangles;
 
     TextureList                                         m_textures;
-
-
-    BuffersList                                         m_buffers;
 
 
     ////////////////////////////////////////////////////////
