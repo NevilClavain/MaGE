@@ -32,13 +32,19 @@ cbuffer constargs : register(b0)
 
 struct VS_INPUT 
 {
-   float3 Position : POSITION;
+    float3 Position : POSITION;
+    
+    float4 row0 : INSTANCE0;
+    float4 row1 : INSTANCE1;
+    float4 row2 : INSTANCE2;
+    float4 row3 : INSTANCE3;
+    
 };
 
 struct VS_OUTPUT 
 {
-   float4 Position : SV_POSITION;
-   float4 TexCoord0 : TEXCOORD0;
+    float4 Position : SV_POSITION;
+    float4 TexCoord0 : TEXCOORD0;
 };
 
 VS_OUTPUT vs_main( VS_INPUT Input )
@@ -49,10 +55,12 @@ VS_OUTPUT vs_main( VS_INPUT Input )
     pos.xyz = Input.Position;    
     pos.w = 1.0;
 
-    Output.Position = mul(pos, mat[matWorldViewProjection]);
+    float4x4 wvp = float4x4(Input.row0, Input.row1, Input.row2, Input.row3);
+    Output.Position = mul(pos, wvp);
 
-    float4 wvp = mul(pos, mat[matWorldView]);
-    Output.TexCoord0 = wvp;
+
+    float4 wv = mul(pos, mat[matWorldView]);
+    Output.TexCoord0 = wv;
     
     return( Output );   
 }

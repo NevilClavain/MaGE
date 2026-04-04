@@ -22,7 +22,7 @@
 */
 /* -*-LIC_END-*- */
 
-#define matWorldViewProjection                  0
+
 #define matWorldView                            4
 
 #define matWorld                                8

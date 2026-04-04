@@ -38,12 +38,17 @@ struct VS_INPUT
     float4 TexCoord1    : TEXCOORD1;
     float4 TexCoord2    : TEXCOORD2;
     float4 TexCoord3    : TEXCOORD3;
-    
-       
+           
     float4 BonesId0     : TEXCOORD4;
     float4 Weights0     : TEXCOORD5;
     float4 BonesId1     : TEXCOORD6;
     float4 Weights1     : TEXCOORD7;
+    
+    float4 row0 : INSTANCE0;
+    float4 row1 : INSTANCE1;
+    float4 row2 : INSTANCE2;
+    float4 row3 : INSTANCE3;
+    
 };
 
 struct VS_OUTPUT
@@ -101,10 +106,12 @@ VS_OUTPUT vs_main(VS_INPUT Input)
     
     pos = mul(initial_pos, final_transform_from_bones);
         
-    Output.Position = mul(pos, mat[matWorldViewProjection]);
+    float4x4 wvp = float4x4(Input.row0, Input.row1, Input.row2, Input.row3);
+    Output.Position = mul(pos, wvp);
+
         
-    float4 wvp = mul(pos, mat[matWorldView]);
-    Output.TexCoord0 = wvp;
+    float4 wv = mul(pos, mat[matWorldView]);
+    Output.TexCoord0 = wv;
     
     return (Output);
 }

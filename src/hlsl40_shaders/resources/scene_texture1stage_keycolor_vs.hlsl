@@ -56,6 +56,7 @@ VS_OUTPUT vs_main(VS_INPUT Input)
             
     float4x4 wvp = float4x4( Input.row0, Input.row1, Input.row2, Input.row3);    
     Output.Position = mul(pos, wvp);
+    
     Output.TexCoord0 = Input.TexCoord0.xy;
       
     return (Output);

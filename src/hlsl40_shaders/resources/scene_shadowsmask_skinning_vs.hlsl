@@ -45,6 +45,12 @@ struct VS_INPUT
     float4 Weights0 : TEXCOORD5;
     float4 BonesId1 : TEXCOORD6;
     float4 Weights1 : TEXCOORD7;
+    
+    float4 row0 : INSTANCE0;
+    float4 row1 : INSTANCE1;
+    float4 row2 : INSTANCE2;
+    float4 row3 : INSTANCE3;
+    
 };
 
 struct VS_OUTPUT 
@@ -107,7 +113,8 @@ VS_OUTPUT vs_main( VS_INPUT Input )
     
     
     // compute vertex position from main view (shadows mask scene) 
-    float4 projected_pos_mainview = mul(pos, mat[matWorldViewProjection]);
+    float4x4 wvp = float4x4(Input.row0, Input.row1, Input.row2, Input.row3);
+    float4 projected_pos_mainview = mul(pos, wvp);
     
     // compute vertex position from secondary view (shadow map scene)    
     float4 projected_pos_secondaryview = mul(pos, mat[matWorldViewProjectionSecondary]);
