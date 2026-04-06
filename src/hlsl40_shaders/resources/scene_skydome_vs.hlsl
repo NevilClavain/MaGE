@@ -40,6 +40,10 @@ struct VS_INPUT
     float4 row2 : INSTANCE2;
     float4 row3 : INSTANCE3;
     
+    float4 row4 : INSTANCE4;
+    float4 row5 : INSTANCE5;
+    float4 row6 : INSTANCE6;
+    float4 row7 : INSTANCE7;
 };
 
 struct VS_OUTPUT 
@@ -74,7 +78,8 @@ VS_OUTPUT vs_main( VS_INPUT Input )
     
     ////// atmo scattering : calcul vertex pos
     
-    float4x4 matWorldRot = mat[matWorld];
+    float4x4 world = float4x4(Input.row4, Input.row5, Input.row6, Input.row7);
+    float4x4 matWorldRot = world; //mat[matWorld];
     
     // clear translations matWorld
     matWorldRot[3][0] = 0.0;
