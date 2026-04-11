@@ -168,14 +168,19 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 				{
 					_MAGE_DEBUG(m_localLogger, "\t\t\t-> renderstate : " + rs.first);
 
+					if (rs.second.triangles_dc_list.size() > 0)
+					{
+						_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> number of triangles_dc : " + std::to_string(rs.second.triangles_dc_list.size()));
+					}
+
 					for (const auto& triangles_dc : rs.second.triangles_dc_list)
 					{
-						_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> triangles : " + triangles_dc.first);
+						_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> triangles_dc : " + triangles_dc.first);
 					}
 
 					for (const auto& lines_dc : rs.second.lines_dc_list)
 					{
-						_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> lines : " + lines_dc.first);
+						_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> lines_dc : " + lines_dc.first);
 					}
 				}
 			}
