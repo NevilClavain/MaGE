@@ -787,9 +787,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 							}
 						}
 						else if (triangle_meshe_ref)
-						{															
-							//std::string textureset_signature;
-							std::map<size_t, std::string> textures;
+						{																						
+							std::unordered_map<size_t, std::string> textures;
 
 							for (const auto& e : texturesSet)
 							{
@@ -840,9 +839,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 							}
 						}
 						else if (file_triangle_meshe_ref)
-						{
-							//std::string textureset_signature;
-							std::map<size_t, std::string> textures;
+						{							
+							std::unordered_map<size_t, std::string> textures;
 
 							for (const auto& e : texturesSet)
 							{
