@@ -259,9 +259,9 @@ public:
         D3D11_VIEWPORT                      viewport; // viewport adapte au rendu dans cette texture
     };
 
-
-
 private:
+
+    static constexpr int nbMaxInstances{ 1500 };
 
     struct FontRenderingData
     {

@@ -23,6 +23,8 @@
 */
 /* -*-LIC_END-*- */
 
+#include <vector>
+
 #include "d3d11systemimpl.h"
 
 #include "logsink.h"
@@ -133,9 +135,8 @@ bool D3D11SystemImpl::createLineMeshe(const mage::LineMeshe& p_lm)
             D3D11_BUFFER_DESC transformersBufferDesc = { 0 };
 
             transformersBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-
-            // 1 -> TEMPORAIRE !
-            transformersBufferDesc.ByteWidth = 1 * sizeof(d3d11transformers);
+            
+            transformersBufferDesc.ByteWidth = nbMaxInstances * sizeof(d3d11transformers);
             transformersBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
             transformersBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
             transformersBufferDesc.MiscFlags = 0;
@@ -335,8 +336,7 @@ bool D3D11SystemImpl::createTriangleMeshe(const mage::TriangleMeshe& p_tm)
 
             transformersBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 
-            // 1 -> TEMPORAIRE !
-            transformersBufferDesc.ByteWidth = 1 * sizeof(d3d11transformers);
+            transformersBufferDesc.ByteWidth = nbMaxInstances * sizeof(d3d11transformers);
             transformersBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
             transformersBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
             transformersBufferDesc.MiscFlags = 0;
