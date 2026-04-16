@@ -175,7 +175,7 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 
 					for (const auto& triangles_dc : rs.second.triangles_dc_list)
 					{
-						_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> triangles_dc : " + triangles_dc.first);
+						_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> triangles_dc : " + triangles_dc.first + " worlds stack size = " + std::to_string(triangles_dc.second.worlds.size()) );
 					}
 
 					for (const auto& lines_dc : rs.second.lines_dc_list)
@@ -812,7 +812,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								/// common parts
 
 								trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
-								trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
+								//trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
+								trianglesQueueDrawingControl.worlds.push_back(&trianglesDrawingControl.world);
 								trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
 
 								connect_shaders_args(trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
@@ -836,6 +837,7 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								/// register
 								//
 								renderStatePayloadPtr->triangles_dc_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
+
 							}
 						}
 						else if (file_triangle_meshe_ref)
@@ -864,7 +866,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								/// common parts
 
 								trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
-								trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
+								//trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
+								trianglesQueueDrawingControl.worlds.push_back(&trianglesDrawingControl.world);
 								trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
 
 								connect_shaders_args(trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
@@ -887,7 +890,37 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 
 								/// register
 								//
-								renderStatePayloadPtr->triangles_dc_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
+								//renderStatePayloadPtr->triangles_dc_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
+
+								if (0 == renderStatePayloadPtr->triangles_dc_list.size())
+								{
+									renderStatePayloadPtr->triangles_dc_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
+								}
+								else
+								{
+									bool found = false;
+									std::string found_trianglesQueueDrawingControl_owner_entity_id;
+
+									for (const auto& qtdc : renderStatePayloadPtr->triangles_dc_list)
+									{										
+										if (qtdc.second == trianglesQueueDrawingControl)
+										{
+											found = true;
+											found_trianglesQueueDrawingControl_owner_entity_id = qtdc.first;
+											break;
+										}
+									}
+
+									if (!found)
+									{
+										renderStatePayloadPtr->triangles_dc_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
+									}
+									else
+									{
+										auto& qtdc = renderStatePayloadPtr->triangles_dc_list.at(found_trianglesQueueDrawingControl_owner_entity_id);
+										qtdc.worlds.push_back(&trianglesDrawingControl.world);
+									}
+								}
 							}
 						}
 

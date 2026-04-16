@@ -95,7 +95,9 @@ namespace mage
 			virtual ~QueueDrawingControl() = default;
 
 			// transformations to apply;
-			core::maths::Matrix* world{ nullptr };
+			//core::maths::Matrix* world{ nullptr };
+
+			std::vector< core::maths::Matrix*> worlds;
 
 			bool* projected_z_neg{ nullptr };
 
@@ -124,12 +126,23 @@ namespace mage
 			// textures stages to set
 
 			std::unordered_map<size_t, std::string>	textures; // stage/texture id
+
+			bool operator==(const QueueTrianglesDrawingControl& p_other) const
+			{
+				return meshe_id == p_other.meshe_id && textures == p_other.textures;
+			}
 		};
 
 		struct QueueLinesDrawingControl : public QueueDrawingControl
 		{
+			core::maths::Matrix* world{ nullptr };
 			// meshe to set
 			std::string						meshe_id;
+
+			bool operator==(const QueueTrianglesDrawingControl& p_other) const
+			{
+				return meshe_id == p_other.meshe_id;
+			}
 		};
 
 		struct Queue
