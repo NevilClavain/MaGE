@@ -178,7 +178,7 @@ public:
     bool createTriangleMeshe(const mage::TriangleMeshe& p_tm);
 
     void setTriangleMeshe(const std::string& p_resource_uid);
-    bool updateTriangleMesheTransformers(const std::string& p_resource_uid, const mage::core::maths::Matrix& p_wvp, const mage::core::maths::Matrix& p_view);
+    bool updateTriangleMesheTransformers(const std::string& p_resource_uid, const std::vector<mage::core::maths::Matrix*>& p_worlds, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj);
 
 
     //void destroyTriangleMeshe(const std::string& p_resource_uid);
@@ -221,7 +221,12 @@ public:
                         const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj);
 
     void drawTriangleMeshe(const std::string& p_meshe_id,
-                            const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
+
+                            //const mage::core::maths::Matrix& p_world, 
+
+                            const std::vector<mage::core::maths::Matrix*>& p_worlds,
+
+                            const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
                             const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj);
 
     void setVertexshaderConstantsVec(int p_startreg, const mage::core::maths::Real4Vector& p_vec);

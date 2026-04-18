@@ -31,6 +31,8 @@
 #include "logconf.h"
 #include "logging.h"
 
+#include "matrixchain.h"
+
 
 bool D3D11SystemImpl::createLineMeshe(const mage::LineMeshe& p_lm)
 {
@@ -379,7 +381,7 @@ void D3D11SystemImpl::setTriangleMeshe(const std::string& p_resource_uid)
     }
 }
 
-bool D3D11SystemImpl::updateTriangleMesheTransformers(const std::string& p_resource_uid, const mage::core::maths::Matrix& p_wvp, const mage::core::maths::Matrix& p_world)
+bool D3D11SystemImpl::updateTriangleMesheTransformers(const std::string& p_resource_uid, const std::vector<mage::core::maths::Matrix*>& p_worlds, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj)
 {
     DECLARE_D3D11ASSERT_VARS
 
@@ -388,9 +390,25 @@ bool D3D11SystemImpl::updateTriangleMesheTransformers(const std::string& p_resou
         _EXCEPTION("unknown triangle meshes :" + p_resource_uid)
     }
 
+    mage::core::maths::Matrix inv;
+    inv.identity();
+    inv(2, 2) = -1.0;
+    const auto final_view{ p_view * inv };
+
+
+    mage::transform::MatrixChain chain;
+
+    chain.pushMatrix(p_proj);
+    chain.pushMatrix(final_view);
+    chain.pushMatrix(*p_worlds.at(0));
+    chain.buildResult();
+    auto result{ chain.getResultTransform() };
+    const auto result_not_transposed{ result };
+
+
     d3d11transformers tr;
-    tr.wordlViewProj = convertMatrixToXMFloat44(p_wvp);
-    tr.world = convertMatrixToXMFloat44(p_world);
+    tr.wordlViewProj = convertMatrixToXMFloat44(result_not_transposed);
+    tr.world = convertMatrixToXMFloat44(*p_worlds.at(0));
     
 
     std::vector<d3d11transformers> instances; // TEMP : later, many entries here ;-)

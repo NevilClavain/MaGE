@@ -114,7 +114,8 @@ void D3D11SystemImpl::drawLineMeshe(const std::string& p_meshe_id, const mage::c
 }
 
 void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
-                                        const mage::core::maths::Matrix& p_world, 
+                                        //const mage::core::maths::Matrix& p_world, 
+                                        const std::vector<mage::core::maths::Matrix*>& p_worlds,
                                         const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
                                         const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj)
 {
@@ -124,21 +125,23 @@ void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
     inv(2, 2) = -1.0;
     const auto final_view{ p_view * inv };
 
-    MatrixChain chain;
-    chain.pushMatrix(p_proj);
-    chain.pushMatrix(final_view);
-    chain.pushMatrix(p_world);
-    chain.buildResult();
-    auto result{ chain.getResultTransform() };
-    const auto result_not_transposed{ result };
-    result.transpose();
+    //MatrixChain chain;
 
-    setVertexshaderConstantsMat(0, result);
-    setPixelshaderConstantsMat(0, result);
+    //chain.pushMatrix(p_proj);
+    //chain.pushMatrix(final_view);
+    //chain.pushMatrix(p_world);
+    //chain.buildResult();
+    //auto result{ chain.getResultTransform() };
+    //const auto result_not_transposed{ result };
+    //result.transpose();
+
+    //setVertexshaderConstantsMat(0, result);
+    //setPixelshaderConstantsMat(0, result);
     
     //////////////////////////////////////////////////////////////////////
 
-    Matrix worldview{ p_world * p_view };
+    //Matrix worldview{ p_world * p_view };
+    Matrix worldview{ *p_worlds.at(0) * p_view };
     worldview.transpose();
 
     setPixelshaderConstantsMat(4, worldview);
@@ -147,7 +150,8 @@ void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
 
     //////////////////////////////////////////////////////////////////////
 
-    auto world{ p_world };   
+    //auto world{ p_world };
+    auto world{ *p_worlds.at(0)};
     auto view{ p_view };
 
     world.transpose();
@@ -188,7 +192,8 @@ void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
     MatrixChain chain2;
     chain2.pushMatrix(p_secondary_proj);
     chain2.pushMatrix(final_secondary_view);
-    chain2.pushMatrix(p_world);
+    //chain2.pushMatrix(p_world);
+    chain2.pushMatrix(*p_worlds.at(0));
     chain2.buildResult();
     auto result2{ chain2.getResultTransform() };
     result2.transpose();
@@ -197,7 +202,8 @@ void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
     setPixelshaderConstantsMat(24, result2);
 
 
-    Matrix worldviewSecondary{ p_world * p_secondary_view };
+    //Matrix worldviewSecondary{ p_world * p_secondary_view };
+    Matrix worldviewSecondary{ *p_worlds.at(0) * p_secondary_view };
     worldviewSecondary.transpose();
 
     setPixelshaderConstantsMat(28, worldviewSecondary);    
@@ -230,7 +236,8 @@ void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
 
     //////////////////////////////////////////////////////////////////////
 
-    updateTriangleMesheTransformers(p_meshe_id, result_not_transposed, p_world);
+    //updateTriangleMesheTransformers(p_meshe_id, result_not_transposed, p_world);
+    updateTriangleMesheTransformers(p_meshe_id, p_worlds, p_view, p_proj);
 
     // update des shaders legacy constants buffers...
 
