@@ -23,17 +23,17 @@
 /* -*-LIC_END-*- */
 
 
-#define matWorldView                            4
+#define matWorldView                            4 // To be removed
 
-#define matWorld                                8
+#define matWorld                                8 // To be removed
 
 #define matView                                 12
 #define matCam                                  16
 #define matProj                                 20
 
 
-#define matWorldViewProjectionSecondary         24
-#define matWorldViewSecondary                   28
+#define matWorldViewProjectionSecondary         24 // To be removed
+#define matWorldViewSecondary                   28 // To be removed
 
 #define matSecondaryView                        32
 #define matSecondaryCam                         36

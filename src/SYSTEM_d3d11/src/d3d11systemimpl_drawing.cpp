@@ -119,28 +119,10 @@ void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
                                         const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
                                         const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj)
 {
-    // setting transformation    
-    Matrix inv;
-    inv.identity();
-    inv(2, 2) = -1.0;
-    const auto final_view{ p_view * inv };
-
-    //MatrixChain chain;
-
-    //chain.pushMatrix(p_proj);
-    //chain.pushMatrix(final_view);
-    //chain.pushMatrix(p_world);
-    //chain.buildResult();
-    //auto result{ chain.getResultTransform() };
-    //const auto result_not_transposed{ result };
-    //result.transpose();
-
-    //setVertexshaderConstantsMat(0, result);
-    //setPixelshaderConstantsMat(0, result);
     
     //////////////////////////////////////////////////////////////////////
 
-    //Matrix worldview{ p_world * p_view };
+    // To be removed    
     Matrix worldview{ *p_worlds.at(0) * p_view };
     worldview.transpose();
 
@@ -150,17 +132,23 @@ void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
 
     //////////////////////////////////////////////////////////////////////
 
-    //auto world{ p_world };
+
     auto world{ *p_worlds.at(0)};
     auto view{ p_view };
 
     world.transpose();
+
     view.transpose();
 
+    // To be removed    
     setPixelshaderConstantsMat(8, world);
+
     setPixelshaderConstantsMat(12, view);
    
+    // To be removed    
     setVertexshaderConstantsMat(8, world);
+
+
     setVertexshaderConstantsMat(12, view);
 
    
@@ -184,6 +172,13 @@ void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
     // for secondary view
     //////////////////////////////////////////////////////////////////////
 
+    // To be removed    
+
+    Matrix inv;
+    inv.identity();
+    inv(2, 2) = -1.0;
+    const auto final_view{ p_view * inv };
+
 
     inv.identity();
     inv(2, 2) = -1.0;
@@ -202,12 +197,18 @@ void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
     setPixelshaderConstantsMat(24, result2);
 
 
-    //Matrix worldviewSecondary{ p_world * p_secondary_view };
+
+
+    // To be removed        
     Matrix worldviewSecondary{ *p_worlds.at(0) * p_secondary_view };
     worldviewSecondary.transpose();
-
     setPixelshaderConstantsMat(28, worldviewSecondary);    
     setVertexshaderConstantsMat(28, worldviewSecondary);
+
+
+
+
+
 
     auto secondary_view{ p_secondary_view };
     secondary_view.transpose();
