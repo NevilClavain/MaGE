@@ -33,8 +33,18 @@ cbuffer constargs : register(b0)
 
 struct VS_INPUT
 {
-    float3 Position : POSITION;
-    float4 TexCoord0 : TEXCOORD0;
+    float3 Position     : POSITION;
+    float4 TexCoord0    : TEXCOORD0;
+    
+    float4 row0         : INSTANCE0;
+    float4 row1         : INSTANCE1;
+    float4 row2         : INSTANCE2;
+    float4 row3         : INSTANCE3;
+    
+    float4 row4         : INSTANCE4;
+    float4 row5         : INSTANCE5;
+    float4 row6         : INSTANCE6;
+    float4 row7         : INSTANCE7;    
 };
 
 struct VS_OUTPUT
@@ -53,7 +63,13 @@ VS_OUTPUT vs_main(VS_INPUT Input)
     float4x4 matrxView = IDENTITY_MATRIX;    
     matrxView[3][2] = 1.0;
     
-    float4x4 matrxWorld = mat[matWorld];
+    float4x4 matrxWorld = float4x4(
+        Input.row4,
+        Input.row5,
+        Input.row6,
+        Input.row7
+    );
+    
     matrxWorld[3][2] = 0.0;
     
     float4x4 matrxProj = mat[matProj];

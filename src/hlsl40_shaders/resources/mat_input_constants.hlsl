@@ -25,7 +25,6 @@
 
 #define matWorldView                            4 // To be removed
 
-#define matWorld                                8 // To be removed
 
 #define matView                                 12
 #define matCam                                  16
