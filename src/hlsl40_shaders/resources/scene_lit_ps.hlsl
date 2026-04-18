@@ -45,9 +45,7 @@ struct PS_INTPUT
 #include "generic_rendering.hlsl"
 
 float4 ps_main(PS_INTPUT input) : SV_Target
-{
-    //float4x4 mat_World = mat[matWorld];
-    
+{    
     float4x4 world = float4x4(
         input.world0,
         input.world1,

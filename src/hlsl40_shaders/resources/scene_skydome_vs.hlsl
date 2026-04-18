@@ -79,7 +79,7 @@ VS_OUTPUT vs_main( VS_INPUT Input )
     ////// atmo scattering : calcul vertex pos
     
     float4x4 world = float4x4(Input.row4, Input.row5, Input.row6, Input.row7);
-    float4x4 matWorldRot = world; //mat[matWorld];
+    float4x4 matWorldRot = world;
     
     // clear translations matWorld
     matWorldRot[3][0] = 0.0;
