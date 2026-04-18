@@ -40,6 +40,11 @@ struct PS_INTPUT
     float4 Position     : SV_POSITION;
     float2 TexCoord0    : TEXCOORD0;
     float4 Normale      : TEXCOORD1;
+    
+    float4 world0       : TEXCOORD2;
+    float4 world1       : TEXCOORD3;
+    float4 world2       : TEXCOORD4;
+    float4 world3       : TEXCOORD5;    
 };
 
 #include "mat_input_constants.hlsl"
@@ -47,6 +52,13 @@ struct PS_INTPUT
 
 float4 ps_main(PS_INTPUT input) : SV_Target
 {
+    float4x4 world = float4x4(
+        input.world0,
+        input.world1,
+        input.world2,
+        input.world3
+    );
+        
     float4 key_color = vec[v_key_color];
     
     float4 texture_color = txDiffuse.Sample(sam, input.TexCoord0);    
@@ -54,16 +66,14 @@ float4 ps_main(PS_INTPUT input) : SV_Target
     {
         clip(-1);
     }
-               
-    float4x4 mat_World = mat[matWorld];
-    
+                      
     float4 light_dir_global;
     light_dir_global = vec[v_light_dir];
     
     float4 color = {0, 0, 0, 1};
     
     const float4 object_normale = input.Normale;        
-    const float3 world_object_normale = transformedNormaleForLights(object_normale, mat_World); 
+    const float3 world_object_normale = transformedNormaleForLights(object_normale, world);
            
     color.rgb += computePixelColorFromDirectionalLight(light_dir_global.xyz, world_object_normale);
         

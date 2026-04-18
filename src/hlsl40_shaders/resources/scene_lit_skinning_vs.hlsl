@@ -36,10 +36,10 @@ struct VS_INPUT
     float3 Position     : POSITION;
     float3 Normal       : NORMALE;
     
-    float4 TexCoord0    : TEXCOORD0;
-    float4 TexCoord1    : TEXCOORD1;
-    float4 TexCoord2    : TEXCOORD2;
-    float4 TexCoord3    : TEXCOORD3;
+    //float4 TexCoord0    : TEXCOORD0;
+    //float4 TexCoord1    : TEXCOORD1;
+    //float4 TexCoord2    : TEXCOORD2;
+    //float4 TexCoord3    : TEXCOORD3;
     
        
     float4 BonesId0     : TEXCOORD4;
@@ -47,18 +47,26 @@ struct VS_INPUT
     float4 BonesId1     : TEXCOORD6;
     float4 Weights1     : TEXCOORD7;
     
-    float4 row0 : INSTANCE0;
-    float4 row1 : INSTANCE1;
-    float4 row2 : INSTANCE2;
-    float4 row3 : INSTANCE3;
+    float4 row0         : INSTANCE0;
+    float4 row1         : INSTANCE1;
+    float4 row2         : INSTANCE2;
+    float4 row3         : INSTANCE3;
     
+    float4 row4         : INSTANCE4;
+    float4 row5         : INSTANCE5;
+    float4 row6         : INSTANCE6;
+    float4 row7         : INSTANCE7;    
 };
 
 struct VS_OUTPUT
 {
     float4 Position     : SV_POSITION;
     float4 Normale      : TEXCOORD1;
-   
+    
+    float4 world0       : TEXCOORD2;
+    float4 world1       : TEXCOORD3;
+    float4 world2       : TEXCOORD4;
+    float4 world3       : TEXCOORD5;   
 };
 
 VS_OUTPUT vs_main(VS_INPUT Input)
@@ -121,6 +129,11 @@ VS_OUTPUT vs_main(VS_INPUT Input)
     
     Output.Normale.xyz = normalize(initial_n);
     Output.Normale.w = 1.0;
+    
+    Output.world0 = Input.row4;
+    Output.world1 = Input.row5;
+    Output.world2 = Input.row6;
+    Output.world3 = Input.row7;
             
     return (Output);
 }

@@ -81,7 +81,7 @@ VS_OUTPUT vs_main( VS_INPUT Input )
     float4x4 world = float4x4(Input.row4, Input.row5, Input.row6, Input.row7);
     float4x4 matWorldRot = world;
     
-    // clear translations matWorld
+    // clear translations
     matWorldRot[3][0] = 0.0;
     matWorldRot[3][1] = 0.0;
     matWorldRot[3][2] = 0.0;
