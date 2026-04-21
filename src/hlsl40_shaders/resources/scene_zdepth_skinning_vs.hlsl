@@ -34,11 +34,7 @@ cbuffer constargs : register(b0)
 struct VS_INPUT
 {
     float3 Position     : POSITION;
-    float4 TexCoord0    : TEXCOORD0;
-    float4 TexCoord1    : TEXCOORD1;
-    float4 TexCoord2    : TEXCOORD2;
-    float4 TexCoord3    : TEXCOORD3;
-           
+
     float4 BonesId0     : TEXCOORD4;
     float4 Weights0     : TEXCOORD5;
     float4 BonesId1     : TEXCOORD6;
@@ -48,7 +44,11 @@ struct VS_INPUT
     float4 row1 : INSTANCE1;
     float4 row2 : INSTANCE2;
     float4 row3 : INSTANCE3;
-    
+  
+    float4 row4 : INSTANCE4;
+    float4 row5 : INSTANCE5;
+    float4 row6 : INSTANCE6;
+    float4 row7 : INSTANCE7;
 };
 
 struct VS_OUTPUT
@@ -108,9 +108,12 @@ VS_OUTPUT vs_main(VS_INPUT Input)
         
     float4x4 wvp = float4x4(Input.row0, Input.row1, Input.row2, Input.row3);
     Output.Position = mul(pos, wvp);
-
+       
+    float4x4 world = float4x4(Input.row4, Input.row5, Input.row6, Input.row7);
+    float4x4 view = mat[matView];
+    float4x4 worldView = mul(world, view);
+    float4 wv = mul(pos, worldView);
         
-    float4 wv = mul(pos, mat[matWorldView]);
     Output.TexCoord0 = wv;
     
     return (Output);

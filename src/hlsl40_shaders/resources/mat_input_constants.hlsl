@@ -22,10 +22,6 @@
 */
 /* -*-LIC_END-*- */
 
-
-#define matWorldView                            4 // To be removed
-
-
 #define matView                                 12
 #define matCam                                  16
 #define matProj                                 20

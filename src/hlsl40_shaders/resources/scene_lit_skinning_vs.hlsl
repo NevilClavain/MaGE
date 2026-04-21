@@ -36,12 +36,6 @@ struct VS_INPUT
     float3 Position     : POSITION;
     float3 Normal       : NORMALE;
     
-    //float4 TexCoord0    : TEXCOORD0;
-    //float4 TexCoord1    : TEXCOORD1;
-    //float4 TexCoord2    : TEXCOORD2;
-    //float4 TexCoord3    : TEXCOORD3;
-    
-       
     float4 BonesId0     : TEXCOORD4;
     float4 Weights0     : TEXCOORD5;
     float4 BonesId1     : TEXCOORD6;

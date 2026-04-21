@@ -66,8 +66,7 @@ VS_OUTPUT vs_main(VS_INPUT Input)
     Output.TexCoord0 = Input.TexCoord0.xy;
                
     float4x4 world = float4x4(Input.row4, Input.row5, Input.row6, Input.row7);
-    float4x4 view = mat[matView];
-    
+    float4x4 view = mat[matView];    
     float4x4 worldView = mul(world, view);
     float4 wv = mul(pos, worldView);
              
