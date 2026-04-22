@@ -237,7 +237,7 @@ void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
 
     //////////////////////////////////////////////////////////////////////
 
-    updateTriangleMesheTransformers(p_meshe_id, p_worlds, p_view, p_proj);
+    updateTriangleMesheTransformers(p_meshe_id, p_worlds, p_view, p_proj, p_secondary_view, p_secondary_proj);
 
     // update des shaders legacy constants buffers...
 

@@ -381,7 +381,9 @@ void D3D11SystemImpl::setTriangleMeshe(const std::string& p_resource_uid)
     }
 }
 
-bool D3D11SystemImpl::updateTriangleMesheTransformers(const std::string& p_resource_uid, const std::vector<mage::core::maths::Matrix*>& p_worlds, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj)
+bool D3D11SystemImpl::updateTriangleMesheTransformers(const std::string& p_resource_uid, const std::vector<mage::core::maths::Matrix*>& p_worlds, 
+                                                        const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
+                                                        const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2)
 {
     DECLARE_D3D11ASSERT_VARS
 
@@ -406,9 +408,22 @@ bool D3D11SystemImpl::updateTriangleMesheTransformers(const std::string& p_resou
     const auto result_not_transposed{ result };
 
 
+    const auto final_view2{ p_view2 * inv };
+    mage::transform::MatrixChain chain2;
+
+    chain2.pushMatrix(p_proj2);
+    chain2.pushMatrix(final_view2);
+    chain2.pushMatrix(*p_worlds.at(0));
+    chain2.buildResult();
+    auto result2{ chain2.getResultTransform() };
+    const auto result2_not_transposed{ result2 };
+
+
+
     d3d11transformers tr;
     tr.wordlViewProj = convertMatrixToXMFloat44(result_not_transposed);
     tr.world = convertMatrixToXMFloat44(*p_worlds.at(0));
+    tr.wordlView2Proj2 = convertMatrixToXMFloat44(result2_not_transposed);
     
 
     std::vector<d3d11transformers> instances; // TEMP : later, many entries here ;-)

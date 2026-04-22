@@ -105,6 +105,7 @@ struct d3d11transformers
 {
     DirectX::XMFLOAT4X4 wordlViewProj;
     DirectX::XMFLOAT4X4 world;
+    DirectX::XMFLOAT4X4 wordlView2Proj2; // world combined with 2nd View and 2nd proj
 };
 
 struct D3D10Include : public ID3D10Include
@@ -178,7 +179,10 @@ public:
     bool createTriangleMeshe(const mage::TriangleMeshe& p_tm);
 
     void setTriangleMeshe(const std::string& p_resource_uid);
-    bool updateTriangleMesheTransformers(const std::string& p_resource_uid, const std::vector<mage::core::maths::Matrix*>& p_worlds, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj);
+
+    bool updateTriangleMesheTransformers(const std::string& p_resource_uid, const std::vector<mage::core::maths::Matrix*>& p_worlds, 
+                                        const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
+                                        const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2);
 
 
     //void destroyTriangleMeshe(const std::string& p_resource_uid);
