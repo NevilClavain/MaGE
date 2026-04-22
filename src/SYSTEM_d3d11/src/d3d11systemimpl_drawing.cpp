@@ -187,7 +187,6 @@ void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
     MatrixChain chain2;
     chain2.pushMatrix(p_secondary_proj);
     chain2.pushMatrix(final_secondary_view);
-    //chain2.pushMatrix(p_world);
     chain2.pushMatrix(*p_worlds.at(0));
     chain2.buildResult();
     auto result2{ chain2.getResultTransform() };

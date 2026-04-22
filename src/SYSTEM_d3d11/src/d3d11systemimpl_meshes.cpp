@@ -397,7 +397,6 @@ bool D3D11SystemImpl::updateTriangleMesheTransformers(const std::string& p_resou
     inv(2, 2) = -1.0;
     const auto final_view{ p_view * inv };
 
-
     mage::transform::MatrixChain chain;
 
     chain.pushMatrix(p_proj);
@@ -406,7 +405,6 @@ bool D3D11SystemImpl::updateTriangleMesheTransformers(const std::string& p_resou
     chain.buildResult();
     auto result{ chain.getResultTransform() };
     const auto result_not_transposed{ result };
-
 
     const auto final_view2{ p_view2 * inv };
     mage::transform::MatrixChain chain2;
@@ -418,14 +416,11 @@ bool D3D11SystemImpl::updateTriangleMesheTransformers(const std::string& p_resou
     auto result2{ chain2.getResultTransform() };
     const auto result2_not_transposed{ result2 };
 
-
-
     d3d11transformers tr;
     tr.wordlViewProj = convertMatrixToXMFloat44(result_not_transposed);
     tr.world = convertMatrixToXMFloat44(*p_worlds.at(0));
     tr.wordlView2Proj2 = convertMatrixToXMFloat44(result2_not_transposed);
     
-
     std::vector<d3d11transformers> instances; // TEMP : later, many entries here ;-)
     instances.push_back(tr);
 
