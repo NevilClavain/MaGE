@@ -40,6 +40,10 @@ struct VS_INPUT
     float4 row2 : INSTANCE2;
     float4 row3 : INSTANCE3;
     
+    float4 row8 : INSTANCE8;
+    float4 row9 : INSTANCE9;
+    float4 row10 : INSTANCE10;
+    float4 row11 : INSTANCE11;    
 };
 
 struct VS_OUTPUT 
@@ -58,12 +62,12 @@ VS_OUTPUT vs_main( VS_INPUT Input )
     pos.w = 1.0;
     
     // compute vertex position from main view (shadows mask scene) 
-    float4x4 wvp = float4x4(Input.row0, Input.row1, Input.row2, Input.row3);
-    
+    float4x4 wvp = float4x4(Input.row0, Input.row1, Input.row2, Input.row3);    
     float4 projected_pos_mainview = mul(pos, wvp);
     
     // compute vertex position from secondary view (shadow map scene)    
-    float4 projected_pos_secondaryview = mul(pos, mat[matWorldViewProjectionSecondary]);
+    float4x4 wvp_2nd = float4x4(Input.row8, Input.row9, Input.row10, Input.row11);
+    float4 projected_pos_secondaryview = mul(pos, wvp_2nd);
     
     Output.Position = projected_pos_mainview;
     Output.TexCoord0 = Input.TexCoord0.xy;

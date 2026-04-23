@@ -35,12 +35,7 @@ struct VS_INPUT
 {
     float3 Position : POSITION;
     
-    float4 TexCoord0 : TEXCOORD0;
-    float4 TexCoord1 : TEXCOORD1;
-    float4 TexCoord2 : TEXCOORD2;
-    float4 TexCoord3 : TEXCOORD3;
-    
-       
+          
     float4 BonesId0 : TEXCOORD4;
     float4 Weights0 : TEXCOORD5;
     float4 BonesId1 : TEXCOORD6;
@@ -50,6 +45,11 @@ struct VS_INPUT
     float4 row1 : INSTANCE1;
     float4 row2 : INSTANCE2;
     float4 row3 : INSTANCE3;
+    
+    float4 row8 : INSTANCE8;
+    float4 row9 : INSTANCE9;
+    float4 row10 : INSTANCE10;
+    float4 row11 : INSTANCE11;
     
 };
 
@@ -116,8 +116,9 @@ VS_OUTPUT vs_main( VS_INPUT Input )
     float4x4 wvp = float4x4(Input.row0, Input.row1, Input.row2, Input.row3);
     float4 projected_pos_mainview = mul(pos, wvp);
     
-    // compute vertex position from secondary view (shadow map scene)    
-    float4 projected_pos_secondaryview = mul(pos, mat[matWorldViewProjectionSecondary]);
+    // compute vertex position from secondary view (shadow map scene)        
+    float4x4 wvp_2nd = float4x4(Input.row8, Input.row9, Input.row10, Input.row11);
+    float4 projected_pos_secondaryview = mul(pos, wvp_2nd);
     
     Output.Position = projected_pos_mainview;        
     Output.TexCoord1 = projected_pos_secondaryview.xy;
