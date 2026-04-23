@@ -26,8 +26,6 @@
 #define matCam                                  16
 #define matProj                                 20
 
-
-#define matWorldViewProjectionSecondary         24 // To be removed
 #define matWorldViewSecondary                   28 // To be removed
 
 #define matSecondaryView                        32
