@@ -21,50 +21,50 @@
 # -*-LIC_END-*-
 
 cmake_minimum_required(VERSION 3.5)
-project(hlsl40_shaders)
+project(hls50_shaders)
 
 file(
         GLOB_RECURSE
         vs_source_files
-		${CMAKE_SOURCE_DIR}/hlsl40_shaders/resources/*_vs.hlsl
+		${CMAKE_SOURCE_DIR}/hlsl50_shaders/resources/*_vs.hlsl
 )
 
 file(
         GLOB_RECURSE
         ps_source_files
-		${CMAKE_SOURCE_DIR}/hlsl40_shaders/resources/*_ps.hlsl
+		${CMAKE_SOURCE_DIR}/hlsl50_shaders/resources/*_ps.hlsl
 )
 
 file(
         GLOB_RECURSE
         commons_source_files
-		${CMAKE_SOURCE_DIR}/hlsl40_shaders/resources/mat_input_constants.hlsl
-		${CMAKE_SOURCE_DIR}/hlsl40_shaders/resources/atmospheric_scattering.hlsl
-		${CMAKE_SOURCE_DIR}/hlsl40_shaders/resources/commons.hlsl
-		${CMAKE_SOURCE_DIR}/hlsl40_shaders/resources/generic_rendering.hlsl
+		${CMAKE_SOURCE_DIR}/hlsl50_shaders/resources/mat_input_constants.hlsl
+		${CMAKE_SOURCE_DIR}/hlsl50_shaders/resources/atmospheric_scattering.hlsl
+		${CMAKE_SOURCE_DIR}/hlsl50_shaders/resources/commons.hlsl
+		${CMAKE_SOURCE_DIR}/hlsl50_shaders/resources/generic_rendering.hlsl
 )
 
 file(
         GLOB_RECURSE
         json_files
-		${CMAKE_SOURCE_DIR}/hlsl40_shaders/resources/*.json
+		${CMAKE_SOURCE_DIR}/hlsl50_shaders/resources/*.json
 )
 
 set_property(SOURCE ${ps_source_files} PROPERTY VS_SHADER_TYPE Pixel)
-set_property(SOURCE ${ps_source_files} PROPERTY VS_SHADER_MODEL 4.0)
+set_property(SOURCE ${ps_source_files} PROPERTY VS_SHADER_MODEL 5.0)
 set_property(SOURCE ${ps_source_files} PROPERTY VS_SHADER_DISABLE_OPTIMIZATIONS False)
 set_property(SOURCE ${ps_source_files} PROPERTY VS_SHADER_ENABLE_DEBUG False)
 set_property(SOURCE ${ps_source_files} PROPERTY VS_SHADER_ENTRYPOINT ps_main)
 
 set_property(SOURCE ${vs_source_files} PROPERTY VS_SHADER_TYPE Vertex)
-set_property(SOURCE ${vs_source_files} PROPERTY VS_SHADER_MODEL 4.0)
+set_property(SOURCE ${vs_source_files} PROPERTY VS_SHADER_MODEL 5.0)
 set_property(SOURCE ${vs_source_files} PROPERTY VS_SHADER_DISABLE_OPTIMIZATIONS False)
 set_property(SOURCE ${vs_source_files} PROPERTY VS_SHADER_ENABLE_DEBUG False)
 set_property(SOURCE ${vs_source_files} PROPERTY VS_SHADER_ENTRYPOINT vs_main)
 
-add_custom_target(hlsl40_shaders SOURCES ${vs_source_files} ${ps_source_files})
-add_custom_target(hlsl40_shaders_metadata SOURCES ${json_files})
-add_custom_target(hlsl40_shaders_commons SOURCES ${commons_source_files})
+add_custom_target(hlsl50_shaders SOURCES ${vs_source_files} ${ps_source_files})
+add_custom_target(hlsl50_shaders_metadata SOURCES ${json_files})
+add_custom_target(hlsl50_shaders_commons SOURCES ${commons_source_files})
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/hlsl40_shaders/resources OPTIONAL DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/shaders)
 

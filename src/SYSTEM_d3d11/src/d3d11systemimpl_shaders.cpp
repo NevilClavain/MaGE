@@ -86,7 +86,7 @@ bool D3D11SystemImpl::createShaderBytesOnFile(int p_shadertype,
     hRes = compileShaderFromMem((void*)srcFile.getData(), srcFile.getDataSize(), 
                                     srcFile.getPath().c_str(), 
                                     (p_shadertype == 0 ? "vs_main" : "ps_main"), 
-                                    (p_shadertype == 0 ? "vs_4_0" : "ps_4_0"), 
+                                    (p_shadertype == 0 ? "vs_5_0" : "ps_5_0"), 
                                     &include_mgmt,
                                     &pBlob, &pErrBlob);
 

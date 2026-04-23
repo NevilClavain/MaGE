@@ -39,6 +39,11 @@ struct VS_INPUT
     float4 row2 : INSTANCE2;
     float4 row3 : INSTANCE3;
     
+    float4 row4 : INSTANCE4;
+    float4 row5 : INSTANCE5;
+    float4 row6 : INSTANCE6;
+    float4 row7 : INSTANCE7;
+        
     float4 row8 : INSTANCE8;
     float4 row9 : INSTANCE9;
     float4 row10 : INSTANCE10;
@@ -70,7 +75,11 @@ VS_OUTPUT vs_main( VS_INPUT Input )
     Output.Position = projected_pos_mainview;        
     Output.TexCoord1 = projected_pos_secondaryview.xy;
     
-    float4 wv = mul(pos, mat[matWorldViewSecondary]);
+    float4x4 world = float4x4(Input.row4, Input.row5, Input.row6, Input.row7);
+    float4x4 view2 = mat[matSecondaryView];
+    float4x4 worldView2 = mul(world, view2);
+    float4 wv = mul(pos, worldView2);
+
     Output.TexCoord2 = wv;
         
     return( Output );   

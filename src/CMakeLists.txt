@@ -86,7 +86,7 @@ add_subdirectory(SYSTEM_dataprint)
 add_subdirectory(SYSTEM_animations)
 add_subdirectory(SYSTEM_scenestreamer)
 
-add_subdirectory(hlsl40_shaders)
+add_subdirectory(hlsl50_shaders)
 
 add_subdirectory(commons)
 add_subdirectory(helpers)
