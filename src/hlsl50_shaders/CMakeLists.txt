@@ -66,7 +66,7 @@ add_custom_target(hlsl50_shaders SOURCES ${vs_source_files} ${ps_source_files})
 add_custom_target(hlsl50_shaders_metadata SOURCES ${json_files})
 add_custom_target(hlsl50_shaders_commons SOURCES ${commons_source_files})
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/hlsl40_shaders/resources OPTIONAL DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/shaders)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/hlsl50_shaders/resources OPTIONAL DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/shaders)
 
 
 

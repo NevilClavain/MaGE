@@ -122,38 +122,12 @@ void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
     
     //////////////////////////////////////////////////////////////////////
 
-    // To be removed    
-    Matrix worldview{ *p_worlds.at(0) * p_view };
-    worldview.transpose();
-
-    setPixelshaderConstantsMat(4, worldview);
-    setVertexshaderConstantsMat(4, worldview);
-
-
-    //////////////////////////////////////////////////////////////////////
-
-
-    auto world{ *p_worlds.at(0)};
-    auto view{ p_view };
-
-    world.transpose();
-
+    auto view{ p_view };  
     view.transpose();
 
-    // To be removed    
-    setPixelshaderConstantsMat(8, world);
-
-    setPixelshaderConstantsMat(12, view);
-   
-    // To be removed    
-    setVertexshaderConstantsMat(8, world);
-
-
+    setPixelshaderConstantsMat(12, view);  
     setVertexshaderConstantsMat(12, view);
-
-   
-    //////////////////////////////////////////////////////////////////////
-
+  
     auto cam{ p_view };
 
     cam.inverse();
@@ -172,42 +146,6 @@ void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
     // for secondary view
     //////////////////////////////////////////////////////////////////////
 
-    // To be removed    
-
-    Matrix inv;
-    inv.identity();
-    inv(2, 2) = -1.0;
-    const auto final_view{ p_view * inv };
-
-
-    inv.identity();
-    inv(2, 2) = -1.0;
-    const auto final_secondary_view{ p_secondary_view * inv };
-
-    MatrixChain chain2;
-    chain2.pushMatrix(p_secondary_proj);
-    chain2.pushMatrix(final_secondary_view);
-    chain2.pushMatrix(*p_worlds.at(0));
-    chain2.buildResult();
-    auto result2{ chain2.getResultTransform() };
-    result2.transpose();
-
-    setVertexshaderConstantsMat(24, result2);
-    setPixelshaderConstantsMat(24, result2);
-
-
-
-
-    // To be removed        
-    Matrix worldviewSecondary{ *p_worlds.at(0) * p_secondary_view };
-    worldviewSecondary.transpose();
-    setPixelshaderConstantsMat(28, worldviewSecondary);    
-    setVertexshaderConstantsMat(28, worldviewSecondary);
-
-
-
-
-
 
     auto secondary_view{ p_secondary_view };
     secondary_view.transpose();
@@ -215,8 +153,6 @@ void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
     setPixelshaderConstantsMat(32, secondary_view);    
     setVertexshaderConstantsMat(32, secondary_view);
 
-
-    //////////////////////////////////////////////////////////////////////
 
     auto secondary_cam{ p_secondary_view };
     secondary_cam.inverse();
