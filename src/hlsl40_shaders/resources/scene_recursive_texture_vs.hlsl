@@ -43,7 +43,7 @@ struct VS_INPUT
     float4 row4 : INSTANCE4;
     float4 row5 : INSTANCE5;
     float4 row6 : INSTANCE6;
-    float4 row7 : INSTANCE7;       
+    float4 row7 : INSTANCE7;
 };
 
 struct VS_OUTPUT
