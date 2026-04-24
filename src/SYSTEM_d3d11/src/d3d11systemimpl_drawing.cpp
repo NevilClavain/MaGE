@@ -29,54 +29,22 @@
 using namespace mage::core::maths;
 using namespace mage::transform;
 
-void D3D11SystemImpl::drawLineMeshe(const std::string& p_meshe_id, const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj)
+//void D3D11SystemImpl::drawLineMeshe(const std::string& p_meshe_id, const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj)
+
+void D3D11SystemImpl::drawLineMeshe(const std::string& p_meshe_id, const std::vector<mage::core::maths::Matrix*>& p_worlds,
+                    const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
+                    const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj)
 {   
-    // setting transformation    
-    Matrix inv;    
-    inv.identity();
-    inv(2, 2) = -1.0;
-    const auto final_view{ p_view * inv };
     
-    MatrixChain chain;
-    chain.pushMatrix(p_proj);
-    chain.pushMatrix(final_view);
-    chain.pushMatrix(p_world);
-    chain.buildResult();
-    auto result{ chain.getResultTransform() };
-    const auto result_not_transposed{ result };
-
-    result.transpose();
-
-    setVertexshaderConstantsMat(0, result);
-    setPixelshaderConstantsMat(0, result);
-
-    //////////////////////////////////////////////////////////////////////
-    
-    Matrix worldview{ p_world * p_view };
-    worldview.transpose();
-
-    setVertexshaderConstantsMat(4, worldview);
-    setPixelshaderConstantsMat(4, worldview);
-
-    //////////////////////////////////////////////////////////////////////
-
-    auto world{ p_world };
-    world.transpose();
-
     auto view{ p_view };
-    auto cam{ p_view };
-
     view.transpose();
 
-    setVertexshaderConstantsMat(8, world);
     setVertexshaderConstantsMat(12, view);
-
-    setPixelshaderConstantsMat(8, world);
     setPixelshaderConstantsMat(12, view);
 
     //////////////////////////////////////////////////////////////////////
 
-    //auto cam{ view };
+    auto cam{ p_view };
     cam.inverse();
     cam.transpose();
 
@@ -89,9 +57,37 @@ void D3D11SystemImpl::drawLineMeshe(const std::string& p_meshe_id, const mage::c
     setVertexshaderConstantsMat(20, proj);
     setPixelshaderConstantsMat(20, proj);
 
+    //////////////////////////////////////////////////////////////////////
+    // for secondary view
+    //////////////////////////////////////////////////////////////////////
+
+
+    auto secondary_view{ p_secondary_view };
+    secondary_view.transpose();
+
+    setPixelshaderConstantsMat(32, secondary_view);
+    setVertexshaderConstantsMat(32, secondary_view);
+
+
+    auto secondary_cam{ p_secondary_view };
+    secondary_cam.inverse();
+
+    secondary_cam.transpose();
+
+    setPixelshaderConstantsMat(36, secondary_cam);
+    setVertexshaderConstantsMat(36, secondary_cam);
+
+    auto secondary_proj{ p_secondary_proj };
+
+    secondary_proj.transpose();
+
+    setPixelshaderConstantsMat(40, secondary_proj);
+    setVertexshaderConstantsMat(40, secondary_proj);
+
     ///////////////////////////////////////////////////////////////////////
 
-    updateLineMesheTransformers(p_meshe_id, result_not_transposed, p_world);
+
+    updateLineMesheTransformers(p_meshe_id, p_worlds, p_view, p_proj, p_secondary_view, p_secondary_proj);
 
     // update des shaders legacy constants buffers...
 
@@ -168,7 +164,6 @@ void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
 
     setPixelshaderConstantsMat(40, secondary_proj);    
     setVertexshaderConstantsMat(40, secondary_proj);
-
 
     //////////////////////////////////////////////////////////////////////
 

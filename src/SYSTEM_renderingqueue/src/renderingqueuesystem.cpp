@@ -180,7 +180,7 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 
 					for (const auto& lines_dc : rs.second.lines_dc_list)
 					{
-						_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> lines_dc : " + lines_dc.first);
+						_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> lines_dc : " + lines_dc.first + " worlds stack size = " + std::to_string(lines_dc.second.worlds.size()));						
 					}
 				}
 			}
@@ -762,7 +762,7 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								/// common parts
 										
 								linesQueueDrawingControl.owner_entity_id = linesDrawingControl.owner_entity_id;
-								linesQueueDrawingControl.world = &linesDrawingControl.world;
+								linesQueueDrawingControl.worlds.push_back(&linesDrawingControl.world);
 
 								connect_shaders_args(linesDrawingControl, linesQueueDrawingControl, vshader, pshader);
 
@@ -812,7 +812,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								/// common parts
 
 								trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
-								//trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
 								trianglesQueueDrawingControl.worlds.push_back(&trianglesDrawingControl.world);
 								trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
 
@@ -850,7 +849,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 
 								const size_t stage{ staged_texture.first };
 								const Texture& texture{ staged_texture.second };
-								//textureset_signature += texture.getSourceID() + "." + std::to_string(stage) + "/";
 
 								textures[stage] = texture.getResourceUID();
 							}
@@ -866,7 +864,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								/// common parts
 
 								trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
-								//trianglesQueueDrawingControl.world = &trianglesDrawingControl.world;
 								trianglesQueueDrawingControl.worlds.push_back(&trianglesDrawingControl.world);
 								trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
 
@@ -889,9 +886,7 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								trianglesQueueDrawingControl.textures = textures;
 
 								/// register
-								//
-								//renderStatePayloadPtr->triangles_dc_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
-
+								
 								if (0 == renderStatePayloadPtr->triangles_dc_list.size())
 								{
 									renderStatePayloadPtr->triangles_dc_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;

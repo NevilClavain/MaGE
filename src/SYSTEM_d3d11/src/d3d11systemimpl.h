@@ -172,7 +172,12 @@ public:
 
     bool createLineMeshe(const mage::LineMeshe& p_lm);
     void setLineMeshe(const std::string& p_resource_uid);
-    bool updateLineMesheTransformers(const std::string& p_resource_uid, const mage::core::maths::Matrix& p_wvp, const mage::core::maths::Matrix& p_view);
+
+    //bool updateLineMesheTransformers(const std::string& p_resource_uid, const mage::core::maths::Matrix& p_wvp, const mage::core::maths::Matrix& p_view);
+
+    bool updateLineMesheTransformers(const std::string& p_resource_uid, const std::vector<mage::core::maths::Matrix*>& p_worlds,
+                                    const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
+                                    const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2);
 
     //void destroyLineMeshe(const std::string& p_resource_uid);
 
@@ -221,13 +226,21 @@ public:
 
     void forceCurrentTopology();
 
+    /*
     void drawLineMeshe(const std::string& p_meshe_id, 
                         const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj);
+                        */
+
+    void drawLineMeshe(const std::string& p_meshe_id,
+
+                        const std::vector<mage::core::maths::Matrix*>& p_worlds,
+
+                        const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
+                        const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj);
+
 
     void drawTriangleMeshe(const std::string& p_meshe_id,
-
-                            //const mage::core::maths::Matrix& p_world, 
-
+                           
                             const std::vector<mage::core::maths::Matrix*>& p_worlds,
 
                             const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,

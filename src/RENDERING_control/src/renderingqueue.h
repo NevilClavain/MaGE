@@ -135,7 +135,7 @@ namespace mage
 
 		struct QueueLinesDrawingControl : public QueueDrawingControl
 		{
-			core::maths::Matrix* world{ nullptr };
+		public:			
 			// meshe to set
 			std::string						meshe_id;
 

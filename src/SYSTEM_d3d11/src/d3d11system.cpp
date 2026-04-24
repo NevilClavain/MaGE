@@ -762,9 +762,6 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 
 							if (!(*tdc.projected_z_neg))
 							{
-								//d3dimpl->drawTriangleMeshe(tdc.meshe_id, *tdc.world, current_mainview_view, current_mainview_proj, current_secondaryiew_view, current_secondaryview_proj);						
-								//d3dimpl->drawTriangleMeshe(tdc.meshe_id, *tdc.worlds.at(0), current_mainview_view, current_mainview_proj, current_secondaryiew_view, current_secondaryview_proj);
-
 								d3dimpl->drawTriangleMeshe(tdc.meshe_id, tdc.worlds, current_mainview_view, current_mainview_proj, current_secondaryiew_view, current_secondaryview_proj);
 							}
 						}
@@ -815,7 +812,8 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 
 							/////////////////////////
 
-							d3dimpl->drawLineMeshe(ldc.meshe_id, *ldc.world, current_mainview_view, current_mainview_proj);
+							//d3dimpl->drawLineMeshe(ldc.meshe_id, *ldc.world, current_mainview_view, current_mainview_proj);
+							d3dimpl->drawLineMeshe(ldc.meshe_id, ldc.worlds, current_mainview_view, current_mainview_proj, current_secondaryiew_view, current_secondaryview_proj);
 						}
 					}
 
