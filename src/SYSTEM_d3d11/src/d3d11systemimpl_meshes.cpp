@@ -179,42 +179,12 @@ void D3D11SystemImpl::setLineMeshe(const std::string& p_md5)
     }
 }
 
-bool D3D11SystemImpl::updateLineMesheTransformers(const std::string& p_resource_uid, const std::vector<mage::core::maths::Matrix*>& p_worlds,
-                                                    const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
-                                                    const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2)
+bool D3D11SystemImpl::updateMesheTransformers(const MesheData& p_meshe_data, const std::vector<mage::core::maths::Matrix*>& p_worlds,
+    const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
+    const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2)
 {
-    /*
-    DECLARE_D3D11ASSERT_VARS
-
-    if (!m_lines.count(p_resource_uid))
-    {
-        _EXCEPTION("unknown line meshes :" + p_resource_uid)
-    }
-
-    d3d11transformers tr;
-    tr.wordlViewProj = convertMatrixToXMFloat44(p_wvp);
-    tr.world = convertMatrixToXMFloat44(p_world);
-
-    std::vector<d3d11transformers> instances; // TEMP : later, many entries here ;-)
-    instances.push_back(tr);
-
-    const auto lmData{ m_lines.at(p_resource_uid) };
-
-    D3D11_MAPPED_SUBRESOURCE mapped = {};
-    hRes = m_lpd3ddevcontext->Map(lmData.transforms_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
-    D3D11_CHECK(Map)
-
-    memcpy(mapped.pData, instances.data(), sizeof(d3d11transformers) * instances.size());
-
-    m_lpd3ddevcontext->Unmap(lmData.transforms_buffer, 0);
-    */
 
     DECLARE_D3D11ASSERT_VARS
-
-    if (!m_lines.count(p_resource_uid))
-    {
-        _EXCEPTION("unknown line meshes :" + p_resource_uid)
-    }
 
     mage::core::maths::Matrix inv;
     inv.identity();
@@ -247,18 +217,17 @@ bool D3D11SystemImpl::updateLineMesheTransformers(const std::string& p_resource_
 
     std::vector<d3d11transformers> instances; // TEMP : later, many entries here ;-)
     instances.push_back(tr);
-
-    const auto lmData{ m_lines.at(p_resource_uid) };
+    
 
     D3D11_MAPPED_SUBRESOURCE mapped = {};
-    hRes = m_lpd3ddevcontext->Map(lmData.transforms_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+    hRes = m_lpd3ddevcontext->Map(p_meshe_data.transforms_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
     D3D11_CHECK(Map)
 
     memcpy(mapped.pData, instances.data(), sizeof(d3d11transformers) * instances.size());
 
-    m_lpd3ddevcontext->Unmap(lmData.transforms_buffer, 0);
-
+    m_lpd3ddevcontext->Unmap(p_meshe_data.transforms_buffer, 0);
 }
+
 
 //void D3D11SystemImpl::destroyLineMeshe(const std::string& p_md5)
 //{
@@ -433,60 +402,6 @@ void D3D11SystemImpl::setTriangleMeshe(const std::string& p_resource_uid)
 
         m_currentMeshe = p_resource_uid;
     }
-}
-
-bool D3D11SystemImpl::updateTriangleMesheTransformers(const std::string& p_resource_uid, const std::vector<mage::core::maths::Matrix*>& p_worlds, 
-                                                        const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
-                                                        const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2)
-{
-    DECLARE_D3D11ASSERT_VARS
-
-    if (!m_triangles.count(p_resource_uid))
-    {
-        _EXCEPTION("unknown triangle meshes :" + p_resource_uid)
-    }
-
-    mage::core::maths::Matrix inv;
-    inv.identity();
-    inv(2, 2) = -1.0;
-    const auto final_view{ p_view * inv };
-
-    mage::transform::MatrixChain chain;
-
-    chain.pushMatrix(p_proj);
-    chain.pushMatrix(final_view);
-    chain.pushMatrix(*p_worlds.at(0));
-    chain.buildResult();
-    auto result{ chain.getResultTransform() };
-    const auto result_not_transposed{ result };
-
-    const auto final_view2{ p_view2 * inv };
-    mage::transform::MatrixChain chain2;
-
-    chain2.pushMatrix(p_proj2);
-    chain2.pushMatrix(final_view2);
-    chain2.pushMatrix(*p_worlds.at(0));
-    chain2.buildResult();
-    auto result2{ chain2.getResultTransform() };
-    const auto result2_not_transposed{ result2 };
-
-    d3d11transformers tr;
-    tr.wordlViewProj = convertMatrixToXMFloat44(result_not_transposed);
-    tr.world = convertMatrixToXMFloat44(*p_worlds.at(0));
-    tr.wordlView2Proj2 = convertMatrixToXMFloat44(result2_not_transposed);
-    
-    std::vector<d3d11transformers> instances; // TEMP : later, many entries here ;-)
-    instances.push_back(tr);
-
-    const auto tmData{ m_triangles.at(p_resource_uid) };
-
-    D3D11_MAPPED_SUBRESOURCE mapped = {};
-    hRes = m_lpd3ddevcontext->Map(tmData.transforms_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
-    D3D11_CHECK(Map)
-
-    memcpy(mapped.pData, instances.data(), sizeof(d3d11transformers) * instances.size());
-
-    m_lpd3ddevcontext->Unmap(tmData.transforms_buffer, 0);
 }
 
 /*

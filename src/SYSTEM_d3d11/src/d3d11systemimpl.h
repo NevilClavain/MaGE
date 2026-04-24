@@ -169,25 +169,14 @@ public:
 
     bool createTransformersBuffer(const std::string& p_resource_uid, size_t p_instancesCount);
 
-
     bool createLineMeshe(const mage::LineMeshe& p_lm);
     void setLineMeshe(const std::string& p_resource_uid);
-
-    //bool updateLineMesheTransformers(const std::string& p_resource_uid, const mage::core::maths::Matrix& p_wvp, const mage::core::maths::Matrix& p_view);
-
-    bool updateLineMesheTransformers(const std::string& p_resource_uid, const std::vector<mage::core::maths::Matrix*>& p_worlds,
-                                    const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
-                                    const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2);
 
     //void destroyLineMeshe(const std::string& p_resource_uid);
 
     bool createTriangleMeshe(const mage::TriangleMeshe& p_tm);
 
     void setTriangleMeshe(const std::string& p_resource_uid);
-
-    bool updateTriangleMesheTransformers(const std::string& p_resource_uid, const std::vector<mage::core::maths::Matrix*>& p_worlds, 
-                                        const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
-                                        const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2);
 
 
     //void destroyTriangleMeshe(const std::string& p_resource_uid);
@@ -226,10 +215,6 @@ public:
 
     void forceCurrentTopology();
 
-    /*
-    void drawLineMeshe(const std::string& p_meshe_id, 
-                        const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj);
-                        */
 
     void drawLineMeshe(const std::string& p_meshe_id,
 
@@ -446,5 +431,11 @@ private:
     static void translateD3DD11Error(HRESULT p_hRes, std::string& p_str);    
     static void fullscreenAutosetDesktopResolution(int& p_fullscreen_width, int& p_fullscreen_height, DXGI_FORMAT& p_fullscreen_format, 
                                                         int& p_fullscreen_refreshRate_num, int& p_fullscreen_refreshRate_den);
+
+public:
+
+    bool updateMesheTransformers(const MesheData& p_meshe_data, const std::vector<mage::core::maths::Matrix*>& p_worlds,
+        const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
+        const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2);
 };
 
