@@ -29,9 +29,8 @@
 using namespace mage::core::maths;
 using namespace mage::transform;
 
-//void D3D11SystemImpl::drawLineMeshe(const std::string& p_meshe_id, const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj)
-
-void D3D11SystemImpl::drawLineMeshe(const std::string& p_meshe_id, const std::vector<mage::core::maths::Matrix*>& p_worlds,
+void D3D11SystemImpl::drawLineMeshe(const std::string& p_meshe_id, 
+                    const std::vector<mage::core::maths::Matrix*>& p_worlds,
                     const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
                     const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj)
 {   
@@ -113,7 +112,6 @@ void D3D11SystemImpl::drawLineMeshe(const std::string& p_meshe_id, const std::ve
 }
 
 void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
-                                        //const mage::core::maths::Matrix& p_world, 
                                         const std::vector<mage::core::maths::Matrix*>& p_worlds,
                                         const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
                                         const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj)
