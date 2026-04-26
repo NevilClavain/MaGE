@@ -1,4 +1,3 @@
-
 /* -*-LIC_BEGIN-*- */
 /*
 *
@@ -24,6 +23,7 @@
 /* -*-LIC_END-*- */
 
 #include <vector>
+#include <omp.h>
 
 #include "d3d11systemimpl.h"
 
@@ -193,6 +193,7 @@ bool D3D11SystemImpl::updateMesheTransformers(const MesheData& p_meshe_data, con
 
     std::vector<d3d11transformers> instances;
     
+    #pragma omp parallel for default(shared) schedule(static) private(chain, chain2, result, result2, tr)
     for (const mage::core::maths::Matrix* world_mat : p_worlds)
     {
         mage::transform::MatrixChain chain;

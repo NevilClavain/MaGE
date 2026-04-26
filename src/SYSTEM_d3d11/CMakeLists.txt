@@ -23,6 +23,9 @@
 cmake_minimum_required(VERSION 3.5)
 project(SYSTEM_d3d11)
 
+# Enable OpenMP support
+find_package(OpenMP REQUIRED)
+
 include_directories(${CMAKE_SOURCE_DIR}/commons)
 
 include_directories(${CMAKE_SOURCE_DIR}/CORE_ecs/src)
@@ -53,6 +56,9 @@ file(
 add_definitions( -D_FROMCMAKE )
 
 add_library(SYSTEM_d3d11 ${source_files})
+
+# Link OpenMP to the library
+target_link_libraries(SYSTEM_d3d11 PUBLIC OpenMP::OpenMP_CXX)
 
 #deploy DirectXTK fonts
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/SYSTEM_d3d11/fonts DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>)
