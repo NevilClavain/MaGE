@@ -127,7 +127,6 @@ private:
 class D3D11SystemImpl : public mage::property::Singleton<D3D11SystemImpl>
 {
 public:
-
     D3D11SystemImpl();
     ~D3D11SystemImpl() = default;
 
@@ -427,19 +426,39 @@ private:
 
 public:
 
+    enum class Primitives
+    {
+        LINES,
+        TRIANGLES
+    };
+
     bool updateMesheTransformers(const MesheData& p_meshe_data, 
         const std::vector<mage::core::maths::Matrix*>& p_worlds,
         const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
         const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2);
 
-    bool updateMesheTransformersForLines(const std::string& p_meshe_id,
-        const std::vector<mage::core::maths::Matrix*>& p_worlds,
-        const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
-        const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2);
 
-    bool updateMesheTransformersForTriangles(const std::string& p_meshe_id,
+    template<Primitives p>
+    bool updateMesheTransformersForPrimitive(const std::string& p_meshe_id,
         const std::vector<mage::core::maths::Matrix*>& p_worlds,
         const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
-        const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2);
+        const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2)
+    {
+        MesheList ml;
+
+        if constexpr (Primitives::LINES == p)
+        {
+            ml = m_lines;
+        }
+        else // TRIANGLES
+        {
+            ml = m_triangles;
+        }
+
+        if (!ml.count(p_meshe_id))
+        {
+            _EXCEPTION("unknown meshes :" + p_meshe_id)
+        }
+        updateMesheTransformers(ml.at(p_meshe_id), p_worlds, p_view, p_proj, p_view2, p_proj2);
+    }
 };
-

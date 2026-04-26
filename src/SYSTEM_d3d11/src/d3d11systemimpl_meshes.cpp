@@ -456,29 +456,3 @@ bool D3D11SystemImpl::updateMesheTransformers(const MesheData& p_meshe_data, con
 
     m_lpd3ddevcontext->Unmap(p_meshe_data.transforms_buffer, 0);
 }
-
-bool D3D11SystemImpl::updateMesheTransformersForLines(const std::string& p_meshe_id,
-    const std::vector<mage::core::maths::Matrix*>& p_worlds,
-    const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
-    const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2)
-{
-    if (!m_lines.count(p_meshe_id))
-    {
-        _EXCEPTION("unknown line meshes :" + p_meshe_id)
-    }
-    updateMesheTransformers(m_lines.at(p_meshe_id), p_worlds, p_view, p_proj, p_view2, p_proj2);
-
-}
-
-bool D3D11SystemImpl::updateMesheTransformersForTriangles(const std::string& p_meshe_id,
-    const std::vector<mage::core::maths::Matrix*>& p_worlds,
-    const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
-    const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2)
-{
-    if (!m_triangles.count(p_meshe_id))
-    {
-        _EXCEPTION("unknown triangle meshes :" + p_meshe_id)
-    }
-    updateMesheTransformers(m_triangles.at(p_meshe_id), p_worlds, p_view, p_proj, p_view2, p_proj2);
-
-}
