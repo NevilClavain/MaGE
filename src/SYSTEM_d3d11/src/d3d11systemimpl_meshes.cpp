@@ -190,37 +190,36 @@ bool D3D11SystemImpl::updateMesheTransformers(const MesheData& p_meshe_data, con
     inv.identity();
     inv(2, 2) = -1.0;
     const auto final_view{ p_view * inv };
+    const auto final_view2{ p_view2 * inv };
 
-    std::vector<d3d11transformers> instances;
-    
-    #pragma omp parallel for default(shared) schedule(static) private(chain, chain2, result, result2, tr)
-    for (const mage::core::maths::Matrix* world_mat : p_worlds)
+    std::vector<d3d11transformers> instances(p_worlds.size());
+
+    // looks like fps is degraded with omp ! :(
+    //#pragma omp parallel for default(shared) schedule(static)
+    for (int i = 0; i < static_cast<int>(p_worlds.size()); ++i)
     {
         mage::transform::MatrixChain chain;
 
         chain.pushMatrix(p_proj);
         chain.pushMatrix(final_view);
-        chain.pushMatrix(*world_mat);
+        chain.pushMatrix(*p_worlds[i]);
         chain.buildResult();
         auto result{ chain.getResultTransform() };
-        const auto result_not_transposed{ result };
 
-        const auto final_view2{ p_view2 * inv };
         mage::transform::MatrixChain chain2;
 
         chain2.pushMatrix(p_proj2);
         chain2.pushMatrix(final_view2);
-        chain2.pushMatrix(*world_mat);
+        chain2.pushMatrix(*p_worlds[i]);
         chain2.buildResult();
         auto result2{ chain2.getResultTransform() };
-        const auto result2_not_transposed{ result2 };
 
         d3d11transformers tr;
-        tr.wordlViewProj = convertMatrixToXMFloat44(result_not_transposed);
-        tr.world = convertMatrixToXMFloat44(*p_worlds.at(0));
-        tr.wordlView2Proj2 = convertMatrixToXMFloat44(result2_not_transposed);
+        tr.wordlViewProj = convertMatrixToXMFloat44(result);
+        tr.world = convertMatrixToXMFloat44(*p_worlds[0]);
+        tr.wordlView2Proj2 = convertMatrixToXMFloat44(result2);
 
-        instances.push_back(tr);
+        instances[i] = tr;
     }
 
     D3D11_MAPPED_SUBRESOURCE mapped = {};
