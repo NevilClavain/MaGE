@@ -179,58 +179,6 @@ void D3D11SystemImpl::setLineMeshe(const std::string& p_md5)
     }
 }
 
-bool D3D11SystemImpl::updateMesheTransformers(const MesheData& p_meshe_data, const std::vector<mage::core::maths::Matrix*>& p_worlds,
-    const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
-    const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2)
-{
-
-    DECLARE_D3D11ASSERT_VARS
-
-    mage::core::maths::Matrix inv;
-    inv.identity();
-    inv(2, 2) = -1.0;
-    const auto final_view{ p_view * inv };
-    const auto final_view2{ p_view2 * inv };
-
-    std::vector<d3d11transformers> instances(p_worlds.size());
-
-    // looks like fps is degraded with omp ! :(
-    //#pragma omp parallel for default(shared) schedule(static)
-    for (int i = 0; i < static_cast<int>(p_worlds.size()); ++i)
-    {
-        mage::transform::MatrixChain chain;
-
-        chain.pushMatrix(p_proj);
-        chain.pushMatrix(final_view);
-        chain.pushMatrix(*p_worlds[i]);
-        chain.buildResult();
-        auto result{ chain.getResultTransform() };
-
-        mage::transform::MatrixChain chain2;
-
-        chain2.pushMatrix(p_proj2);
-        chain2.pushMatrix(final_view2);
-        chain2.pushMatrix(*p_worlds[i]);
-        chain2.buildResult();
-        auto result2{ chain2.getResultTransform() };
-
-        d3d11transformers tr;
-        tr.wordlViewProj = convertMatrixToXMFloat44(result);
-        tr.world = convertMatrixToXMFloat44(*p_worlds[0]);
-        tr.wordlView2Proj2 = convertMatrixToXMFloat44(result2);
-
-        instances[i] = tr;
-    }
-
-    D3D11_MAPPED_SUBRESOURCE mapped = {};
-    hRes = m_lpd3ddevcontext->Map(p_meshe_data.transforms_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
-    D3D11_CHECK(Map)
-
-    memcpy(mapped.pData, instances.data(), sizeof(d3d11transformers) * instances.size());
-
-    m_lpd3ddevcontext->Unmap(p_meshe_data.transforms_buffer, 0);
-}
-
 
 //void D3D11SystemImpl::destroyLineMeshe(const std::string& p_md5)
 //{
@@ -455,4 +403,82 @@ void D3D11SystemImpl::forceCurrentMeshe()
         m_next_nbvertices = lmData.nb_vertices;
         m_next_nblines = lmData.nb_primitives;
     }
+}
+
+bool D3D11SystemImpl::updateMesheTransformers(const MesheData& p_meshe_data, const std::vector<mage::core::maths::Matrix*>& p_worlds,
+    const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
+    const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2)
+{
+
+    DECLARE_D3D11ASSERT_VARS
+
+    mage::core::maths::Matrix inv;
+    inv.identity();
+    inv(2, 2) = -1.0;
+    const auto final_view{ p_view * inv };
+    const auto final_view2{ p_view2 * inv };
+
+    std::vector<d3d11transformers> instances(p_worlds.size());
+
+    // looks like fps is degraded with omp ! :(
+    //#pragma omp parallel for default(shared) schedule(static)
+    for (int i = 0; i < static_cast<int>(p_worlds.size()); ++i)
+    {
+        mage::transform::MatrixChain chain;
+
+        chain.pushMatrix(p_proj);
+        chain.pushMatrix(final_view);
+        chain.pushMatrix(*p_worlds[i]);
+        chain.buildResult();
+        auto result{ chain.getResultTransform() };
+
+        mage::transform::MatrixChain chain2;
+
+        chain2.pushMatrix(p_proj2);
+        chain2.pushMatrix(final_view2);
+        chain2.pushMatrix(*p_worlds[i]);
+        chain2.buildResult();
+        auto result2{ chain2.getResultTransform() };
+
+        d3d11transformers tr;
+        tr.wordlViewProj = convertMatrixToXMFloat44(result);
+        tr.world = convertMatrixToXMFloat44(*p_worlds[0]);
+        tr.wordlView2Proj2 = convertMatrixToXMFloat44(result2);
+
+        instances[i] = tr;
+    }
+
+    D3D11_MAPPED_SUBRESOURCE mapped = {};
+    hRes = m_lpd3ddevcontext->Map(p_meshe_data.transforms_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+    D3D11_CHECK(Map)
+
+    memcpy(mapped.pData, instances.data(), sizeof(d3d11transformers) * instances.size());
+
+    m_lpd3ddevcontext->Unmap(p_meshe_data.transforms_buffer, 0);
+}
+
+bool D3D11SystemImpl::updateMesheTransformersForLines(const std::string& p_meshe_id,
+    const std::vector<mage::core::maths::Matrix*>& p_worlds,
+    const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
+    const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2)
+{
+    if (!m_lines.count(p_meshe_id))
+    {
+        _EXCEPTION("unknown line meshes :" + p_meshe_id)
+    }
+    updateMesheTransformers(m_lines.at(p_meshe_id), p_worlds, p_view, p_proj, p_view2, p_proj2);
+
+}
+
+bool D3D11SystemImpl::updateMesheTransformersForTriangles(const std::string& p_meshe_id,
+    const std::vector<mage::core::maths::Matrix*>& p_worlds,
+    const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
+    const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2)
+{
+    if (!m_triangles.count(p_meshe_id))
+    {
+        _EXCEPTION("unknown triangle meshes :" + p_meshe_id)
+    }
+    updateMesheTransformers(m_triangles.at(p_meshe_id), p_worlds, p_view, p_proj, p_view2, p_proj2);
+
 }

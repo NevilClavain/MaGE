@@ -215,19 +215,12 @@ public:
 
     void forceCurrentTopology();
 
-
-    void drawLineMeshe(const std::string& p_meshe_id,
-
-                        const std::vector<mage::core::maths::Matrix*>& p_worlds,
-
+    void drawLineMeshe(const std::vector<mage::core::maths::Matrix*>& p_worlds,
                         const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
                         const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj);
 
 
-    void drawTriangleMeshe(const std::string& p_meshe_id,
-                           
-                            const std::vector<mage::core::maths::Matrix*>& p_worlds,
-
+    void drawTriangleMeshe(const std::vector<mage::core::maths::Matrix*>& p_worlds,
                             const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
                             const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj);
 
@@ -434,7 +427,18 @@ private:
 
 public:
 
-    bool updateMesheTransformers(const MesheData& p_meshe_data, const std::vector<mage::core::maths::Matrix*>& p_worlds,
+    bool updateMesheTransformers(const MesheData& p_meshe_data, 
+        const std::vector<mage::core::maths::Matrix*>& p_worlds,
+        const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
+        const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2);
+
+    bool updateMesheTransformersForLines(const std::string& p_meshe_id,
+        const std::vector<mage::core::maths::Matrix*>& p_worlds,
+        const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
+        const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2);
+
+    bool updateMesheTransformersForTriangles(const std::string& p_meshe_id,
+        const std::vector<mage::core::maths::Matrix*>& p_worlds,
         const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
         const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2);
 };

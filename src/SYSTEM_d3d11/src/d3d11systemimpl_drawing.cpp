@@ -29,8 +29,7 @@
 using namespace mage::core::maths;
 using namespace mage::transform;
 
-void D3D11SystemImpl::drawLineMeshe(const std::string& p_meshe_id, 
-                    const std::vector<mage::core::maths::Matrix*>& p_worlds,
+void D3D11SystemImpl::drawLineMeshe(const std::vector<mage::core::maths::Matrix*>& p_worlds,
                     const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
                     const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj)
 {   
@@ -84,13 +83,6 @@ void D3D11SystemImpl::drawLineMeshe(const std::string& p_meshe_id,
     setVertexshaderConstantsMat(40, secondary_proj);
 
     ///////////////////////////////////////////////////////////////////////
-
-    if (!m_lines.count(p_meshe_id))
-    {
-        _EXCEPTION("unknown line meshes :" + p_meshe_id)
-    }
-    updateMesheTransformers(m_lines.at(p_meshe_id), p_worlds, p_view, p_proj, p_secondary_view, p_secondary_proj);
-
     // update des shaders legacy constants buffers...
 
     D3D11_MAPPED_SUBRESOURCE mapped = {};
@@ -112,8 +104,7 @@ void D3D11SystemImpl::drawLineMeshe(const std::string& p_meshe_id,
     m_lpd3ddevcontext->DrawIndexedInstanced(m_next_nblines * 2, p_worlds.size(), 0, 0, 0);
 }
 
-void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
-                                        const std::vector<mage::core::maths::Matrix*>& p_worlds,
+void D3D11SystemImpl::drawTriangleMeshe(const std::vector<mage::core::maths::Matrix*>& p_worlds,
                                         const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
                                         const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj)
 {
@@ -168,13 +159,6 @@ void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
     setVertexshaderConstantsMat(40, secondary_proj);
 
     //////////////////////////////////////////////////////////////////////
-
-    if (!m_triangles.count(p_meshe_id))
-    {
-        _EXCEPTION("unknown triangle meshes :" + p_meshe_id)
-    }
-    updateMesheTransformers(m_triangles.at(p_meshe_id), p_worlds, p_view, p_proj, p_secondary_view, p_secondary_proj);
-
     // update des shaders legacy constants buffers...
 
     D3D11_MAPPED_SUBRESOURCE mapped = {};
