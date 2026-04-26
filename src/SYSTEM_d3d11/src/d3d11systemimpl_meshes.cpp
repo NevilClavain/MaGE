@@ -191,33 +191,36 @@ bool D3D11SystemImpl::updateMesheTransformers(const MesheData& p_meshe_data, con
     inv(2, 2) = -1.0;
     const auto final_view{ p_view * inv };
 
-    mage::transform::MatrixChain chain;
-
-    chain.pushMatrix(p_proj);
-    chain.pushMatrix(final_view);
-    chain.pushMatrix(*p_worlds.at(0));
-    chain.buildResult();
-    auto result{ chain.getResultTransform() };
-    const auto result_not_transposed{ result };
-
-    const auto final_view2{ p_view2 * inv };
-    mage::transform::MatrixChain chain2;
-
-    chain2.pushMatrix(p_proj2);
-    chain2.pushMatrix(final_view2);
-    chain2.pushMatrix(*p_worlds.at(0));
-    chain2.buildResult();
-    auto result2{ chain2.getResultTransform() };
-    const auto result2_not_transposed{ result2 };
-
-    d3d11transformers tr;
-    tr.wordlViewProj = convertMatrixToXMFloat44(result_not_transposed);
-    tr.world = convertMatrixToXMFloat44(*p_worlds.at(0));
-    tr.wordlView2Proj2 = convertMatrixToXMFloat44(result2_not_transposed);
-
-    std::vector<d3d11transformers> instances; // TEMP : later, many entries here ;-)
-    instances.push_back(tr);
+    std::vector<d3d11transformers> instances;
     
+    for (const mage::core::maths::Matrix* world_mat : p_worlds)
+    {
+        mage::transform::MatrixChain chain;
+
+        chain.pushMatrix(p_proj);
+        chain.pushMatrix(final_view);
+        chain.pushMatrix(*world_mat);
+        chain.buildResult();
+        auto result{ chain.getResultTransform() };
+        const auto result_not_transposed{ result };
+
+        const auto final_view2{ p_view2 * inv };
+        mage::transform::MatrixChain chain2;
+
+        chain2.pushMatrix(p_proj2);
+        chain2.pushMatrix(final_view2);
+        chain2.pushMatrix(*world_mat);
+        chain2.buildResult();
+        auto result2{ chain2.getResultTransform() };
+        const auto result2_not_transposed{ result2 };
+
+        d3d11transformers tr;
+        tr.wordlViewProj = convertMatrixToXMFloat44(result_not_transposed);
+        tr.world = convertMatrixToXMFloat44(*p_worlds.at(0));
+        tr.wordlView2Proj2 = convertMatrixToXMFloat44(result2_not_transposed);
+
+        instances.push_back(tr);
+    }
 
     D3D11_MAPPED_SUBRESOURCE mapped = {};
     hRes = m_lpd3ddevcontext->Map(p_meshe_data.transforms_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);

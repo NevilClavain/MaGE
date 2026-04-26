@@ -108,7 +108,8 @@ void D3D11SystemImpl::drawLineMeshe(const std::string& p_meshe_id,
 
     m_lpd3ddevcontext->VSSetConstantBuffers(0, 1, &m_vertexShaderArgsBuffer);
     m_lpd3ddevcontext->PSSetConstantBuffers(0, 1, &m_pixelShaderArgsBuffer);
-    m_lpd3ddevcontext->DrawIndexed(m_next_nblines * 2, 0, 0);
+
+    m_lpd3ddevcontext->DrawIndexedInstanced(m_next_nblines * 2, p_worlds.size(), 0, 0, 0);
 }
 
 void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
@@ -191,7 +192,7 @@ void D3D11SystemImpl::drawTriangleMeshe(const std::string& p_meshe_id,
     m_lpd3ddevcontext->VSSetConstantBuffers(0, 1, &m_vertexShaderArgsBuffer);
     m_lpd3ddevcontext->PSSetConstantBuffers(0, 1, &m_pixelShaderArgsBuffer);
 
-    m_lpd3ddevcontext->DrawIndexed(m_next_nbtriangles * 3, 0, 0);
+    m_lpd3ddevcontext->DrawIndexedInstanced(m_next_nbtriangles * 3, p_worlds.size(), 0, 0, 0);
 }
 
 void D3D11SystemImpl::beginScreen()
