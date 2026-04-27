@@ -763,7 +763,8 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 							if (!(*tdc.projected_z_neg))
 							{
 								d3dimpl->updateMesheTransformersForPrimitive<D3D11SystemImpl::Primitives::TRIANGLES>(tdc.meshe_id, tdc.worlds, current_mainview_view, current_mainview_proj, current_secondaryiew_view, current_secondaryview_proj);
-								d3dimpl->drawTriangleMeshe(tdc.worlds, current_mainview_view, current_mainview_proj, current_secondaryiew_view, current_secondaryview_proj);
+								d3dimpl->bindShadersConstantBuffers(current_mainview_view, current_mainview_proj, current_secondaryiew_view, current_secondaryview_proj);
+								d3dimpl->drawIndexedInstancedTriangles(tdc.worlds.size());
 							}
 						}
 					}
@@ -814,7 +815,8 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 							/////////////////////////
 
 							d3dimpl->updateMesheTransformersForPrimitive<D3D11SystemImpl::Primitives::LINES>(ldc.meshe_id, ldc.worlds, current_mainview_view, current_mainview_proj, current_secondaryiew_view, current_secondaryview_proj);
-							d3dimpl->drawLineMeshe(ldc.worlds, current_mainview_view, current_mainview_proj, current_secondaryiew_view, current_secondaryview_proj);
+							d3dimpl->bindShadersConstantBuffers(current_mainview_view, current_mainview_proj, current_secondaryiew_view, current_secondaryview_proj);
+							d3dimpl->drawIndexedInstancedLines(ldc.worlds.size());
 						}
 					}
 

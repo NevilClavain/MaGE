@@ -29,11 +29,12 @@
 using namespace mage::core::maths;
 using namespace mage::transform;
 
-void D3D11SystemImpl::drawLineMeshe(const std::vector<mage::core::maths::Matrix*>& p_worlds,
-                    const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
-                    const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj)
-{   
-    
+
+void D3D11SystemImpl::bindShadersConstantBuffers(const mage::core::maths::Matrix& p_view,
+                                                    const mage::core::maths::Matrix& p_proj,
+                                                    const mage::core::maths::Matrix& p_secondary_view,
+                                                    const mage::core::maths::Matrix& p_secondary_proj)
+{
     auto view{ p_view };
     view.transpose();
 
@@ -49,7 +50,7 @@ void D3D11SystemImpl::drawLineMeshe(const std::vector<mage::core::maths::Matrix*
     setVertexshaderConstantsMat(16, cam);
     setPixelshaderConstantsMat(16, cam);
 
-    auto proj { p_proj };
+    auto proj{ p_proj };
 
     proj.transpose();
     setVertexshaderConstantsMat(20, proj);
@@ -83,7 +84,7 @@ void D3D11SystemImpl::drawLineMeshe(const std::vector<mage::core::maths::Matrix*
     setVertexshaderConstantsMat(40, secondary_proj);
 
     ///////////////////////////////////////////////////////////////////////
-    // update des shaders legacy constants buffers...
+    // update des shaders constants buffers...
 
     D3D11_MAPPED_SUBRESOURCE mapped = {};
 
@@ -95,88 +96,20 @@ void D3D11SystemImpl::drawLineMeshe(const std::vector<mage::core::maths::Matrix*
     memcpy(mapped.pData, &m_pixelshader_args, sizeof(m_pixelshader_args));
     m_lpd3ddevcontext->Unmap(m_pixelShaderArgsBuffer, 0);
 
-
     ///////////////
 
     m_lpd3ddevcontext->VSSetConstantBuffers(0, 1, &m_vertexShaderArgsBuffer);
     m_lpd3ddevcontext->PSSetConstantBuffers(0, 1, &m_pixelShaderArgsBuffer);
-
-    m_lpd3ddevcontext->DrawIndexedInstanced(m_next_nblines * 2, p_worlds.size(), 0, 0, 0);
 }
 
-void D3D11SystemImpl::drawTriangleMeshe(const std::vector<mage::core::maths::Matrix*>& p_worlds,
-                                        const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
-                                        const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj)
+void D3D11SystemImpl::drawIndexedInstancedLines(int p_instances_count)
 {
-    
-    //////////////////////////////////////////////////////////////////////
+    m_lpd3ddevcontext->DrawIndexedInstanced(m_next_nblines * 2, p_instances_count, 0, 0, 0);
+}
 
-    auto view{ p_view };  
-    view.transpose();
-
-    setPixelshaderConstantsMat(12, view);  
-    setVertexshaderConstantsMat(12, view);
-  
-    auto cam{ p_view };
-
-    cam.inverse();
-    cam.transpose();
-
-    setPixelshaderConstantsMat(16, cam);
-    setVertexshaderConstantsMat(16, cam);
-    
-    auto proj{ p_proj };
-
-    proj.transpose();
-    setPixelshaderConstantsMat(20, proj);    
-    setVertexshaderConstantsMat(20, proj);
-    
-    //////////////////////////////////////////////////////////////////////
-    // for secondary view
-    //////////////////////////////////////////////////////////////////////
-
-
-    auto secondary_view{ p_secondary_view };
-    secondary_view.transpose();
-
-    setPixelshaderConstantsMat(32, secondary_view);    
-    setVertexshaderConstantsMat(32, secondary_view);
-
-
-    auto secondary_cam{ p_secondary_view };
-    secondary_cam.inverse();
-
-    secondary_cam.transpose();
-
-    setPixelshaderConstantsMat(36, secondary_cam);    
-    setVertexshaderConstantsMat(36, secondary_cam);
-
-    auto secondary_proj{ p_secondary_proj };
-
-    secondary_proj.transpose();
-
-    setPixelshaderConstantsMat(40, secondary_proj);    
-    setVertexshaderConstantsMat(40, secondary_proj);
-
-    //////////////////////////////////////////////////////////////////////
-    // update des shaders legacy constants buffers...
-
-    D3D11_MAPPED_SUBRESOURCE mapped = {};
-
-    auto hRes = m_lpd3ddevcontext->Map(m_vertexShaderArgsBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
-    memcpy(mapped.pData, &m_vertexshader_args, sizeof(m_vertexshader_args));
-    m_lpd3ddevcontext->Unmap(m_vertexShaderArgsBuffer, 0);
-        
-    hRes = m_lpd3ddevcontext->Map(m_pixelShaderArgsBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
-    memcpy(mapped.pData, &m_pixelshader_args, sizeof(m_pixelshader_args));
-    m_lpd3ddevcontext->Unmap(m_pixelShaderArgsBuffer, 0);
-
-    ///////////////
-
-    m_lpd3ddevcontext->VSSetConstantBuffers(0, 1, &m_vertexShaderArgsBuffer);
-    m_lpd3ddevcontext->PSSetConstantBuffers(0, 1, &m_pixelShaderArgsBuffer);
-
-    m_lpd3ddevcontext->DrawIndexedInstanced(m_next_nbtriangles * 3, p_worlds.size(), 0, 0, 0);
+void D3D11SystemImpl::drawIndexedInstancedTriangles(int p_instances_count)
+{
+    m_lpd3ddevcontext->DrawIndexedInstanced(m_next_nbtriangles * 3, p_instances_count, 0, 0, 0);
 }
 
 void D3D11SystemImpl::beginScreen()

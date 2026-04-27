@@ -214,15 +214,6 @@ public:
 
     void forceCurrentTopology();
 
-    void drawLineMeshe(const std::vector<mage::core::maths::Matrix*>& p_worlds,
-                        const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
-                        const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj);
-
-
-    void drawTriangleMeshe(const std::vector<mage::core::maths::Matrix*>& p_worlds,
-                            const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
-                            const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj);
-
     void setVertexshaderConstantsVec(int p_startreg, const mage::core::maths::Real4Vector& p_vec);
     void setPixelshaderConstantsVec(int p_startreg, const mage::core::maths::Real4Vector& p_vec);
     void setVertexshaderConstantsMat(int p_startreg, const mage::core::maths::Matrix& p_mat);
@@ -230,7 +221,13 @@ public:
 
     DirectX::XMFLOAT4X4 convertMatrixToXMFloat44(const mage::core::maths::Matrix& p_mat);
 
+    void bindShadersConstantBuffers(const mage::core::maths::Matrix& p_view,
+                                    const mage::core::maths::Matrix& p_proj,
+                                    const mage::core::maths::Matrix& p_secondary_view,
+                                    const mage::core::maths::Matrix& p_secondary_proj);
 
+    void drawIndexedInstancedLines(int p_instances_count);
+    void drawIndexedInstancedTriangles(int p_instances_count);
 
     struct TextureData
     {
