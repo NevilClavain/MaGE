@@ -257,7 +257,7 @@ public:
 
 private:
 
-    static constexpr int nbMaxInstances{ 1500 };
+    static constexpr int nbMaxTransformersInstances{ 15 };
 
     struct FontRenderingData
     {
@@ -298,12 +298,14 @@ private:
 
     struct MesheData
     {
-        ID3D11Buffer* vertex_buffer         { nullptr };
-        ID3D11Buffer* transforms_buffer     { nullptr };
-        ID3D11Buffer* index_buffer          { nullptr };
+        ID3D11Buffer* vertex_buffer             { nullptr };
+        ID3D11Buffer* index_buffer              { nullptr };
 
-        size_t        nb_vertices           { 0 };
-        size_t        nb_primitives         { 0 };
+        ID3D11Buffer* transforms_buffer         { nullptr };
+        size_t        transforms_buffer_size    { 0 };
+        
+        size_t        nb_vertices               { 0 };
+        size_t        nb_primitives             { 0 };
     };
 
     using RSCache =                 std::unordered_map<std::string, RSCacheEntry>;
@@ -405,7 +407,6 @@ private:
     // current meshe (line or triangle)
     std::string                                         m_currentMeshe;
 
-
     bool                                                m_initialized{ false };
 
     ////////////////////////////////////////////////////////
@@ -456,6 +457,6 @@ public:
         {
             _EXCEPTION("unknown meshes :" + p_meshe_id)
         }
-        updateMesheTransformers(ml.at(p_meshe_id), p_worlds, p_view, p_proj, p_view2, p_proj2);
+        return updateMesheTransformers(ml.at(p_meshe_id), p_worlds, p_view, p_proj, p_view2, p_proj2);
     }
 };

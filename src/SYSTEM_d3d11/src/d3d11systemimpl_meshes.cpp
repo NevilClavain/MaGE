@@ -138,7 +138,7 @@ bool D3D11SystemImpl::createLineMeshe(const mage::LineMeshe& p_lm)
 
             transformersBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
             
-            transformersBufferDesc.ByteWidth = nbMaxInstances * sizeof(d3d11transformers);
+            transformersBufferDesc.ByteWidth = nbMaxTransformersInstances * sizeof(d3d11transformers);
             transformersBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
             transformersBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
             transformersBufferDesc.MiscFlags = 0;
@@ -147,7 +147,7 @@ bool D3D11SystemImpl::createLineMeshe(const mage::LineMeshe& p_lm)
             D3D11_CHECK(CreateBuffer)
         }
 
-        m_lines[resource_uid] = { vertex_buffer, transformer_buffer, index_buffer, nb_vertices, nb_lines };
+        m_lines[resource_uid] = { vertex_buffer, index_buffer, transformer_buffer, nbMaxTransformersInstances, nb_vertices, nb_lines };
     }
 
     _MAGE_DEBUG(m_localLogger, "Line meshe loading SUCCESS : " + resource_uid);
@@ -312,7 +312,7 @@ bool D3D11SystemImpl::createTriangleMeshe(const mage::TriangleMeshe& p_tm)
 
             transformersBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 
-            transformersBufferDesc.ByteWidth = nbMaxInstances * sizeof(d3d11transformers);
+            transformersBufferDesc.ByteWidth = nbMaxTransformersInstances * sizeof(d3d11transformers);
             transformersBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
             transformersBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
             transformersBufferDesc.MiscFlags = 0;
@@ -321,7 +321,7 @@ bool D3D11SystemImpl::createTriangleMeshe(const mage::TriangleMeshe& p_tm)
             D3D11_CHECK(CreateBuffer)
         }
 
-        m_triangles[resource_uid] = { vertex_buffer, transformer_buffer, index_buffer, nb_vertices, nb_triangles };
+        m_triangles[resource_uid] = { vertex_buffer, index_buffer, transformer_buffer, nbMaxTransformersInstances, nb_vertices, nb_triangles };
     }
 
     _MAGE_DEBUG(m_localLogger, "Triangle meshe loading SUCCESS : " + resource_uid);
@@ -419,6 +419,13 @@ bool D3D11SystemImpl::updateMesheTransformers(const MesheData& p_meshe_data, con
     const auto final_view2{ p_view2 * inv };
 
     std::vector<d3d11transformers> instances(p_worlds.size());
+
+    if (instances.size() > p_meshe_data.transforms_buffer_size)
+    {
+        // grow buffer
+
+        _asm nop
+    }
 
     // looks like fps is degraded with omp ! :(
     //#pragma omp parallel for default(shared) schedule(static)
