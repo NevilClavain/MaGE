@@ -23,7 +23,7 @@
 */
 /* -*-LIC_END-*- */
 
-
+#include <md5.h>
 #include "shader.h"
 
 using namespace mage;
@@ -137,4 +137,12 @@ const std::vector<Shader::VectorArrayArgument>& Shader::getVectorArrayArguments(
 void Shader::compute_resource_uid()
 {
     m_resource_uid = std::string("CONTENT_FROM_FILE_") + m_source_id;
+}
+
+void Shader::compute_content_hash()
+{
+    MD5 md5;
+    const std::string hash{ md5.digestMemory((BYTE*)m_file_content, m_file_content_size) };
+
+    m_content_hash = hash;
 }

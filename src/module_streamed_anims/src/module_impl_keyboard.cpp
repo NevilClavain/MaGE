@@ -73,6 +73,17 @@ void ModuleImpl::onKeyPress(long p_key)
 
 			speed = 60.0;
 		}
+		else if ("camera3_Entity" == mainView)
+		{
+			auto& sliderJointEntityNode{ m_entitygraph.node("camera3_SliderJoint_Entity") };
+			const auto sliderJointEntity{ sliderJointEntityNode.data() };
+			auto& time_aspect{ sliderJointEntity->aspectAccess(core::timeAspect::id) };
+
+			auto& z_slide_pos{ time_aspect.getComponent< SyncVariable>("z_slide_pos")->getPurpose() };
+
+			z_slide_pos.direction = SyncVariable::Direction::DEC;
+			z_slide_pos.state = SyncVariable::State::ON;
+		}
 
 	}
 	else if ('W' == p_key)
@@ -98,6 +109,18 @@ void ModuleImpl::onKeyPress(long p_key)
 			double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
 
 			speed = -60.0;
+		}
+		else if ("camera3_Entity" == mainView)
+		{
+			auto& sliderJointEntityNode{ m_entitygraph.node("camera3_SliderJoint_Entity") };
+			const auto sliderJointEntity{ sliderJointEntityNode.data() };
+			auto& time_aspect{ sliderJointEntity->aspectAccess(core::timeAspect::id) };
+
+			auto& z_slide_pos{ time_aspect.getComponent< SyncVariable>("z_slide_pos")->getPurpose() };
+
+			z_slide_pos.direction = SyncVariable::Direction::INC;
+			z_slide_pos.state = SyncVariable::State::ON;
+
 		}
 	}
 	else if (VK_CONTROL == p_key)
@@ -167,6 +190,10 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		}
 		else if ("camera2_Entity" == mainView)
 		{
+			renderingQueueSystemInstance->setViewGroupMainView("openenv_main_graph", "camera3_Entity");
+		}
+		else if ("camera3_Entity" == mainView)
+		{
 			renderingQueueSystemInstance->setViewGroupMainView("openenv_main_graph", "camera_Entity");
 		}
 	}
@@ -189,23 +216,26 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 	else if (VK_F8 == p_key)
 	{
-		/*
-		auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
-		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
-
-		renderingQueueSystemInstance->requestRenderingqueueLogging("screenRendering_Filter_DirectForward_Queue_Entity");
-		*/
-
-		auto sceneStreamerSystem{ SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot) };
-		auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(sceneStreamerSystem) };
-
-		sceneStreamerSystemInstance->dumpXTreeEntities();
-		//sceneStreamerSystemInstance->dumpXTree();
 	}
 
 	else if (VK_F9 == p_key)
 	{
 		helpers::logEntitygraph(m_entitygraph, true);
+		
+		auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
+		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
+
+		renderingQueueSystemInstance->requestRenderingqueueLogging("TextureChannelScene_Entity");
+		//renderingQueueSystemInstance->requestRenderingqueueLogging("screenRendering_Filter_DirectForward_Queue_Entity");
+		
+
+		//auto sceneStreamerSystem{ SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot) };
+		//auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(sceneStreamerSystem) };
+
+		//sceneStreamerSystemInstance->dumpXTreeEntities();
+		//sceneStreamerSystemInstance->dumpXTree();
+
+		::MessageBox(0, "Log dump done", "Mage", MB_OK | MB_ICONINFORMATION);
 	}
 
 	else if ('Q' == p_key)
@@ -232,7 +262,16 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 			speed = 0.0;
 		}
+		else if ("camera3_Entity" == mainView)
+		{
+			auto& sliderJointEntityNode{ m_entitygraph.node("camera3_SliderJoint_Entity") };
+			const auto sliderJointEntity{ sliderJointEntityNode.data() };
+			auto& time_aspect{ sliderJointEntity->aspectAccess(core::timeAspect::id) };
 
+			auto& z_slide_pos{ time_aspect.getComponent< SyncVariable>("z_slide_pos")->getPurpose() };
+
+			z_slide_pos.state = SyncVariable::State::OFF;
+		}
 	}
 
 	else if ('W' == p_key)
@@ -258,6 +297,16 @@ void ModuleImpl::onEndKeyPress(long p_key)
 			double& speed{ world_aspect.getComponent<double>("gbl_speed")->getPurpose() };
 
 			speed = 0.0;
+		}
+		else if ("camera3_Entity" == mainView)
+		{
+			auto& sliderJointEntityNode{ m_entitygraph.node("camera3_SliderJoint_Entity") };
+			const auto sliderJointEntity{ sliderJointEntityNode.data() };
+			auto& time_aspect{ sliderJointEntity->aspectAccess(core::timeAspect::id) };
+
+			auto& z_slide_pos{ time_aspect.getComponent< SyncVariable>("z_slide_pos")->getPurpose() };
+
+			z_slide_pos.state = SyncVariable::State::OFF;
 		}
 	}
 

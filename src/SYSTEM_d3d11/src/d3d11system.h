@@ -103,10 +103,10 @@ namespace mage
         void    handleShaderRelease(Shader& p_shaderInfos, int p_shaderType);
 
         void    handleLinemesheCreation(LineMeshe& p_lm);
-        void    handleLinemesheRelease(LineMeshe& p_lm);
+        //void    handleLinemesheRelease(LineMeshe& p_lm);
 
         void    handleTrianglemesheCreation(TriangleMeshe& p_tm);
-        void    handleTrianglemesheRelease(TriangleMeshe& p_tm);
+        //void    handleTrianglemesheRelease(TriangleMeshe& p_tm);
 
         void    handleTextureCreation(Texture& p_texture);
 

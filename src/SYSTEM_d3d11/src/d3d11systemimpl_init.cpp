@@ -471,10 +471,16 @@ bool D3D11SystemImpl::init(mage::core::Entity* p_mainWindow)
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
 
-	bd.Usage = D3D11_USAGE_DEFAULT;
+	//bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.Usage = D3D11_USAGE_DYNAMIC;
 	bd.ByteWidth = sizeof(ShaderArg);
+	//bd.ByteWidth = ((sizeof(ShaderArg) + 15) / 16) * 16; // aligné sur 16 octets
 	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bd.CPUAccessFlags = 0;
+	//bd.CPUAccessFlags = 0;
+	
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bd.MiscFlags = 0;
+	bd.StructureByteStride = 0;
 
 	hRes = m_lpd3ddevice->CreateBuffer(&bd, nullptr, &m_vertexShaderArgsBuffer);
 	D3D11_CHECK(CreateBuffer);

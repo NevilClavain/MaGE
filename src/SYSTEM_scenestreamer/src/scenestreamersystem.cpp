@@ -763,10 +763,10 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
         mage::core::FileContent<char> entityFileContent("./module_streamed_anims_config/" + e.file + ".json");
         entityFileContent.load();
 
-        std::unordered_map<std::string, std::string> file_args;
-        for (const json::FileArgument& file_arg : e.file_args)
+        std::unordered_map<std::string, std::string> file_string_args;
+        for (const json::FileStringArgument& file_string_arg : e.file_string_args)
         {
-            file_args.emplace(file_arg.key, file_arg.value);
+            file_string_args.emplace(file_string_arg.key, file_string_arg.value);
         }
 
         std::unordered_map<std::string, std::unique_ptr<IValueGenerator>> generators;
@@ -774,18 +774,18 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
         int index{ 0 };
         for (const auto& instance_animator : e.instances_factory.animators)        
         {            
-            auto file_args_1 = file_args;
+            auto file_string_args_1 = file_string_args;
             if (index > 0)
             {
                 const auto ext{ std::to_string(index) };
                 // extend entity id with index number
-                for (auto& file_arg : file_args_1)
+                for (auto& file_str_arg : file_string_args_1)
                 {
-                    file_arg.second += "_clone_" + ext;
+                    file_str_arg.second += "_clone_" + ext;
                 }
             }
 
-            buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_args_1, generators);
+            buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_string_args_1, e.file_realvector3_args, generators);
             index++;
         }
 
@@ -797,20 +797,20 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
 
             for (int i = 0; i < instance_animator_repeat.number; i++)
             {
-                auto file_args_2 = file_args;
+                auto file_string_args_2 = file_string_args;
                 if (index > 0)
                 {
                     const auto ext{ std::to_string(index) };
                     // extend entity id with index number
-                    for (auto& file_arg : file_args_2)
+                    for (auto& file_str_arg : file_string_args_2)
                     {
-                        file_arg.second += "_clone_" + ext;
+                        file_str_arg.second += "_clone_" + ext;
                     }
                 }
 
                 const auto instance_animator{ instance_animator_repeat.animator };
 
-                buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_args_2, generators);
+                buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_string_args_2, e.file_realvector3_args, generators);
                 index++;
             }
         }
@@ -824,6 +824,7 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
                                                                                     const std::string& p_parentEntityId, 
                                                                                     const mage::core::maths::Matrix p_perspective_projection,
                                                                                     const std::unordered_map<std::string, std::string> p_file_args,
+                                                                                    const std::vector<json::Real3Vector>& p_file_realvector3_args,
                                                                                     const std::unordered_map<std::string, std::unique_ptr<IValueGenerator>>& p_generators)
 {
     json::ScenegraphEntitiesCollection sgc;
@@ -902,6 +903,106 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
                         }, helpers::makeGimbalLockJointAnimator())
                     );
                 }
+
+                else if ("lookatJoin" == p_animator.helper)
+                {
+                    world_aspect.addComponent<transform::WorldPosition>("lookat_output");
+                    world_aspect.addComponent<core::maths::Real3Vector>("lookat_localpos", core::maths::Real3Vector(0.0, 0.0, 0.0));
+
+
+                    world_aspect.addComponent<std::function<core::maths::Real3Vector(const std::string&)>>("lookat_gettargetpos",
+                        [this](const std::string& p_entityid) -> core::maths::Real3Vector
+                        {
+                            if (!m_entitygraph.hasNode(p_entityid))
+                            {
+                                return core::maths::Real3Vector(0, 0, 0);
+                            }
+
+                            auto& targetNode{ m_entitygraph.node(p_entityid) };
+                            const auto targetEntity{ targetNode.data() };
+
+                            const auto& worldAspect{ targetEntity->aspectAccess(core::worldAspect::id) };
+                            const auto& entity_worldposition_list{ worldAspect.getComponentsByType<transform::WorldPosition>() };
+
+                            const transform::WorldPosition& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
+
+                            core::maths::Real3Vector pos(entity_worldposition.global_pos(3, 0),
+                                entity_worldposition.global_pos(3, 1),
+                                entity_worldposition.global_pos(3, 2));
+                            return pos;
+                        }
+                    );
+
+                    const std::string target_entity_id{ filter_arguments_stack(p_animator.helper_strings_args.at(0), p_file_args) };
+
+                    world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
+                        {
+                            {"lookatJointAnim.output", "lookat_output"},
+                            {"lookatJointAnim.localpos", "lookat_localpos"},
+                            {"lookatJointAnim.target", target_entity_id},
+                            {"lookatJointAnim.gettargetpos", "lookat_gettargetpos"},
+
+                        }, helpers::makeLookatJointAnimator())
+                    );
+                }
+
+                else if ("sliderJoin" == p_animator.helper)
+                {
+                    world_aspect.addComponent<transform::WorldPosition>("slider_output");
+
+                    double speed_x;
+                    double speed_y;
+                    double speed_z;
+
+                    // if vector3 arg provided to file
+                    if (p_file_realvector3_args.size())
+                    {
+                        speed_x = p_file_realvector3_args.at(0).x;
+                        speed_y = p_file_realvector3_args.at(0).y;
+                        speed_z = p_file_realvector3_args.at(0).z;
+                    }
+                    else
+                    {
+                        speed_x = p_animator.helper_realvector3_args.at(0).x;
+                        speed_y = p_animator.helper_realvector3_args.at(0).y;
+                        speed_z = p_animator.helper_realvector3_args.at(0).z;
+                    }
+
+                    SyncVariable x_slide_pos(SyncVariable::Type::POSITION, speed_x, SyncVariable::Direction::INC, 0.0);
+                    x_slide_pos.state = SyncVariable::State::OFF;
+
+                    SyncVariable y_slide_pos(SyncVariable::Type::POSITION, speed_y, SyncVariable::Direction::INC, 0.0);
+                    y_slide_pos.state = SyncVariable::State::OFF;
+
+                    SyncVariable z_slide_pos(SyncVariable::Type::POSITION, speed_z, SyncVariable::Direction::INC, 0.0);
+                    z_slide_pos.state = SyncVariable::State::OFF;
+
+                    time_aspect.addComponent<SyncVariable>("x_slide_pos", x_slide_pos);
+                    time_aspect.addComponent<SyncVariable>("y_slide_pos", y_slide_pos);
+                    time_aspect.addComponent<SyncVariable>("z_slide_pos", z_slide_pos);
+
+                    world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>("x_slide_pos_matrix_source", &time_aspect.getComponent<SyncVariable>("x_slide_pos")->getPurpose());
+                    world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>("y_slide_pos_matrix_source", &time_aspect.getComponent<SyncVariable>("y_slide_pos")->getPurpose());
+                    world_aspect.addComponent<mage::transform::SyncVarValueMatrixSource>("z_slide_pos_matrix_source", &time_aspect.getComponent<SyncVariable>("z_slide_pos")->getPurpose());
+
+                    mage::transform::MatrixFactory slider_matrix_factory("translation");
+
+                    slider_matrix_factory.setXSource(&world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>("x_slide_pos_matrix_source")->getPurpose());
+                    slider_matrix_factory.setYSource(&world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>("y_slide_pos_matrix_source")->getPurpose());
+                    slider_matrix_factory.setZSource(&world_aspect.getComponent<mage::transform::SyncVarValueMatrixSource>("z_slide_pos_matrix_source")->getPurpose());
+
+                    world_aspect.addComponent<mage::transform::MatrixFactory>("slider_matrix_factory", slider_matrix_factory);
+
+                    world_aspect.addComponent<transform::Animator>("slider", transform::Animator
+                    (
+                        {
+                            {"sliderJointAnim.output", "slider_output"},
+                            {"sliderJointAnim.matrixFactory", "slider_matrix_factory"},
+                        },
+                        helpers::makeSliderJointAnimator())
+                    );
+                }
+
                 // if no helper, decode matrix_factory
                 else if ("" == p_animator.helper)
                 {

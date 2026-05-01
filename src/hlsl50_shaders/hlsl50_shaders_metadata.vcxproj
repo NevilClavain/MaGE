@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|Win32">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|Win32">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{6A6FB438-A10A-378C-B62F-389562C70AF0}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>Win32</Platform>
+    <ProjectName>hlsl50_shaders_metadata</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\color_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\color_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\combiner_accumulate2chan_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\combiner_accumulate2chan_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\combiner_accumulate3chan_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\combiner_accumulate3chan_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\combiner_fog_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\combiner_fog_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\combiner_modulate_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\combiner_modulate_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\filter_directforward_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\filter_directforward_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\pass_switch_texture2stages_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\pass_switch_texture2stages_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_flatclouds_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_flatclouds_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_flatcolor_keycolor_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_flatcolor_keycolor_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_flatcolor_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_flatcolor_skinning_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_flatcolor_skinning_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_flatcolor_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_lit_keycolor_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_lit_keycolor_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_lit_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_lit_skinning_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_lit_skinning_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_lit_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_recursive_texture_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_recursive_texture_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_shadowsmask_keycolor_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_shadowsmask_keycolor_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_shadowsmask_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_shadowsmask_skinning_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_shadowsmask_skinning_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_shadowsmask_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_skydome_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_skydome_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_texture1stage_keycolor_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_texture1stage_keycolor_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_texture1stage_skinning_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_texture1stage_skinning_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_zdepth_keycolor_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_zdepth_keycolor_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_zdepth_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_zdepth_skinning_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_zdepth_skinning_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_zdepth_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\sprite_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\sprite_vs.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\texture_ps.json">
+    </None>
+    <None Include="D:\dev\MaGE\src\hlsl50_shaders\resources\texture_vs.json">
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\color_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\combiner_accumulate2chan_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\combiner_accumulate3chan_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\combiner_fog_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\combiner_modulate_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\filter_directforward_switch2chan_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\filter_directforward_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_flatclouds_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_flatcolor_keycolor_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_flatcolor_skinning_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_flatcolor_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_lit_keycolor_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_lit_skinning_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_lit_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_recursive_texture_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_shadowsmask_keycolor_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_shadowsmask_skinning_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_shadowsmask_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_skydome_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_texture1stage_keycolor_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_texture1stage_skinning_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_zdepth_keycolor_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_zdepth_skinning_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_zdepth_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\sprite_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\texture_vs.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\color_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\combiner_accumulate2chan_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\combiner_accumulate3chan_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\combiner_fog_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\combiner_modulate_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\filter_directforward_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\filter_directforward_switch2chan_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_flatclouds_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_flatcolor_keycolor_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_flatcolor_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_flatcolor_skinning_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_lit_keycolor_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_lit_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_lit_skinning_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_recursive_texture_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_shadowsmask_keycolor_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_shadowsmask_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_shadowsmask_skinning_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_skydome_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_texture1stage_keycolor_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_texture1stage_skinning_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_zdepth_keycolor_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_zdepth_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\scene_zdepth_skinning_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\sprite_ps.hlsl" />
+    <FXCompile Include="D:\dev\MaGE\src\hlsl50_shaders\resources\texture_ps.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+</Project>

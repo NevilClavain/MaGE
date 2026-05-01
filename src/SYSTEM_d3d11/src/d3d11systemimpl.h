@@ -101,6 +101,13 @@ struct d3d11vertex
     DirectX::XMFLOAT3 binormale;
 };
 
+struct d3d11transformers
+{
+    DirectX::XMFLOAT4X4 wordlViewProj;
+    DirectX::XMFLOAT4X4 world;
+    DirectX::XMFLOAT4X4 wordlView2Proj2; // world combined with 2nd View and 2nd proj
+};
+
 struct D3D10Include : public ID3D10Include
 {
 public:
@@ -113,14 +120,13 @@ public:
 
 private:
     mage::core::FileContent<const char>*    m_fc{ nullptr };
-    const std::string                           m_basepath;
+    const std::string                       m_basepath;
     mage::core::logger::Sink&               m_logger;
 };
 
 class D3D11SystemImpl : public mage::property::Singleton<D3D11SystemImpl>
 {
 public:
-
     D3D11SystemImpl();
     ~D3D11SystemImpl() = default;
 
@@ -159,13 +165,20 @@ public:
     void destroyVertexShader(const std::string& p_resource_uid);
     void destroyPixelShader(const std::string& p_resource_uid);
 
+
+    bool createTransformersBuffer(const std::string& p_resource_uid, size_t p_instancesCount);
+
     bool createLineMeshe(const mage::LineMeshe& p_lm);
     void setLineMeshe(const std::string& p_resource_uid);
-    void destroyLineMeshe(const std::string& p_resource_uid);
+
+    //void destroyLineMeshe(const std::string& p_resource_uid);
 
     bool createTriangleMeshe(const mage::TriangleMeshe& p_tm);
+
     void setTriangleMeshe(const std::string& p_resource_uid);
-    void destroyTriangleMeshe(const std::string& p_resource_uid);
+
+
+    //void destroyTriangleMeshe(const std::string& p_resource_uid);
 
     void forceCurrentMeshe();
 
@@ -201,16 +214,20 @@ public:
 
     void forceCurrentTopology();
 
-    void drawLineMeshe(const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj);
-    void drawTriangleMeshe(const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
-                            const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj);
-
     void setVertexshaderConstantsVec(int p_startreg, const mage::core::maths::Real4Vector& p_vec);
     void setPixelshaderConstantsVec(int p_startreg, const mage::core::maths::Real4Vector& p_vec);
     void setVertexshaderConstantsMat(int p_startreg, const mage::core::maths::Matrix& p_mat);
     void setPixelshaderConstantsMat(int p_startreg, const mage::core::maths::Matrix& p_mat);
 
+    DirectX::XMFLOAT4X4 convertMatrixToXMFloat44(const mage::core::maths::Matrix& p_mat);
 
+    void bindShadersConstantBuffers(const mage::core::maths::Matrix& p_view,
+                                    const mage::core::maths::Matrix& p_proj,
+                                    const mage::core::maths::Matrix& p_secondary_view,
+                                    const mage::core::maths::Matrix& p_secondary_proj);
+
+    void drawIndexedInstancedLines(int p_instances_count);
+    void drawIndexedInstancedTriangles(int p_instances_count);
 
     struct TextureData
     {
@@ -238,9 +255,9 @@ public:
         D3D11_VIEWPORT                      viewport; // viewport adapte au rendu dans cette texture
     };
 
-
-
 private:
+
+    static constexpr int nbMaxTransformersInstances{ 1500 };
 
     struct FontRenderingData
     {
@@ -281,10 +298,14 @@ private:
 
     struct MesheData
     {
-        ID3D11Buffer* vertex_buffer         { nullptr };
-        ID3D11Buffer* index_buffer          { nullptr };
-        size_t        nb_vertices           { 0 };
-        size_t        nb_primitives         { 0 };
+        ID3D11Buffer* vertex_buffer             { nullptr };
+        ID3D11Buffer* index_buffer              { nullptr };
+
+        ID3D11Buffer* transforms_buffer         { nullptr };
+        size_t        transforms_buffer_size    { 0 };
+        
+        size_t        nb_vertices               { 0 };
+        size_t        nb_primitives             { 0 };
     };
 
     using RSCache =                 std::unordered_map<std::string, RSCacheEntry>;
@@ -297,7 +318,8 @@ private:
     using TextureList =             std::unordered_map<std::string, TextureData>;
 
 
-    mage::core::logger::Sink                        m_localLogger;
+
+    mage::core::logger::Sink                            m_localLogger;
 
     size_t                                              m_next_nbvertices{ 0 };
     size_t                                              m_next_nbtriangles{ 0 };
@@ -385,13 +407,14 @@ private:
     // current meshe (line or triangle)
     std::string                                         m_currentMeshe;
 
-
     bool                                                m_initialized{ false };
 
     ////////////////////////////////////////////////////////
 
 
     bool createDepthStencilBuffer(ID3D11Device* p_lpd3ddevice, int p_width, int p_height, DXGI_FORMAT p_format, ID3D11Texture2D** p_texture2D, ID3D11DepthStencilView** p_view);
+
+    bool createTransformersInstancesBuffer(int p_size, ID3D11Buffer** p_outbuffer);
 
     HRESULT compileShaderFromMem(void* p_data, int p_size, LPCTSTR szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3D10Include* p_include, ID3DBlob** ppBlobOut, ID3DBlob** ppBlobErrOut);
 
@@ -400,5 +423,43 @@ private:
     static void translateD3DD11Error(HRESULT p_hRes, std::string& p_str);    
     static void fullscreenAutosetDesktopResolution(int& p_fullscreen_width, int& p_fullscreen_height, DXGI_FORMAT& p_fullscreen_format, 
                                                         int& p_fullscreen_refreshRate_num, int& p_fullscreen_refreshRate_den);
-};
 
+public:
+
+    enum class Primitives
+    {
+        LINES,
+        TRIANGLES
+    };
+
+    bool updateMesheTransformers(MesheData& p_meshe_data, 
+        const std::vector<mage::core::maths::Matrix*>& p_worlds,
+        const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
+        const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2);
+
+
+    template<Primitives p>
+    bool updateMesheTransformersForPrimitive(const std::string& p_meshe_id,
+        const std::vector<mage::core::maths::Matrix*>& p_worlds,
+        const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
+        const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2)
+    {
+        // ICI
+        MesheList* ml;
+
+        if constexpr (Primitives::LINES == p)
+        {
+            ml = &m_lines;
+        }
+        else // TRIANGLES
+        {
+            ml = &m_triangles;
+        }
+
+        if (!ml->count(p_meshe_id))
+        {
+            _EXCEPTION("unknown meshes :" + p_meshe_id)
+        }
+        return updateMesheTransformers(ml->at(p_meshe_id), p_worlds, p_view, p_proj, p_view2, p_proj2);
+    }
+};

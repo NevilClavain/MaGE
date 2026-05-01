@@ -1,4 +1,3 @@
-
 /* -*-LIC_BEGIN-*- */
 /*
 *
@@ -23,11 +22,16 @@
 */
 /* -*-LIC_END-*- */
 
+#include <vector>
+#include <omp.h>
+
 #include "d3d11systemimpl.h"
 
 #include "logsink.h"
 #include "logconf.h"
 #include "logging.h"
+
+#include "matrixchain.h"
 
 
 bool D3D11SystemImpl::createLineMeshe(const mage::LineMeshe& p_lm)
@@ -51,6 +55,7 @@ bool D3D11SystemImpl::createLineMeshe(const mage::LineMeshe& p_lm)
 
         ID3D11Buffer* vertex_buffer{ nullptr };
         ID3D11Buffer* index_buffer{ nullptr };
+        ID3D11Buffer* transformer_buffer{ nullptr };
 
         {
             // vertex buffer creation
@@ -127,7 +132,13 @@ bool D3D11SystemImpl::createLineMeshe(const mage::LineMeshe& p_lm)
             delete[] t;
         }
 
-        m_lines[resource_uid] = { vertex_buffer, index_buffer, nb_vertices, nb_lines };
+        // TRANSFORMERS buffer creationZ
+        if (!createTransformersInstancesBuffer(nbMaxTransformersInstances, &transformer_buffer))
+        {
+            return false;
+        }
+
+        m_lines[resource_uid] = { vertex_buffer, index_buffer, transformer_buffer, nbMaxTransformersInstances, nb_vertices, nb_lines };
     }
 
     _MAGE_DEBUG(m_localLogger, "Line meshe loading SUCCESS : " + resource_uid);
@@ -145,10 +156,11 @@ void D3D11SystemImpl::setLineMeshe(const std::string& p_md5)
     {
         const auto lmData{ m_lines.at(p_md5) };
 
-        const UINT stride{ sizeof(d3d11vertex) };
-        const UINT offset = 0;
+        UINT strides[2] = { sizeof(d3d11vertex), sizeof(d3d11transformers) };
+        UINT offsets[2] = { 0, 0 };
+        ID3D11Buffer* buffers[2] = { lmData.vertex_buffer, lmData.transforms_buffer };
+        m_lpd3ddevcontext->IASetVertexBuffers(0, 2, buffers, strides, offsets);
 
-        m_lpd3ddevcontext->IASetVertexBuffers(0, 1, &lmData.vertex_buffer, &stride, &offset);
         m_lpd3ddevcontext->IASetIndexBuffer(lmData.index_buffer, DXGI_FORMAT_R32_UINT, 0);
 
         m_next_nbvertices = lmData.nb_vertices;
@@ -158,20 +170,21 @@ void D3D11SystemImpl::setLineMeshe(const std::string& p_md5)
     }
 }
 
-void D3D11SystemImpl::destroyLineMeshe(const std::string& p_md5)
-{
-    if (!m_lines.count(p_md5))
-    {
-        _EXCEPTION("unknown line meshe :" + p_md5)
-    }
-    const auto lmData{ m_lines.at(p_md5) };
 
-    lmData.vertex_buffer->Release();
-    lmData.index_buffer->Release();
-
-    m_lines.erase(p_md5);
-    _MAGE_DEBUG(m_localLogger, "Line meshe release SUCCESS : " + p_md5);
-}
+//void D3D11SystemImpl::destroyLineMeshe(const std::string& p_md5)
+//{
+//    if (!m_lines.count(p_md5))
+//    {
+//        _EXCEPTION("unknown line meshe :" + p_md5)
+//    }
+//    const auto lmData{ m_lines.at(p_md5) };
+//
+//    lmData.vertex_buffer->Release();
+//    lmData.index_buffer->Release();
+//
+//    m_lines.erase(p_md5);
+//    _MAGE_DEBUG(m_localLogger, "Line meshe release SUCCESS : " + p_md5);
+//}
 
 bool D3D11SystemImpl::createTriangleMeshe(const mage::TriangleMeshe& p_tm)
 {
@@ -194,6 +207,7 @@ bool D3D11SystemImpl::createTriangleMeshe(const mage::TriangleMeshe& p_tm)
 
         ID3D11Buffer* vertex_buffer{ nullptr };
         ID3D11Buffer* index_buffer{ nullptr };
+        ID3D11Buffer* transformer_buffer{ nullptr };
 
         {
             // vertex buffer creation
@@ -283,7 +297,13 @@ bool D3D11SystemImpl::createTriangleMeshe(const mage::TriangleMeshe& p_tm)
             delete[] t;
         }
 
-        m_triangles[resource_uid] = { vertex_buffer, index_buffer, nb_vertices, nb_triangles };
+        // TRANSFORMERS buffer creation
+        if (!createTransformersInstancesBuffer(nbMaxTransformersInstances, &transformer_buffer))
+        {
+            return false;
+        }
+
+        m_triangles[resource_uid] = { vertex_buffer, index_buffer, transformer_buffer, nbMaxTransformersInstances, nb_vertices, nb_triangles };
     }
 
     _MAGE_DEBUG(m_localLogger, "Triangle meshe loading SUCCESS : " + resource_uid);
@@ -302,10 +322,12 @@ void D3D11SystemImpl::setTriangleMeshe(const std::string& p_resource_uid)
     {
         const auto tmData{ m_triangles.at(p_resource_uid) };
 
-        const UINT stride{ sizeof(d3d11vertex) };
-        const UINT offset = 0;
+        UINT strides[2] = { sizeof(d3d11vertex), sizeof(d3d11transformers) };
+        UINT offsets[2] = { 0, 0 };
+        ID3D11Buffer* buffers[2] = { tmData.vertex_buffer, tmData.transforms_buffer };
+        m_lpd3ddevcontext->IASetVertexBuffers(0, 2, buffers, strides, offsets);
 
-        m_lpd3ddevcontext->IASetVertexBuffers(0, 1, &tmData.vertex_buffer, &stride, &offset);
+
         m_lpd3ddevcontext->IASetIndexBuffer(tmData.index_buffer, DXGI_FORMAT_R32_UINT, 0);
 
         m_next_nbvertices = tmData.nb_vertices;
@@ -315,6 +337,7 @@ void D3D11SystemImpl::setTriangleMeshe(const std::string& p_resource_uid)
     }
 }
 
+/*
 void D3D11SystemImpl::destroyTriangleMeshe(const std::string& p_resource_uid)
 {
     if (!m_triangles.count(p_resource_uid))
@@ -329,6 +352,7 @@ void D3D11SystemImpl::destroyTriangleMeshe(const std::string& p_resource_uid)
     m_triangles.erase(p_resource_uid);
     _MAGE_DEBUG(m_localLogger, "Triangle meshe release SUCCESS : " + p_resource_uid);
 }
+*/
 
 
 void D3D11SystemImpl::forceCurrentMeshe()
@@ -337,10 +361,11 @@ void D3D11SystemImpl::forceCurrentMeshe()
     {
         const auto tmData{ m_triangles.at(m_currentMeshe) };
 
-        const UINT stride{ sizeof(d3d11vertex) };
-        const UINT offset = 0;
+        UINT strides[2] = { sizeof(d3d11vertex), sizeof(d3d11transformers) };
+        UINT offsets[2] = { 0, 0 };
+        ID3D11Buffer* buffers[2] = { tmData.vertex_buffer, tmData.transforms_buffer };
+        m_lpd3ddevcontext->IASetVertexBuffers(0, 2, buffers, strides, offsets);
 
-        m_lpd3ddevcontext->IASetVertexBuffers(0, 1, &tmData.vertex_buffer, &stride, &offset);
         m_lpd3ddevcontext->IASetIndexBuffer(tmData.index_buffer, DXGI_FORMAT_R32_UINT, 0);
 
         m_next_nbvertices = tmData.nb_vertices;
@@ -350,13 +375,116 @@ void D3D11SystemImpl::forceCurrentMeshe()
     {
         const auto lmData{ m_lines.at(m_currentMeshe) };
 
-        const UINT stride{ sizeof(d3d11vertex) };
-        const UINT offset = 0;
+        UINT strides[2] = { sizeof(d3d11vertex), sizeof(d3d11transformers) };
+        UINT offsets[2] = { 0, 0 };
+        ID3D11Buffer* buffers[2] = { lmData.vertex_buffer, lmData.transforms_buffer };
+        m_lpd3ddevcontext->IASetVertexBuffers(0, 2, buffers, strides, offsets);
 
-        m_lpd3ddevcontext->IASetVertexBuffers(0, 1, &lmData.vertex_buffer, &stride, &offset);
         m_lpd3ddevcontext->IASetIndexBuffer(lmData.index_buffer, DXGI_FORMAT_R32_UINT, 0);
 
         m_next_nbvertices = lmData.nb_vertices;
         m_next_nblines = lmData.nb_primitives;
     }
+}
+
+bool D3D11SystemImpl::updateMesheTransformers(MesheData& p_meshe_data, const std::vector<mage::core::maths::Matrix*>& p_worlds,
+    const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
+    const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2)
+{
+
+    DECLARE_D3D11ASSERT_VARS
+
+    mage::core::maths::Matrix inv;
+    inv.identity();
+    inv(2, 2) = -1.0;
+    const auto final_view{ p_view * inv };
+    const auto final_view2{ p_view2 * inv };
+
+    std::vector<d3d11transformers> instances(p_worlds.size());
+
+    //////////////////////////////////////
+    // "Dynamic Growable Buffer" BEGIN
+    //////////////////////////////////////
+
+    if (instances.size() > p_meshe_data.transforms_buffer_size)
+    {
+
+        if (p_meshe_data.transforms_buffer != nullptr)
+        {
+            p_meshe_data.transforms_buffer->Release();
+        }
+
+        // realloc with twice size...
+
+        // TRANSFORMERS buffer creation
+        p_meshe_data.transforms_buffer_size *= 2;
+        if (!createTransformersInstancesBuffer(p_meshe_data.transforms_buffer_size, &p_meshe_data.transforms_buffer))
+        {
+            p_meshe_data.transforms_buffer_size = 0;
+            return false;
+        }        
+    }
+
+    //////////////////////////////////////
+    // "Dynamic Growable Buffer" END
+    //////////////////////////////////////
+
+
+    // looks like fps is degraded with omp ! :(
+    //#pragma omp parallel for default(shared) schedule(static)
+    for (int i = 0; i < static_cast<int>(p_worlds.size()); ++i)
+    {
+        mage::transform::MatrixChain chain;
+
+        chain.pushMatrix(p_proj);
+        chain.pushMatrix(final_view);
+        chain.pushMatrix(*p_worlds[i]);
+        chain.buildResult();
+        auto result{ chain.getResultTransform() };
+
+        mage::transform::MatrixChain chain2;
+
+        chain2.pushMatrix(p_proj2);
+        chain2.pushMatrix(final_view2);
+        chain2.pushMatrix(*p_worlds[i]);
+        chain2.buildResult();
+        auto result2{ chain2.getResultTransform() };
+
+        d3d11transformers tr;
+        tr.wordlViewProj = convertMatrixToXMFloat44(result);
+        tr.world = convertMatrixToXMFloat44(*p_worlds[0]);
+        tr.wordlView2Proj2 = convertMatrixToXMFloat44(result2);
+
+        instances[i] = tr;
+    }
+
+    D3D11_MAPPED_SUBRESOURCE mapped = {};
+    hRes = m_lpd3ddevcontext->Map(p_meshe_data.transforms_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+    D3D11_CHECK(Map)
+
+    memcpy(mapped.pData, instances.data(), sizeof(d3d11transformers) * instances.size());
+
+    m_lpd3ddevcontext->Unmap(p_meshe_data.transforms_buffer, 0);
+}
+
+bool D3D11SystemImpl::createTransformersInstancesBuffer(int p_size, ID3D11Buffer** p_outbuffer)
+{
+    DECLARE_D3D11ASSERT_VARS
+
+    D3D11_BUFFER_DESC transformersBufferDesc = { 0 };
+    ID3D11Buffer* transformer_buffer{ nullptr };
+
+    transformersBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+
+    transformersBufferDesc.ByteWidth = p_size * sizeof(d3d11transformers);
+    transformersBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    transformersBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    transformersBufferDesc.MiscFlags = 0;
+
+    hRes = m_lpd3ddevice->CreateBuffer(&transformersBufferDesc, nullptr, &transformer_buffer);
+    D3D11_CHECK(CreateBuffer)
+
+    *p_outbuffer = transformer_buffer;
+
+    return true;
 }

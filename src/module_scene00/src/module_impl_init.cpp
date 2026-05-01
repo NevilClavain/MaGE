@@ -431,7 +431,7 @@ void ModuleImpl::d3d11_system_events()
 
 						slider_world_aspect.addComponent<transform::WorldPosition>("output");
 
-						SyncVariable x_slide_pos(SyncVariable::Type::POSITION, 5.0, SyncVariable::Direction::INC, 0.0);
+						SyncVariable x_slide_pos(SyncVariable::Type::POSITION, 5.0, SyncVariable::Direction::INC, -7.0);
 						x_slide_pos.state = SyncVariable::State::OFF;
 
 						SyncVariable y_slide_pos(SyncVariable::Type::POSITION, 5.0, SyncVariable::Direction::INC, 4.0);
@@ -484,15 +484,37 @@ void ModuleImpl::d3d11_system_events()
 
 						lookat_world_aspect.addComponent<transform::WorldPosition>("lookat_output");
 
+						lookat_world_aspect.addComponent<std::function<core::maths::Real3Vector(const std::string&)>>("lookat_gettargetpos", 
+								[this](const std::string& p_entityid) -> core::maths::Real3Vector
+								{
+									if (!m_entitygraph.hasNode(p_entityid))
+									{
+										return core::maths::Real3Vector(0, 0, 0);
+									}
 
-						lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_dest", core::maths::Real3Vector(0.0, 0.0, -20.0));
+									auto& targetNode{ m_entitygraph.node(p_entityid) };
+									const auto targetEntity{ targetNode.data() };
+
+									const auto& worldAspect{ targetEntity->aspectAccess(core::worldAspect::id) };
+									const auto& entity_worldposition_list{ worldAspect.getComponentsByType<transform::WorldPosition>() };
+
+									const transform::WorldPosition& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
+
+									core::maths::Real3Vector pos(entity_worldposition.global_pos(3, 0), 
+																entity_worldposition.global_pos(3, 1),
+																entity_worldposition.global_pos(3, 2));
+									return pos;
+								}
+							);
+
 						lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_localpos", core::maths::Real3Vector(0.0, 0.0, 0.0));
 
 						lookat_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
 							{
 								{"lookatJointAnim.output", "lookat_output"},
-								{"lookatJointAnim.dest", "lookat_dest"},
 								{"lookatJointAnim.localpos", "lookat_localpos"},
+								{"lookatJointAnim.target", "quadEntity2"},
+								{"lookatJointAnim.gettargetpos", "lookat_gettargetpos"},
 							},
 							helpers::makeLookatJointAnimator())
 						);

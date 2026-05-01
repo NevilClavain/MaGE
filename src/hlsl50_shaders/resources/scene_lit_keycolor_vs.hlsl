@@ -1,0 +1,92 @@
+/* -*-LIC_BEGIN-*- */
+/*
+*
+* MaGE rendering framework
+* Emmanuel Chaumont Copyright (c) 2013-2026
+*
+* This file is part of MaGE.
+*
+*    MaGE is free software: you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation, either version 3 of the License, or
+*    (at your option) any later version.
+*
+*    MaGE is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with MaGE.  If not, see <http://www.gnu.org/licenses/>.
+*
+*/
+/* -*-LIC_END-*- */
+
+cbuffer constargs : register(b0)
+{
+    float4 vec[512];
+    Matrix mat[512];
+};
+
+#include "mat_input_constants.hlsl"
+
+struct VS_INPUT 
+{
+    float3 Position  : POSITION;
+    float4 TexCoord0 : TEXCOORD0;
+    float3 Normal    : NORMALE;
+    
+    float4 row0      : INSTANCE0;
+    float4 row1      : INSTANCE1;
+    float4 row2      : INSTANCE2;
+    float4 row3      : INSTANCE3;
+
+    float4 row4      : INSTANCE4;
+    float4 row5      : INSTANCE5;
+    float4 row6      : INSTANCE6;
+    float4 row7      : INSTANCE7;
+     
+};
+
+struct VS_OUTPUT 
+{
+    float4 Position     : SV_POSITION;
+    float2 TexCoord0    : TEXCOORD0;
+    float4 Normale      : TEXCOORD1;
+    
+    float4 world0       : TEXCOORD2;
+    float4 world1       : TEXCOORD3;
+    float4 world2       : TEXCOORD4;
+    float4 world3       : TEXCOORD5;
+};
+
+VS_OUTPUT vs_main( VS_INPUT Input )
+{
+    VS_OUTPUT Output;
+    float4 pos;
+    
+    pos.xyz = Input.Position;    
+    pos.w = 1.0;
+
+    float4x4 wvp = float4x4(Input.row0, Input.row1, Input.row2, Input.row3);
+    Output.Position = mul(pos, wvp);
+
+    
+    Output.TexCoord0 = Input.TexCoord0.xy;
+    
+    //////////////////////////////////////
+   
+    float3 initial_n;
+    initial_n.xyz = Input.Normal;
+    
+    Output.Normale.xyz = normalize(initial_n);
+    Output.Normale.w = 1.0;
+    
+    Output.world0 = Input.row4;
+    Output.world1 = Input.row5;
+    Output.world2 = Input.row6;
+    Output.world3 = Input.row7;
+    
+         
+    return( Output );   
+}

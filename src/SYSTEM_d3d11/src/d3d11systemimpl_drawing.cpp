@@ -29,202 +29,87 @@
 using namespace mage::core::maths;
 using namespace mage::transform;
 
-void D3D11SystemImpl::drawLineMeshe(const mage::core::maths::Matrix& p_world, const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj)
-{   
-    // setting transformation    
-    Matrix inv;    
-    inv.identity();
-    inv(2, 2) = -1.0;
-    const auto final_view{ p_view * inv };
-    
-    MatrixChain chain;
-    chain.pushMatrix(p_proj);
-    chain.pushMatrix(final_view);
-    chain.pushMatrix(p_world);
-    chain.buildResult();
-    auto result{ chain.getResultTransform() };
-    result.transpose();
 
-    setVertexshaderConstantsMat(0, result);
-    setPixelshaderConstantsMat(0, result);
-
-    //////////////////////////////////////////////////////////////////////
-    
-    Matrix worldview{ p_world * p_view };
-    worldview.transpose();
-
-    setVertexshaderConstantsMat(4, worldview);
-    setPixelshaderConstantsMat(4, worldview);
-
-    //////////////////////////////////////////////////////////////////////
-
-    auto world{ p_world };
-    world.transpose();
-
+void D3D11SystemImpl::bindShadersConstantBuffers(const mage::core::maths::Matrix& p_view,
+                                                    const mage::core::maths::Matrix& p_proj,
+                                                    const mage::core::maths::Matrix& p_secondary_view,
+                                                    const mage::core::maths::Matrix& p_secondary_proj)
+{
     auto view{ p_view };
-    auto cam{ p_view };
-
     view.transpose();
 
-    setVertexshaderConstantsMat(8, world);
     setVertexshaderConstantsMat(12, view);
-
-    setPixelshaderConstantsMat(8, world);
     setPixelshaderConstantsMat(12, view);
 
     //////////////////////////////////////////////////////////////////////
 
-    //auto cam{ view };
+    auto cam{ p_view };
     cam.inverse();
     cam.transpose();
 
     setVertexshaderConstantsMat(16, cam);
     setPixelshaderConstantsMat(16, cam);
 
-    auto proj { p_proj };
+    auto proj{ p_proj };
 
     proj.transpose();
     setVertexshaderConstantsMat(20, proj);
     setPixelshaderConstantsMat(20, proj);
 
-    // update des shaders legacy constants buffers...
-
-    m_lpd3ddevcontext->UpdateSubresource(m_vertexShaderArgsBuffer, 0, nullptr, &m_vertexshader_args, 0, 0);
-    m_lpd3ddevcontext->UpdateSubresource(m_pixelShaderArgsBuffer, 0, nullptr, &m_pixelshader_args, 0, 0);
-
-    ///////////////
-
-    m_lpd3ddevcontext->VSSetConstantBuffers(0, 1, &m_vertexShaderArgsBuffer);
-    m_lpd3ddevcontext->PSSetConstantBuffers(0, 1, &m_pixelShaderArgsBuffer);
-    m_lpd3ddevcontext->DrawIndexed(m_next_nblines * 2, 0, 0);
-}
-
-void D3D11SystemImpl::drawTriangleMeshe(const mage::core::maths::Matrix& p_world, 
-                                        const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
-                                        const mage::core::maths::Matrix& p_secondary_view, const mage::core::maths::Matrix& p_secondary_proj)
-{
-    // setting transformation    
-    Matrix inv;
-    inv.identity();
-    inv(2, 2) = -1.0;
-    const auto final_view{ p_view * inv };
-
-    MatrixChain chain;
-    chain.pushMatrix(p_proj);
-    chain.pushMatrix(final_view);
-    chain.pushMatrix(p_world);
-    chain.buildResult();
-    auto result{ chain.getResultTransform() };
-    result.transpose();
-
-    setVertexshaderConstantsMat(0, result);
-    setPixelshaderConstantsMat(0, result);
-
-    //////////////////////////////////////////////////////////////////////
-
-    Matrix worldview{ p_world * p_view };
-    worldview.transpose();
-
-    setPixelshaderConstantsMat(4, worldview);
-    setVertexshaderConstantsMat(4, worldview);
-
-
-    //////////////////////////////////////////////////////////////////////
-
-    auto world{ p_world };   
-    auto view{ p_view };
-
-    world.transpose();
-    view.transpose();
-
-    setPixelshaderConstantsMat(8, world);
-    setPixelshaderConstantsMat(12, view);
-   
-    setVertexshaderConstantsMat(8, world);
-    setVertexshaderConstantsMat(12, view);
-
-
-    //////////////////////////////////////////////////////////////////////
-
-    auto cam{ p_view };
-
-    cam.inverse();
-    cam.transpose();
-
-    setPixelshaderConstantsMat(16, cam);
-    setVertexshaderConstantsMat(16, cam);
-    
-    auto proj{ p_proj };
-
-    proj.transpose();
-    setPixelshaderConstantsMat(20, proj);    
-    setVertexshaderConstantsMat(20, proj);
-    
     //////////////////////////////////////////////////////////////////////
     // for secondary view
     //////////////////////////////////////////////////////////////////////
 
 
-    inv.identity();
-    inv(2, 2) = -1.0;
-    const auto final_secondary_view{ p_secondary_view * inv };
-
-    MatrixChain chain2;
-    chain2.pushMatrix(p_secondary_proj);
-    chain2.pushMatrix(final_secondary_view);
-    chain2.pushMatrix(p_world);
-    chain2.buildResult();
-    auto result2{ chain2.getResultTransform() };
-    result2.transpose();
-
-    setVertexshaderConstantsMat(24, result2);
-    setPixelshaderConstantsMat(24, result2);
-
-
-    Matrix worldviewSecondary{ p_world * p_secondary_view };
-    worldviewSecondary.transpose();
-
-    setPixelshaderConstantsMat(28, worldviewSecondary);    
-    setVertexshaderConstantsMat(28, worldviewSecondary);
-
     auto secondary_view{ p_secondary_view };
     secondary_view.transpose();
 
-    setPixelshaderConstantsMat(32, secondary_view);    
+    setPixelshaderConstantsMat(32, secondary_view);
     setVertexshaderConstantsMat(32, secondary_view);
 
-
-    //////////////////////////////////////////////////////////////////////
 
     auto secondary_cam{ p_secondary_view };
     secondary_cam.inverse();
 
     secondary_cam.transpose();
 
-    setPixelshaderConstantsMat(36, secondary_cam);    
+    setPixelshaderConstantsMat(36, secondary_cam);
     setVertexshaderConstantsMat(36, secondary_cam);
 
     auto secondary_proj{ p_secondary_proj };
 
     secondary_proj.transpose();
 
-    setPixelshaderConstantsMat(40, secondary_proj);    
+    setPixelshaderConstantsMat(40, secondary_proj);
     setVertexshaderConstantsMat(40, secondary_proj);
 
+    ///////////////////////////////////////////////////////////////////////
+    // update des shaders constants buffers...
 
-    //////////////////////////////////////////////////////////////////////
+    D3D11_MAPPED_SUBRESOURCE mapped = {};
 
-    // update des shaders legacy constants buffers...
+    auto hRes = m_lpd3ddevcontext->Map(m_vertexShaderArgsBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+    memcpy(mapped.pData, &m_vertexshader_args, sizeof(m_vertexshader_args));
+    m_lpd3ddevcontext->Unmap(m_vertexShaderArgsBuffer, 0);
 
-    m_lpd3ddevcontext->UpdateSubresource(m_vertexShaderArgsBuffer, 0, nullptr, &m_vertexshader_args, 0, 0);
-    m_lpd3ddevcontext->UpdateSubresource(m_pixelShaderArgsBuffer, 0, nullptr, &m_pixelshader_args, 0, 0);
+    hRes = m_lpd3ddevcontext->Map(m_pixelShaderArgsBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+    memcpy(mapped.pData, &m_pixelshader_args, sizeof(m_pixelshader_args));
+    m_lpd3ddevcontext->Unmap(m_pixelShaderArgsBuffer, 0);
 
     ///////////////
 
     m_lpd3ddevcontext->VSSetConstantBuffers(0, 1, &m_vertexShaderArgsBuffer);
     m_lpd3ddevcontext->PSSetConstantBuffers(0, 1, &m_pixelShaderArgsBuffer);
+}
 
-    m_lpd3ddevcontext->DrawIndexed(m_next_nbtriangles * 3, 0, 0);
+void D3D11SystemImpl::drawIndexedInstancedLines(int p_instances_count)
+{
+    m_lpd3ddevcontext->DrawIndexedInstanced(m_next_nblines * 2, p_instances_count, 0, 0, 0);
+}
+
+void D3D11SystemImpl::drawIndexedInstancedTriangles(int p_instances_count)
+{
+    m_lpd3ddevcontext->DrawIndexedInstanced(m_next_nbtriangles * 3, p_instances_count, 0, 0, 0);
 }
 
 void D3D11SystemImpl::beginScreen()

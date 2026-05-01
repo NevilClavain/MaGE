@@ -75,8 +75,6 @@ namespace mage
 
 			bool                projected_z_neg{ false }; // for objects that takes their pos from projected position (some 2d sprites...)
 
-			std::function<void()> setup{ [] {} };
-			std::function<void()> teardown{ [] {} };
 
 			//shaders params mapping description
 			// dataCloud variable id / shader argument section id in shader json
@@ -91,20 +89,18 @@ namespace mage
 		};
 
 		/// 'DrawingControl' EQUIVALENT IN BUILT RENDERING QUEUE
+
 		struct QueueDrawingControl
 		{
-		public:
-			QueueDrawingControl() = default;
-			~QueueDrawingControl() = default;
+			virtual ~QueueDrawingControl() = default;
 
 			// transformations to apply;
-			core::maths::Matrix* world{ nullptr };
+			//core::maths::Matrix* world{ nullptr };
+
+			std::vector< core::maths::Matrix*> worlds;
 
 			bool* projected_z_neg{ nullptr };
 
-			std::function<void()>* setup{ nullptr };
-			std::function<void()>* teardown{ nullptr };
-			
 			// shaders generic params to apply
 			// dataCloud variable id/shader argument
 			std::vector<std::pair<std::string, mage::Shader::GenericArgument>>	vshaders_map_cnx; // computed from vshaders_map and the queue current vshader
@@ -113,10 +109,40 @@ namespace mage
 			// shaders vector arrays to apply
 			const std::vector<mage::Shader::VectorArrayArgument>* vshaders_vector_array{ nullptr };
 			const std::vector<mage::Shader::VectorArrayArgument>* pshaders_vector_array{ nullptr };
-		
+
 			std::string owner_entity_id;
 
 			bool* draw{ nullptr };
+		};
+
+
+		struct QueueTrianglesDrawingControl : public QueueDrawingControl
+		{
+		public:
+
+			// meshe to set
+			std::string						meshe_id;
+
+			// textures stages to set
+
+			std::unordered_map<size_t, std::string>	textures; // stage/texture id
+
+			bool operator==(const QueueTrianglesDrawingControl& p_other) const
+			{
+				return meshe_id == p_other.meshe_id && textures == p_other.textures;
+			}
+		};
+
+		struct QueueLinesDrawingControl : public QueueDrawingControl
+		{
+		public:			
+			// meshe to set
+			std::string						meshe_id;
+
+			bool operator==(const QueueTrianglesDrawingControl& p_other) const
+			{
+				return meshe_id == p_other.meshe_id;
+			}
 		};
 
 		struct Queue
@@ -149,59 +175,39 @@ namespace mage
 
 			/////////////////////////////////////////////////////////////////////////////////////////
 
-			struct TextureSetPayload
-			{
-				std::map<size_t, std::string>						 textures; // stage/texture id
-
-				// key = entity id
-				std::unordered_map<std::string, QueueDrawingControl> drawing_list;
-			};
-			
-			struct TriangleMeshePayload
-			{
-				// drawing without textures
-				// key = entity id
-				std::unordered_map<std::string, QueueDrawingControl> drawing_list;
-
-				// drawing under textures set
-				// key = texture set signatures : "<name>.<stagenumber>/..."
-				std::unordered_map<std::string, TextureSetPayload> textures_set_list;
-			};
-
-			struct LineMeshePayload
-			{
-				// key = entity id
-				std::unordered_map<std::string, QueueDrawingControl> drawing_list;
-			};
-
 			struct RenderStatePayload
 			{
 				// renderstates set
 				std::vector<RenderState>								description;
 
 				// key = triangleMeshe D3D11 id
-				std::unordered_map<std::string, TriangleMeshePayload>	trianglemeshes_list;
+				//std::unordered_map<std::string, TriangleMeshePayload>	trianglemeshes_list;
 
 				// key = lineMeshe D3D11 id
-				std::unordered_map<std::string, LineMeshePayload>		linemeshes_list;
+				//std::unordered_map<std::string, LineMeshePayload>		linemeshes_list;
+
+				// key = QueueTrianglesDrawingControl unique id
+				std::unordered_map<std::string, QueueTrianglesDrawingControl>	triangles_dc_list;
+
+				// key = QueueLinesDrawingControl unique id
+				std::unordered_map<std::string, QueueLinesDrawingControl>		lines_dc_list;
+
+				
+
 			};
 
-			struct PixelShaderPayload
-			{
+			struct ShadersPayload
+			{ 
+				std::vector<std::string> shaders_ids; // ALWAYS 2 entries for now (vertex shader, pixel shader)
+
 				// key = renderstate set strings dump concatenation (RenderState::toString())
 				std::unordered_map<std::string, RenderStatePayload> list;
 			};
 
-			struct VertexShaderPayload
-			{
-				// key = pixel shader D3D11 id
-				std::unordered_map<std::string, PixelShaderPayload> list;
-			};
-
 			struct RenderingOrderChannel
 			{
-				// key = vertex shader D3D11 id
-				std::unordered_map<std::string, VertexShaderPayload> list;
+				// key = shaders id concatenation
+				std::unordered_map<std::string, ShadersPayload> list; 
 			};
 
 			using QueueNodes = std::map<int, RenderingOrderChannel>;  // RenderingOrderChannel are rendered following order given by int key

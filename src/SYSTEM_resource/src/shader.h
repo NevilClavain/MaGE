@@ -135,8 +135,8 @@ namespace mage
 
         const char*                         m_file_content{ nullptr };
         size_t                              m_file_content_size{ 0 };
-        
-        //core::Buffer<char>                  m_code;
+
+        std::string                         m_content_hash; // to fill bc.md5 file in cache
 
         char*                               m_code{ nullptr }; // shader compiled code
         size_t                              m_code_size;
@@ -153,6 +153,8 @@ namespace mage
         void setState(State p_state);
 
         void compute_resource_uid();
+
+        void compute_content_hash();
 
         friend class mage::ResourceSystem;
         friend class mage::D3D11System;

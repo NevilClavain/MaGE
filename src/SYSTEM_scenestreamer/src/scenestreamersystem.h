@@ -318,14 +318,26 @@ namespace mage
                          xyzw_direct_value, xyz_direct_value, x_direct_value, y_direct_value, z_direct_value, w_direct_value);
         };
 
+        struct Real3Vector
+        {
+            double x;
+            double y;
+            double z;
+
+            JS_OBJ(x, y, z);
+        };
+
         struct Animator
         {            
             std::string                 descr;
+
             std::string                 helper;
+            std::vector<std::string>    helper_strings_args; // if animator needs string arguments
+            std::vector<Real3Vector>    helper_realvector3_args; // if animator needs Real3Vector arguments
 
             std::vector<MatrixFactory>  matrix_factory_chain;
-
-            JS_OBJ(descr, helper, matrix_factory_chain);
+            
+            JS_OBJ(descr, helper, matrix_factory_chain, helper_strings_args, helper_realvector3_args);
         };
 
         struct WorldAspect
@@ -430,13 +442,14 @@ namespace mage
 
         ///////////////////////////////////
 
-        struct FileArgument
+        struct FileStringArgument
         {
             std::string                                 key;
             std::string                                 value;
 
             JS_OBJ(key, value);
         };
+
 
         struct AnimatorRepeat
         {
@@ -456,17 +469,19 @@ namespace mage
 
         struct ScenegraphNode
         {
-            std::string                 file;
+            std::string                                 file;
 
-            std::vector<FileArgument>   file_args;
+            std::vector<FileStringArgument>             file_string_args;
 
-            std::vector<std::string>    tags;
+            std::vector<Real3Vector>                    file_realvector3_args;
 
-            std::vector<std::string>    rendergraph_parts;
+            std::vector<std::string>                    tags;
 
-            InstancesFactory            instances_factory;
+            std::vector<std::string>                    rendergraph_parts;
+
+            InstancesFactory                            instances_factory;
             
-            JS_OBJ(file, file_args, tags, rendergraph_parts, /*animator,*/ instances_factory);
+            JS_OBJ(file, file_string_args, file_realvector3_args, tags, rendergraph_parts, instances_factory);
         };
 
         struct Scenegraph
@@ -729,7 +744,10 @@ namespace mage
 
 
         void buildScenegraphEntity(const std::string& p_jsonsource, const std::vector<std::string>& p_rendergraph_parts, const json::Animator& p_animator, const std::vector<std::string>& p_tags, const std::string& p_parentEntityId,
-                                    const mage::core::maths::Matrix p_perspective_projection, const std::unordered_map<std::string, std::string> p_file_args, const std::unordered_map<std::string, std::unique_ptr<IValueGenerator>>& p_generators);
+                                    const mage::core::maths::Matrix p_perspective_projection,                                     
+                                    const std::unordered_map<std::string, std::string> p_file_args, 
+                                    const std::vector<json::Real3Vector>& p_file_realvector3_args,
+                                    const std::unordered_map<std::string, std::unique_ptr<IValueGenerator>>& p_generators);
 
 
         void buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot);

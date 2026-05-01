@@ -86,7 +86,7 @@ bool D3D11SystemImpl::createShaderBytesOnFile(int p_shadertype,
     hRes = compileShaderFromMem((void*)srcFile.getData(), srcFile.getDataSize(), 
                                     srcFile.getPath().c_str(), 
                                     (p_shadertype == 0 ? "vs_main" : "ps_main"), 
-                                    (p_shadertype == 0 ? "vs_4_0" : "ps_4_0"), 
+                                    (p_shadertype == 0 ? "vs_5_0" : "ps_5_0"), 
                                     &include_mgmt,
                                     &pBlob, &pErrBlob);
 
@@ -155,19 +155,37 @@ bool D3D11SystemImpl::createVertexShader(const std::string& p_resource_uid, char
 
     const D3D11_INPUT_ELEMENT_DESC layout[] =
     {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NORMALE", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 4, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 5, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 6, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 7, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 8, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TANGENT",  0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "BINORMALE", 0, DXGI_FORMAT_R32G32B32_FLOAT,   0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "POSITION",      0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  0,               D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "NORMALE",       0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD",      0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD",      1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD",      2, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD",      3, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD",      4, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD",      5, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD",      6, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD",      7, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD",      8, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TANGENT",       0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "BINORMALE",     0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        
+        // WORLD x VIEW x PROJ
+        { "INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+        { "INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+        { "INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+        { "INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+
+        // WORLD
+        { "INSTANCE", 4, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+        { "INSTANCE", 5, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 80, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+        { "INSTANCE", 6, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 96, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+        { "INSTANCE", 7, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 112, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+
+        // WORLD x VIEW2nd x PROJ2nd
+        { "INSTANCE", 8, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 128, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+        { "INSTANCE", 9, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 144, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+        { "INSTANCE", 10, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 160, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+        { "INSTANCE", 11, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 176, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
     };
 
     if (m_vshaders.count(p_resource_uid))
@@ -337,53 +355,11 @@ void D3D11SystemImpl::setPixelshaderConstantsVec(int p_startreg, const mage::cor
 void D3D11SystemImpl::setVertexshaderConstantsMat(int p_startreg, const mage::core::maths::Matrix& p_mat)
 {
     auto& dest{ m_vertexshader_args.matrix[p_startreg] };
-
-    
-    dest._11 = p_mat(0, 0);
-    dest._12 = p_mat(0, 1);
-    dest._13 = p_mat(0, 2);
-    dest._14 = p_mat(0, 3);
-
-    dest._21 = p_mat(1, 0);
-    dest._22 = p_mat(1, 1);
-    dest._23 = p_mat(1, 2);
-    dest._24 = p_mat(1, 3);
-
-    dest._31 = p_mat(2, 0);
-    dest._32 = p_mat(2, 1);
-    dest._33 = p_mat(2, 2);
-    dest._34 = p_mat(2, 3);
-
-    dest._41 = p_mat(3, 0);
-    dest._42 = p_mat(3, 1);
-    dest._43 = p_mat(3, 2);
-    dest._44 = p_mat(3, 3);
-    
+    dest = convertMatrixToXMFloat44(p_mat);
 }
 
 void D3D11SystemImpl::setPixelshaderConstantsMat(int p_startreg, const mage::core::maths::Matrix& p_mat)
 {
-    auto& dest{ m_pixelshader_args.matrix[p_startreg] };
-
-    
-    dest._11 = p_mat(0, 0);
-    dest._12 = p_mat(0, 1);
-    dest._13 = p_mat(0, 2);
-    dest._14 = p_mat(0, 3);
-
-    dest._21 = p_mat(1, 0);
-    dest._22 = p_mat(1, 1);
-    dest._23 = p_mat(1, 2);
-    dest._24 = p_mat(1, 3);
-
-    dest._31 = p_mat(2, 0);
-    dest._32 = p_mat(2, 1);
-    dest._33 = p_mat(2, 2);
-    dest._34 = p_mat(2, 3);
-
-    dest._41 = p_mat(3, 0);
-    dest._42 = p_mat(3, 1);
-    dest._43 = p_mat(3, 2);
-    dest._44 = p_mat(3, 3);
-    
+    auto& dest{ m_pixelshader_args.matrix[p_startreg] };    
+    dest = convertMatrixToXMFloat44(p_mat);
 }
