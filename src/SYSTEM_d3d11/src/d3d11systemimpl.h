@@ -257,7 +257,7 @@ public:
 
 private:
 
-    static constexpr int nbMaxTransformersInstances{ 15 };
+    static constexpr int nbMaxTransformersInstances{ 1500 };
 
     struct FontRenderingData
     {
@@ -414,6 +414,8 @@ private:
 
     bool createDepthStencilBuffer(ID3D11Device* p_lpd3ddevice, int p_width, int p_height, DXGI_FORMAT p_format, ID3D11Texture2D** p_texture2D, ID3D11DepthStencilView** p_view);
 
+    bool createTransformersInstancesBuffer(int p_size, ID3D11Buffer** p_outbuffer);
+
     HRESULT compileShaderFromMem(void* p_data, int p_size, LPCTSTR szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3D10Include* p_include, ID3DBlob** ppBlobOut, ID3DBlob** ppBlobErrOut);
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -430,7 +432,7 @@ public:
         TRIANGLES
     };
 
-    bool updateMesheTransformers(const MesheData& p_meshe_data, 
+    bool updateMesheTransformers(MesheData& p_meshe_data, 
         const std::vector<mage::core::maths::Matrix*>& p_worlds,
         const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
         const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2);
@@ -442,21 +444,22 @@ public:
         const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
         const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2)
     {
-        MesheList ml;
+        // ICI
+        MesheList* ml;
 
         if constexpr (Primitives::LINES == p)
         {
-            ml = m_lines;
+            ml = &m_lines;
         }
         else // TRIANGLES
         {
-            ml = m_triangles;
+            ml = &m_triangles;
         }
 
-        if (!ml.count(p_meshe_id))
+        if (!ml->count(p_meshe_id))
         {
             _EXCEPTION("unknown meshes :" + p_meshe_id)
         }
-        return updateMesheTransformers(ml.at(p_meshe_id), p_worlds, p_view, p_proj, p_view2, p_proj2);
+        return updateMesheTransformers(ml->at(p_meshe_id), p_worlds, p_view, p_proj, p_view2, p_proj2);
     }
 };

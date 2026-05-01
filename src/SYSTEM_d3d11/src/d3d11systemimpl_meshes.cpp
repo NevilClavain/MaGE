@@ -132,19 +132,10 @@ bool D3D11SystemImpl::createLineMeshe(const mage::LineMeshe& p_lm)
             delete[] t;
         }
 
-        // TRANSFORMERS buffer creation
+        // TRANSFORMERS buffer creationZ
+        if (!createTransformersInstancesBuffer(nbMaxTransformersInstances, &transformer_buffer))
         {
-            D3D11_BUFFER_DESC transformersBufferDesc = { 0 };
-
-            transformersBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-            
-            transformersBufferDesc.ByteWidth = nbMaxTransformersInstances * sizeof(d3d11transformers);
-            transformersBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-            transformersBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-            transformersBufferDesc.MiscFlags = 0;
-
-            hRes = m_lpd3ddevice->CreateBuffer(&transformersBufferDesc, nullptr, &transformer_buffer);
-            D3D11_CHECK(CreateBuffer)
+            return false;
         }
 
         m_lines[resource_uid] = { vertex_buffer, index_buffer, transformer_buffer, nbMaxTransformersInstances, nb_vertices, nb_lines };
@@ -307,18 +298,9 @@ bool D3D11SystemImpl::createTriangleMeshe(const mage::TriangleMeshe& p_tm)
         }
 
         // TRANSFORMERS buffer creation
+        if (!createTransformersInstancesBuffer(nbMaxTransformersInstances, &transformer_buffer))
         {
-            D3D11_BUFFER_DESC transformersBufferDesc = { 0 };
-
-            transformersBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-
-            transformersBufferDesc.ByteWidth = nbMaxTransformersInstances * sizeof(d3d11transformers);
-            transformersBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-            transformersBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-            transformersBufferDesc.MiscFlags = 0;
-
-            hRes = m_lpd3ddevice->CreateBuffer(&transformersBufferDesc, nullptr, &transformer_buffer);
-            D3D11_CHECK(CreateBuffer)
+            return false;
         }
 
         m_triangles[resource_uid] = { vertex_buffer, index_buffer, transformer_buffer, nbMaxTransformersInstances, nb_vertices, nb_triangles };
@@ -405,7 +387,7 @@ void D3D11SystemImpl::forceCurrentMeshe()
     }
 }
 
-bool D3D11SystemImpl::updateMesheTransformers(const MesheData& p_meshe_data, const std::vector<mage::core::maths::Matrix*>& p_worlds,
+bool D3D11SystemImpl::updateMesheTransformers(MesheData& p_meshe_data, const std::vector<mage::core::maths::Matrix*>& p_worlds,
     const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
     const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2)
 {
@@ -420,12 +402,33 @@ bool D3D11SystemImpl::updateMesheTransformers(const MesheData& p_meshe_data, con
 
     std::vector<d3d11transformers> instances(p_worlds.size());
 
+    //////////////////////////////////////
+    // "Dynamic Growable Buffer" BEGIN
+    //////////////////////////////////////
+
     if (instances.size() > p_meshe_data.transforms_buffer_size)
     {
-        // grow buffer
 
-        _asm nop
+        if (p_meshe_data.transforms_buffer != nullptr)
+        {
+            p_meshe_data.transforms_buffer->Release();
+        }
+
+        // realloc with twice size...
+
+        // TRANSFORMERS buffer creation
+        p_meshe_data.transforms_buffer_size *= 2;
+        if (!createTransformersInstancesBuffer(p_meshe_data.transforms_buffer_size, &p_meshe_data.transforms_buffer))
+        {
+            p_meshe_data.transforms_buffer_size = 0;
+            return false;
+        }        
     }
+
+    //////////////////////////////////////
+    // "Dynamic Growable Buffer" END
+    //////////////////////////////////////
+
 
     // looks like fps is degraded with omp ! :(
     //#pragma omp parallel for default(shared) schedule(static)
@@ -462,4 +465,26 @@ bool D3D11SystemImpl::updateMesheTransformers(const MesheData& p_meshe_data, con
     memcpy(mapped.pData, instances.data(), sizeof(d3d11transformers) * instances.size());
 
     m_lpd3ddevcontext->Unmap(p_meshe_data.transforms_buffer, 0);
+}
+
+bool D3D11SystemImpl::createTransformersInstancesBuffer(int p_size, ID3D11Buffer** p_outbuffer)
+{
+    DECLARE_D3D11ASSERT_VARS
+
+    D3D11_BUFFER_DESC transformersBufferDesc = { 0 };
+    ID3D11Buffer* transformer_buffer{ nullptr };
+
+    transformersBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+
+    transformersBufferDesc.ByteWidth = p_size * sizeof(d3d11transformers);
+    transformersBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    transformersBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    transformersBufferDesc.MiscFlags = 0;
+
+    hRes = m_lpd3ddevice->CreateBuffer(&transformersBufferDesc, nullptr, &transformer_buffer);
+    D3D11_CHECK(CreateBuffer)
+
+    *p_outbuffer = transformer_buffer;
+
+    return true;
 }
