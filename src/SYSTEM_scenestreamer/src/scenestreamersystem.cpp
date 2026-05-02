@@ -62,6 +62,11 @@ void SceneStreamerSystem::enableSystem(bool p_enabled)
     m_enabled = p_enabled;
 }
 
+bool SceneStreamerSystem::isEnabled() const
+{
+    return m_enabled;
+}
+
 void SceneStreamerSystem::configure(const Configuration& p_config)
 {
     if (!m_configured)

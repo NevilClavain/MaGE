@@ -760,6 +760,8 @@ namespace mage
 
         void enableSystem(bool p_enabled);
 
+        bool isEnabled() const;
+
     private:
 
 
