@@ -54,6 +54,8 @@ namespace mage
         void setRenderingQueue(mage::rendering::Queue* p_queue);
 
         void addDatacloudFilter(const std::string& p_filter);
+        void addDatacloudFilter(const std::vector<std::string>& p_filter);
+
         void showRenderingQueues(bool p_show);
         void showSyncVars(bool p_show);
 
@@ -83,7 +85,8 @@ namespace mage
 
         std::vector<std::string>                m_rq_strings; // rendering queues display
 
-        std::set<std::string>                   m_display_filters;
+        std::vector<std::vector<std::string>>   m_display_filters;
+
         bool                                    m_display_renderingqueues{ false };
         bool                                    m_display_synchronizedvars{ false };
 

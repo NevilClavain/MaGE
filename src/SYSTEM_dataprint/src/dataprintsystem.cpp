@@ -88,14 +88,32 @@ std::vector<std::string> DataPrintSystem::splitString(const std::string& p_str, 
 bool DataPrintSystem::checkDcVar(const std::string& p_var_id) const
 {
 	bool status = false;
+	
 	const std::vector<std::string> parts{ splitString(p_var_id, '.')};
 
 	if (parts.size() > 0)
 	{
-		const std::string sub_id{ parts.at(0) };
-		if (m_display_filters.count(sub_id))
+		for (const auto& display_filter : m_display_filters)
 		{
-			status = true;
+			bool loop_status = true;
+
+			//for (const std::string& filter_part : display_filter)
+			for (int i = 0; i < display_filter.size(); i++)
+			{
+				const std::string& filter_part{ display_filter.at(i) };
+				const std::string sub_id{ parts.at(i) };
+
+				if (sub_id != filter_part)
+				{
+					loop_status = false;
+				}
+			}
+
+			if (loop_status)
+			{
+				status = true;
+				break;
+			}
 		}
 	}
 	return status;
@@ -381,7 +399,12 @@ void DataPrintSystem::print(const std::vector<std::string>& p_list, int p_x_base
 
 void DataPrintSystem::addDatacloudFilter(const std::string& p_filter)
 {
-	m_display_filters.insert(p_filter);
+	m_display_filters.push_back({ p_filter });
+}
+
+void DataPrintSystem::addDatacloudFilter(const std::vector<std::string>& p_filter)
+{
+	m_display_filters.push_back( p_filter );
 }
 
 void DataPrintSystem::showRenderingQueues(bool p_show)
