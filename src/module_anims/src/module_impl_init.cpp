@@ -110,7 +110,6 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
 	dataPrintSystem->addDatacloudFilter("resources_event");
 	dataPrintSystem->addDatacloudFilter("current_animation");
-	dataPrintSystem->addDatacloudFilter("debug");
 	dataPrintSystem->addDatacloudFilter("std");
 
 	///////////////////////////
