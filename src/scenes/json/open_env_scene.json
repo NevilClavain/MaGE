@@ -551,7 +551,7 @@
 
         "animator_repeat": [
           {
-            "number": 40,
+            "number": 4,
 
             "animator": {
               "descr": "g_grass_Entity pos animator",
