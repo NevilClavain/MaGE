@@ -96,16 +96,16 @@ bool DataPrintSystem::checkDcVar(const std::string& p_var_id) const
 		for (const auto& display_filter : m_display_filters)
 		{
 			bool loop_status = true;
-
-			//for (const std::string& filter_part : display_filter)
-			for (int i = 0; i < display_filter.size(); i++)
+			for (size_t i = 0; i < display_filter.size(); i++)
 			{
 				const std::string& filter_part{ display_filter.at(i) };
-				const std::string sub_id{ parts.at(i) };
-
-				if (sub_id != filter_part)
+				if (i < parts.size())
 				{
-					loop_status = false;
+					const std::string sub_id{ parts.at(i) };
+					if (sub_id != filter_part)
+					{
+						loop_status = false;
+					}
 				}
 			}
 

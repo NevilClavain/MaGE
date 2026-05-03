@@ -58,13 +58,13 @@ void ModuleImpl::run(void)
 		const auto currentAnimationSecondsProgress{ animations_aspect.getComponent<double>("eg.std.currentAnimationSecondsProgress")->getPurpose() };
 
 		
-		dataCloud->updateDataValue<std::string>("current_animation.id", currentAnimationId);
+		dataCloud->updateDataValue<std::string>("app.current_animation.id", currentAnimationId);
 
-		dataCloud->updateDataValue<double>("current_animation.ticks_duration", currentAnimationTicksDuration);
-		dataCloud->updateDataValue<double>("current_animation.ticks_progress", currentAnimationTicksProgress);
+		dataCloud->updateDataValue<double>("app.current_animation.ticks_duration", currentAnimationTicksDuration);
+		dataCloud->updateDataValue<double>("app.current_animation.ticks_progress", currentAnimationTicksProgress);
 
-		dataCloud->updateDataValue<double>("current_animation.seconds_duration", currentAnimationSecondsDuration);
-		dataCloud->updateDataValue<double>("current_animation.seconds_progress", currentAnimationSecondsProgress);
+		dataCloud->updateDataValue<double>("app.current_animation.seconds_duration", currentAnimationSecondsDuration);
+		dataCloud->updateDataValue<double>("app.current_animation.seconds_progress", currentAnimationSecondsProgress);
 	}
 	
 	//////////////////////////////////////////////////////
