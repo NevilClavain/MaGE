@@ -147,8 +147,8 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					
 					
 
-					dataCloud->registerData<maths::Real4Vector>("std.fog.color");
-					dataCloud->updateDataValue<maths::Real4Vector>("std.fog.color", maths::Real4Vector(0.8, 0.9, 1, 1));
+					dataCloud->registerData<maths::Real4Vector>("mage.scene.fog.color");
+					dataCloud->updateDataValue<maths::Real4Vector>("mage.scene.fog.color", maths::Real4Vector(0.8, 0.9, 1, 1));
 
 					dataCloud->registerData<maths::Real4Vector>("std.fog.density");
 					dataCloud->updateDataValue<maths::Real4Vector>("std.fog.density", maths::Real4Vector(0.003, 0, 0, 0));

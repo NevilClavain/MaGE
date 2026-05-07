@@ -11,7 +11,7 @@
             "name": "combiner_fog_ps",
             "args": [
               {
-                "source": "std.fog.color",
+                "source": "mage.scene.fog.color",
                 "destination": "fog_color"
               },
               {
