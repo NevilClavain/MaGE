@@ -54,7 +54,7 @@ void ModuleImpl::run(void)
 
 		mage::core::maths::sphericaltoCartesian(light_spherical, light_cartesian);
 
-		dataCloud->updateDataValue<maths::Real4Vector>("std.light0.dir", light_cartesian);
+		dataCloud->updateDataValue<maths::Real4Vector>("mage.scene.light0.dir", light_cartesian);
 
 	}
 }

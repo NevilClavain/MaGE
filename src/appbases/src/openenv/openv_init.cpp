@@ -138,8 +138,8 @@ void OpenEnv::d3d11_system_events_openenv()
 					dataCloud->updateDataValue<maths::Real4Vector>("white_color", maths::Real4Vector(1.0, 1.0, 1.0, 1));
 
 
-					dataCloud->registerData<maths::Real4Vector>("std.light0.dir");
-					dataCloud->updateDataValue<maths::Real4Vector>("std.light0.dir", maths::Real4Vector(0.6, -0.18, 0.1, 1));
+					dataCloud->registerData<maths::Real4Vector>("mage.scene.light0.dir");
+					dataCloud->updateDataValue<maths::Real4Vector>("mage.scene.light0.dir", maths::Real4Vector(0.6, -0.18, 0.1, 1));
 
 					dataCloud->registerData<maths::Real4Vector>("std.fog.color");
 					dataCloud->updateDataValue<maths::Real4Vector>("std.fog.color", maths::Real4Vector(0.8, 0.9, 1, 1));
@@ -257,7 +257,7 @@ void OpenEnv::d3d11_system_events_openenv()
 								},
 								{ "bufferRendering_Scene_LitChannel_Queue_Entity",
 									{
-										{ std::make_pair("std.light0.dir", "light_dir") }
+										{ std::make_pair("mage.scene.light0.dir", "light_dir") }
 									}
 								},
 								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
@@ -320,7 +320,7 @@ void OpenEnv::d3d11_system_events_openenv()
 								},
 								{ "bufferRendering_Scene_LitChannel_Queue_Entity",
 									{
-										{ std::make_pair("std.light0.dir", "light_dir") }
+										{ std::make_pair("mage.scene.light0.dir", "light_dir") }
 									}
 								},
 								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
@@ -385,7 +385,7 @@ void OpenEnv::d3d11_system_events_openenv()
 								},
 								{ "bufferRendering_Scene_LitChannel_Queue_Entity",
 									{
-										{ std::make_pair("std.light0.dir", "light_dir") }
+										{ std::make_pair("mage.scene.light0.dir", "light_dir") }
 									}
 								},
 								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
@@ -475,7 +475,7 @@ void OpenEnv::d3d11_system_events_openenv()
 								{ "bufferRendering_Scene_LitChannel_Queue_Entity",
 									{
 										{ std::make_pair("texture_keycolor_ps.key_color", "key_color") },
-										{ std::make_pair("std.light0.dir", "light_dir") }
+										{ std::make_pair("mage.scene.light0.dir", "light_dir") }
 									}
 								},
 								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
@@ -622,7 +622,7 @@ void OpenEnv::d3d11_system_events_openenv()
 							{
 								{ "bufferRendering_Scene_TexturesChannel_Queue_Entity",
 									{
-										{ std::make_pair("std.light0.dir", "light0_dir") },
+										{ std::make_pair("mage.scene.light0.dir", "light0_dir") },
 										{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_0", "atmo_scattering_flag_0") },
 										{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_1", "atmo_scattering_flag_1") },
 										{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_2", "atmo_scattering_flag_2") },

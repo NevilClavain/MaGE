@@ -168,7 +168,7 @@
                 "param_name": "key_color"
               },
               {
-                "datacloud_name": "std.light0.dir",
+                "datacloud_name": "mage.scene.light0.dir",
                 "param_name": "light_dir"
               }
             ]

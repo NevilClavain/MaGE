@@ -143,7 +143,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					dataCloud->updateDataValue<maths::Real4Vector>("std.white_color", maths::Real4Vector(1.0, 1.0, 1.0, 1));
 
 
-					dataCloud->registerData<maths::Real4Vector>("std.light0.dir");
+					dataCloud->registerData<maths::Real4Vector>("mage.scene.light0.dir");
 					
 					
 

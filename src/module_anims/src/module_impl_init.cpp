@@ -331,7 +331,7 @@ void ModuleImpl::d3d11_system_events()
 								},
 								{ "LitChannel",
 									{
-										{ std::make_pair("std.light0.dir", "light_dir") }
+										{ std::make_pair("mage.scene.light0.dir", "light_dir") }
 									}
 								},
 								{ "EmissiveChannel",

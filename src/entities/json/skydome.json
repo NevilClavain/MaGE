@@ -84,7 +84,7 @@
             "rendering_channel_type": "texture",
             "shaders_params": [
               {
-                "datacloud_name": "std.light0.dir",
+                "datacloud_name": "mage.scene.light0.dir",
                 "param_name": "light0_dir"
               },
 
