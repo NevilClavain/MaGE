@@ -94,10 +94,6 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 
-	//dataCloud->registerData<std::string>("resources_event");
-	//dataCloud->updateDataValue<std::string>("resources_event", "...");
-
-
 	dataCloud->registerData<std::string>("app.current_animation.id");
 	dataCloud->registerData<double>("app.current_animation.ticks_progress");
 	dataCloud->registerData<double>("app.current_animation.seconds_progress");
