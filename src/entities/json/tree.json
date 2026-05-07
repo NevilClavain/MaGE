@@ -140,7 +140,7 @@
                 "param_name": "key_color"
               },
               {
-                "datacloud_name": "std.ambientlight.color",
+                "datacloud_name": "mage.scene.ambientlight.color",
                 "param_name": "color"
               }
             ]

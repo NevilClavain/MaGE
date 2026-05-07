@@ -326,7 +326,7 @@ void ModuleImpl::d3d11_system_events()
 							{
 								{ "AmbientLightChannel",
 									{
-										{ std::make_pair("std.ambientlight.color", "color") }
+										{ std::make_pair("mage.scene.ambientlight.color", "color") }
 									}
 								},
 								{ "LitChannel",

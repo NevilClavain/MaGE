@@ -122,8 +122,8 @@ void OpenEnv::d3d11_system_events_openenv()
 					dataCloud->updateDataValue<maths::Real4Vector>("texture_keycolor_ps.key_color", maths::Real4Vector(0, 0, 0, 1));
 
 
-					dataCloud->registerData<maths::Real4Vector>("std.ambientlight.color");
-					dataCloud->updateDataValue<maths::Real4Vector>("std.ambientlight.color", maths::Real4Vector(0.33, 0.33, 0.33, 1));
+					dataCloud->registerData<maths::Real4Vector>("mage.scene.ambientlight.color");
+					dataCloud->updateDataValue<maths::Real4Vector>("mage.scene.ambientlight.color", maths::Real4Vector(0.33, 0.33, 0.33, 1));
 					
 
 
@@ -252,7 +252,7 @@ void OpenEnv::d3d11_system_events_openenv()
 
 								{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity",
 									{
-										{ std::make_pair("std.ambientlight.color", "color") }
+										{ std::make_pair("mage.scene.ambientlight.color", "color") }
 									}
 								},
 								{ "bufferRendering_Scene_LitChannel_Queue_Entity",
@@ -315,7 +315,7 @@ void OpenEnv::d3d11_system_events_openenv()
 
 								{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity",
 									{
-										{ std::make_pair("std.ambientlight.color", "color") }
+										{ std::make_pair("mage.scene.ambientlight.color", "color") }
 									}
 								},
 								{ "bufferRendering_Scene_LitChannel_Queue_Entity",
@@ -380,7 +380,7 @@ void OpenEnv::d3d11_system_events_openenv()
 
 								{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity",
 									{
-										{ std::make_pair("std.ambientlight.color", "color") }
+										{ std::make_pair("mage.scene.ambientlight.color", "color") }
 									}
 								},
 								{ "bufferRendering_Scene_LitChannel_Queue_Entity",
@@ -469,7 +469,7 @@ void OpenEnv::d3d11_system_events_openenv()
 								{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity",
 									{
 										{ std::make_pair("texture_keycolor_ps.key_color", "key_color") },
-										{ std::make_pair("std.ambientlight.color", "color") }
+										{ std::make_pair("mage.scene.ambientlight.color", "color") }
 									}
 								},
 								{ "bufferRendering_Scene_LitChannel_Queue_Entity",
