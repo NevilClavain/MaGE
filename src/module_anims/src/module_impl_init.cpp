@@ -335,7 +335,7 @@ void ModuleImpl::d3d11_system_events()
 								},
 								{ "EmissiveChannel",
 									{
-										{ std::make_pair("std.black_color", "color") }
+										{ std::make_pair("mage.rendering.black_color", "color") }
 									}
 								}
 							}

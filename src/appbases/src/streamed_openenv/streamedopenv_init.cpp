@@ -136,8 +136,8 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 
 
-					dataCloud->registerData<maths::Real4Vector>("std.black_color");
-					dataCloud->updateDataValue<maths::Real4Vector>("std.black_color", maths::Real4Vector(0.0, 0.0, 0.0, 1));
+					dataCloud->registerData<maths::Real4Vector>("mage.rendering.black_color");
+					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.black_color", maths::Real4Vector(0.0, 0.0, 0.0, 1));
 
 					dataCloud->registerData<maths::Real4Vector>("std.white_color");
 					dataCloud->updateDataValue<maths::Real4Vector>("std.white_color", maths::Real4Vector(1.0, 1.0, 1.0, 1));

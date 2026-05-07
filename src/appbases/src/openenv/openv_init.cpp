@@ -131,8 +131,8 @@ void OpenEnv::d3d11_system_events_openenv()
 					dataCloud->updateDataValue<maths::Real4Vector>("skydome_emissive_color", maths::Real4Vector(1.0, 1.0, 1.0, 1));
 
 
-					dataCloud->registerData<maths::Real4Vector>("std.black_color");
-					dataCloud->updateDataValue<maths::Real4Vector>("std.black_color", maths::Real4Vector(0.0, 0.0, 0.0, 1));
+					dataCloud->registerData<maths::Real4Vector>("mage.rendering.black_color");
+					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.black_color", maths::Real4Vector(0.0, 0.0, 0.0, 1));
 
 					dataCloud->registerData<maths::Real4Vector>("white_color");
 					dataCloud->updateDataValue<maths::Real4Vector>("white_color", maths::Real4Vector(1.0, 1.0, 1.0, 1));
@@ -262,7 +262,7 @@ void OpenEnv::d3d11_system_events_openenv()
 								},
 								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
 									{
-										{ std::make_pair("std.black_color", "color") }
+										{ std::make_pair("mage.rendering.black_color", "color") }
 									}
 								}
 							}
@@ -325,7 +325,7 @@ void OpenEnv::d3d11_system_events_openenv()
 								},
 								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
 									{
-										{ std::make_pair("std.black_color", "color") }
+										{ std::make_pair("mage.rendering.black_color", "color") }
 									}
 								}
 							}
@@ -390,7 +390,7 @@ void OpenEnv::d3d11_system_events_openenv()
 								},
 								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
 									{
-										{ std::make_pair("std.black_color", "color") }
+										{ std::make_pair("mage.rendering.black_color", "color") }
 									}
 								}
 							}
@@ -481,7 +481,7 @@ void OpenEnv::d3d11_system_events_openenv()
 								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
 									{
 										{ std::make_pair("texture_keycolor_ps.key_color", "key_color") },
-										{ std::make_pair("std.black_color", "color") }
+										{ std::make_pair("mage.rendering.black_color", "color") }
 									}
 								}
 							}
