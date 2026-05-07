@@ -232,7 +232,7 @@ void Base::d3d11_system_events_base()
 
 					const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 
-					const auto window_dims{ dataCloud->readDataValue<mage::core::maths::IntCoords2D>("std.window_resol") };
+					const auto window_dims{ dataCloud->readDataValue<mage::core::maths::IntCoords2D>("mage.infos.window_resol") };
 
 					const int w_width{ window_dims.x() };
 					const int w_height{ window_dims.y() };
@@ -302,7 +302,7 @@ void Base::d3d11_system_events_base()
 						core::SyncVariable& y_pos{ time_aspect.getComponent<SyncVariable>("y_pos")->getPurpose() };
 
 						const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-						const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("std.viewport") };
+						const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("mage.infos.viewport") };
 
 						x_pos.value = (-viewport.x() * 0.5) + gear_size * 0.5;
 						y_pos.value = (-viewport.y() * 0.5) + gear_size * 0.5;
@@ -329,7 +329,7 @@ void Base::d3d11_system_events_base()
 						double& y_pos{ world_aspect.getComponent<double>("y_pos")->getPurpose() };
 
 						const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-						const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("std.viewport") };
+						const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("mage.infos.viewport") };
 
 						x_pos = (viewport.x() * 0.5) - logo_size * 0.5;
 						y_pos = (-viewport.y() * 0.5) + logo_size * 0.5;

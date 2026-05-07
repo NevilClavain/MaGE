@@ -112,11 +112,11 @@ bool D3D11SystemImpl::init(mage::core::Entity* p_mainWindow)
 	mainwindows_rendering_aspect.addComponent<float>("eg.std.viewportWidth", characteristics_v_width);
 	mainwindows_rendering_aspect.addComponent<float>("eg.std.viewportHeight", characteristics_v_height);
 
-	dataCloud->registerData<mage::core::maths::IntCoords2D>("std.window_resol");
-	dataCloud->updateDataValue<mage::core::maths::IntCoords2D>("std.window_resol", mage::core::maths::IntCoords2D(characteristics_width_resol, characteristics_height_resol));
+	dataCloud->registerData<mage::core::maths::IntCoords2D>("mage.infos.window_resol");
+	dataCloud->updateDataValue<mage::core::maths::IntCoords2D>("mage.infos.window_resol", mage::core::maths::IntCoords2D(characteristics_width_resol, characteristics_height_resol));
 
-	dataCloud->registerData<mage::core::maths::FloatCoords2D>("std.viewport");
-	dataCloud->updateDataValue<mage::core::maths::FloatCoords2D>("std.viewport", mage::core::maths::FloatCoords2D(characteristics_v_width, characteristics_v_height));
+	dataCloud->registerData<mage::core::maths::FloatCoords2D>("mage.infos.viewport");
+	dataCloud->updateDataValue<mage::core::maths::FloatCoords2D>("mage.infos.viewport", mage::core::maths::FloatCoords2D(characteristics_v_width, characteristics_v_height));
 
 
 	swap_chain.BufferDesc.Width = characteristics_width_resol;
@@ -210,10 +210,10 @@ bool D3D11SystemImpl::init(mage::core::Entity* p_mainWindow)
 
 	m_dxgiAdapter->GetDesc(&m_adapterDescription);
 
-	dataCloud->registerData<std::string>("std.gpu");
+	dataCloud->registerData<std::string>("mage.infos.gpu");
 	const std::wstring w_gpu_description(m_adapterDescription.Description);
 	const std::string gpu_description(w_gpu_description.begin(), w_gpu_description.end());
-	dataCloud->updateDataValue<std::string>("std.gpu", gpu_description);
+	dataCloud->updateDataValue<std::string>("mage.infos.gpu", gpu_description);
 
 	mainwindows_rendering_aspect.addComponent<std::string>("eg.std.gpuName", gpu_description);
 
@@ -228,8 +228,8 @@ bool D3D11SystemImpl::init(mage::core::Entity* p_mainWindow)
 	const auto d{ i.QuadPart & 0xFFFF };
 
 	std::string driver_version{ std::to_string(a) + "." + std::to_string(b) + "." + std::to_string(c) + "." + std::to_string(d) };
-	dataCloud->registerData<std::string>("std.gpu_driver");
-	dataCloud->updateDataValue<std::string>("std.gpu_driver", driver_version);
+	dataCloud->registerData<std::string>("mage.infos.gpu_driver");
+	dataCloud->updateDataValue<std::string>("mage.infos.gpu_driver", driver_version);
 
 	mainwindows_rendering_aspect.addComponent<std::string>("eg.std.gpuDriver", driver_version);
 

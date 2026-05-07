@@ -387,7 +387,7 @@ void WorldSystem::run()
 						final_mat.transform(&point, &res_point);
 
 						const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-						const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("std.viewport") };
+						const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("mage.infos.viewport") };
 
 
 						const double posx{ static_cast<double>(res_point[0] / (res_point[2] + 1.0)) * 0.5 * viewport[0] };

@@ -335,8 +335,8 @@ void RenderingQueueSystem::manageRenderingQueue()
 						projected_z_neg = wp.projected_z_neg;
 
 						const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-						const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("std.viewport") };
-						const auto window_dims{ dataCloud->readDataValue<mage::core::maths::IntCoords2D>("std.window_resol") };
+						const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("mage.infos.viewport") };
+						const auto window_dims{ dataCloud->readDataValue<mage::core::maths::IntCoords2D>("mage.infos.window_resol") };
 
 						text.position[0] = ((wp.global_pos(3, 0) + (viewport[0] * 0.5f)) * window_dims[0]) / viewport[0];
 						text.position[1] = (((viewport[1] * 0.5f) - wp.global_pos(3, 1)) * window_dims[1]) / viewport[1];

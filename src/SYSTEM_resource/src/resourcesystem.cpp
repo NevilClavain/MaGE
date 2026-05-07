@@ -48,6 +48,12 @@ ResourceSystem::ResourceSystem(Entitygraph& p_entitygraph) : System(p_entitygrap
 m_localLogger("ResourceSystem", mage::core::logger::Configuration::getInstance()),
 m_localLoggerRunner("ResourceSystemRunner", mage::core::logger::Configuration::getInstance())
 {
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	dataCloud->registerData<std::string>("mage.system_resource.event");
+	dataCloud->updateDataValue<std::string>("mage.system_resource.event", "...");
+
+	///////////////////////////////////////////
+
 	m_runner.reserve(nbRunners);
 
 	for (int i = 0; i < nbRunners; i++)
@@ -97,11 +103,6 @@ m_localLoggerRunner("ResourceSystemRunner", mage::core::logger::Configuration::g
 		m_runner[i].get()->registerSubscriber(cb);
 		m_runner[i].get()->startup();
 	}
-
-	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-
-	dataCloud->registerData<std::string>("mage.system_resource.event");
-	dataCloud->updateDataValue<std::string>("mage.system_resource.event", "...");
 }
 
 ResourceSystem::~ResourceSystem()

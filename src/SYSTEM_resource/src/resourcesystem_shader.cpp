@@ -92,7 +92,7 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 
 					// get current driver version
 					const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-					const auto current_driver{ dataCloud->readDataValue<std::string>("std.gpu_driver") };
+					const auto current_driver{ dataCloud->readDataValue<std::string>("mage.infos.gpu_driver") };
 
 					bool update_driver_text{ false };
 

@@ -51,7 +51,7 @@ void DataPrintSystem::run()
 	print(m_dc_strings, 0, 0, dcNbCols, dcNbRows, dcColWidth, dcRowHeight);
 
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-	const auto window_dims{ dataCloud->readDataValue<mage::core::maths::IntCoords2D>("std.window_resol") };
+	const auto window_dims{ dataCloud->readDataValue<mage::core::maths::IntCoords2D>("mage.infos.window_resol") };
 
 
 	// positioning sync vars print bloc at bottomo of the window : compute y position

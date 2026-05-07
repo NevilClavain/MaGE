@@ -108,7 +108,7 @@ void OpenEnv::d3d11_system_events_openenv()
 
 					const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 
-					const auto window_dims{ dataCloud->readDataValue<mage::core::maths::IntCoords2D>("std.window_resol") };
+					const auto window_dims{ dataCloud->readDataValue<mage::core::maths::IntCoords2D>("mage.infos.window_resol") };
 
 					const int w_width{ window_dims.x() };
 					const int w_height{ window_dims.y() };
