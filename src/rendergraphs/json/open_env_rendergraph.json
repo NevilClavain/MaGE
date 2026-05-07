@@ -15,7 +15,7 @@
                 "destination": "fog_color"
               },
               {
-                "source": "std.fog.density",
+                "source": "mage.scene.fog.density",
                 "destination": "fog_density"
               }
             ]

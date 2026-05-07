@@ -144,8 +144,8 @@ void OpenEnv::d3d11_system_events_openenv()
 					dataCloud->registerData<maths::Real4Vector>("mage.scene.fog.color");
 					dataCloud->updateDataValue<maths::Real4Vector>("mage.scene.fog.color", maths::Real4Vector(0.8, 0.9, 1, 1));
 
-					dataCloud->registerData<maths::Real4Vector>("std.fog.density");
-					dataCloud->updateDataValue<maths::Real4Vector>("std.fog.density", maths::Real4Vector(0.009, 0, 0, 0));
+					dataCloud->registerData<maths::Real4Vector>("mage.scene.fog.density");
+					dataCloud->updateDataValue<maths::Real4Vector>("mage.scene.fog.density", maths::Real4Vector(0.009, 0, 0, 0));
 
 
 					const auto skydomeOuterRadius{ dataCloud->readDataValue<double>("app.skydomeOuterRadius")};
@@ -994,7 +994,7 @@ void OpenEnv::create_openenv_rendergraph(const std::string& p_parentEntityId, in
 
 	rendering::DrawingControl& fogDrawingControl{ screenRendering_Combiner_Fog_Quad_Entity_rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
 	fogDrawingControl.pshaders_map.push_back(std::make_pair("mage.scene.fog.color", "fog_color"));
-	fogDrawingControl.pshaders_map.push_back(std::make_pair("std.fog.density", "fog_density"));
+	fogDrawingControl.pshaders_map.push_back(std::make_pair("mage.scene.fog.density", "fog_density"));
 
 
 	// channel : zdepth
