@@ -113,8 +113,7 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 
 	const std::vector<std::string>& app_curr_animation_filter = { "app","current_animation" };
 	dataPrintSystem->addDatacloudFilter(app_curr_animation_filter);
-	dataPrintSystem->addDatacloudFilter("std");
-
+	
 	///////////////////////////
 
 	auto now = std::chrono::system_clock::now();

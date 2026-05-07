@@ -87,8 +87,6 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 
-	dataCloud->registerData<std::string>("resources_event");
-	dataCloud->updateDataValue<std::string>("resources_event", "...");
 
 	/////////// systems
 
@@ -97,10 +95,7 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 
 	// dataprint system filters
 	const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
-	dataPrintSystem->addDatacloudFilter("resources_event");
-	dataPrintSystem->addDatacloudFilter("std");
-
-
+	
 
 	d3d11_system_events();
 	resource_system_events();
@@ -134,32 +129,26 @@ void ModuleImpl::resource_system_events()
 			{
 				case ResourceSystemEvent::RESOURCE_SHADER_CACHE_CREATED:
 					_MAGE_DEBUG(eventsLogger, "RECV EVENT -> RESOURCE_SHADER_CACHE_CREATED : " + p_resourceName);
-					dataCloud->updateDataValue<std::string>("resources_event", "Shader cache creation : " + p_resourceName);
 					break;
 
 				case ResourceSystemEvent::RESOURCE_SHADER_COMPILATION_BEGIN:
 					_MAGE_DEBUG(eventsLogger, "RECV EVENT -> RESOURCE_SHADER_COMPILATION_BEGIN : " + p_resourceName);
-					dataCloud->updateDataValue<std::string>("resources_event", "Shader compilation: " + p_resourceName + " BEGIN");
 					break;
 
 				case ResourceSystemEvent::RESOURCE_SHADER_COMPILATION_SUCCESS:
 					_MAGE_DEBUG(eventsLogger, "RECV EVENT -> RESOURCE_SHADER_COMPILATION_SUCCESS : " + p_resourceName);
-					dataCloud->updateDataValue<std::string>("resources_event", "Shader compilation " + p_resourceName + " SUCCESS");
 					break;
 
 				case ResourceSystemEvent::RESOURCE_SHADER_COMPILATION_ERROR:
 					_MAGE_DEBUG(eventsLogger, "RECV EVENT -> RESOURCE_SHADER_COMPILATION_ERROR : " + p_resourceName);
-					dataCloud->updateDataValue<std::string>("resources_event", "Shader compilation " + p_resourceName + " ERROR");
 					break;
 
 				case ResourceSystemEvent::RESOURCE_TEXTURE_LOAD_SUCCESS:
 					_MAGE_DEBUG(eventsLogger, "RECV EVENT -> RESOURCE_TEXTURE_LOAD_SUCCESS : " + p_resourceName);
-					dataCloud->updateDataValue<std::string>("resources_event", "Texture loaded :" + p_resourceName);
 					break;
 
 				case ResourceSystemEvent::RESOURCE_MESHE_LOAD_SUCCESS:
 					_MAGE_DEBUG(eventsLogger, "RECV EVENT -> RESOURCE_MESHE_LOAD_SUCCESS : " + p_resourceName);
-					dataCloud->updateDataValue<std::string>("resources_event", "Meshe loaded :" + p_resourceName);
 					break;
 			}
 		}
