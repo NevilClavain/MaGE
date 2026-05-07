@@ -22,6 +22,8 @@
 */
 /* -*-LIC_END-*- */
 
+#include <string>
+
 #include "resourcesystem.h"
 
 #include "entity.h"
@@ -36,6 +38,8 @@
 #include "trianglemeshe.h"
 
 #include "filesystem.h"
+
+#include "datacloud.h"
 
 using namespace mage;
 using namespace mage::core;
@@ -65,6 +69,9 @@ m_localLoggerRunner("ResourceSystemRunner", mage::core::logger::Configuration::g
 		{
 			call(ResourceSystemEvent::RESOURCE_SHADER_CACHE_CREATED, m_shadersCachePath);
 		}
+
+		const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+		dataCloud->updateDataValue<std::string>("mage.system_resource.event", "Shader cache creation : " + m_shadersCachePath);
 	}
 	
 	/////////////////////////////////////////////
@@ -90,6 +97,11 @@ m_localLoggerRunner("ResourceSystemRunner", mage::core::logger::Configuration::g
 		m_runner[i].get()->registerSubscriber(cb);
 		m_runner[i].get()->startup();
 	}
+
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+
+	dataCloud->registerData<std::string>("mage.system_resource.event");
+	dataCloud->updateDataValue<std::string>("mage.system_resource.event", "...");
 }
 
 ResourceSystem::~ResourceSystem()

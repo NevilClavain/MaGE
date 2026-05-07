@@ -26,6 +26,7 @@
 #include "singleton.h"
 #include "componentcontainer.h"
 #include "eventsource.h"
+#include <shared_mutex>
 
 namespace mage
 {
@@ -46,7 +47,9 @@ namespace mage
 
             template<typename T, class... Args>
             void registerData(const std::string& p_id, Args&&... p_args)
-            {                
+            {
+                std::unique_lock<std::shared_mutex> lock(m_mutex);
+
                 m_component_container.addComponent<T, Args...>(p_id, (std::forward<Args>(p_args))...);
 
                 const std::string tid{ typeid(T).name() };
@@ -58,7 +61,9 @@ namespace mage
 
             template<typename T>
             T readDataValue(const std::string& p_id) const
-            {               
+            {
+                std::shared_lock<std::shared_mutex> lock(m_mutex);
+
                 const auto comp{ m_component_container.getComponent<T>(p_id) };
                 if (nullptr == comp)
                 {
@@ -70,6 +75,8 @@ namespace mage
             template<typename T>
             void updateDataValue(const std::string& p_id, T value)
             {
+                std::unique_lock<std::shared_mutex> lock(m_mutex);
+
                 const auto comp{ m_component_container.getComponent<T>(p_id) };
                 if (nullptr == comp)
                 {
@@ -89,6 +96,8 @@ namespace mage
             template<typename T>
             void removeData(const std::string& p_id)
             {
+                std::unique_lock<std::shared_mutex> lock(m_mutex);
+
                 m_component_container.removeComponent<T>(p_id);
 
                 const std::string tid{ typeid(T).name() };
@@ -100,11 +109,14 @@ namespace mage
 
             const std::unordered_map<std::string, size_t>& getVarsIdsList() const
             {
+                std::shared_lock<std::shared_mutex> lock(m_mutex);
+
                 return m_component_container.getComponentsIdList();
             }
 
         private:
             core::ComponentContainer m_component_container;
+            mutable std::shared_mutex m_mutex;
         };
     }
 }

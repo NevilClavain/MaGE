@@ -23,6 +23,8 @@
 */
 /* -*-LIC_END-*- */
 
+#include <string>
+
 #include "resourcesystem.h"
 
 #include <assimp/Importer.hpp>      // C++ importer interface
@@ -35,6 +37,8 @@
 #include "filesystem.h"
 
 #include "matrix.h"
+
+#include "datacloud.h"
 
 using namespace mage;
 using namespace mage::core;
@@ -480,6 +484,9 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 				{
 					call(ResourceSystemEvent::RESOURCE_MESHE_LOAD_SUCCESS, filename);
 				}
+
+				const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+				dataCloud->updateDataValue<std::string>("mage.system_resource.event", "Meshe loaded :" + filename);
 
 				p_mesheInfos.setState(TriangleMeshe::State::BLOBLOADED);
 			}

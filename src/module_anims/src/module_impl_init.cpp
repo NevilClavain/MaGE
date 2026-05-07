@@ -94,8 +94,8 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 
-	dataCloud->registerData<std::string>("resources_event");
-	dataCloud->updateDataValue<std::string>("resources_event", "...");
+	//dataCloud->registerData<std::string>("resources_event");
+	//dataCloud->updateDataValue<std::string>("resources_event", "...");
 
 
 	dataCloud->registerData<std::string>("app.current_animation.id");
@@ -108,7 +108,11 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 
 	// dataprint system filters
 	const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
-	dataPrintSystem->addDatacloudFilter("resources_event");
+	
+	const std::vector<std::string>& resources_system_event_filter = { "mage","system_resource", "event"};
+	dataPrintSystem->addDatacloudFilter(resources_system_event_filter);
+
+
 	const std::vector<std::string>& app_curr_animation_filter = { "app","current_animation" };
 	dataPrintSystem->addDatacloudFilter(app_curr_animation_filter);
 	dataPrintSystem->addDatacloudFilter("std");
@@ -172,34 +176,28 @@ void ModuleImpl::resource_system_events()
 			switch (p_event)
 			{
 				case ResourceSystemEvent::RESOURCE_SHADER_CACHE_CREATED:
-					_MAGE_DEBUG(eventsLogger, "RECV EVENT -> RESOURCE_SHADER_CACHE_CREATED : " + p_resourceName);
-					dataCloud->updateDataValue<std::string>("resources_event", "Shader cache creation : " + p_resourceName);
+					_MAGE_DEBUG(eventsLogger, "RECV EVENT -> RESOURCE_SHADER_CACHE_CREATED : " + p_resourceName);					
 					break;
 
 				case ResourceSystemEvent::RESOURCE_SHADER_COMPILATION_BEGIN:
-					_MAGE_DEBUG(eventsLogger, "RECV EVENT -> RESOURCE_SHADER_COMPILATION_BEGIN : " + p_resourceName);
-					dataCloud->updateDataValue<std::string>("resources_event", "Shader compilation: " + p_resourceName + " BEGIN");
+					_MAGE_DEBUG(eventsLogger, "RECV EVENT -> RESOURCE_SHADER_COMPILATION_BEGIN : " + p_resourceName);					
 					break;
 
 				case ResourceSystemEvent::RESOURCE_SHADER_COMPILATION_SUCCESS:
-					_MAGE_DEBUG(eventsLogger, "RECV EVENT -> RESOURCE_SHADER_COMPILATION_SUCCESS : " + p_resourceName);
-					dataCloud->updateDataValue<std::string>("resources_event", "Shader compilation " + p_resourceName + " SUCCESS");
+					_MAGE_DEBUG(eventsLogger, "RECV EVENT -> RESOURCE_SHADER_COMPILATION_SUCCESS : " + p_resourceName);					
 					break;
 
 				case ResourceSystemEvent::RESOURCE_SHADER_COMPILATION_ERROR:
-					_MAGE_DEBUG(eventsLogger, "RECV EVENT -> RESOURCE_SHADER_COMPILATION_ERROR : " + p_resourceName);
-					dataCloud->updateDataValue<std::string>("resources_event", "Shader compilation " + p_resourceName + " ERROR");
+					_MAGE_DEBUG(eventsLogger, "RECV EVENT -> RESOURCE_SHADER_COMPILATION_ERROR : " + p_resourceName);					
 					break;
 
 				case ResourceSystemEvent::RESOURCE_TEXTURE_LOAD_SUCCESS:
-					_MAGE_DEBUG(eventsLogger, "RECV EVENT -> RESOURCE_TEXTURE_LOAD_SUCCESS : " + p_resourceName);
-					dataCloud->updateDataValue<std::string>("resources_event", "Texture loaded :" + p_resourceName);
+					_MAGE_DEBUG(eventsLogger, "RECV EVENT -> RESOURCE_TEXTURE_LOAD_SUCCESS : " + p_resourceName);					
 					break;
 
 				case ResourceSystemEvent::RESOURCE_MESHE_LOAD_SUCCESS:
 					_MAGE_DEBUG(eventsLogger, "RECV EVENT -> RESOURCE_MESHE_LOAD_SUCCESS : " + p_resourceName);
-					dataCloud->updateDataValue<std::string>("resources_event", "Meshe loaded :" + p_resourceName);
-					
+										
 					if ("raptor.fbx" == p_resourceName)
 					{											
 						const auto& resources_aspect{ m_raptorEntity->aspectAccess(core::resourcesAspect::id) };

@@ -95,22 +95,13 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	dataCloud->updateDataValue<std::string>("resources_event", "...");
 
 
-	dataCloud->registerData<std::string>("current_animation.id");
-	dataCloud->registerData<double>("current_animation.ticks_progress");
-	dataCloud->registerData<double>("current_animation.seconds_progress");
-	dataCloud->registerData<double>("current_animation.ticks_duration");
-	dataCloud->registerData<double>("current_animation.seconds_duration");
-
-
-
 	auto sysEngine{ SystemEngine::getInstance() };
 
 	// dataprint system filters
 	const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
-	dataPrintSystem->addDatacloudFilter("resources_event");
-	dataPrintSystem->addDatacloudFilter("current_animation");
-	dataPrintSystem->addDatacloudFilter("debug");
-	dataPrintSystem->addDatacloudFilter("std");
+	//dataPrintSystem->addDatacloudFilter("resources_event");
+	//dataPrintSystem->addDatacloudFilter("current_animation");	
+	//dataPrintSystem->addDatacloudFilter("std");
 	
 	///////////////////////////
 

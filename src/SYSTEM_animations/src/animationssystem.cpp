@@ -53,7 +53,7 @@ using namespace mage;
 using namespace mage::core;
 
 AnimationsSystem::AnimationsSystem(Entitygraph& p_entitygraph) : System(p_entitygraph)
-{		
+{
 }
 
 static void send_bones_to_shaders(TriangleMeshe& p_meshe, /*Shader& p_vertex_shader*/ std::vector<std::pair<std::string, Shader>*>& p_vshaders_refs, int p_animationbones_array_arg_index)
