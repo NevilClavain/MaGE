@@ -191,8 +191,8 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					dataCloud->registerData<maths::Real4Vector>("mage.rendering.shadow_bias");
 					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.shadow_bias", maths::Real4Vector(0.005, 0, 0, 0));
 
-					dataCloud->registerData<maths::Real4Vector>("shadowmap_resol");
-					dataCloud->updateDataValue<maths::Real4Vector>("shadowmap_resol", maths::Real4Vector(2048, 0, 0, 0));
+					dataCloud->registerData<maths::Real4Vector>("mage.rendering.shadowmap_resol");
+					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.shadowmap_resol", maths::Real4Vector(2048, 0, 0, 0));
 
 
 					mage::core::FileContent<char> rendergraphFileContent("./module_streamed_anims_config/open_env_rendergraph.json");
