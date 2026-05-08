@@ -127,8 +127,8 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 					/////////// commons shaders params
 
-					dataCloud->registerData<maths::Real4Vector>("texture_keycolor_ps.key_color");
-					dataCloud->updateDataValue<maths::Real4Vector>("texture_keycolor_ps.key_color", maths::Real4Vector(0, 0, 0, 1));
+					dataCloud->registerData<maths::Real4Vector>("mage.rendering.texture_keycolor_ps.key_color");
+					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.texture_keycolor_ps.key_color", maths::Real4Vector(0, 0, 0, 1));
 
 
 					dataCloud->registerData<maths::Real4Vector>("mage.scene.ambientlight.color");

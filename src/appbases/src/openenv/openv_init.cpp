@@ -118,8 +118,8 @@ void OpenEnv::d3d11_system_events_openenv()
 
 					/////////// commons shaders params
 					
-					dataCloud->registerData<maths::Real4Vector>("texture_keycolor_ps.key_color");
-					dataCloud->updateDataValue<maths::Real4Vector>("texture_keycolor_ps.key_color", maths::Real4Vector(0, 0, 0, 1));
+					dataCloud->registerData<maths::Real4Vector>("mage.rendering.texture_keycolor_ps.key_color");
+					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.texture_keycolor_ps.key_color", maths::Real4Vector(0, 0, 0, 1));
 
 
 					dataCloud->registerData<maths::Real4Vector>("mage.scene.ambientlight.color");
@@ -458,29 +458,29 @@ void OpenEnv::d3d11_system_events_openenv()
 							{
 								{ "bufferRendering_Scene_TexturesChannel_Queue_Entity",
 									{
-										{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
+										{ std::make_pair("mage.rendering.texture_keycolor_ps.key_color", "key_color") }
 									}
 								},
 								{ "bufferRendering_Scene_ZDepthChannel_Queue_Entity",
 									{
-										{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
+										{ std::make_pair("mage.rendering.texture_keycolor_ps.key_color", "key_color") }
 									}
 								},
 								{ "bufferRendering_Scene_AmbientLightChannel_Queue_Entity",
 									{
-										{ std::make_pair("texture_keycolor_ps.key_color", "key_color") },
+										{ std::make_pair("mage.rendering.texture_keycolor_ps.key_color", "key_color") },
 										{ std::make_pair("mage.scene.ambientlight.color", "color") }
 									}
 								},
 								{ "bufferRendering_Scene_LitChannel_Queue_Entity",
 									{
-										{ std::make_pair("texture_keycolor_ps.key_color", "key_color") },
+										{ std::make_pair("mage.rendering.texture_keycolor_ps.key_color", "key_color") },
 										{ std::make_pair("mage.scene.light0.dir", "light_dir") }
 									}
 								},
 								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
 									{
-										{ std::make_pair("texture_keycolor_ps.key_color", "key_color") },
+										{ std::make_pair("mage.rendering.texture_keycolor_ps.key_color", "key_color") },
 										{ std::make_pair("mage.rendering.black_color", "color") }
 									}
 								}
@@ -1265,12 +1265,12 @@ void OpenEnv::enable_shadows()
 					{
 						{ std::make_pair("mage.rendering.shadow_bias", "shadow_bias") },
 						{ std::make_pair("mage.rendering.shadowmap_resol", "shadowmap_resol") },
-						{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
+						{ std::make_pair("mage.rendering.texture_keycolor_ps.key_color", "key_color") }
 					}
 				},
 				{ "bufferRendering_Scene_ShadowMapChannel_Queue_Entity",
 					{
-						{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
+						{ std::make_pair("mage.rendering.texture_keycolor_ps.key_color", "key_color") }
 					}
 				}
 			}
