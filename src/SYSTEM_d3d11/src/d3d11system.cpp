@@ -26,6 +26,8 @@
 #pragma warning( disable : 4005 4838 )
 
 #include <utility>
+#include <chrono>
+#include <string>
 
 #include "d3d11system.h"
 
@@ -67,9 +69,8 @@ static const auto d3dimpl{ D3D11SystemImpl::getInstance() };
 D3D11System::D3D11System(Entitygraph& p_entitygraph) : System(p_entitygraph)
 {
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-	dataCloud->registerData<int>("mage.timings.d3d11system");
-	dataCloud->updateDataValue<int>("mage.timings.d3d11system", 0);
-
+	dataCloud->registerData<std::string>("mage.timings.d3d11system");
+	
 	m_shadercompilation_invocation_cb = [&, this](const std::string& p_includePath,
 		const mage::core::FileContent<const char>& p_src,		
 		int p_shaderType,
@@ -856,6 +857,8 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 
 void D3D11System::run()
 {
+	const auto start_time{ std::chrono::high_resolution_clock::now() };
+
 	if (!m_initialized)
 	{
 		manageInitialization();
@@ -871,6 +874,11 @@ void D3D11System::run()
 	}
 
 	m_runner.dispatchEvents();
+
+	const auto end_time{ std::chrono::high_resolution_clock::now() };
+	const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	dataCloud->updateDataValue<std::string>("mage.timings.d3d11system", std::to_string(duration.count()) + " ms");
 }
 
 void D3D11System::killRunner()

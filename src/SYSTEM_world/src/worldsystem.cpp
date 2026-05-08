@@ -22,6 +22,9 @@
 */
 /* -*-LIC_END-*- */
 
+#include <chrono>
+#include <string>
+
 #include "worldsystem.h"
 #include "entity.h"
 #include "entitygraph.h"
@@ -39,12 +42,13 @@ using namespace mage::core;
 WorldSystem::WorldSystem(Entitygraph& p_entitygraph) : System(p_entitygraph)
 {
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-	dataCloud->registerData<int>("mage.timings.worldsystem");
-	dataCloud->updateDataValue<int>("mage.timings.worldsystem", 0);
+	dataCloud->registerData<std::string>("mage.timings.worldsystem");	
 }
 
 void WorldSystem::run()
 {
+	const auto start_time{ std::chrono::high_resolution_clock::now() };
+
 	//////////////////////////////////////////////////////////
 	/// I : compute transformations
 	//////////////////////////////////////////////////////////
@@ -412,4 +416,9 @@ void WorldSystem::run()
 	};
 
 	browseHierarchy(root, 0);
+
+	const auto end_time{ std::chrono::high_resolution_clock::now() };
+	const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	dataCloud->updateDataValue<std::string>("mage.timings.worldsystem", std::to_string(duration.count()) + " ms");
 }
