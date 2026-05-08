@@ -127,8 +127,8 @@ void OpenEnv::d3d11_system_events_openenv()
 					
 
 
-					dataCloud->registerData<maths::Real4Vector>("skydome_emissive_color");
-					dataCloud->updateDataValue<maths::Real4Vector>("skydome_emissive_color", maths::Real4Vector(1.0, 1.0, 1.0, 1));
+					dataCloud->registerData<maths::Real4Vector>("mage.rendering.skydome_emissive_color");
+					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.skydome_emissive_color", maths::Real4Vector(1.0, 1.0, 1.0, 1));
 
 
 					dataCloud->registerData<maths::Real4Vector>("mage.rendering.black_color");
@@ -555,7 +555,7 @@ void OpenEnv::d3d11_system_events_openenv()
 							{
 								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
 									{
-										{ std::make_pair("skydome_emissive_color", "color") }
+										{ std::make_pair("mage.rendering.skydome_emissive_color", "color") }
 									}
 								}
 							}
@@ -634,7 +634,7 @@ void OpenEnv::d3d11_system_events_openenv()
 
 								{ "bufferRendering_Scene_EmissiveChannel_Queue_Entity",
 									{
-										{ std::make_pair("skydome_emissive_color", "color") }
+										{ std::make_pair("mage.rendering.skydome_emissive_color", "color") }
 									}
 								}
 							}
