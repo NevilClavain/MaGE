@@ -38,6 +38,9 @@ using namespace mage::core;
 
 WorldSystem::WorldSystem(Entitygraph& p_entitygraph) : System(p_entitygraph)
 {
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	dataCloud->registerData<int>("mage.timings.worldsystem");
+	dataCloud->updateDataValue<int>("mage.timings.worldsystem", 0);
 }
 
 void WorldSystem::run()

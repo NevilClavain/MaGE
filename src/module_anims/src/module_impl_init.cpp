@@ -113,6 +113,9 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 
 	const std::vector<std::string>& app_curr_animation_filter = { "app","current_animation" };
 	dataPrintSystem->addDatacloudFilter(app_curr_animation_filter);
+
+	const std::vector<std::string>& mage_timings_filter = { "mage","timings" };
+	dataPrintSystem->addDatacloudFilter(mage_timings_filter);
 	
 	///////////////////////////
 

@@ -66,6 +66,10 @@ static const auto d3dimpl{ D3D11SystemImpl::getInstance() };
 
 D3D11System::D3D11System(Entitygraph& p_entitygraph) : System(p_entitygraph)
 {
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	dataCloud->registerData<int>("mage.timings.d3d11system");
+	dataCloud->updateDataValue<int>("mage.timings.d3d11system", 0);
+
 	m_shadercompilation_invocation_cb = [&, this](const std::string& p_includePath,
 		const mage::core::FileContent<const char>& p_src,		
 		int p_shaderType,
