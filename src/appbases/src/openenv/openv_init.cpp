@@ -184,8 +184,8 @@ void OpenEnv::d3d11_system_events_openenv()
 
 
 
-					dataCloud->registerData<maths::Real4Vector>("shadow_bias");
-					dataCloud->updateDataValue<maths::Real4Vector>("shadow_bias", maths::Real4Vector(0.005, 0, 0, 0));
+					dataCloud->registerData<maths::Real4Vector>("mage.rendering.shadow_bias");
+					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.shadow_bias", maths::Real4Vector(0.005, 0, 0, 0));
 
 					dataCloud->registerData<maths::Real4Vector>("shadowmap_resol");
 					dataCloud->updateDataValue<maths::Real4Vector>("shadowmap_resol", maths::Real4Vector(2048, 0, 0, 0));
@@ -1143,7 +1143,7 @@ void OpenEnv::enable_shadows()
 				{
 					"bufferRendering_Scene_ShadowsChannel_Queue_Entity",
 					{
-						{ std::make_pair("shadow_bias", "shadow_bias") },
+						{ std::make_pair("mage.rendering.shadow_bias", "shadow_bias") },
 						{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
 					}
 				}
@@ -1179,7 +1179,7 @@ void OpenEnv::enable_shadows()
 			{
 				{ "bufferRendering_Scene_ShadowsChannel_Queue_Entity",
 					{
-						{ std::make_pair("shadow_bias", "shadow_bias") },
+						{ std::make_pair("mage.rendering.shadow_bias", "shadow_bias") },
 						{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
 					}
 				}
@@ -1218,7 +1218,7 @@ void OpenEnv::enable_shadows()
 			{
 				{ "bufferRendering_Scene_ShadowsChannel_Queue_Entity",
 					{
-						{ std::make_pair("shadow_bias", "shadow_bias") },
+						{ std::make_pair("mage.rendering.shadow_bias", "shadow_bias") },
 						{ std::make_pair("shadowmap_resol", "shadowmap_resol") }
 					}
 				}
@@ -1263,7 +1263,7 @@ void OpenEnv::enable_shadows()
 			{
 				{ "bufferRendering_Scene_ShadowsChannel_Queue_Entity",
 					{
-						{ std::make_pair("shadow_bias", "shadow_bias") },
+						{ std::make_pair("mage.rendering.shadow_bias", "shadow_bias") },
 						{ std::make_pair("shadowmap_resol", "shadowmap_resol") },
 						{ std::make_pair("texture_keycolor_ps.key_color", "key_color") }
 					}
