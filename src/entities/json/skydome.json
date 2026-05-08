@@ -89,32 +89,32 @@
               },
 
               {
-                "datacloud_name": "scene_skydome_ps.atmo_scattering_flag_0",
+                "datacloud_name": "mage.rendering.scene_skydome_ps.atmo_scattering_flag_0",
                 "param_name": "atmo_scattering_flag_0"
               },
 
               {
-                "datacloud_name": "scene_skydome_ps.atmo_scattering_flag_1",
+                "datacloud_name": "mage.rendering.scene_skydome_ps.atmo_scattering_flag_1",
                 "param_name": "atmo_scattering_flag_1"
               },
 
               {
-                "datacloud_name": "scene_skydome_ps.atmo_scattering_flag_2",
+                "datacloud_name": "mage.rendering.scene_skydome_ps.atmo_scattering_flag_2",
                 "param_name": "atmo_scattering_flag_2"
               },
 
               {
-                "datacloud_name": "scene_skydome_ps.atmo_scattering_flag_3",
+                "datacloud_name": "mage.rendering.scene_skydome_ps.atmo_scattering_flag_3",
                 "param_name": "atmo_scattering_flag_3"
               },
 
               {
-                "datacloud_name": "scene_skydome_ps.atmo_scattering_flag_4",
+                "datacloud_name": "mage.rendering.scene_skydome_ps.atmo_scattering_flag_4",
                 "param_name": "atmo_scattering_flag_4"
               },
 
               {
-                "datacloud_name": "scene_skydome_ps.atmo_scattering_flag_5",
+                "datacloud_name": "mage.rendering.scene_skydome_ps.atmo_scattering_flag_5",
                 "param_name": "atmo_scattering_flag_5"
               }
             ]

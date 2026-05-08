@@ -164,23 +164,23 @@ void OpenEnv::d3d11_system_events_openenv()
 					const auto skydomeKr{ dataCloud->readDataValue<double>("app.skydomeKr") };
 					const auto skydomeScaleDepth{ dataCloud->readDataValue<double>("app.skydomeScaleDepth") };
 
-					dataCloud->registerData<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_0");
-					dataCloud->updateDataValue<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_0", maths::Real4Vector(skydomeOuterRadius, skydomeInnerRadius, skydomeOuterRadius * skydomeOuterRadius, skydomeInnerRadius * skydomeInnerRadius));
+					dataCloud->registerData<maths::Real4Vector>("mage.rendering.scene_skydome_ps.atmo_scattering_flag_0");
+					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.scene_skydome_ps.atmo_scattering_flag_0", maths::Real4Vector(skydomeOuterRadius, skydomeInnerRadius, skydomeOuterRadius * skydomeOuterRadius, skydomeInnerRadius * skydomeInnerRadius));
 
-					dataCloud->registerData<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_1");
-					dataCloud->updateDataValue<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_1", maths::Real4Vector(skydomeScaleDepth, 1.0 / skydomeScaleDepth, 1.0 / (skydomeOuterRadius - skydomeInnerRadius), (1.0 / (skydomeOuterRadius - skydomeInnerRadius)) / skydomeScaleDepth));
+					dataCloud->registerData<maths::Real4Vector>("mage.rendering.scene_skydome_ps.atmo_scattering_flag_1");
+					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.scene_skydome_ps.atmo_scattering_flag_1", maths::Real4Vector(skydomeScaleDepth, 1.0 / skydomeScaleDepth, 1.0 / (skydomeOuterRadius - skydomeInnerRadius), (1.0 / (skydomeOuterRadius - skydomeInnerRadius)) / skydomeScaleDepth));
 
-					dataCloud->registerData<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_2");
-					dataCloud->updateDataValue<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_2", maths::Real4Vector(1.0 / std::pow(skydomeWaveLength_x, 4.0), 1.0 / std::pow(skydomeWaveLength_y, 4.0), 1.0 / std::pow(skydomeWaveLength_z, 4.0), 0));
+					dataCloud->registerData<maths::Real4Vector>("mage.rendering.scene_skydome_ps.atmo_scattering_flag_2");
+					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.scene_skydome_ps.atmo_scattering_flag_2", maths::Real4Vector(1.0 / std::pow(skydomeWaveLength_x, 4.0), 1.0 / std::pow(skydomeWaveLength_y, 4.0), 1.0 / std::pow(skydomeWaveLength_z, 4.0), 0));
 
-					dataCloud->registerData<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_3");
-					dataCloud->updateDataValue<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_3", maths::Real4Vector(skydomeKr, skydomeKm, 4.0 * skydomeKr * 3.1415927, 4.0 * skydomeKm * 3.1415927));
+					dataCloud->registerData<maths::Real4Vector>("mage.rendering.scene_skydome_ps.atmo_scattering_flag_3");
+					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.scene_skydome_ps.atmo_scattering_flag_3", maths::Real4Vector(skydomeKr, skydomeKm, 4.0 * skydomeKr * 3.1415927, 4.0 * skydomeKm * 3.1415927));
 
-					dataCloud->registerData<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_4");
-					dataCloud->updateDataValue<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_4", maths::Real4Vector(skydomeSkyfromspace_ESun, skydomeSkyfromatmo_ESun, skydomeGroundfromspace_ESun, skydomeGroundfromatmo_ESun));
+					dataCloud->registerData<maths::Real4Vector>("mage.rendering.scene_skydome_ps.atmo_scattering_flag_4");
+					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.scene_skydome_ps.atmo_scattering_flag_4", maths::Real4Vector(skydomeSkyfromspace_ESun, skydomeSkyfromatmo_ESun, skydomeGroundfromspace_ESun, skydomeGroundfromatmo_ESun));
 
-					dataCloud->registerData<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_5");
-					dataCloud->updateDataValue<maths::Real4Vector>("scene_skydome_ps.atmo_scattering_flag_5", maths::Real4Vector(0.0, 0.0, 0.0, 1));
+					dataCloud->registerData<maths::Real4Vector>("mage.rendering.scene_skydome_ps.atmo_scattering_flag_5");
+					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.scene_skydome_ps.atmo_scattering_flag_5", maths::Real4Vector(0.0, 0.0, 0.0, 1));
 
 
 
@@ -623,12 +623,12 @@ void OpenEnv::d3d11_system_events_openenv()
 								{ "bufferRendering_Scene_TexturesChannel_Queue_Entity",
 									{
 										{ std::make_pair("mage.scene.light0.dir", "light0_dir") },
-										{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_0", "atmo_scattering_flag_0") },
-										{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_1", "atmo_scattering_flag_1") },
-										{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_2", "atmo_scattering_flag_2") },
-										{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_3", "atmo_scattering_flag_3") },
-										{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_4", "atmo_scattering_flag_4") },
-										{ std::make_pair("scene_skydome_ps.atmo_scattering_flag_5", "atmo_scattering_flag_5") },
+										{ std::make_pair("mage.rendering.scene_skydome_ps.atmo_scattering_flag_0", "atmo_scattering_flag_0") },
+										{ std::make_pair("mage.rendering.scene_skydome_ps.atmo_scattering_flag_1", "atmo_scattering_flag_1") },
+										{ std::make_pair("mage.rendering.scene_skydome_ps.atmo_scattering_flag_2", "atmo_scattering_flag_2") },
+										{ std::make_pair("mage.rendering.scene_skydome_ps.atmo_scattering_flag_3", "atmo_scattering_flag_3") },
+										{ std::make_pair("mage.rendering.scene_skydome_ps.atmo_scattering_flag_4", "atmo_scattering_flag_4") },
+										{ std::make_pair("mage.rendering.scene_skydome_ps.atmo_scattering_flag_5", "atmo_scattering_flag_5") },
 									}
 								},
 
