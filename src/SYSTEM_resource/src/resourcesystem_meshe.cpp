@@ -486,7 +486,7 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 				}
 
 				const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-				dataCloud->updateDataValue<std::string>("mage.system_resource.event", "Meshe loaded :" + filename);
+				dataCloud->updateDataValue<std::string>("mage.resourcesystem.event", "Meshe loaded :" + filename);
 
 				p_mesheInfos.setState(TriangleMeshe::State::BLOBLOADED);
 			}

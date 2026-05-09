@@ -94,7 +94,7 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 					}
 
 					const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-					dataCloud->updateDataValue<std::string>("mage.system_resource.event", "Texture loaded :" + filename);
+					dataCloud->updateDataValue<std::string>("mage.resourcesystem.event", "Texture loaded :" + filename);
 
 					p_textureInfos.setState(Texture::State::BLOBLOADED);
 

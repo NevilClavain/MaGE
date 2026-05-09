@@ -193,7 +193,7 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 						}
 
 						const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-						dataCloud->updateDataValue<std::string>("mage.system_resource.event", "Shader compilation: " + filename + " BEGIN");
+						dataCloud->updateDataValue<std::string>("mage.resourcesystem.event", "Shader compilation: " + filename + " BEGIN");
 
 						bool compilationStatus;
 
@@ -215,7 +215,7 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 							}
 
 							const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-							dataCloud->updateDataValue<std::string>("mage.system_resource.event", "Shader compilation " + filename + " SUCCESS");
+							dataCloud->updateDataValue<std::string>("mage.resourcesystem.event", "Shader compilation " + filename + " SUCCESS");
 
 							mage::core::FileContent<char> cache_code_content(shaderCacheDirectory + "/bc.code");
 							cache_code_content.save(shaderBytes.get(), shaderBytesLength);
@@ -243,7 +243,7 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 							}
 
 							const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-							dataCloud->updateDataValue<std::string>("mage.system_resource.event", "Shader compilation " + filename + " ERROR");
+							dataCloud->updateDataValue<std::string>("mage.resourcesystem.event", "Shader compilation " + filename + " ERROR");
 
 							std::string compilErrorMessage(shaderBytes.get(), shaderBytesLength);
 							_EXCEPTION("shader compilation error : " + compilErrorMessage)

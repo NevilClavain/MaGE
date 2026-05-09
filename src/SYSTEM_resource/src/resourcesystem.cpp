@@ -50,8 +50,8 @@ m_localLogger("ResourceSystem", mage::core::logger::Configuration::getInstance()
 m_localLoggerRunner("ResourceSystemRunner", mage::core::logger::Configuration::getInstance())
 {
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-	dataCloud->registerData<std::string>("mage.system_resource.event");
-	dataCloud->updateDataValue<std::string>("mage.system_resource.event", "...");
+	dataCloud->registerData<std::string>("mage.resourcesystem.event");
+	dataCloud->updateDataValue<std::string>("mage.resourcesystem.event", "...");
 
 	dataCloud->registerData<std::string>("mage.timings.resourcesystem");
 
@@ -80,7 +80,7 @@ m_localLoggerRunner("ResourceSystemRunner", mage::core::logger::Configuration::g
 		}
 
 		const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-		dataCloud->updateDataValue<std::string>("mage.system_resource.event", "Shader cache creation : " + m_shadersCachePath);
+		dataCloud->updateDataValue<std::string>("mage.resourcesystem.event", "Shader cache creation : " + m_shadersCachePath);
 	}
 	
 	/////////////////////////////////////////////
