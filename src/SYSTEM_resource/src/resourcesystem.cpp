@@ -22,6 +22,7 @@
 */
 /* -*-LIC_END-*- */
 
+#include <chrono>
 #include <string>
 
 #include "resourcesystem.h"
@@ -51,6 +52,8 @@ m_localLoggerRunner("ResourceSystemRunner", mage::core::logger::Configuration::g
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 	dataCloud->registerData<std::string>("mage.system_resource.event");
 	dataCloud->updateDataValue<std::string>("mage.system_resource.event", "...");
+
+	dataCloud->registerData<std::string>("mage.timings.resourcesystem");
 
 	///////////////////////////////////////////
 
@@ -112,6 +115,8 @@ ResourceSystem::~ResourceSystem()
 
 void ResourceSystem::run()
 {
+	const auto start_time{ std::chrono::high_resolution_clock::now() };
+
 	const auto forEachResourceAspect
 	{
 		[&](Entity* p_entity, const ComponentContainer& p_resource_components)
@@ -176,7 +181,12 @@ void ResourceSystem::run()
 	for (int i = 0; i < nbRunners; i++)
 	{
 		m_runner[i].get()->dispatchEvents();
-	}	
+	}
+
+	const auto end_time{ std::chrono::high_resolution_clock::now() };
+	const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	dataCloud->updateDataValue<std::string>("mage.timings.resourcesystem", std::to_string(duration.count()) + " ms");
 }
 
 void ResourceSystem::killRunner()
