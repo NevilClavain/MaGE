@@ -50,11 +50,10 @@ m_localLogger("ResourceSystem", mage::core::logger::Configuration::getInstance()
 m_localLoggerRunner("ResourceSystemRunner", mage::core::logger::Configuration::getInstance())
 {
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-	dataCloud->registerData<std::string>("mage.resourcesystem.event");
-	dataCloud->updateDataValue<std::string>("mage.resourcesystem.event", "...");
+	dataCloud->registerData<std::string>("mage.resourcesystem.event");	
 
 	dataCloud->registerData<std::string>("mage.timings.resourcesystem");
-
+	
 	///////////////////////////////////////////
 
 	m_runner.reserve(nbRunners);

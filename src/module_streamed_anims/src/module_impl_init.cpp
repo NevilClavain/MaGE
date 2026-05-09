@@ -97,7 +97,7 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
 
 
-	const std::vector<std::string>& resources_system_event_filter = { "mage","resourcesystem", "event" };
+	const std::vector<std::string>& resources_system_event_filter = { "mage","resourcesystem" };
 	dataPrintSystem->addDatacloudFilter(resources_system_event_filter);
 
 	const std::vector<std::string>& mage_infos_filter = { "mage","infos" };
