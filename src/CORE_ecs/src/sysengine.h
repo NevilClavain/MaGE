@@ -45,7 +45,7 @@ namespace mage
 		class SystemEngine : public property::EventSource<SystemEngineEvents, const System&>, public property::Singleton<SystemEngine>
 		{
 		public:
-			SystemEngine() = default;
+			SystemEngine();
 			~SystemEngine() = default;
 
 			template<typename T, class... Args>

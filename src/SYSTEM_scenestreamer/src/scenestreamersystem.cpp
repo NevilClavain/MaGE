@@ -48,6 +48,8 @@
 #include "trianglemeshe.h"
 #include "matrixchain.h"
 
+#include "datacloud.h"
+
 #include "filesystem.h"
 
 using namespace mage;
@@ -59,8 +61,6 @@ m_localLogger("SceneStreamerSystem", mage::core::logger::Configuration::getInsta
 {
     const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
     dataCloud->registerData<std::string>("mage.timings.scenestreamersystem");
-
-
 }
 
 void SceneStreamerSystem::enableSystem(bool p_enabled)

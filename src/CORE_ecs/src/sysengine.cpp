@@ -22,16 +22,39 @@
 */
 /* -*-LIC_END-*- */
 
+#include <chrono>
+#include <string>
+
 #include "sysengine.h"
+
+#include "datacloud.h"
 
 using namespace mage::core;
 
+
+SystemEngine::SystemEngine()
+{
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	dataCloud->registerData<std::string>("mage.timings.systemengine");
+}
+
 void SystemEngine::run()
 {
+	const auto start_time{ std::chrono::high_resolution_clock::now() };
+
 	for (auto& system : m_systems)
 	{
 		system.second.get()->run();
 	}
+
+	const auto end_time{ std::chrono::high_resolution_clock::now() };
+	const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
+
+	// estimated fps
+	const int estimated_fps = 1000 / duration.count();
+
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	dataCloud->updateDataValue<std::string>("mage.timings.systemengine", std::to_string(duration.count()) + " ms, estimated fps = " + std::to_string(estimated_fps));
 }
 
 System* SystemEngine::getSystem(int p_executionslot) const
