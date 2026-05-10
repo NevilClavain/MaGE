@@ -22,7 +22,9 @@
 */
 /* -*-LIC_END-*- */
 
+#include <chrono>
 #include <string>
+
 #include <unordered_map>
 #include <sstream>  
 
@@ -41,10 +43,13 @@ using namespace mage::core;
 
 DataPrintSystem::DataPrintSystem(Entitygraph& p_entitygraph) : System(p_entitygraph)
 {
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	dataCloud->registerData<std::string>("mage.timings.dataprintsystem");
 }
 
 void DataPrintSystem::run()
 {
+	const auto start_time{ std::chrono::high_resolution_clock::now() };
 
 	collectData();
 
@@ -65,6 +70,9 @@ void DataPrintSystem::run()
 
 	if(m_display_renderingqueues) print(m_rq_strings, x_pos, 0, rqNbCols, rqNbRows, rqColWidth, rqRowHeight);
 
+	const auto end_time{ std::chrono::high_resolution_clock::now() };
+	const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
+	dataCloud->updateDataValue<std::string>("mage.timings.dataprintsystem", std::to_string(duration.count()) + " ms");
 }
 
 void DataPrintSystem::setRenderingQueue(mage::rendering::Queue* p_queue)
