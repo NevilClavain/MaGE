@@ -70,6 +70,7 @@ D3D11System::D3D11System(Entitygraph& p_entitygraph) : System(p_entitygraph)
 {
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 	dataCloud->registerData<std::string>("mage.timings.d3d11system");
+	dataCloud->registerData<std::string>("mage.timings.d3d11system.drawing");
 	
 	m_shadercompilation_invocation_cb = [&, this](const std::string& p_includePath,
 		const mage::core::FileContent<const char>& p_src,		
@@ -769,7 +770,16 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 							{
 								d3dimpl->updateMesheTransformersForPrimitive<D3D11SystemImpl::Primitives::TRIANGLES>(tdc.meshe_id, tdc.worlds, current_mainview_view, current_mainview_proj, current_secondaryiew_view, current_secondaryview_proj);
 								d3dimpl->bindShadersConstantBuffers(current_mainview_view, current_mainview_proj, current_secondaryiew_view, current_secondaryview_proj);
+
+
+								const auto start_time{ std::chrono::high_resolution_clock::now() };
+
 								d3dimpl->drawIndexedInstancedTriangles(tdc.worlds.size());
+
+								const auto end_time{ std::chrono::high_resolution_clock::now() };
+								const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
+								const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+								dataCloud->updateDataValue<std::string>("mage.timings.d3d11system.drawing", std::to_string(duration.count()) + " ms");
 							}
 						}
 					}
