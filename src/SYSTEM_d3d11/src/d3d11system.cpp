@@ -70,6 +70,10 @@ D3D11System::D3D11System(Entitygraph& p_entitygraph) : System(p_entitygraph)
 {
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 	dataCloud->registerData<std::string>("mage.timings.d3d11system");
+
+	dataCloud->registerData<std::string>("mage.timings.d3d11system.manageResources");
+	dataCloud->registerData<std::string>("mage.timings.d3d11system.manageRenderingQueue");
+	dataCloud->registerData<std::string>("mage.timings.d3d11system.collectWorldTransformations");
 	
 	m_shadercompilation_invocation_cb = [&, this](const std::string& p_includePath,
 		const mage::core::FileContent<const char>& p_src,		
@@ -865,9 +869,40 @@ void D3D11System::run()
 		manageInitialization();
 	}
 
-	manageResources();
-	manageRenderingQueue();
-	collectWorldTransformations();
+	{
+		const auto start_time{ std::chrono::high_resolution_clock::now() };
+
+		manageResources();
+
+		const auto end_time{ std::chrono::high_resolution_clock::now() };
+		const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
+		const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+		dataCloud->updateDataValue<std::string>("mage.timings.d3d11system.manageResources", std::to_string(duration.count()) + " ms");
+	}
+
+	{
+		const auto start_time{ std::chrono::high_resolution_clock::now() };
+
+		manageRenderingQueue();
+
+		const auto end_time{ std::chrono::high_resolution_clock::now() };
+		const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
+		const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+		dataCloud->updateDataValue<std::string>("mage.timings.d3d11system.manageRenderingQueue", std::to_string(duration.count()) + " ms");
+	}
+	
+
+	{
+		const auto start_time{ std::chrono::high_resolution_clock::now() };
+
+		collectWorldTransformations();
+
+		const auto end_time{ std::chrono::high_resolution_clock::now() };
+		const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
+		const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+		dataCloud->updateDataValue<std::string>("mage.timings.d3d11system.collectWorldTransformations", std::to_string(duration.count()) + " ms");
+	}
+	
 
 	if (m_initialized)
 	{

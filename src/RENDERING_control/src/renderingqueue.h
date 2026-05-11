@@ -95,7 +95,6 @@ namespace mage
 			virtual ~QueueDrawingControl() = default;
 
 			// transformations to apply;
-			//core::maths::Matrix* world{ nullptr };
 
 			std::vector< core::maths::Matrix*> worlds;
 
