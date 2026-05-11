@@ -22,6 +22,9 @@
 */
 /* -*-LIC_END-*- */
 
+#include <chrono>
+#include <string>
+
 #include "timesystem.h"
 #include "entity.h"
 #include "entitygraph.h"
@@ -29,17 +32,21 @@
 #include "ecshelpers.h"
 #include "syncvariable.h"
 #include "timecontrol.h"
-
+#include "datacloud.h"
 
 using namespace mage;
 using namespace mage::core;
 
 TimeSystem::TimeSystem(Entitygraph& p_entitygraph) : System(p_entitygraph)
 {
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	dataCloud->registerData<std::string>("mage.timings.timesystem");
 }
 
 void TimeSystem::run()
 {
+	const auto start_time{ std::chrono::high_resolution_clock::now() };
+
 	auto tc{ TimeControl::getInstance() };
 	tc->update();
 	if (tc->isReady())
@@ -64,4 +71,9 @@ void TimeSystem::run()
 
 		mage::helpers::extractAspectsTopDown<mage::core::timeAspect>(m_entitygraph, forEachTimeAspect);
 	}
+
+	const auto end_time{ std::chrono::high_resolution_clock::now() };
+	const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	dataCloud->updateDataValue<std::string>("mage.timings.timesystem", std::to_string(duration.count()) + " ms");
 }

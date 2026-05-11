@@ -24,6 +24,7 @@ cmake_minimum_required(VERSION 3.5)
 project(CORE_ecs)
 
 include_directories(${CMAKE_SOURCE_DIR}/commons)
+include_directories(${CMAKE_SOURCE_DIR}/RENDERING_control/src)
 
 include_directories(${st_tree_include_dir})
 

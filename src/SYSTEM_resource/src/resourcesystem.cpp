@@ -22,6 +22,9 @@
 */
 /* -*-LIC_END-*- */
 
+#include <chrono>
+#include <string>
+
 #include "resourcesystem.h"
 
 #include "entity.h"
@@ -37,6 +40,8 @@
 
 #include "filesystem.h"
 
+#include "datacloud.h"
+
 using namespace mage;
 using namespace mage::core;
 
@@ -44,6 +49,13 @@ ResourceSystem::ResourceSystem(Entitygraph& p_entitygraph) : System(p_entitygrap
 m_localLogger("ResourceSystem", mage::core::logger::Configuration::getInstance()),
 m_localLoggerRunner("ResourceSystemRunner", mage::core::logger::Configuration::getInstance())
 {
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	dataCloud->registerData<std::string>("mage.resourcesystem.event");	
+
+	dataCloud->registerData<std::string>("mage.timings.resourcesystem");
+	
+	///////////////////////////////////////////
+
 	m_runner.reserve(nbRunners);
 
 	for (int i = 0; i < nbRunners; i++)
@@ -65,6 +77,9 @@ m_localLoggerRunner("ResourceSystemRunner", mage::core::logger::Configuration::g
 		{
 			call(ResourceSystemEvent::RESOURCE_SHADER_CACHE_CREATED, m_shadersCachePath);
 		}
+
+		const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+		dataCloud->updateDataValue<std::string>("mage.resourcesystem.event", "Shader cache creation : " + m_shadersCachePath);
 	}
 	
 	/////////////////////////////////////////////
@@ -99,6 +114,8 @@ ResourceSystem::~ResourceSystem()
 
 void ResourceSystem::run()
 {
+	const auto start_time{ std::chrono::high_resolution_clock::now() };
+
 	const auto forEachResourceAspect
 	{
 		[&](Entity* p_entity, const ComponentContainer& p_resource_components)
@@ -163,7 +180,12 @@ void ResourceSystem::run()
 	for (int i = 0; i < nbRunners; i++)
 	{
 		m_runner[i].get()->dispatchEvents();
-	}	
+	}
+
+	const auto end_time{ std::chrono::high_resolution_clock::now() };
+	const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	dataCloud->updateDataValue<std::string>("mage.timings.resourcesystem", std::to_string(duration.count()) + " ms");
 }
 
 void ResourceSystem::killRunner()

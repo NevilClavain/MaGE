@@ -23,6 +23,7 @@
 */
 /* -*-LIC_END-*- */
 
+#include <string>
 #include <json_struct/json_struct.h>
 
 #include "resourcesystem.h"
@@ -30,7 +31,6 @@
 #include "logger_service.h"
 
 #include "shaders_service.h"
-
 
 #include "datacloud.h"
 
@@ -92,7 +92,7 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 
 					// get current driver version
 					const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-					const auto current_driver{ dataCloud->readDataValue<std::string>("std.gpu_driver") };
+					const auto current_driver{ dataCloud->readDataValue<std::string>("mage.infos.gpu_driver") };
 
 					bool update_driver_text{ false };
 
@@ -192,6 +192,9 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 							call(ResourceSystemEvent::RESOURCE_SHADER_COMPILATION_BEGIN, filename);
 						}
 
+						const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+						dataCloud->updateDataValue<std::string>("mage.resourcesystem.event", "Shader compilation: " + filename + " BEGIN");
+
 						bool compilationStatus;
 
 						if (vertexShader == shaderType)
@@ -210,6 +213,9 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 							{
 								call(ResourceSystemEvent::RESOURCE_SHADER_COMPILATION_SUCCESS, filename);
 							}
+
+							const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+							dataCloud->updateDataValue<std::string>("mage.resourcesystem.event", "Shader compilation " + filename + " SUCCESS");
 
 							mage::core::FileContent<char> cache_code_content(shaderCacheDirectory + "/bc.code");
 							cache_code_content.save(shaderBytes.get(), shaderBytesLength);
@@ -235,6 +241,9 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 							{
 								call(ResourceSystemEvent::RESOURCE_SHADER_COMPILATION_ERROR, filename);
 							}
+
+							const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+							dataCloud->updateDataValue<std::string>("mage.resourcesystem.event", "Shader compilation " + filename + " ERROR");
 
 							std::string compilErrorMessage(shaderBytes.get(), shaderBytesLength);
 							_EXCEPTION("shader compilation error : " + compilErrorMessage)

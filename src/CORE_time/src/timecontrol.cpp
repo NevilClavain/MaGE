@@ -75,11 +75,11 @@ TimeControl::TimeControl()
 {
     const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 
-    dataCloud->registerData<long>("std.frames_per_second", 0);
-    dataCloud->registerData<std::string>("std.date", "");
+    dataCloud->registerData<long>("mage.infos.frames_per_second", 0);
+    dataCloud->registerData<std::string>("mage.infos.date", "");
 
-    dataCloud->registerData<std::string>("std.time_factor", "");
-    dataCloud->registerData<__time64_t>("std.current_time");
+    dataCloud->registerData<std::string>("mage.infos.time_factor", "");
+    dataCloud->registerData<__time64_t>("mage.infos.current_time");
 
     m_timer.registerSubscriber([this](TimerEvents p_event) 
     {
@@ -124,11 +124,11 @@ void TimeControl::update(void)
         datetime = asctime(mytime);
     }
 
-    dataCloud->updateDataValue<std::string>("std.date", datetime);
-    dataCloud->updateDataValue<__time64_t>("std.current_time", m_current_time);
-    dataCloud->updateDataValue<long>("std.frames_per_second", m_tm.getFPS());
-    dataCloud->updateDataValue<long>("std.frames_per_second", m_tm.getFPS());
-    dataCloud->updateDataValue<std::string>("std.time_factor", m_mode_str);
+    dataCloud->updateDataValue<std::string>("mage.infos.date", datetime);
+    dataCloud->updateDataValue<__time64_t>("mage.infos.current_time", m_current_time);
+    dataCloud->updateDataValue<long>("mage.infos.frames_per_second", m_tm.getFPS());
+    dataCloud->updateDataValue<long>("mage.infos.frames_per_second", m_tm.getFPS());
+    dataCloud->updateDataValue<std::string>("mage.infos.time_factor", m_mode_str);
 }
 
 bool TimeControl::isReady(void) const

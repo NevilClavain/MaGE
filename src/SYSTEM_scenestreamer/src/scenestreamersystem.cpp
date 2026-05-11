@@ -22,7 +22,9 @@
 */
 /* -*-LIC_END-*- */
 
+#include <chrono>
 #include <string>
+
 #include <unordered_map>
 #include <sstream>  
 #include <utility>
@@ -46,6 +48,8 @@
 #include "trianglemeshe.h"
 #include "matrixchain.h"
 
+#include "datacloud.h"
+
 #include "filesystem.h"
 
 using namespace mage;
@@ -55,6 +59,8 @@ using namespace mage::core::maths;
 SceneStreamerSystem::SceneStreamerSystem(Entitygraph& p_entitygraph) : System(p_entitygraph),
 m_localLogger("SceneStreamerSystem", mage::core::logger::Configuration::getInstance())
 {
+    const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+    dataCloud->registerData<std::string>("mage.timings.scenestreamersystem");
 }
 
 void SceneStreamerSystem::enableSystem(bool p_enabled)
@@ -264,12 +270,12 @@ void SceneStreamerSystem::init_XTree(RendergraphPartData& p_rgpd)
 
 void SceneStreamerSystem::run()
 {
+    const auto start_time{ std::chrono::high_resolution_clock::now() };
+
     if (!m_enabled)
     {
         return;
     }
-
-
 
     /////////////////////////////////////////////////////////////////////////////////
     // place 3D object in appropriate xtree leaf : utility lambda
@@ -630,6 +636,11 @@ void SceneStreamerSystem::run()
             _MAGE_DEBUG(m_localLogger, "SceneStreamerSystemEvent::RENDERING_DISABLED for " + e.first);
         }
     }
+
+    const auto end_time{ std::chrono::high_resolution_clock::now() };
+    const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
+    const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+    dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem", std::to_string(duration.count()) + " ms");
 }
 
 void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId,

@@ -11,11 +11,11 @@
             "name": "combiner_fog_ps",
             "args": [
               {
-                "source": "std.fog.color",
+                "source": "mage.scene.fog.color",
                 "destination": "fog_color"
               },
               {
-                "source": "std.fog.density",
+                "source": "mage.scene.fog.density",
                 "destination": "fog_density"
               }
             ]

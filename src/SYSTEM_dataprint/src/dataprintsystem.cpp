@@ -22,7 +22,9 @@
 */
 /* -*-LIC_END-*- */
 
+#include <chrono>
 #include <string>
+
 #include <unordered_map>
 #include <sstream>  
 
@@ -41,17 +43,20 @@ using namespace mage::core;
 
 DataPrintSystem::DataPrintSystem(Entitygraph& p_entitygraph) : System(p_entitygraph)
 {
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	dataCloud->registerData<std::string>("mage.timings.dataprintsystem");
 }
 
 void DataPrintSystem::run()
 {
+	const auto start_time{ std::chrono::high_resolution_clock::now() };
 
 	collectData();
 
 	print(m_dc_strings, 0, 0, dcNbCols, dcNbRows, dcColWidth, dcRowHeight);
 
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-	const auto window_dims{ dataCloud->readDataValue<mage::core::maths::IntCoords2D>("std.window_resol") };
+	const auto window_dims{ dataCloud->readDataValue<mage::core::maths::IntCoords2D>("mage.infos.window_resol") };
 
 
 	// positioning sync vars print bloc at bottomo of the window : compute y position
@@ -65,6 +70,9 @@ void DataPrintSystem::run()
 
 	if(m_display_renderingqueues) print(m_rq_strings, x_pos, 0, rqNbCols, rqNbRows, rqColWidth, rqRowHeight);
 
+	const auto end_time{ std::chrono::high_resolution_clock::now() };
+	const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
+	dataCloud->updateDataValue<std::string>("mage.timings.dataprintsystem", std::to_string(duration.count()) + " ms");
 }
 
 void DataPrintSystem::setRenderingQueue(mage::rendering::Queue* p_queue)
@@ -88,14 +96,32 @@ std::vector<std::string> DataPrintSystem::splitString(const std::string& p_str, 
 bool DataPrintSystem::checkDcVar(const std::string& p_var_id) const
 {
 	bool status = false;
+	
 	const std::vector<std::string> parts{ splitString(p_var_id, '.')};
 
 	if (parts.size() > 0)
 	{
-		const std::string sub_id{ parts.at(0) };
-		if (m_display_filters.count(sub_id))
+		for (const auto& display_filter : m_display_filters)
 		{
-			status = true;
+			bool loop_status = true;
+			for (size_t i = 0; i < display_filter.size(); i++)
+			{
+				const std::string& filter_part{ display_filter.at(i) };
+				if (i < parts.size())
+				{
+					const std::string sub_id{ parts.at(i) };
+					if (sub_id != filter_part)
+					{
+						loop_status = false;
+					}
+				}
+			}
+
+			if (loop_status)
+			{
+				status = true;
+				break;
+			}
 		}
 	}
 	return status;
@@ -381,7 +407,12 @@ void DataPrintSystem::print(const std::vector<std::string>& p_list, int p_x_base
 
 void DataPrintSystem::addDatacloudFilter(const std::string& p_filter)
 {
-	m_display_filters.insert(p_filter);
+	m_display_filters.push_back({ p_filter });
+}
+
+void DataPrintSystem::addDatacloudFilter(const std::vector<std::string>& p_filter)
+{
+	m_display_filters.push_back( p_filter );
 }
 
 void DataPrintSystem::showRenderingQueues(bool p_show)

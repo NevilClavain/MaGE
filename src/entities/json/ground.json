@@ -69,7 +69,7 @@
             "rendering_channel_type": "ambient_lit",
             "shaders_params": [
               {
-                "datacloud_name": "std.ambientlight.color",
+                "datacloud_name": "mage.scene.ambientlight.color",
                 "param_name": "color"
               }
             ]
@@ -79,7 +79,7 @@
             "rendering_channel_type": "emissive_lit",
             "shaders_params": [
               {
-                "datacloud_name": "std.black_color",
+                "datacloud_name": "mage.rendering.black_color",
                 "param_name": "color"
               }
             ]
@@ -89,7 +89,7 @@
             "rendering_channel_type": "directional_lit",
             "shaders_params": [
               {
-                "datacloud_name": "std.light0.dir",
+                "datacloud_name": "mage.scene.light0.dir",
                 "param_name": "light_dir"
               }
             ]

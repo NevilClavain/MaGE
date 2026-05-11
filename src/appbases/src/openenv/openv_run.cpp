@@ -46,7 +46,7 @@ void OpenEnv::run(void)
 	// update all shadowmaps camera pos/direction
 
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-	const auto light_cartesian4{ dataCloud->readDataValue<maths::Real4Vector>("std.light0.dir") };
+	const auto light_cartesian4{ dataCloud->readDataValue<maths::Real4Vector>("mage.scene.light0.dir") };
 
 	maths::Real3Vector light_cartesian3(light_cartesian4[0], light_cartesian4[1], light_cartesian4[2]);
 

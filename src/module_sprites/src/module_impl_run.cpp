@@ -70,7 +70,7 @@ void ModuleImpl::manage_sprite_trajectory(core::Entity* p_entity)
 	// sprite collisions management
 
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-	const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("std.viewport") };
+	const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("mage.infos.viewport") };
 
 	if (x_pos.value > viewport.x() * 0.5)
 	{

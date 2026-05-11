@@ -23,7 +23,8 @@
 /* -*-LIC_END-*- */
 
 #include<utility>
-#include<string>
+#include <chrono>
+#include <string>
 #include<map>
 #include<vector>
 
@@ -53,6 +54,9 @@ using namespace mage::core;
 RenderingQueueSystem::RenderingQueueSystem(Entitygraph& p_entitygraph) : System(p_entitygraph),
 m_localLogger("RenderingQueueSystem", mage::core::logger::Configuration::getInstance())
 {
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	dataCloud->registerData<std::string>("mage.timings.renderingqueuesystem");
+
 	////// Register callback to entitygraph
 
 	const Entitygraph::Callback eg_cb
@@ -96,7 +100,14 @@ m_localLogger("RenderingQueueSystem", mage::core::logger::Configuration::getInst
 
 void RenderingQueueSystem::run()
 {
+	const auto start_time{ std::chrono::high_resolution_clock::now() };
+
 	manageRenderingQueue();
+
+	const auto end_time{ std::chrono::high_resolution_clock::now() };
+	const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	dataCloud->updateDataValue<std::string>("mage.timings.renderingqueuesystem", std::to_string(duration.count()) + " ms");
 }
 
 void RenderingQueueSystem::requestRenderingqueueLogging(const std::string& p_entityid)
@@ -335,8 +346,8 @@ void RenderingQueueSystem::manageRenderingQueue()
 						projected_z_neg = wp.projected_z_neg;
 
 						const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-						const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("std.viewport") };
-						const auto window_dims{ dataCloud->readDataValue<mage::core::maths::IntCoords2D>("std.window_resol") };
+						const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("mage.infos.viewport") };
+						const auto window_dims{ dataCloud->readDataValue<mage::core::maths::IntCoords2D>("mage.infos.window_resol") };
 
 						text.position[0] = ((wp.global_pos(3, 0) + (viewport[0] * 0.5f)) * window_dims[0]) / viewport[0];
 						text.position[1] = (((viewport[1] * 0.5f) - wp.global_pos(3, 1)) * window_dims[1]) / viewport[1];

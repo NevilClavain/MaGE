@@ -23,6 +23,7 @@
 /* -*-LIC_END-*- */
 
 #include <vector>
+#include <chrono>
 #include <string>
 #include <unordered_map>
 #include <map>
@@ -49,11 +50,16 @@
 #include "quaternion.h"
 #include "timecontrol.h"
 
+#include "datacloud.h"
+
 using namespace mage;
 using namespace mage::core;
 
 AnimationsSystem::AnimationsSystem(Entitygraph& p_entitygraph) : System(p_entitygraph)
-{		
+{
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	dataCloud->registerData<std::string>("mage.timings.animationssystem");
+
 }
 
 static void send_bones_to_shaders(TriangleMeshe& p_meshe, /*Shader& p_vertex_shader*/ std::vector<std::pair<std::string, Shader>*>& p_vshaders_refs, int p_animationbones_array_arg_index)
@@ -310,6 +316,8 @@ bool AnimationsSystem::animation_step(core::TimeMark& p_tmk, const AnimationKeys
 
 void AnimationsSystem::run()
 {
+	const auto start_time{ std::chrono::high_resolution_clock::now() };
+
 	const auto forEachAnimationAspect
 	{
 		[&](Entity* p_entity, const ComponentContainer& p_animation_components)
@@ -548,5 +556,10 @@ void AnimationsSystem::run()
 	};
 
 	mage::helpers::extractAspectsTopDown<mage::core::animationsAspect>(m_entitygraph, forEachAnimationAspect);
+
+	const auto end_time{ std::chrono::high_resolution_clock::now() };
+	const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+	dataCloud->updateDataValue<std::string>("mage.timings.animationssystem", std::to_string(duration.count()) + " ms");
 
 }
