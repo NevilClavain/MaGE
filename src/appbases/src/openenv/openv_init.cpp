@@ -87,7 +87,7 @@ void OpenEnv::init(const std::string p_appWindowsEntityName)
 void OpenEnv::d3d11_system_events_openenv()
 {
 	const auto sysEngine{ SystemEngine::getInstance() };
-	const auto d3d11System{ sysEngine->getSystem<mage::D3D11System>(d3d11SystemSlot) };
+	const auto d3d11System{ sysEngine->getSystem<mage::D3D11System>(System::d3d11SystemSlot) };
 
 	const D3D11System::Callback d3d11_cb
 	{
@@ -648,7 +648,7 @@ void OpenEnv::d3d11_system_events_openenv()
 					/////////////////////////////////////////////////////////////////////////////////////
 					/////// set queue current cameras
 		
-					auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot)) };
+					auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(System::renderingQueueSystemSlot)) };
 
 					renderingQueueSystemInstance->createViewGroup("player_camera");
 					renderingQueueSystemInstance->setViewGroupMainView("player_camera", "camera_Entity");
@@ -1313,7 +1313,7 @@ void OpenEnv::enable_shadows()
 										m_shadowmap_joints_list,
 										shadowsRenderingParams);
 
-	auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot)) };
+	auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(System::renderingQueueSystemSlot)) };
 
 	
 	renderingQueueSystemInstance->createViewGroup("player_camera_2");

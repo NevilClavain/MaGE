@@ -89,17 +89,17 @@ void Base::init(const std::string p_appWindowsEntityName)
 
 	auto sysEngine{ SystemEngine::getInstance() };
 
-	sysEngine->makeSystem<mage::TimeSystem>(timeSystemSlot, m_entitygraph);
-	sysEngine->makeSystem<mage::D3D11System>(d3d11SystemSlot, m_entitygraph);
-	sysEngine->makeSystem<mage::ResourceSystem>(resourceSystemSlot, m_entitygraph);
-	sysEngine->makeSystem<mage::WorldSystem>(worldSystemSlot, m_entitygraph);
-	sysEngine->makeSystem<mage::RenderingQueueSystem>(renderingQueueSystemSlot, m_entitygraph);
-	sysEngine->makeSystem<mage::DataPrintSystem>(dataPrintSystemSlot, m_entitygraph);
-	sysEngine->makeSystem<mage::AnimationsSystem>(animationsSystemSlot, m_entitygraph);
-	sysEngine->makeSystem<mage::SceneStreamerSystem>(sceneStreamSystemSlot, m_entitygraph);
+	sysEngine->makeSystem<mage::TimeSystem>(System::timeSystemSlot, m_entitygraph);
+	sysEngine->makeSystem<mage::D3D11System>(System::d3d11SystemSlot, m_entitygraph);
+	sysEngine->makeSystem<mage::ResourceSystem>(System::resourceSystemSlot, m_entitygraph);
+	sysEngine->makeSystem<mage::WorldSystem>(System::worldSystemSlot, m_entitygraph);
+	sysEngine->makeSystem<mage::RenderingQueueSystem>(System::renderingQueueSystemSlot, m_entitygraph);
+	sysEngine->makeSystem<mage::DataPrintSystem>(System::dataPrintSystemSlot, m_entitygraph);
+	sysEngine->makeSystem<mage::AnimationsSystem>(System::animationsSystemSlot, m_entitygraph);
+	sysEngine->makeSystem<mage::SceneStreamerSystem>(System::sceneStreamSystemSlot, m_entitygraph);
 
 	// D3D11 system provides compilation shader service : give access to this to resources sytem
-	const auto d3d11System{ sysEngine->getSystem<mage::D3D11System>(d3d11SystemSlot) };
+	const auto d3d11System{ sysEngine->getSystem<mage::D3D11System>(System::d3d11SystemSlot) };
 	services::ShadersCompilationService::getInstance()->registerSubscriber(d3d11System->getShaderCompilationInvocationCallback());
 	services::TextureContentCopyService::getInstance()->registerSubscriber(d3d11System->getTextureContentCopyInvocationCallback());
 
@@ -209,7 +209,7 @@ void Base::init(const std::string p_appWindowsEntityName)
 void Base::d3d11_system_events_base()
 {
 	const auto sysEngine{ SystemEngine::getInstance() };
-	const auto d3d11System{ sysEngine->getSystem<mage::D3D11System>(d3d11SystemSlot) };
+	const auto d3d11System{ sysEngine->getSystem<mage::D3D11System>(System::d3d11SystemSlot) };
 
 	const D3D11System::Callback d3d11_cb
 	{
@@ -275,7 +275,7 @@ void Base::d3d11_system_events_base()
 					m_windowRenderingQueue = &screen_rendering_queue;
 
 					auto sysEngine{ SystemEngine::getInstance() };
-					const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
+					const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(System::dataPrintSystemSlot) };
 
 					dataPrintSystem->setRenderingQueue(m_windowRenderingQueue);
 

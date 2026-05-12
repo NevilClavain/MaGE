@@ -34,12 +34,12 @@ using namespace mage::core;
 
 void Base::close(void)
 {
-	auto resourceSystem{ SystemEngine::getInstance()->getSystem(resourceSystemSlot) };
+	auto resourceSystem{ SystemEngine::getInstance()->getSystem(System::resourceSystemSlot) };
 	auto resourceSystemInstance{ dynamic_cast<mage::ResourceSystem*>(resourceSystem) };
 
 	resourceSystemInstance->killRunner();
 
-	auto d3d11System{ SystemEngine::getInstance()->getSystem(d3d11SystemSlot) };
+	auto d3d11System{ SystemEngine::getInstance()->getSystem(System::d3d11SystemSlot) };
 	auto d3d11SystemInstance{ dynamic_cast<mage::D3D11System*>(d3d11System) };
 
 	d3d11SystemInstance->killRunner();

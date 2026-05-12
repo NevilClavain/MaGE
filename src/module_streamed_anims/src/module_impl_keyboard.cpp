@@ -45,7 +45,7 @@ void ModuleImpl::onKeyPress(long p_key)
 {
 	if (!m_appReady) return;
 
-	auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot)) };
+	auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(System::renderingQueueSystemSlot)) };
 	auto& [mainView, secondaryView] { renderingQueueSystemInstance->getViewGroupCurrentViews("openenv_main_graph") };
 
 
@@ -135,7 +135,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 	auto& eventsLogger{ services::LoggerSharing::getInstance()->getLogger("Events") };
 
-	auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot)) };
+	auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(System::renderingQueueSystemSlot)) };
 	auto& [mainView, secondaryView] { renderingQueueSystemInstance->getViewGroupCurrentViews("openenv_main_graph") };
 
 
@@ -216,7 +216,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 	else if (VK_F8 == p_key)
 	{
-		auto sceneStreamerSystem{ SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot) };
+		auto sceneStreamerSystem{ SystemEngine::getInstance()->getSystem(System::sceneStreamSystemSlot) };
 		auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(sceneStreamerSystem) };
 
 		if (sceneStreamerSystemInstance->isEnabled())
@@ -233,14 +233,14 @@ void ModuleImpl::onEndKeyPress(long p_key)
 	{
 		//helpers::logEntitygraph(m_entitygraph, true);
 		
-		//auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
+		//auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(System::renderingQueueSystemSlot) };
 		//auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
 
 		//renderingQueueSystemInstance->requestRenderingqueueLogging("TextureChannelScene_Entity");
 		//renderingQueueSystemInstance->requestRenderingqueueLogging("screenRendering_Filter_DirectForward_Queue_Entity");
 		
 
-		auto sceneStreamerSystem{ SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot) };
+		auto sceneStreamerSystem{ SystemEngine::getInstance()->getSystem(System::sceneStreamSystemSlot) };
 		auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(sceneStreamerSystem) };
 
 		sceneStreamerSystemInstance->dumpXTreeEntities();
@@ -323,7 +323,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 	else if (VK_SPACE == p_key)
 	{
-		auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot)) };
+		auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(SystemEngine::getInstance()->getSystem(System::sceneStreamSystemSlot)) };
 
 		static bool draw_it{ true };
 

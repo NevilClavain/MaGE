@@ -54,7 +54,7 @@ void ModuleImpl::onMouseMove(long p_xm, long p_ym, long p_dx, long p_dy)
 		const auto tc{ TimeControl::getInstance() };
 		if (tc->isReady())
 		{
-			auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot)) };
+			auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(System::renderingQueueSystemSlot)) };
 			auto& [mainView, secondaryView] { renderingQueueSystemInstance->getViewGroupCurrentViews("openenv_main_graph") };
 
 			if ("camera_Entity" == mainView)

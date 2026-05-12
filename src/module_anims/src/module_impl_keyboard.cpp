@@ -43,7 +43,7 @@ void ModuleImpl::onKeyPress(long p_key)
 {
 	if (!m_appReady) return;
 
-	auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot)) };
+	auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(System::renderingQueueSystemSlot)) };
 	auto& [mainView, secondaryView] { renderingQueueSystemInstance->getViewGroupCurrentViews("player_camera") };
 
 	if ('Q' == p_key)
@@ -87,7 +87,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 	auto& eventsLogger{ services::LoggerSharing::getInstance()->getLogger("Events") };
 
-	auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot)) };
+	auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(System::renderingQueueSystemSlot)) };
 	auto& [mainView, secondaryView] { renderingQueueSystemInstance->getViewGroupCurrentViews("player_camera") };
 
 
@@ -201,7 +201,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 	{
 		//enable_shadows();
 
-		auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
+		auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(System::renderingQueueSystemSlot) };
 		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
 
 		renderingQueueSystemInstance->requestRenderingqueueLogging("bufferRendering_Scene_LitChannel_Queue_Entity");

@@ -88,7 +88,7 @@ void StreamedOpenEnv::init(const std::string p_appWindowsEntityName)
 void StreamedOpenEnv::d3d11_system_events_openenv()
 {
 	const auto sysEngine{ SystemEngine::getInstance() };
-	const auto d3d11System{ sysEngine->getSystem<mage::D3D11System>(d3d11SystemSlot) };
+	const auto d3d11System{ sysEngine->getSystem<mage::D3D11System>(System::d3d11SystemSlot) };
 
 	const D3D11System::Callback d3d11_cb
 	{
@@ -201,7 +201,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 
 
-					auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot)) };
+					auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(SystemEngine::getInstance()->getSystem(System::sceneStreamSystemSlot)) };
 
 					sceneStreamerSystemInstance->enableSystem(true);
 
@@ -242,9 +242,9 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					}
 					)json";
 					
-					sceneStreamerSystemInstance->buildViewgroup(viewgroup_json, Base::renderingQueueSystemSlot);
+					sceneStreamerSystemInstance->buildViewgroup(viewgroup_json, System::renderingQueueSystemSlot);
 
-					auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(Base::renderingQueueSystemSlot)) };
+					auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(System::renderingQueueSystemSlot)) };
 					renderingQueueSystemInstance->setViewGroupMainView("openenv_main_graph", "camera_Entity");
 				}
 				break;

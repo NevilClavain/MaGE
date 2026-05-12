@@ -94,7 +94,7 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	auto sysEngine{ SystemEngine::getInstance() };
 
 	// dataprint system filters
-	const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
+	const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(System::dataPrintSystemSlot) };
 
 
 	const std::vector<std::string>& resources_system_event_filter = { "mage","resourcesystem" };
@@ -164,14 +164,14 @@ void ModuleImpl::resource_system_events()
 	};
 
 	const auto sysEngine{ SystemEngine::getInstance() };
-	const auto resourceSystem{ sysEngine->getSystem<mage::ResourceSystem>(resourceSystemSlot) };
+	const auto resourceSystem{ sysEngine->getSystem<mage::ResourceSystem>(System::resourceSystemSlot) };
 	resourceSystem->registerSubscriber(rs_cb);
 }
 
 void ModuleImpl::d3d11_system_events()
 {
 	const auto sysEngine{ SystemEngine::getInstance() };
-	const auto d3d11System{ sysEngine->getSystem<mage::D3D11System>(d3d11SystemSlot) };
+	const auto d3d11System{ sysEngine->getSystem<mage::D3D11System>(System::d3d11SystemSlot) };
 
 	const D3D11System::Callback d3d11_cb
 	{
