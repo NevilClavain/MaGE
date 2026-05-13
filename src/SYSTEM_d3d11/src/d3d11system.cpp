@@ -58,9 +58,6 @@
 #include "worldposition.h"
 #include "matrixchain.h"
 
-#include "sysengine.h"
-#include "resourcesystem.h"
-
 
 using namespace mage;
 using namespace mage::core;
@@ -870,48 +867,12 @@ void D3D11System::run()
 	if (!m_initialized)
 	{
 		manageInitialization();
-
-		
-		// register to resource system events
-		const ResourceSystem::Callback rs_cb
-		{
-			[&, this](ResourceSystemEvent p_event, const std::string& p_resourceName)
-			{
-				auto& eventsLogger{ services::LoggerSharing::getInstance()->getLogger("Events") };
-
-				const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-
-				switch (p_event)
-				{
-
-					case ResourceSystemEvent::RESOURCE_SHADER_LOAD_SUCCESS:
-					{
-					}
-					break;
-
-					case ResourceSystemEvent::RESOURCE_TEXTURE_LOAD_SUCCESS:
-					{
-					}						
-					break;
-
-					case ResourceSystemEvent::RESOURCE_MESHE_LOAD_SUCCESS:
-					{
-					}						
-					break;
-				}
-			}
-		};
-
-		const auto sysEngine{ SystemEngine::getInstance() };
-		const auto resourceSystem{ sysEngine->getSystem<mage::ResourceSystem>(System::resourceSystemSlot) };
-		resourceSystem->registerSubscriber(rs_cb);
-		
 	}
 
 	{
 		const auto start_time{ std::chrono::high_resolution_clock::now() };
 
-		//manageResources();
+		manageResources();
 
 		const auto end_time{ std::chrono::high_resolution_clock::now() };
 		const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };

@@ -51,7 +51,7 @@ void ModuleImpl::onMouseMove(long p_xm, long p_ym, long p_dx, long p_dy)
 	}
 	else
 	{
-		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(System::renderingQueueSystemSlot)) };
+		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot)) };
 		auto& [mainView, secondaryView] { renderingQueueSystemInstance->getViewGroupCurrentViews("player_camera") };
 
 		if ("camera_Entity" == mainView)

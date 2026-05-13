@@ -311,7 +311,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 	else if (VK_F8 == p_key)
 	{
-		auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(System::renderingQueueSystemSlot) };
+		auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
 		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
 
 		renderingQueueSystemInstance->requestRenderingqueueLogging("bufferRenderingEntity");		
