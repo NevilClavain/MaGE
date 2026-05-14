@@ -335,6 +335,7 @@ std::string TriangleMeshe::getSourceID() const
 	return m_source_id;
 }
 
+
 void TriangleMeshe::setSourceID(const std::string& p_source_id)
 {
 	m_source_id = p_source_id;
@@ -343,6 +344,13 @@ void TriangleMeshe::setSourceID(const std::string& p_source_id)
 void TriangleMeshe::setSource(TriangleMeshe::Source p_source)
 {
 	m_source = p_source;
+}
+
+void TriangleMeshe::setSource(TriangleMeshe::Source p_source, const std::string& p_source_id)
+{
+	m_source = p_source;
+	m_source_id = p_source_id;
+
 }
 
 void TriangleMeshe::setSceneNodes(const std::map<std::string, SceneNode>& p_scene_nodes, const std::string& p_scene_root_node_id)

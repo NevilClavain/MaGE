@@ -32,6 +32,7 @@
 #include "filesystem.h"
 
 #include "datacloud.h"
+#include "resourcestatecontroler.h"
 
 using namespace mage;
 using namespace mage::core;
@@ -41,9 +42,7 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 {
 	const std::string textureAction{ "load_texture" };
 
-	p_textureInfos.m_source = Texture::Source::CONTENT_FROM_FILE;
-	p_textureInfos.m_source_id = p_filename;
-	p_textureInfos.compute_resource_uid();
+	p_textureInfos.setSource(Texture::Source::CONTENT_FROM_FILE, p_filename);
 
 	const auto resourceUID{ p_textureInfos.getResourceUID() };
 
@@ -84,8 +83,7 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 					m_texturesBlobCache.at(resourceUID).texture_content.fill(texture_content.getData(), texture_content.getDataSize());
 					m_texturesBlobCache_mutex.unlock();
 
-					p_textureInfos.m_file_content = m_texturesBlobCache.at(resourceUID).texture_content.getData();
-					p_textureInfos.m_file_content_size = m_texturesBlobCache.at(resourceUID).texture_content.getDataSize();
+					p_textureInfos.setFileContent(m_texturesBlobCache.at(resourceUID).texture_content.getData(), m_texturesBlobCache.at(resourceUID).texture_content.getDataSize());
 
 					_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> RESOURCE_TEXTURE_LOAD_SUCCESS : " + filename);
 					for (const auto& call : m_callbacks)
@@ -96,7 +94,9 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 					const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 					dataCloud->updateDataValue<std::string>("mage.resourcesystem.event", "Texture loaded :" + filename);
 
-					p_textureInfos.setState(Texture::State::BLOBLOADED);
+					//p_textureInfos.setState(Texture::State::BLOBLOADED);
+					ResourceStateControler::getInstance()->update(p_textureInfos, Texture::State::BLOBLOADED);
+
 
 					m_texturesBlobCache_mutex.lock();
 					m_texturesBlobCache.at(resourceUID).state = TextureCacheEntry::State::BLOBLOADED;
@@ -131,9 +131,8 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 
 		if (TextureCacheEntry::State::BLOBLOADED == texture_state)
 		{
-			p_textureInfos.m_file_content = m_texturesBlobCache.at(resourceUID).texture_content.getData();
-			p_textureInfos.m_file_content_size = m_texturesBlobCache.at(resourceUID).texture_content.getDataSize();
-			p_textureInfos.setState(Texture::State::BLOBLOADED);
+			p_textureInfos.setFileContent(m_texturesBlobCache.at(resourceUID).texture_content.getData(), m_texturesBlobCache.at(resourceUID).texture_content.getDataSize());
+			ResourceStateControler::getInstance()->update(p_textureInfos, Texture::State::BLOBLOADED);
 		}
 	}
 }

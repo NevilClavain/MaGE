@@ -40,6 +40,7 @@
 namespace mage
 {
 	class RenderingQueueSystem;
+	class D3D11System;
 
 	namespace core
 	{

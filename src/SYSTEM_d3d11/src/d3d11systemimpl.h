@@ -231,7 +231,7 @@ public:
 
     struct TextureData
     {
-        mage::Texture::Source           source;
+        mage::Texture::Source               source;
         D3D11_TEXTURE2D_DESC                desc;
 
         // common

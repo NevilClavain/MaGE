@@ -43,6 +43,8 @@
 #include "animators_helpers.h"
 #include "entitygraph_helpers.h"
 
+#include "resourcestatecontroler.h"
+
 using namespace mage;
 using namespace mage::core;
 using namespace mage::rendering;
@@ -121,7 +123,7 @@ void ModuleImpl::run(void)
 		square.computeResourceUID();
 		square.setSourceID("quadEntity0");
 
-		square.setState(LineMeshe::State::BLOBLOADED);
+		ResourceStateControler::getInstance()->update(square, LineMeshe::State::BLOBLOADED);
 
 		quad_resource_aspect.addComponent<LineMeshe>("line_square_0", square);
 
@@ -261,8 +263,7 @@ void ModuleImpl::run(void)
 		square.computeResourceUID();
 		square.setSourceID("quadEntity1");
 
-
-		square.setState(LineMeshe::State::BLOBLOADED);
+		ResourceStateControler::getInstance()->update(square, LineMeshe::State::BLOBLOADED);
 
 		quad_resource_aspect.addComponent<LineMeshe>("line_square_1", square);
 

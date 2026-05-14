@@ -51,6 +51,8 @@
 
 #include "animatorfunc.h"
 
+#include "resourcestatecontroler.h"
+
 extern mage::core::logger::Sink localLogger("Helpers", mage::core::logger::Configuration::getInstance());
 
 namespace mage
@@ -265,7 +267,7 @@ namespace mage
 			square.setSourceID("helpers::plugRenderingQuadView");
 			square.setSource(TriangleMeshe::Source::CONTENT_DYNAMIC_INIT);
 
-			square.setState(TriangleMeshe::State::BLOBLOADED);
+			ResourceStateControler::getInstance()->update(square, TriangleMeshe::State::BLOBLOADED);
 
 			quad_resource_aspect.addComponent<TriangleMeshe>("quad", square);
 
@@ -431,7 +433,7 @@ namespace mage
 			square.setSourceID("helpers::plugRenderingQuadView");
 			square.setSource(TriangleMeshe::Source::CONTENT_DYNAMIC_INIT);
 			
-			square.setState(TriangleMeshe::State::BLOBLOADED);
+			ResourceStateControler::getInstance()->update(square, TriangleMeshe::State::BLOBLOADED);
 
 			quad_resource_aspect.addComponent<TriangleMeshe>("quad", square);
 
@@ -595,7 +597,8 @@ namespace mage
 			sprite2D_square.setSourceID("sprite2DEntity");
 			sprite2D_square.setSource(TriangleMeshe::Source::CONTENT_DYNAMIC_INIT);
 
-			sprite2D_square.setState(TriangleMeshe::State::BLOBLOADED);
+			ResourceStateControler::getInstance()->update(sprite2D_square, TriangleMeshe::State::BLOBLOADED);
+
 
 			resource_aspect.addComponent<TriangleMeshe>("sprite2D_square", sprite2D_square);
 
@@ -742,7 +745,7 @@ namespace mage
 			sprite2D_square.setSourceID("sprite2DEntity");
 			sprite2D_square.setSource(TriangleMeshe::Source::CONTENT_DYNAMIC_INIT);
 
-			sprite2D_square.setState(TriangleMeshe::State::BLOBLOADED);
+			ResourceStateControler::getInstance()->update(sprite2D_square, TriangleMeshe::State::BLOBLOADED);
 
 			resource_aspect.addComponent<TriangleMeshe>("sprite2D_square", sprite2D_square);
 

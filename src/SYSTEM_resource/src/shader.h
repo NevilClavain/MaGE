@@ -37,8 +37,9 @@
 namespace mage
 {
     //fwd decl
-    class ResourceSystem;
-    class D3D11System;
+    //class ResourceSystem;
+    //class D3D11System;
+    class ResourceStateControler;
 
     static constexpr int            vertexShader{ 0 };
     static constexpr int            pixelShader{ 1 };
@@ -106,12 +107,19 @@ namespace mage
 
         std::string getSourceID() const;
 
+        void setSourceID(const std::string& p_source_id);
+
         const char* getFileContent() const;
         size_t getFileContentSize() const;
+
+        void setFileContent(const char* p_file_content, size_t p_file_content_size);
 
         char* getCode() const;
         size_t getCodeSize() const;
 
+        void setCode(char* p_code, size_t p_code_size);
+
+        std::string getContentHash() const;
 
         State getState() const;
         
@@ -156,8 +164,9 @@ namespace mage
 
         void compute_content_hash();
 
-        friend class mage::ResourceSystem;
-        friend class mage::D3D11System;
+        //friend class mage::ResourceSystem;
+        //friend class mage::D3D11System;
+        friend class mage::ResourceStateControler;
     };
 }
 

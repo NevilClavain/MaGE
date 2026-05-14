@@ -58,6 +58,7 @@
 #include "worldposition.h"
 #include "matrixchain.h"
 
+#include "resourcestatecontroler.h"
 
 using namespace mage;
 using namespace mage::core;
@@ -342,13 +343,14 @@ void D3D11System::manageResources()
 					if (Shader::State::BLOBLOADED == state)
 					{
 
-						_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> D3D11_SHADER_CREATION_BEGIN : " + shader.m_source_id);
+						_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> D3D11_SHADER_CREATION_BEGIN : " + shader.getSourceID());
 						for (const auto& call : m_callbacks)
 						{
-							call(D3D11SystemEvent::D3D11_SHADER_CREATION_BEGIN, shader.m_source_id);
+							call(D3D11SystemEvent::D3D11_SHADER_CREATION_BEGIN, shader.getSourceID());
 						}
 
-						shader.setState(Shader::State::RENDERERLOADING);
+						ResourceStateControler::getInstance()->update(shader, Shader::State::RENDERERLOADING);
+
 						handleShaderCreation(shader, shader.getType());						
 					}
 				}
@@ -368,7 +370,8 @@ void D3D11System::manageResources()
 						call(D3D11SystemEvent::D3D11_LINEMESHE_CREATION_BEGIN, lm.getSourceID());
 					}
 
-					lm.setState(LineMeshe::State::RENDERERLOADING);
+					ResourceStateControler::getInstance()->update(lm, LineMeshe::State::RENDERERLOADING);
+
 					handleLinemesheCreation(lm);					
 				}			
 			}
@@ -388,7 +391,8 @@ void D3D11System::manageResources()
 						call(D3D11SystemEvent::D3D11_TRIANGLEMESHE_CREATION_BEGIN, tm.getSourceID());
 					}
 
-					tm.setState(TriangleMeshe::State::RENDERERLOADING);
+					ResourceStateControler::getInstance()->update(tm, TriangleMeshe::State::RENDERERLOADING);
+
 					handleTrianglemesheCreation(tm);					
 				}
 			}
@@ -410,7 +414,8 @@ void D3D11System::manageResources()
 						call(D3D11SystemEvent::D3D11_TRIANGLEMESHE_CREATION_BEGIN, tm.getSourceID());
 					}
 
-					tm.setState(TriangleMeshe::State::RENDERERLOADING);
+					ResourceStateControler::getInstance()->update(tm, TriangleMeshe::State::RENDERERLOADING);
+
 					handleTrianglemesheCreation(tm);					
 				}
 			}
@@ -427,13 +432,14 @@ void D3D11System::manageResources()
 					const auto state{ texture.getState() };
 					if (Texture::State::BLOBLOADED == state)
 					{
-						_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> D3D11_TEXTURE_CREATION_BEGIN : " + texture.m_source_id);
+						_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> D3D11_TEXTURE_CREATION_BEGIN : " + texture.getSourceID());
 						for (const auto& call : m_callbacks)
 						{
-							call(D3D11SystemEvent::D3D11_TEXTURE_CREATION_BEGIN, texture.m_source_id);
+							call(D3D11SystemEvent::D3D11_TEXTURE_CREATION_BEGIN, texture.getSourceID());
 						}
 
-						texture.setState(Texture::State::RENDERERLOADING);
+						ResourceStateControler::getInstance()->update(texture, Texture::State::RENDERERLOADING);
+
 						handleTextureCreation(texture);						
 					}
 				}
@@ -453,13 +459,14 @@ void D3D11System::manageResources()
 					const auto state{ texture.getState() };
 					if (Texture::State::BLOBLOADED == state)
 					{
-						_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> D3D11_TEXTURE_CREATION_BEGIN : " + texture.m_source_id);
+						_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> D3D11_TEXTURE_CREATION_BEGIN : " + texture.getSourceID());
 						for (const auto& call : m_callbacks)
 						{
-							call(D3D11SystemEvent::D3D11_TEXTURE_CREATION_BEGIN, texture.m_source_id);
+							call(D3D11SystemEvent::D3D11_TEXTURE_CREATION_BEGIN, texture.getSourceID());
 						}
 
-						texture.setState(Texture::State::RENDERERLOADING);
+						ResourceStateControler::getInstance()->update(texture, Texture::State::RENDERERLOADING);
+
 						handleTextureCreation(texture);						
 					}
 				}
@@ -928,11 +935,11 @@ void D3D11System::handleShaderCreation(Shader& p_shaderInfos, int p_shaderType)
 {
 	const auto shaderType{ p_shaderType };
 
-	_MAGE_DEBUG(d3dimpl->logger(), std::string("Handle shader creation ") + p_shaderInfos.m_source_id + std::string(" shader type ") + std::to_string(shaderType));
+	_MAGE_DEBUG(d3dimpl->logger(), std::string("Handle shader creation ") + p_shaderInfos.getSourceID() + std::string(" shader type ") + std::to_string(shaderType));
 
 	const std::string shaderAction{ "load_shader_d3d11" };
 
-	const auto task{ new mage::core::SimpleAsyncTask<>(shaderAction, p_shaderInfos.m_source_id,
+	const auto task{ new mage::core::SimpleAsyncTask<>(shaderAction, p_shaderInfos.getSourceID(),
 		[&,
 			shaderType = shaderType,
 			shaderAction = shaderAction
@@ -944,33 +951,33 @@ void D3D11System::handleShaderCreation(Shader& p_shaderInfos, int p_shaderType)
 
 				if (0 == shaderType)
 				{
-					status = d3dimpl->createVertexShader(p_shaderInfos.m_resource_uid, p_shaderInfos.getCode(), p_shaderInfos.getCodeSize());
+					status = d3dimpl->createVertexShader(p_shaderInfos.getResourceUID(), p_shaderInfos.getCode(), p_shaderInfos.getCodeSize());
 				}
 				else if (1 == shaderType)
 				{
-					status = d3dimpl->createPixelShader(p_shaderInfos.m_resource_uid, p_shaderInfos.getCode(), p_shaderInfos.getCodeSize());
+					status = d3dimpl->createPixelShader(p_shaderInfos.getResourceUID(), p_shaderInfos.getCode(), p_shaderInfos.getCodeSize());
 				}
 
 				if (!status)
 				{
-					_MAGE_ERROR(d3dimpl->logger(), "Failed to load shader " + p_shaderInfos.m_source_id + " in D3D11 ");
+					_MAGE_ERROR(d3dimpl->logger(), "Failed to load shader " + p_shaderInfos.getSourceID() + " in D3D11 ");
 
 					// send error status to main thread and let terminate
-					const Runner::TaskReport report{ RunnerEvent::TASK_ERROR, p_shaderInfos.m_source_id, shaderAction };
+					const Runner::TaskReport report{ RunnerEvent::TASK_ERROR, p_shaderInfos.getSourceID(), shaderAction};
 					m_runner.m_mailbox_out.push(report);
 				}
 				else
 				{
-					_MAGE_DEBUG(d3dimpl->logger(), "Successful creation of shader " + p_shaderInfos.m_source_id + " in D3D11 ");
-					p_shaderInfos.setState(Shader::State::RENDERERLOADED);
+					_MAGE_DEBUG(d3dimpl->logger(), "Successful creation of shader " + p_shaderInfos.getSourceID() + " in D3D11 ");
+					ResourceStateControler::getInstance()->update(p_shaderInfos, Shader::State::RENDERERLOADED);
 				}
 			}
 			catch (const std::exception& e)
 			{
-				_MAGE_ERROR(d3dimpl->logger(), "Failed to load shader " + p_shaderInfos.m_source_id + " in D3D11 : reason = " + e.what());
+				_MAGE_ERROR(d3dimpl->logger(), "Failed to load shader " + p_shaderInfos.getSourceID() + " in D3D11 : reason = " + e.what());
 
 				// send error status to main thread and let terminate
-				const Runner::TaskReport report{ RunnerEvent::TASK_ERROR, p_shaderInfos.m_source_id, shaderAction };
+				const Runner::TaskReport report{ RunnerEvent::TASK_ERROR, p_shaderInfos.getSourceID(), shaderAction};
 				m_runner.m_mailbox_out.push(report);
 			}
 		}
@@ -983,11 +990,11 @@ void D3D11System::handleShaderRelease(Shader& p_shaderInfos, int p_shaderType)
 {
 	const auto shaderType{ p_shaderType };
 
-	_MAGE_DEBUG(d3dimpl->logger(), std::string("Handle shader release ") + p_shaderInfos.m_source_id + std::string(" shader type ") + std::to_string(shaderType));
+	_MAGE_DEBUG(d3dimpl->logger(), std::string("Handle shader release ") + p_shaderInfos.getSourceID() + std::string(" shader type ") + std::to_string(shaderType));
 
 	const std::string shaderAction{ "release_shader_d3d11" };
 
-	const auto task{ new mage::core::SimpleAsyncTask<>(shaderAction, p_shaderInfos.m_source_id,
+	const auto task{ new mage::core::SimpleAsyncTask<>(shaderAction, p_shaderInfos.getSourceID(),
 		[&,
 			shaderType = shaderType,
 			shaderAction = shaderAction
@@ -997,22 +1004,22 @@ void D3D11System::handleShaderRelease(Shader& p_shaderInfos, int p_shaderType)
 			{
 				if (0 == shaderType)
 				{
-					d3dimpl->destroyVertexShader(p_shaderInfos.m_source_id);
+					d3dimpl->destroyVertexShader(p_shaderInfos.getSourceID());
 				}
 				else if (1 == shaderType)
 				{
-					d3dimpl->destroyPixelShader(p_shaderInfos.m_source_id);
+					d3dimpl->destroyPixelShader(p_shaderInfos.getSourceID());
 				}
 
-				_MAGE_DEBUG(d3dimpl->logger(), "Successful release of shader " + p_shaderInfos.m_source_id + " in D3D11 ");
+				_MAGE_DEBUG(d3dimpl->logger(), "Successful release of shader " + p_shaderInfos.getSourceID() + " in D3D11 ");
 
 			}
 			catch (const std::exception& e)
 			{
-				_MAGE_ERROR(d3dimpl->logger(), std::string("failed to release ") + p_shaderInfos.m_source_id + " : reason = " + e.what());
+				_MAGE_ERROR(d3dimpl->logger(), std::string("failed to release ") + p_shaderInfos.getSourceID() + " : reason = " + e.what());
 
 				// send error status to main thread and let terminate
-				const Runner::TaskReport report{ RunnerEvent::TASK_ERROR, p_shaderInfos.m_source_id, shaderAction };
+				const Runner::TaskReport report{ RunnerEvent::TASK_ERROR, p_shaderInfos.getSourceID(), shaderAction};
 				m_runner.m_mailbox_out.push(report);
 			}
 		}
@@ -1048,7 +1055,7 @@ void D3D11System::handleLinemesheCreation(LineMeshe& p_lm)
 				else
 				{
 					_MAGE_DEBUG(d3dimpl->logger(), "Successful creation of linemeshe " + p_lm.getSourceID() + " in D3D11 ");
-					p_lm.setState(LineMeshe::State::RENDERERLOADED);
+					ResourceStateControler::getInstance()->update(p_lm, LineMeshe::State::RENDERERLOADED);
 				}
 			}
 			catch (const std::exception& e)
@@ -1125,7 +1132,7 @@ void D3D11System::handleTrianglemesheCreation(TriangleMeshe& p_tm)
 				else
 				{
 					_MAGE_DEBUG(d3dimpl->logger(), "Successful creation of trianglemeshe " + p_tm.getSourceID() + " in D3D11 ");
-					p_tm.setState(TriangleMeshe::State::RENDERERLOADED);
+					ResourceStateControler::getInstance()->update(p_tm, TriangleMeshe::State::RENDERERLOADED);
 				}
 			}
 			catch (const std::exception& e)
@@ -1174,11 +1181,11 @@ void D3D11System::handleTrianglemesheRelease(TriangleMeshe& p_tm)
 */
 void D3D11System::handleTextureCreation(Texture& p_texture)
 {
-	_MAGE_DEBUG(d3dimpl->logger(), std::string("Handle texture creation ") + p_texture.m_source_id);
+	_MAGE_DEBUG(d3dimpl->logger(), std::string("Handle texture creation ") + p_texture.getSourceID());
 
 	const std::string action{ "load_texture_d3d11" };
 
-	const auto task{ new mage::core::SimpleAsyncTask<>(action, p_texture.m_source_id,
+	const auto task{ new mage::core::SimpleAsyncTask<>(action, p_texture.getSourceID(),
 		[&,
 			action = action
 		]()
@@ -1190,29 +1197,28 @@ void D3D11System::handleTextureCreation(Texture& p_texture)
 
 				if (!status)
 				{
-					_MAGE_ERROR(d3dimpl->logger(), "Failed to load texture " + p_texture.m_source_id + " in D3D11 ");
+					_MAGE_ERROR(d3dimpl->logger(), "Failed to load texture " + p_texture.getSourceID() + " in D3D11 ");
 
 					// send error status to main thread and let terminate
-					const Runner::TaskReport report{ RunnerEvent::TASK_ERROR, p_texture.m_source_id, action };
+					const Runner::TaskReport report{ RunnerEvent::TASK_ERROR, p_texture.getSourceID(), action};
 					m_runner.m_mailbox_out.push(report);
 				}
 				else
 				{
-					_MAGE_DEBUG(d3dimpl->logger(), "Successful creation of texture " + p_texture.m_source_id + " in D3D11 ");
-					p_texture.setState(Texture::State::RENDERERLOADED);
+					_MAGE_DEBUG(d3dimpl->logger(), "Successful creation of texture " + p_texture.getSourceID() + " in D3D11 ");
+					ResourceStateControler::getInstance()->update(p_texture, Texture::State::RENDERERLOADED);
 				}
 			}
 			catch (const std::exception& e)
 			{
-				_MAGE_ERROR(d3dimpl->logger(), "Failed to load texture " + p_texture.m_source_id + " in D3D11 : reason = " + e.what());
+				_MAGE_ERROR(d3dimpl->logger(), "Failed to load texture " + p_texture.getSourceID() + " in D3D11 : reason = " + e.what());
 
 				// send error status to main thread and let terminate
-				const Runner::TaskReport report{ RunnerEvent::TASK_ERROR, p_texture.m_source_id, action };
+				const Runner::TaskReport report{ RunnerEvent::TASK_ERROR, p_texture.getSourceID(), action};
 				m_runner.m_mailbox_out.push(report);
 			}
 		}
 	) };
 
 	m_runner.m_mailbox_in.push(task);
-
 }

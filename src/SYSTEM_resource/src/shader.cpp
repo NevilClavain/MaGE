@@ -69,6 +69,12 @@ std::string Shader::getSourceID() const
     return m_source_id;
 }
 
+void Shader::setSourceID(const std::string& p_source_id)
+{
+    m_source_id = p_source_id;
+    compute_resource_uid();
+}
+
 const char* Shader::getFileContent() const
 {
     return m_file_content;
@@ -79,6 +85,14 @@ size_t Shader::getFileContentSize() const
     return m_file_content_size;
 }
 
+void Shader::setFileContent(const char* p_file_content, size_t p_file_content_size)
+{
+    m_file_content = p_file_content;
+    m_file_content_size = p_file_content_size;
+
+    compute_content_hash();
+}
+
 char* Shader::getCode() const
 {
     return m_code;
@@ -87,6 +101,17 @@ char* Shader::getCode() const
 size_t Shader::getCodeSize() const
 {
     return m_code_size;
+}
+
+void Shader::setCode(char* p_code, size_t p_code_size)
+{
+    m_code = p_code;
+    m_code_size = p_code_size;
+}
+
+std::string Shader::getContentHash() const
+{
+    return m_content_hash;
 }
 
 Shader::State Shader::getState() const

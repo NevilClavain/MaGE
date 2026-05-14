@@ -42,6 +42,8 @@
 
 #include "datacloud.h"
 
+#include "resourcestatecontroler.h"
+
 using namespace mage;
 using namespace mage::core;
 
@@ -131,7 +133,7 @@ void ResourceSystem::run()
 				const auto state{ shader.getState() };
 				if (Shader::State::INIT == state || Shader::State::BLOBLOADING == state)
 				{
-					shader.setState(Shader::State::BLOBLOADING);
+					ResourceStateControler::getInstance()->update(shader, Shader::State::BLOBLOADING);
 					handleShader(filename, shader);					
 				}
 			}
@@ -146,7 +148,7 @@ void ResourceSystem::run()
 				const auto state{ texture.getState() };
 				if (Texture::State::INIT == state || Texture::State::BLOBLOADING == state)
 				{
-					texture.setState(Texture::State::BLOBLOADING);
+					ResourceStateControler::getInstance()->update(texture, Texture::State::BLOBLOADING);
 					handleTexture(filename, texture);					
 				}
 			}
@@ -168,7 +170,7 @@ void ResourceSystem::run()
 				const auto state{ meshe.getState() };
 				if (TriangleMeshe::State::INIT == state)
 				{
-					meshe.setState(TriangleMeshe::State::BLOBLOADING);
+					ResourceStateControler::getInstance()->update(meshe, TriangleMeshe::State::BLOBLOADING);
 					handleSceneFile(file_path, meshe_id, meshe, nodes_list);					
 				}
 			}

@@ -33,6 +33,10 @@
 
 namespace mage
 {
+	//fwd decl
+	
+	class ResourceStateControler;
+
 	class LineMeshe
 	{
 	public:
@@ -82,8 +86,7 @@ namespace mage
 		void clearVertices(void);
 
 		State getState() const;
-		void setState(State p_state);
-
+		
 		std::string	getResourceUID() const;
 		std::string getSourceID() const;
 
@@ -102,6 +105,10 @@ namespace mage
 
 		mutable std::mutex							m_state_mutex;
 		State										m_state{ State::INIT };
+
+		void setState(State p_state);
+
+		friend class mage::ResourceStateControler;
 
 		// IF NEW MEMBERS HERE :
 		// UPDATE COPY CTOR AND OPERATOR !!!!!!

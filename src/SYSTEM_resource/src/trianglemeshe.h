@@ -39,7 +39,8 @@
 namespace mage
 {
 	//fwd decl
-	class ResourceSystem;
+	//class ResourceSystem;
+	class ResourceStateControler;
 
 	class TriangleMeshe
 	{
@@ -129,13 +130,15 @@ namespace mage
 		void													computeTB();
 
 		State													getState() const;
-		void													setState(State p_state);
+		
 
 		std::string												getResourceUID() const;
 
 		std::string												getSourceID() const;
 
+
 		void													setSourceID(const std::string& p_source_id);
+		void													setSource(Source p_source, const std::string& p_source_id);
 		void													setSource(Source p_source);
 		
 		void													computeResourceUID();
@@ -161,7 +164,6 @@ namespace mage
 		std::string																m_resource_uid;       // meshe content source unique identifier
 
 		Source																	m_source{ Source::CONTENT_FROM_FILE };
-
 		std::string																m_source_id;
 
 		std::vector<Vertex>														m_vertices;
@@ -191,13 +193,16 @@ namespace mage
 
 		double																	m_meshe_size{ 0 };
 
+		void																	setState(State p_state);
+
 		// IF NEW MEMBERS HERE :
 		// UPDATE COPY CTOR AND OPERATOR !!!!!!
 
 		void compute_TBN(const Vertex& p_v1, const Vertex& p_v2, const Vertex& p_v3, int p_stage,
 							core::maths::Real4Vector& p_T, core::maths::Real4Vector& p_B, core::maths::Real4Vector& p_N);	
 
-		friend class mage::ResourceSystem;
+		//friend class mage::ResourceSystem;
+		friend class mage::ResourceStateControler;
 
 	};
 }

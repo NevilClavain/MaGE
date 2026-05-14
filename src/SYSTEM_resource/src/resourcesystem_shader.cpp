@@ -27,12 +27,10 @@
 #include <json_struct/json_struct.h>
 
 #include "resourcesystem.h"
-
 #include "logger_service.h"
-
 #include "shaders_service.h"
-
 #include "datacloud.h"
+#include "resourcestatecontroler.h"
 
 using namespace mage;
 using namespace mage::core;
@@ -44,8 +42,7 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 
 	const std::string shaderAction{ "load_shader" };
 
-	p_shaderInfos.m_source_id = p_filename;
-	p_shaderInfos.compute_resource_uid();
+	p_shaderInfos.setSourceID(p_filename);
 
 	const auto resourceUID{ p_shaderInfos.getResourceUID() };
 
@@ -77,10 +74,7 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 					m_shadersCache.at(resourceUID).shader_source = std::string(shader_src_content.getData(), shader_src_content.getDataSize());
 					m_shadersCache_mutex.unlock();
 
-					p_shaderInfos.m_file_content = m_shadersCache.at(resourceUID).shader_source.c_str();
-					p_shaderInfos.m_file_content_size = m_shadersCache.at(resourceUID).shader_source.size();
-
-					p_shaderInfos.compute_content_hash();
+					p_shaderInfos.setFileContent(m_shadersCache.at(resourceUID).shader_source.c_str(), m_shadersCache.at(resourceUID).shader_source.size());
 
 					_MAGE_DEBUG(m_localLoggerRunner, std::string("loading shader ") + filename + " type = " + std::to_string(shaderType) + ", resource uid = " + resourceUID);
 
@@ -164,7 +158,7 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 
 							// check if md5 are equals
 
-							if (std::string(cache_md5_content.getData(), cache_md5_content.getDataSize()) != p_shaderInfos.m_content_hash)
+							if (std::string(cache_md5_content.getData(), cache_md5_content.getDataSize()) != p_shaderInfos.getContentHash())
 							{
 								_MAGE_TRACE(m_localLoggerRunner, std::string("MD5 not matching ! : ") + filename);
 								generate_cache_entry = true;
@@ -223,15 +217,14 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 							// create cache md5 file
 							mage::core::FileContent<const char> shader_md5_content(shaderCacheDirectory + "/bc.md5");
 
-							const std::string shaderMD5{ p_shaderInfos.m_content_hash };
+							const std::string shaderMD5{ p_shaderInfos.getContentHash()};
 							shader_md5_content.save(shaderMD5.c_str(), shaderMD5.length());
 
 							m_shadersCache_mutex.lock();
 							m_shadersCache.at(resourceUID).shader_code.fill(shaderBytes.get(), shaderBytesLength);
 							m_shadersCache_mutex.unlock();
 
-							p_shaderInfos.m_code = m_shadersCache.at(resourceUID).shader_code.getData();
-							p_shaderInfos.m_code_size = m_shadersCache.at(resourceUID).shader_code.getDataSize();
+							p_shaderInfos.setCode(m_shadersCache.at(resourceUID).shader_code.getData(), m_shadersCache.at(resourceUID).shader_code.getDataSize());
 						}
 						else
 						{
@@ -267,8 +260,7 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 						m_shadersCache.at(resourceUID).shader_code.fill(cache_code_content.getData(), cache_code_content.getDataSize());
 						m_shadersCache_mutex.unlock();
 
-						p_shaderInfos.m_code = m_shadersCache.at(resourceUID).shader_code.getData();
-						p_shaderInfos.m_code_size = m_shadersCache.at(resourceUID).shader_code.getDataSize();
+						p_shaderInfos.setCode(m_shadersCache.at(resourceUID).shader_code.getData(), m_shadersCache.at(resourceUID).shader_code.getDataSize());
 
 						_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> RESOURCE_SHADER_LOAD_SUCCESS : " + filename);
 						for (const auto& call : m_callbacks)
@@ -330,7 +322,7 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 
 					////////////////////////////////
 
-					p_shaderInfos.setState(Shader::State::BLOBLOADED);
+					ResourceStateControler::getInstance()->update(p_shaderInfos, Shader::State::BLOBLOADED);
 
 					m_shadersCache_mutex.lock();
 					m_shadersCache.at(resourceUID).state = ShaderCacheEntry::State::BLOBLOADED;
@@ -364,13 +356,9 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 
 		if (ShaderCacheEntry::State::BLOBLOADED == shader_state)
 		{
-			p_shaderInfos.m_file_content = m_shadersCache.at(resourceUID).shader_source.c_str();
-			p_shaderInfos.m_file_content_size = m_shadersCache.at(resourceUID).shader_source.size();
+			p_shaderInfos.setFileContent(m_shadersCache.at(resourceUID).shader_source.c_str(), m_shadersCache.at(resourceUID).shader_source.size());
 
-			p_shaderInfos.compute_content_hash();
-
-			p_shaderInfos.m_code = m_shadersCache.at(resourceUID).shader_code.getData();
-			p_shaderInfos.m_code_size = m_shadersCache.at(resourceUID).shader_code.getDataSize();
+			p_shaderInfos.setCode(m_shadersCache.at(resourceUID).shader_code.getData(), m_shadersCache.at(resourceUID).shader_code.getDataSize());
 
 			for (const auto& e : m_shadersCache.at(resourceUID).generic_arguments)
 			{
@@ -382,7 +370,7 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 				p_shaderInfos.addVectorArrayArgument(e);
 			}
 
-			p_shaderInfos.setState(Shader::State::BLOBLOADED);
+			ResourceStateControler::getInstance()->update(p_shaderInfos, Shader::State::BLOBLOADED);
 		}
 	}
 }
