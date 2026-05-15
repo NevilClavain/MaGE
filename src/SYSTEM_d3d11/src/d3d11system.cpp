@@ -372,7 +372,7 @@ void D3D11System::manageResources()
 
 					ResourceStateControler::getInstance()->update(lm, LineMeshe::State::RENDERERLOADING);
 
-					handleLinemesheCreation(lm);					
+					handleLinemesheCreation(lm);
 				}			
 			}
 
@@ -416,7 +416,7 @@ void D3D11System::manageResources()
 
 					ResourceStateControler::getInstance()->update(tm, TriangleMeshe::State::RENDERERLOADING);
 
-					handleTrianglemesheCreation(tm);					
+					handleTrianglemesheCreation(tm);
 				}
 			}
 
@@ -440,7 +440,7 @@ void D3D11System::manageResources()
 
 						ResourceStateControler::getInstance()->update(texture, Texture::State::RENDERERLOADING);
 
-						handleTextureCreation(texture);						
+						handleTextureCreation(texture);
 					}
 				}
 			}
@@ -873,13 +873,90 @@ void D3D11System::run()
 
 	if (!m_initialized)
 	{
+	
+		ResourceStateControler::TextureCallback texture_cb
+		{
+			[&, this](Texture* p_texture, Texture::State p_state)
+			{
+				if (Texture::State::BLOBLOADED == p_state)
+				{
+
+					for (const auto& call : m_callbacks)
+					{
+						call(D3D11SystemEvent::D3D11_TEXTURE_CREATION_BEGIN, p_texture->getSourceID());
+					}
+
+					ResourceStateControler::getInstance()->update(*p_texture, Texture::State::RENDERERLOADING);
+
+					handleTextureCreation(*p_texture);
+				}
+			}
+		};
+		ResourceStateControler::getInstance()->registerSubscriber(texture_cb);
+
+		ResourceStateControler::ShaderCallback shader_cb
+		{
+			[&, this](Shader* p_shader, Shader::State p_state)
+			{
+				if (Shader::State::BLOBLOADED == p_state)
+				{
+					for (const auto& call : m_callbacks)
+					{
+						call(D3D11SystemEvent::D3D11_SHADER_CREATION_BEGIN, p_shader->getSourceID());
+					}
+					ResourceStateControler::getInstance()->update(*p_shader, Shader::State::RENDERERLOADING);
+
+					handleShaderCreation(*p_shader, p_shader->getType());
+				}
+			}
+		};
+		ResourceStateControler::getInstance()->registerSubscriber(shader_cb);
+
+		ResourceStateControler::LineMesheCallback linemeshe_cb
+		{
+			[&, this](LineMeshe* p_lm, LineMeshe::State p_state)
+			{
+				if (LineMeshe::State::BLOBLOADED == p_state)
+				{
+					for (const auto& call : m_callbacks)
+					{
+						call(D3D11SystemEvent::D3D11_LINEMESHE_CREATION_BEGIN, p_lm->getSourceID());
+					}
+
+					ResourceStateControler::getInstance()->update(*p_lm, LineMeshe::State::RENDERERLOADING);
+
+					handleLinemesheCreation(*p_lm);
+				}
+			}
+		};
+		ResourceStateControler::getInstance()->registerSubscriber(linemeshe_cb);
+
+		ResourceStateControler::TriangleMesheCallback trianglemeshe_cb
+		{
+			[&, this](TriangleMeshe* p_tm, TriangleMeshe::State p_state)
+			{
+				if (TriangleMeshe::State::BLOBLOADED == p_state)
+				{
+					for (const auto& call : m_callbacks)
+					{
+						call(D3D11SystemEvent::D3D11_TRIANGLEMESHE_CREATION_BEGIN, p_tm->getSourceID());
+					}
+					ResourceStateControler::getInstance()->update(*p_tm, TriangleMeshe::State::RENDERERLOADING);
+
+					handleTrianglemesheCreation(*p_tm);
+				}
+			}
+		};
+		ResourceStateControler::getInstance()->registerSubscriber(trianglemeshe_cb);
+
+
 		manageInitialization();
 	}
 
 	{
 		const auto start_time{ std::chrono::high_resolution_clock::now() };
 
-		manageResources();
+		//manageResources();
 
 		const auto end_time{ std::chrono::high_resolution_clock::now() };
 		const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };

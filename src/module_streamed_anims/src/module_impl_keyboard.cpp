@@ -233,18 +233,18 @@ void ModuleImpl::onEndKeyPress(long p_key)
 	{
 		//helpers::logEntitygraph(m_entitygraph, true);
 		
-		//auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
-		//auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
+		auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
+		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
 
-		//renderingQueueSystemInstance->requestRenderingqueueLogging("TextureChannelScene_Entity");
-		//renderingQueueSystemInstance->requestRenderingqueueLogging("screenRendering_Filter_DirectForward_Queue_Entity");
+		renderingQueueSystemInstance->requestRenderingqueueLogging("TextureChannelScene_Entity");
+		renderingQueueSystemInstance->requestRenderingqueueLogging("screenRendering_Filter_DirectForward_Queue_Entity");
 		
 
-		auto sceneStreamerSystem{ SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot) };
-		auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(sceneStreamerSystem) };
+		//auto sceneStreamerSystem{ SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot) };
+		//auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(sceneStreamerSystem) };
 
-		sceneStreamerSystemInstance->dumpXTreeEntities();
-		sceneStreamerSystemInstance->dumpXTree();
+		//sceneStreamerSystemInstance->dumpXTreeEntities();
+		//sceneStreamerSystemInstance->dumpXTree();
 
 		::MessageBox(0, "Log dump done", "Mage", MB_OK | MB_ICONINFORMATION);
 	}

@@ -266,10 +266,10 @@ namespace mage
 			square.computeResourceUID();
 			square.setSourceID("helpers::plugRenderingQuadView");
 			square.setSource(TriangleMeshe::Source::CONTENT_DYNAMIC_INIT);
-
-			ResourceStateControler::getInstance()->update(square, TriangleMeshe::State::BLOBLOADED);
-
+		
 			quad_resource_aspect.addComponent<TriangleMeshe>("quad", square);
+
+			ResourceStateControler::getInstance()->update(quad_resource_aspect.getComponent<TriangleMeshe>("quad")->getPurpose(), TriangleMeshe::State::BLOBLOADED);
 
 			/// RENDERING ASPECT
 			auto& quad_rendering_aspect{ screenRenderingQuadEntity->makeAspect(core::renderingAspect::id) };
@@ -432,10 +432,10 @@ namespace mage
 			square.computeResourceUID();
 			square.setSourceID("helpers::plugRenderingQuadView");
 			square.setSource(TriangleMeshe::Source::CONTENT_DYNAMIC_INIT);
-			
-			ResourceStateControler::getInstance()->update(square, TriangleMeshe::State::BLOBLOADED);
-
+					
 			quad_resource_aspect.addComponent<TriangleMeshe>("quad", square);
+
+			ResourceStateControler::getInstance()->update(quad_resource_aspect.getComponent< TriangleMeshe>("quad")->getPurpose(), TriangleMeshe::State::BLOBLOADED);
 
 			/// RENDERING ASPECT
 			auto& quad_rendering_aspect{ screenRenderingQuadEntity->makeAspect(core::renderingAspect::id) };
@@ -596,11 +596,10 @@ namespace mage
 			sprite2D_square.computeResourceUID();
 			sprite2D_square.setSourceID("sprite2DEntity");
 			sprite2D_square.setSource(TriangleMeshe::Source::CONTENT_DYNAMIC_INIT);
-
-			ResourceStateControler::getInstance()->update(sprite2D_square, TriangleMeshe::State::BLOBLOADED);
-
-
+			
 			resource_aspect.addComponent<TriangleMeshe>("sprite2D_square", sprite2D_square);
+
+			ResourceStateControler::getInstance()->update(resource_aspect.getComponent< TriangleMeshe>("sprite2D_square")->getPurpose(), TriangleMeshe::State::BLOBLOADED);
 
 			/////////// Add texture
 			resource_aspect.addComponent<std::pair<size_t, std::pair<std::string, Texture>>>("texture", std::make_pair(Texture::STAGE_0, std::make_pair(p_texture, Texture())));
@@ -745,9 +744,9 @@ namespace mage
 			sprite2D_square.setSourceID("sprite2DEntity");
 			sprite2D_square.setSource(TriangleMeshe::Source::CONTENT_DYNAMIC_INIT);
 
-			ResourceStateControler::getInstance()->update(sprite2D_square, TriangleMeshe::State::BLOBLOADED);
-
 			resource_aspect.addComponent<TriangleMeshe>("sprite2D_square", sprite2D_square);
+
+			ResourceStateControler::getInstance()->update(resource_aspect.getComponent< TriangleMeshe>("sprite2D_square")->getPurpose(), TriangleMeshe::State::BLOBLOADED);
 
 			/////////// Add texture
 			resource_aspect.addComponent<std::pair<size_t, std::pair<std::string, Texture>>>("texture", std::make_pair(Texture::STAGE_0, std::make_pair(p_texture, Texture())));
