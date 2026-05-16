@@ -452,7 +452,7 @@ bool D3D11SystemImpl::updateMesheTransformers(MesheData& p_meshe_data, const std
 
         d3d11transformers tr;
         tr.wordlViewProj = convertMatrixToXMFloat44(result);
-        tr.world = convertMatrixToXMFloat44(*p_worlds[0]);
+        tr.world = convertMatrixToXMFloat44(*p_worlds[i]);
         tr.wordlView2Proj2 = convertMatrixToXMFloat44(result2);
 
         instances[i] = tr;
