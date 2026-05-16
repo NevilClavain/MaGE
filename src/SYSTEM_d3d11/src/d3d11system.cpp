@@ -72,7 +72,6 @@ D3D11System::D3D11System(Entitygraph& p_entitygraph) : System(p_entitygraph)
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 	dataCloud->registerData<std::string>("mage.timings.d3d11system");
 
-	dataCloud->registerData<std::string>("mage.timings.d3d11system.manageResources");
 	dataCloud->registerData<std::string>("mage.timings.d3d11system.manageRenderingQueue");
 	dataCloud->registerData<std::string>("mage.timings.d3d11system.collectWorldTransformations");
 	
@@ -325,156 +324,6 @@ void D3D11System::manageRenderingQueue()
 	mage::helpers::extractAspectsDownTop<mage::core::renderingAspect>(m_entitygraph, forEachRenderingAspect);
 }
 
-void D3D11System::manageResources()
-{
-	const auto forEachResourcesAspect
-	{
-		[&](Entity* p_entity, const ComponentContainer& p_resource_components)
-		{
-			auto& eventsLogger{ services::LoggerSharing::getInstance()->getLogger("Events") };
-
-			{
-				const auto shaders_list{ p_resource_components.getComponentsByType<std::pair<std::string,Shader>>() };
-
-				for (auto& e : shaders_list)
-				{
-					auto& shader{ e->getPurpose().second };
-					const auto state{ shader.getState() };
-					if (Shader::State::BLOBLOADED == state)
-					{
-
-						_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> D3D11_SHADER_CREATION_BEGIN : " + shader.getSourceID());
-						for (const auto& call : m_callbacks)
-						{
-							call(D3D11SystemEvent::D3D11_SHADER_CREATION_BEGIN, shader.getSourceID());
-						}
-
-						ResourceStateControler::getInstance()->update(shader, Shader::State::RENDERERLOADING);
-
-						handleShaderCreation(shader, shader.getType());						
-					}
-				}
-			}
-			
-			//search for line Meshes
-			const auto lmeshes_list{ p_resource_components.getComponentsByType<LineMeshe>()};
-			for (auto& e : lmeshes_list)
-			{
-				auto& lm{ e->getPurpose() };
-				const auto state{ lm.getState()};
-				if (LineMeshe::State::BLOBLOADED == state)
-				{				
-					_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> D3D11_LINEMESHE_CREATION_BEGIN : " + lm.getSourceID());
-					for (const auto& call : m_callbacks)
-					{
-						call(D3D11SystemEvent::D3D11_LINEMESHE_CREATION_BEGIN, lm.getSourceID());
-					}
-
-					ResourceStateControler::getInstance()->update(lm, LineMeshe::State::RENDERERLOADING);
-
-					handleLinemesheCreation(lm);
-				}			
-			}
-
-			//search for plain triangle Meshes
-			const auto tmeshes_list{ p_resource_components.getComponentsByType<TriangleMeshe>() };
-			for (auto& e : tmeshes_list)
-			{
-				auto& tm{ e->getPurpose() };
-				const auto state{ tm.getState() };
-
-				if (TriangleMeshe::State::BLOBLOADED == state)
-				{
-					_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> D3D11_TRIANGLEMESHE_CREATION_BEGIN : " + tm.getSourceID());
-					for (const auto& call : m_callbacks)
-					{
-						call(D3D11SystemEvent::D3D11_TRIANGLEMESHE_CREATION_BEGIN, tm.getSourceID());
-					}
-
-					ResourceStateControler::getInstance()->update(tm, TriangleMeshe::State::RENDERERLOADING);
-
-					handleTrianglemesheCreation(tm);					
-				}
-			}
-
-			//search for triangle Meshes from file			
-			const auto filetmeshes_list{ p_resource_components.getComponentsByType<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>() };
-			for (auto& e : filetmeshes_list)
-			{
-				auto& meshe_descr{ e->getPurpose() };
-
-				TriangleMeshe& tm{ meshe_descr.second };
-				const auto state{ tm.getState() };
-
-				if (TriangleMeshe::State::BLOBLOADED == state)
-				{
-					_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> D3D11_TRIANGLEMESHE_CREATION_BEGIN : " + tm.getSourceID());
-					for (const auto& call : m_callbacks)
-					{
-						call(D3D11SystemEvent::D3D11_TRIANGLEMESHE_CREATION_BEGIN, tm.getSourceID());
-					}
-
-					ResourceStateControler::getInstance()->update(tm, TriangleMeshe::State::RENDERERLOADING);
-
-					handleTrianglemesheCreation(tm);
-				}
-			}
-
-			//search for render-target-textures
-			{
-				const auto textures_list{ p_resource_components.getComponentsByType<std::pair<size_t,Texture>>() };
-
-				for (auto& e : textures_list)
-				{
-					auto& staged_texture{ e->getPurpose() };
-					Texture& texture{ staged_texture.second };
-
-					const auto state{ texture.getState() };
-					if (Texture::State::BLOBLOADED == state)
-					{
-						_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> D3D11_TEXTURE_CREATION_BEGIN : " + texture.getSourceID());
-						for (const auto& call : m_callbacks)
-						{
-							call(D3D11SystemEvent::D3D11_TEXTURE_CREATION_BEGIN, texture.getSourceID());
-						}
-
-						ResourceStateControler::getInstance()->update(texture, Texture::State::RENDERERLOADING);
-
-						handleTextureCreation(texture);
-					}
-				}
-			}
-
-			//search for textures-from-file
-			{
-				const auto textures_list{ p_resource_components.getComponentsByType<std::pair<size_t,std::pair<std::string, Texture>>>() };
-
-				for (auto& e : textures_list)
-				{
-					auto& staged_texture{ e->getPurpose() };
-
-					Texture& texture{ staged_texture.second.second };
-					const auto path{ staged_texture.second.first };
-
-					const auto state{ texture.getState() };
-					if (Texture::State::BLOBLOADED == state)
-					{
-						_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> D3D11_TEXTURE_CREATION_BEGIN : " + texture.getSourceID());
-						for (const auto& call : m_callbacks)
-						{
-							call(D3D11SystemEvent::D3D11_TEXTURE_CREATION_BEGIN, texture.getSourceID());
-						}
-
-						ResourceStateControler::getInstance()->update(texture, Texture::State::RENDERERLOADING);
-
-						handleTextureCreation(texture);						
-					}
-				}
-			}
-		}
-	};
-	mage::helpers::extractAspectsTopDown<mage::core::resourcesAspect>(m_entitygraph, forEachResourcesAspect);
-}
 
 void D3D11System::collectWorldTransformations() const
 {
@@ -951,17 +800,6 @@ void D3D11System::run()
 
 
 		manageInitialization();
-	}
-
-	{
-		const auto start_time{ std::chrono::high_resolution_clock::now() };
-
-		//manageResources();
-
-		const auto end_time{ std::chrono::high_resolution_clock::now() };
-		const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
-		const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-		dataCloud->updateDataValue<std::string>("mage.timings.d3d11system.manageResources", std::to_string(duration.count()) + " ms");
 	}
 
 	{
