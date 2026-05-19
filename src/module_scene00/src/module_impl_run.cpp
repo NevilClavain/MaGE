@@ -123,11 +123,10 @@ void ModuleImpl::run(void)
 		square.computeResourceUID();
 		square.setSourceID("quadEntity0");
 
-		ResourceStateControler::getInstance()->update(square, LineMeshe::State::BLOBLOADED);
-
+		
 		quad_resource_aspect.addComponent<LineMeshe>("line_square_0", square);
 
-
+		ResourceStateControler::getInstance()->update(quad_resource_aspect.getComponent<LineMeshe>("line_square_0")->getPurpose(), LineMeshe::State::BLOBLOADED);
 
 		auto& quad_rendering_aspect{ quadEntity->makeAspect(core::renderingAspect::id) };
 
@@ -263,10 +262,10 @@ void ModuleImpl::run(void)
 		square.computeResourceUID();
 		square.setSourceID("quadEntity1");
 
-		ResourceStateControler::getInstance()->update(square, LineMeshe::State::BLOBLOADED);
-
+		
 		quad_resource_aspect.addComponent<LineMeshe>("line_square_1", square);
 
+		ResourceStateControler::getInstance()->update(quad_resource_aspect.getComponent<LineMeshe>("line_square_1")->getPurpose(), LineMeshe::State::BLOBLOADED);
 
 
 		auto& quad_rendering_aspect{ quadEntity->makeAspect(core::renderingAspect::id) };
