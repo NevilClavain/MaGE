@@ -65,12 +65,12 @@ namespace mage
 
 			DrawingControl()
 			{
-				world.identity();
+				//world.identity();
 			}
 
 			~DrawingControl() = default;
 
-			core::maths::Matrix world;
+			//core::maths::Matrix world;
 
 			bool				ready{ false };
 
@@ -97,7 +97,7 @@ namespace mage
 
 			// transformations to apply;
 
-			std::vector< core::maths::Matrix*> worlds;
+			std::vector<const core::maths::Matrix*> worlds;
 
 			bool* projected_z_neg{ nullptr };
 

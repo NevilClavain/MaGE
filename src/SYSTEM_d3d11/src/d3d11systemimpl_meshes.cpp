@@ -387,7 +387,7 @@ void D3D11SystemImpl::forceCurrentMeshe()
     }
 }
 
-bool D3D11SystemImpl::updateMesheTransformers(MesheData& p_meshe_data, const std::vector<mage::core::maths::Matrix*>& p_worlds,
+bool D3D11SystemImpl::updateMesheTransformers(MesheData& p_meshe_data, const std::vector<const mage::core::maths::Matrix*>& p_worlds,
     const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
     const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2)
 {

@@ -73,7 +73,6 @@ D3D11System::D3D11System(Entitygraph& p_entitygraph) : System(p_entitygraph)
 	dataCloud->registerData<std::string>("mage.timings.d3d11system");
 
 	dataCloud->registerData<std::string>("mage.timings.d3d11system.manageRenderingQueue");
-	dataCloud->registerData<std::string>("mage.timings.d3d11system.collectWorldTransformations");
 	
 	m_shadercompilation_invocation_cb = [&, this](const std::string& p_includePath,
 		const mage::core::FileContent<const char>& p_src,		
@@ -322,54 +321,6 @@ void D3D11System::manageRenderingQueue()
 		}
 	};
 	mage::helpers::extractAspectsDownTop<mage::core::renderingAspect>(m_entitygraph, forEachRenderingAspect);
-}
-
-
-void D3D11System::collectWorldTransformations() const
-{
-	const auto forEachRenderingAspect
-	{
-		[&](Entity* p_entity, const ComponentContainer& p_rendering_aspect)
-		{
-			auto& drawing_control_list { p_rendering_aspect.getComponentsByType<rendering::DrawingControl>() };
-			if (drawing_control_list.size() > 0)
-			{
-				auto& drawing_control{ drawing_control_list.at(0)->getPurpose() };
-
-				// search for a world aspect on the same entity
-				if (!p_entity->hasAspect(core::worldAspect::id))
-				{
-					_EXCEPTION("missing entity world aspect : " + p_entity->getId());
-				}
-
-				const auto& world_aspect{ p_entity->aspectAccess(worldAspect::id) };
-				const auto& worldpositions_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
-
-				if (0 == worldpositions_list.size())
-				{					
-					// try ptr version of the component
-					const auto& worldpositions_ptr_list{ world_aspect.getComponentsByType<transform::WorldPosition*>() };
-					
-					if (0 == worldpositions_ptr_list.size())
-					{
-						_EXCEPTION("entity world aspect : missing world position " + p_entity->getId());
-					}
-					else
-					{
-						const transform::WorldPosition* entity_worldposition{ worldpositions_ptr_list.at(0)->getPurpose() };
-						drawing_control.world = entity_worldposition->global_pos;
-					}						
-				}
-				else
-				{
-					const transform::WorldPosition entity_worldposition{ worldpositions_list.at(0)->getPurpose() };
-					drawing_control.world = entity_worldposition.global_pos;
-				}
-			}
-		}
-	};
-
-	mage::helpers::extractAspectsTopDown<mage::core::renderingAspect>(m_entitygraph, forEachRenderingAspect);
 }
 
 void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
@@ -812,19 +763,7 @@ void D3D11System::run()
 		const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 		dataCloud->updateDataValue<std::string>("mage.timings.d3d11system.manageRenderingQueue", std::to_string(duration.count()) + " ms");
 	}
-	
-
-	{
-		const auto start_time{ std::chrono::high_resolution_clock::now() };
-
-		collectWorldTransformations();
-
-		const auto end_time{ std::chrono::high_resolution_clock::now() };
-		const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
-		const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-		dataCloud->updateDataValue<std::string>("mage.timings.d3d11system.collectWorldTransformations", std::to_string(duration.count()) + " ms");
-	}
-	
+		
 
 	if (m_initialized)
 	{

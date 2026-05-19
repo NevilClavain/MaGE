@@ -88,14 +88,18 @@ std::unordered_map<std::string, Entity*> RenderingChannels::registerToQueues(mag
 
 		proxy_entity_resource_aspect.addComponent<std::pair<std::pair<std::string, std::string>, TriangleMeshe>*>("meshe_ref", meshe_ref);
 
-		
+		/*
 		///// link transforms to related entity in scenegraph side 
 
 		const auto& base_entity_world_aspect{ p_entity->aspectAccess(core::worldAspect::id) };
 		transform::WorldPosition* position_ref{ &base_entity_world_aspect.getComponent<transform::WorldPosition>("position")->getPurpose() };
+		*/
+
 
 		auto& proxy_entity_world_aspect{ proxy_entity->makeAspect(core::worldAspect::id) };
-		proxy_entity_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
+		//proxy_entity_world_aspect.addComponent<transform::WorldPosition*>("position_ref", position_ref);
+		
+		proxy_entity_world_aspect.addComponent<Entity*>("scene_entity", p_entity);
 
 		// if animation aspect in entity, connect vshader
 

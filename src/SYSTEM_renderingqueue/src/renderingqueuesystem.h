@@ -40,7 +40,7 @@ namespace mage
     namespace core { class Entity; }
     namespace core { class Entitygraph; }
     namespace core { class ComponentContainer; }
-    namespace rendering { struct Queue; }
+    namespace rendering { struct Queue; struct QueueDrawingControl; }
 
     enum class RenderingQueueSystemEvent
     {
@@ -106,6 +106,8 @@ namespace mage
 
 
         void logRenderingqueue(const std::string& p_entity_id, mage::rendering::Queue& p_renderingQueue) const;
+
+        void pushWorldOutputToQueueDrawingControl(const std::string& p_entity_id, rendering::QueueDrawingControl& p_outqtdc);
 
     };
 }

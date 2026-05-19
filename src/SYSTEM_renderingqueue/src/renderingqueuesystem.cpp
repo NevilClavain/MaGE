@@ -773,7 +773,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								/// common parts
 										
 								linesQueueDrawingControl.owner_entity_id = linesDrawingControl.owner_entity_id;
-								linesQueueDrawingControl.worlds.push_back(&linesDrawingControl.world);
+
+								pushWorldOutputToQueueDrawingControl(p_entity_id, linesQueueDrawingControl);
 
 								connect_shaders_args(linesDrawingControl, linesQueueDrawingControl, vshader, pshader);
 
@@ -807,7 +808,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 
 								const size_t stage{ staged_texture.first };
 								const Texture& texture{ staged_texture.second };
-								//textureset_signature += texture.getSourceID() + "." + std::to_string(stage) + "/";
 
 								textures[stage] = texture.getResourceUID();
 							}
@@ -823,7 +823,10 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								/// common parts
 
 								trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
-								trianglesQueueDrawingControl.worlds.push_back(&trianglesDrawingControl.world);
+
+								pushWorldOutputToQueueDrawingControl(p_entity_id, trianglesQueueDrawingControl);
+	
+
 								trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
 
 								connect_shaders_args(trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
@@ -875,7 +878,9 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								/// common parts
 
 								trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
-								trianglesQueueDrawingControl.worlds.push_back(&trianglesDrawingControl.world);
+				
+								pushWorldOutputToQueueDrawingControl(p_entity_id, trianglesQueueDrawingControl);
+
 								trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
 
 								connect_shaders_args(trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
@@ -904,12 +909,14 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								}
 								else
 								{
+									// POUR LA GESTION DU DRAWINDEXEDINSTANCED !!! -> push les matrices worlds sur le meme QueueDrawingControl !!!!
+
 									bool found = false;
 									std::string found_trianglesQueueDrawingControl_owner_entity_id;
 
 									for (const auto& qtdc : renderStatePayloadPtr->triangles_dc_list)
 									{										
-										if (qtdc.second == trianglesQueueDrawingControl)
+										if (qtdc.second == trianglesQueueDrawingControl) // cf bool QueueTrianglesDrawingControl::operator==(const QueueTrianglesDrawingControl& p_other) const -> même meshe id et textures !!
 										{
 											found = true;
 											found_trianglesQueueDrawingControl_owner_entity_id = qtdc.first;
@@ -924,7 +931,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 									else
 									{
 										auto& qtdc = renderStatePayloadPtr->triangles_dc_list.at(found_trianglesQueueDrawingControl_owner_entity_id);
-										qtdc.worlds.push_back(&trianglesDrawingControl.world);
+
+										pushWorldOutputToQueueDrawingControl(p_entity_id, qtdc);
 									}
 								}
 							}
@@ -1121,5 +1129,45 @@ void RenderingQueueSystem::addQueuesToViewGroup(const std::string& p_viewGroupId
 	else
 	{
 		_EXCEPTION("Unknow viewGroupId : " + p_viewGroupId);
+	}
+}
+
+void RenderingQueueSystem::pushWorldOutputToQueueDrawingControl(const std::string& p_entity_id, rendering::QueueDrawingControl& p_outqtdc)
+{
+	const Entitygraph::Node& node{ m_entitygraph.node(p_entity_id) };
+	const auto entity{ node.data() };
+	auto& world_aspect{ entity->aspectAccess(mage::core::worldAspect::id) };
+
+	// search if world aspect is delegated to a separated scene entity, represented by a Entity* component in this local entity world aspect
+
+	const auto& scene_entity_list{ world_aspect.getComponentsByType<Entity*>() };
+	if (scene_entity_list.size() > 0)
+	{
+		// separated entity for scene -> connect to world global output of this scene entity
+
+		const Entity* scene_entity{ scene_entity_list.at(0)->getPurpose() };
+		const auto& scene_entity_world_aspect{ scene_entity->aspectAccess(worldAspect::id) };
+		const auto& scene_entity_worldpositions_list{ scene_entity_world_aspect.getComponentsByType<transform::WorldPosition>() };
+		if (0 == scene_entity_worldpositions_list.size())
+		{
+			_EXCEPTION("entity world aspect : missing world position on entity " + scene_entity->getId());
+		}
+		const transform::WorldPosition& scene_entity_worldposition{ scene_entity_worldpositions_list.at(0)->getPurpose() };
+
+		p_outqtdc.worlds.push_back(&scene_entity_worldposition.global_pos);
+
+	}
+	else
+	{
+		// no separated scene entity
+
+		const auto& worldpositions_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
+		if (0 == worldpositions_list.size())
+		{
+			_EXCEPTION("entity world aspect : missing world position on entity " + p_entity_id);
+		}
+		const transform::WorldPosition& worldposition{ worldpositions_list.at(0)->getPurpose() };
+
+		p_outqtdc.worlds.push_back(&worldposition.global_pos);
 	}
 }
