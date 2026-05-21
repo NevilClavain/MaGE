@@ -71,7 +71,7 @@ namespace mage
     {
     public:
 
-        D3D11System(core::Entitygraph& p_entitygraph);
+        D3D11System(core::Entitygraph& p_entitygraph, int p_renderingqueuesystem_slot);
         ~D3D11System() = default;
 
         void run();
@@ -93,6 +93,8 @@ namespace mage
         core::services::TextureContentCopyService::Callback     m_texturecontentcopy_invocation_cb;
 
         mage::core::Runner                                      m_runner;
+
+        int                                                     m_renderingqueuesystem_slot;
 
         void    manageInitialization();       
         void    manageResources();

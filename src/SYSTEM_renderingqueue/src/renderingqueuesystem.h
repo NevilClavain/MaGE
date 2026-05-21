@@ -50,6 +50,7 @@ namespace mage
         TRIANGLEDRAWING_REMOVED,
         MAINVIEW_QUEUE_UPDATED,
         SECONDARYVIEW_QUEUE_UPDATED,
+        RENDERINGQUEUE_STATE_READY
     };
 
     struct ViewGroup

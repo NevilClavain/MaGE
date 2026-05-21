@@ -432,6 +432,12 @@ void RenderingQueueSystem::handleRenderingQueuesState(Entity* p_entity, renderin
 								}
 
 								p_renderingQueue.setState(rendering::Queue::State::READY);
+
+								for (const auto& call : m_callbacks)
+								{
+									const std::string queue_name{ p_renderingQueue.getName() };
+									call(RenderingQueueSystemEvent::RENDERINGQUEUE_STATE_READY, queue_name);
+								}
 							}
 						}
 						else

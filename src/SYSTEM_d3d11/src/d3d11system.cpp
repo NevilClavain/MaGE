@@ -60,6 +60,9 @@
 
 #include "resourcestatecontroler.h"
 
+#include "sysengine.h"
+#include "renderingqueuesystem.h"
+
 using namespace mage;
 using namespace mage::core;
 
@@ -67,7 +70,8 @@ using namespace mage::transform;
 
 static const auto d3dimpl{ D3D11SystemImpl::getInstance() };
 
-D3D11System::D3D11System(Entitygraph& p_entitygraph) : System(p_entitygraph)
+D3D11System::D3D11System(Entitygraph& p_entitygraph, int p_renderingqueuesystem_slot) : System(p_entitygraph),
+m_renderingqueuesystem_slot(p_renderingqueuesystem_slot)
 {
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 	dataCloud->registerData<std::string>("mage.timings.d3d11system");
@@ -674,6 +678,21 @@ void D3D11System::run()
 	if (!m_initialized)
 	{
 	
+		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(m_renderingqueuesystem_slot))};
+
+		RenderingQueueSystem::Callback renderingqueue_system_cb
+		{
+			[&, this](mage::RenderingQueueSystemEvent p_event, const std::string& p_queue_name)
+			{
+				int a = 0;
+				a++;
+			}
+		};
+
+		renderingQueueSystemInstance->registerSubscriber(renderingqueue_system_cb);
+
+		///////////////////////////////////////////////////////////////////
+
 		ResourceStateControler::TextureCallback texture_cb
 		{
 			[&, this](Texture* p_texture, Texture::State p_state)

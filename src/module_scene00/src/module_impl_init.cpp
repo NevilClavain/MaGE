@@ -85,7 +85,7 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	auto sysEngine{ SystemEngine::getInstance() };
 
 	sysEngine->makeSystem<mage::TimeSystem>(0, m_entitygraph);
-	sysEngine->makeSystem<mage::D3D11System>(1, m_entitygraph);
+	sysEngine->makeSystem<mage::D3D11System>(1, m_entitygraph, 4);
 	sysEngine->makeSystem<mage::ResourceSystem>(2, m_entitygraph);
 	sysEngine->makeSystem<mage::WorldSystem>(3, m_entitygraph);
 	sysEngine->makeSystem<mage::RenderingQueueSystem>(4, m_entitygraph);
