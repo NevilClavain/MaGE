@@ -75,8 +75,6 @@ m_renderingqueuesystem_slot(p_renderingqueuesystem_slot)
 {
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 	dataCloud->registerData<std::string>("mage.timings.d3d11system");
-
-	dataCloud->registerData<std::string>("mage.timings.d3d11system.manageRenderingQueue");
 	
 	m_shadercompilation_invocation_cb = [&, this](const std::string& p_includePath,
 		const mage::core::FileContent<const char>& p_src,		
@@ -289,42 +287,6 @@ void D3D11System::manageInitialization()
 			call(D3D11SystemEvent::D3D11_WINDOW_READY, rendering_target_entity_id);
 		}
 	}
-}
-
-void D3D11System::handleRenderingQueuesState(Entity* p_entity, rendering::Queue& p_renderingQueue)
-{
-	switch (p_renderingQueue.getState())
-	{
-		case rendering::Queue::State::READY:
-
-			// do queue rendering
-			renderQueue(p_renderingQueue);
-			break;
-
-		default:
-			// nothin' to do
-			break;
-	}
-}
-
-void D3D11System::manageRenderingQueue()
-{
-	const auto forEachRenderingAspect
-	{
-		[&](Entity* p_entity, const ComponentContainer& p_rendering_components)
-		{
-			const auto rendering_queues_list { p_rendering_components.getComponentsByType<rendering::Queue>() };
-			if (rendering_queues_list.size() > 0)
-			{
-				auto& renderingQueue{ rendering_queues_list.at(0)->getPurpose() };
-
-				this->handleRenderingQueuesState(p_entity, renderingQueue);
-
-				renderingQueue.m_texts.clear();
-			}
-		}
-	};
-	mage::helpers::extractAspectsDownTop<mage::core::renderingAspect>(m_entitygraph, forEachRenderingAspect);
 }
 
 void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
@@ -682,10 +644,32 @@ void D3D11System::run()
 
 		RenderingQueueSystem::Callback renderingqueue_system_cb
 		{
-			[&, this](mage::RenderingQueueSystemEvent p_event, const std::string& p_queue_name, const mage::rendering::Queue& p_renderingQueue)
+			[&, this](mage::RenderingQueueSystemEvent p_event, const std::string&, const mage::rendering::Queue&)
 			{
-				int a = 0;
-				a++;
+				if (RenderingQueueSystemEvent::RENDERINGQUEUE_STATE_READY == p_event)
+				{
+					// queues list clear
+					m_queues.clear();
+
+					const auto forEachRenderingAspect
+					{
+						[&, this](Entity* p_entity, const ComponentContainer& p_rendering_components)
+						{
+							const auto rendering_queues_list { p_rendering_components.getComponentsByType<rendering::Queue>() };
+							if (rendering_queues_list.size() > 0)
+							{
+								auto& renderingQueue{ rendering_queues_list.at(0)->getPurpose() };
+
+								if (mage::rendering::Queue::State::READY == renderingQueue.getState())
+								{
+									// stored in correct order because of extractAspectsDownTop browsing
+									m_queues.push_back(&renderingQueue);
+								}
+							}
+						}
+					};
+					mage::helpers::extractAspectsDownTop<mage::core::renderingAspect>(m_entitygraph, forEachRenderingAspect);
+				}
 			}
 		};
 
@@ -768,19 +752,13 @@ void D3D11System::run()
 		};
 		ResourceStateControler::getInstance()->registerSubscriber(trianglemeshe_cb);
 
-
 		manageInitialization();
 	}
 
+	for (rendering::Queue* rendering_queue : m_queues)
 	{
-		const auto start_time{ std::chrono::high_resolution_clock::now() };
-
-		manageRenderingQueue();
-
-		const auto end_time{ std::chrono::high_resolution_clock::now() };
-		const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
-		const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-		dataCloud->updateDataValue<std::string>("mage.timings.d3d11system.manageRenderingQueue", std::to_string(duration.count()) + " ms");
+		renderQueue(*rendering_queue);
+		rendering_queue->m_texts.clear();
 	}
 		
 
