@@ -63,7 +63,7 @@ namespace mage
         std::unordered_set<std::string>     queues_id_list;
     };
 
-    class RenderingQueueSystem : public core::System, public mage::property::EventSource<RenderingQueueSystemEvent, const std::string&>
+    class RenderingQueueSystem : public core::System, public mage::property::EventSource<RenderingQueueSystemEvent, const std::string&, const mage::rendering::Queue&>
     {
     public:
 

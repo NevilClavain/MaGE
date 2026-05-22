@@ -682,7 +682,7 @@ void D3D11System::run()
 
 		RenderingQueueSystem::Callback renderingqueue_system_cb
 		{
-			[&, this](mage::RenderingQueueSystemEvent p_event, const std::string& p_queue_name)
+			[&, this](mage::RenderingQueueSystemEvent p_event, const std::string& p_queue_name, const mage::rendering::Queue& p_renderingQueue)
 			{
 				int a = 0;
 				a++;

@@ -270,7 +270,7 @@ void RenderingQueueSystem::manageRenderingQueue()
 									renderingQueue.setMainView(vp.second.main_view);
 									for (const auto& call : m_callbacks)
 									{
-										call(RenderingQueueSystemEvent::MAINVIEW_QUEUE_UPDATED, queue_id + ", " + vp.second.main_view);
+										call(RenderingQueueSystemEvent::MAINVIEW_QUEUE_UPDATED, queue_id + ", " + vp.second.main_view, renderingQueue);
 									}
 								}
 								if (vp.second.secondary_view != renderingQueue.getSecondaryView())
@@ -278,7 +278,7 @@ void RenderingQueueSystem::manageRenderingQueue()
 									renderingQueue.setSecondaryView(vp.second.secondary_view);
 									for (const auto& call : m_callbacks)
 									{
-										call(RenderingQueueSystemEvent::SECONDARYVIEW_QUEUE_UPDATED, queue_id + ", " + vp.second.secondary_view);
+										call(RenderingQueueSystemEvent::SECONDARYVIEW_QUEUE_UPDATED, queue_id + ", " + vp.second.secondary_view, renderingQueue);
 									}
 								}
 							}
@@ -436,7 +436,7 @@ void RenderingQueueSystem::handleRenderingQueuesState(Entity* p_entity, renderin
 								for (const auto& call : m_callbacks)
 								{
 									const std::string queue_name{ p_renderingQueue.getName() };
-									call(RenderingQueueSystemEvent::RENDERINGQUEUE_STATE_READY, queue_name);
+									call(RenderingQueueSystemEvent::RENDERINGQUEUE_STATE_READY, queue_name, p_renderingQueue);
 								}
 							}
 						}
@@ -792,7 +792,7 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 
 								for (const auto& call : m_callbacks)
 								{
-									call(RenderingQueueSystemEvent::LINEDRAWING_ADDED, linesDrawingControl.owner_entity_id);
+									call(RenderingQueueSystemEvent::LINEDRAWING_ADDED, linesDrawingControl.owner_entity_id, p_renderingQueue);
 								}
 
 								/// specific part
@@ -845,7 +845,7 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 
 								for (const auto& call : m_callbacks)
 								{
-									call(RenderingQueueSystemEvent::TRIANGLEDRAWING_ADDED, trianglesDrawingControl.owner_entity_id);
+									call(RenderingQueueSystemEvent::TRIANGLEDRAWING_ADDED, trianglesDrawingControl.owner_entity_id, p_renderingQueue);
 								}
 
 								/// specific part
@@ -899,7 +899,7 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 
 								for (const auto& call : m_callbacks)
 								{
-									call(RenderingQueueSystemEvent::TRIANGLEDRAWING_ADDED, trianglesDrawingControl.owner_entity_id);
+									call(RenderingQueueSystemEvent::TRIANGLEDRAWING_ADDED, trianglesDrawingControl.owner_entity_id, p_renderingQueue);
 								}
 
 								/// specific part
@@ -998,7 +998,7 @@ void RenderingQueueSystem::removeFromRenderingQueue(const std::string& p_entity_
 
 						for (const auto& call : m_callbacks)
 						{
-							call(RenderingQueueSystemEvent::LINEDRAWING_REMOVED, p_entity_id);
+							call(RenderingQueueSystemEvent::LINEDRAWING_REMOVED, p_entity_id, p_renderingQueue);
 						}
 					}
 				}
@@ -1021,7 +1021,7 @@ void RenderingQueueSystem::removeFromRenderingQueue(const std::string& p_entity_
 
 						for (const auto& call : m_callbacks)
 						{
-							call(RenderingQueueSystemEvent::TRIANGLEDRAWING_REMOVED, p_entity_id);
+							call(RenderingQueueSystemEvent::TRIANGLEDRAWING_REMOVED, p_entity_id, p_renderingQueue);
 						}
 					}
 				}
