@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include "componentcontainer.h"
 #include "st_tree.h"
 
@@ -113,11 +113,10 @@ namespace mage
 			}
 
 		private:
-			std::map<int, ComponentContainer>	m_aspects;
-			const std::string					m_id;
-			int									m_depth{ 0 };
-			Entity*								m_parent{ nullptr };
-
+			std::unordered_map<int, ComponentContainer>	m_aspects;
+			const std::string							m_id;
+			int											m_depth{ 0 };
+			Entity*										m_parent{ nullptr };
 
 			friend class Entitygraph;
 		};
