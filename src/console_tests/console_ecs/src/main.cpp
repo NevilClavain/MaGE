@@ -105,6 +105,7 @@ int main( int argc, char* argv[] )
 
 
 		auto& ent2{ eg.node("ent2") };
+		ent2.data()->makeAspect(core::teapotAspect::id);
 		eg.add(ent2, "ent21");
 
 
@@ -124,6 +125,11 @@ int main( int argc, char* argv[] )
 
 
 
+
+
+
+
+		/*
 		std::cout << "////////////////////////////////////\n\n";
 		std::cout << "move_subtree test\n";
 
@@ -142,7 +148,7 @@ int main( int argc, char* argv[] )
 			std::cout << currId << "\n";
 		}
 		std::cout << "\n";
-
+		*/
 
 
 
@@ -159,17 +165,17 @@ int main( int argc, char* argv[] )
 		//std::cout << "\n";
 		
 		// remove a node
-		eg.remove(eg.node("ent111"));
+		//eg.remove(eg.node("ent111"));
 
-		std::cout << "root to leaf browsing\n";
-		// root to leaf browsing
-		for (auto it = eg.preBegin(); it != eg.preEnd(); ++it)
-		{
-			const auto currid{ it->data()->getId() };
+		//std::cout << "root to leaf browsing\n";
+		//// root to leaf browsing
+		//for (auto it = eg.preBegin(); it != eg.preEnd(); ++it)
+		//{
+		//	const auto currid{ it->data()->getId() };
 
-			for (int i = 0; i < it->data()->getDepth(); i++) std::cout << " ";
-			std::cout << currid << "\n";
-		}
+		//	for (int i = 0; i < it->data()->getDepth(); i++) std::cout << " ";
+		//	std::cout << currid << "\n";
+		//}
 
 		//std::cout << "remove parent test\n\n";
 		//{

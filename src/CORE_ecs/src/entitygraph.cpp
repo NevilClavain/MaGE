@@ -38,6 +38,7 @@ Entitygraph::Node& Entitygraph::makeRoot(const std::string& p_entity_id)
 	}
 
 	m_entites[p_entity_id] = std::make_unique<Entity>(p_entity_id);
+	m_entites.at(p_entity_id)->m_owner = this;
 	m_tree.insert(m_entites.at(p_entity_id).get());
 
 	m_rootNodeName = p_entity_id; // later we can access to root node through (see bellow)
@@ -78,6 +79,7 @@ Entitygraph::Node& Entitygraph::add(Node& p_parent, const std::string& p_entity_
 	m_nodes[p_entity_id] = &*ite_new_node;
 
 	m_entites.at(p_entity_id)->m_depth = p_parent.data()->m_depth + 1;
+	m_entites.at(p_entity_id)->m_owner = this;
 
 	for (const auto& call : m_callbacks)
 	{
@@ -180,8 +182,6 @@ void Entitygraph::move_subtree(Node& p_parent_dest, Node& p_src)
 	restore_subtree(temp_tree.root(), *new_node);
 }
 
-
-
 Entitygraph::Node& Entitygraph::node(const std::string& p_entity_id)
 {
 	const auto id{ p_entity_id };
@@ -216,4 +216,14 @@ Entitygraph::PostIterator Entitygraph::postEnd()
 bool Entitygraph::hasNode(const std::string& p_entity_id)
 {
 	return (m_nodes.count(p_entity_id) > 0);
+}
+
+std::unordered_set<Entity*> Entitygraph::getEntitiesListForAspect(int p_aspect)
+{
+	return m_entities_by_aspect.at(p_aspect);
+}
+
+void Entitygraph::registerEntityInAspect(Entity* p_entity,int p_aspect)
+{
+	m_entities_by_aspect[p_aspect].insert(p_entity);
 }

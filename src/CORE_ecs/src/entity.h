@@ -28,6 +28,7 @@
 #include <unordered_map>
 #include "componentcontainer.h"
 #include "st_tree.h"
+#include "entitygraph.h"
 
 namespace mage
 {
@@ -62,6 +63,8 @@ namespace mage
 					return m_aspects.at(p_aspect);
 				}
 				m_aspects[p_aspect]; // instantiate entry
+				m_owner->registerEntityInAspect(this, p_aspect);
+
 				return m_aspects.at(p_aspect);
 			}
 
@@ -117,6 +120,8 @@ namespace mage
 			const std::string							m_id;
 			int											m_depth{ 0 };
 			Entity*										m_parent{ nullptr };
+
+			Entitygraph*								m_owner{ nullptr };
 
 			friend class Entitygraph;
 		};

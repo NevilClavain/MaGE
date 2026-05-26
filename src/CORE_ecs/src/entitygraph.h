@@ -26,6 +26,8 @@
 #pragma once
 
 #include <unordered_map>
+#include <unordered_set>
+
 #include <memory>
 #include "st_tree.h"
 #include "eventsource.h"
@@ -61,27 +63,29 @@ namespace mage
 
 			~Entitygraph() = default;
 
-			Node&			makeRoot(const std::string& p_entity_id);
-			bool			hasRoot() const;
+			Node&						makeRoot(const std::string& p_entity_id);
+			bool						hasRoot() const;
 
 			/////////////////////////////////////
-			Node&			add(Node& p_parent, const std::string& p_entity_id);
-			void			remove(Node& p_node);
-			void			remove(const std::string& p_entity_id);
+			Node&						add(Node& p_parent, const std::string& p_entity_id);
+			void						remove(Node& p_node);
+			void						remove(const std::string& p_entity_id);
 
-			Node&			node(const std::string& p_entity_id);
+			Node&						node(const std::string& p_entity_id);
 
+			bool						hasNode(const std::string& p_entity_id);
 
-			bool			hasNode(const std::string& p_entity_id);
+			PreIterator					preBegin();
+			PreIterator					preEnd();
 
+			PostIterator				postBegin();
+			PostIterator				postEnd();
 
-			PreIterator		preBegin();
-			PreIterator		preEnd();
+			void						move_subtree(Node& p_parent_dest, Node& p_src);
 
-			PostIterator	postBegin();
-			PostIterator	postEnd();
+			std::unordered_set<Entity*> getEntitiesListForAspect(int p_aspect);
 
-			void			move_subtree(Node& p_parent_dest, Node& p_src);
+			void						registerEntityInAspect(Entity* p_entity, int p_aspect);
 
 		private:
 			st_tree::tree<core::Entity*>								m_tree;
@@ -91,6 +95,8 @@ namespace mage
 			std::string													m_rootNodeName;
 
 			std::unordered_map<std::string, Node*>						m_nodes;
+
+			std::unordered_map<int, std::unordered_set<Entity*>>		m_entities_by_aspect;
 		};
 	}
 }
