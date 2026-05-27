@@ -90,7 +90,7 @@ Entitygraph::Node& Entitygraph::add(Node& p_parent, const std::string& p_entity_
 
 void Entitygraph::remove(Node& p_node)
 {
-	const auto& entity{ *p_node.data() };
+	auto& entity{ *p_node.data() };
 
 	if (!p_node.empty())
 	{
@@ -107,6 +107,17 @@ void Entitygraph::remove(Node& p_node)
 
 	m_nodes.erase(id);
 	m_entites.erase(id);
+
+	for (auto a_pair : m_entities_by_aspect)
+	{
+		mage::core::Entity* entity_ptr{ &entity };
+		std::unordered_set<Entity*> list_ent{ a_pair.second };
+
+		if (list_ent.count(entity_ptr))
+		{
+			m_entities_by_aspect[a_pair.first].erase(const_cast<Entity*>(entity_ptr));
+		}
+	}	
 }
 
 void Entitygraph::remove(const std::string& p_entity_id)
@@ -220,6 +231,10 @@ bool Entitygraph::hasNode(const std::string& p_entity_id)
 
 std::unordered_set<Entity*> Entitygraph::getEntitiesListForAspect(int p_aspect)
 {
+	if (m_entities_by_aspect.count(p_aspect) == 0)
+	{
+		return std::unordered_set<Entity*>();
+	}
 	return m_entities_by_aspect.at(p_aspect);
 }
 

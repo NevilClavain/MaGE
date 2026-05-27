@@ -93,19 +93,11 @@ int main( int argc, char* argv[] )
 
 		auto& ent1{ eg.node("ent1") };
 
-		ent1.data()->makeAspect(core::teapotAspect::id);
-		{
-			// write component in an entity/aspect
-			auto& teapot_aspect{ ent1.data()->aspectAccess(core::teapotAspect::id) };
-			teapot_aspect.addComponent<Foo>("foo");
-		}
-
 		eg.add( eg.add(ent1, "ent11"), "ent111");		
 		eg.add(ent1, "ent12");
 
 
 		auto& ent2{ eg.node("ent2") };
-		ent2.data()->makeAspect(core::teapotAspect::id);
 		eg.add(ent2, "ent21");
 
 
@@ -194,6 +186,43 @@ int main( int argc, char* argv[] )
 		//	std::cout << "\n";
 		//}
 
+
+		std::cout << "////////////////////////////////////\n\n";
+		std::cout << "all teapot aspects : \n";
+
+		auto& ent21{ eg.node("ent21") };
+		ent21.data()->makeAspect(core::teapotAspect::id);
+
+		auto& ent12{ eg.node("ent12") };
+		ent12.data()->makeAspect(core::teapotAspect::id);
+
+
+		auto teapots_entities{ eg.getEntitiesListForAspect(core::teapotAspect::id) };
+
+		for (auto& e : teapots_entities)
+		{
+			std::cout << "entity : " << e->getId() << "\n";
+		}
+		std::cout << "\n";
+
+		eg.remove(eg.node("ent12"));
+		eg.remove(eg.node("ent21"));
+
+		std::cout << "all teapot aspects after removing: \n";
+
+		// remove teapot entities
+
+		teapots_entities = eg.getEntitiesListForAspect(core::teapotAspect::id);
+
+		for (auto& e : teapots_entities)
+		{
+			std::cout << "entity : " << e->getId() << "\n";
+		}
+		std::cout << "\n";
+
+		//////////////
+		// check we can have void returned list
+		auto animated_entities{ eg.getEntitiesListForAspect(core::animationsAspect::id) }; // animated_entities size is : 0
 
 	}
     return 0;
