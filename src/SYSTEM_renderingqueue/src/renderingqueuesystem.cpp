@@ -229,19 +229,18 @@ void RenderingQueueSystem::manageRenderingQueue()
 {
 	////////Manage Queues states//////////////////////////////////////
 	{
-		const auto forEachRenderingAspect
+		auto entities_with_rendering{ m_entitygraph.getEntitiesListForAspect(core::renderingAspect::id) };
+		for (Entity* entity : entities_with_rendering)
 		{
-			[&](Entity* p_entity, const ComponentContainer& p_rendering_components)
+			const ComponentContainer& rendering_components{ entity->aspectAccess(core::renderingAspect::id) };
+
+			const auto rendering_queues_list{ rendering_components.getComponentsByType<rendering::Queue>() };
+			if (rendering_queues_list.size() > 0)
 			{
-				const auto rendering_queues_list{ p_rendering_components.getComponentsByType<rendering::Queue>() };
-				if (rendering_queues_list.size() > 0)
-				{
-					auto& renderingQueue{ rendering_queues_list.at(0)->getPurpose() };
-					handleRenderingQueuesState(p_entity, renderingQueue);
-				}
+				auto& renderingQueue{ rendering_queues_list.at(0)->getPurpose() };
+				handleRenderingQueuesState(entity, renderingQueue);
 			}
-		};
-		mage::helpers::extractAspectsDownTop<mage::core::renderingAspect>(m_entitygraph, forEachRenderingAspect);
+		}
 	}
 
 	////////Manage Queues main and secondary views//////////////////////////////////////
