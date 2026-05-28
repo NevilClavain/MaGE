@@ -118,45 +118,48 @@ void ResourceSystem::run()
 {
 	const auto start_time{ std::chrono::high_resolution_clock::now() };
 
-	const auto forEachResourceAspect
 	{
-		[&](Entity* p_entity, const ComponentContainer& p_resource_components)
+		auto entities_with_resources{ m_entitygraph.getEntitiesListForAspect(core::resourcesAspect::id) };
+		for (Entity* entity : entities_with_resources)
 		{
+			const ComponentContainer& resource_components{ entity->aspectAccess(core::resourcesAspect::id) };
+
+
 			////// Handle shaders ///////////
 
-			const auto shaders_list{ p_resource_components.getComponentsByType<std::pair<std::string, Shader>>() };
+			const auto shaders_list{ resource_components.getComponentsByType<std::pair<std::string, Shader>>() };
 			for (auto& e : shaders_list)
 			{
 				auto& shader{ e->getPurpose().second };
-				const auto filename{ e->getPurpose().first};
+				const auto filename{ e->getPurpose().first };
 
 				const auto state{ shader.getState() };
 				if (Shader::State::INIT == state || Shader::State::BLOBLOADING == state)
 				{
 					ResourceStateControler::getInstance()->update(shader, Shader::State::BLOBLOADING);
-					handleShader(filename, shader);					
+					handleShader(filename, shader);
 				}
 			}
 			////// Handle textures ///////////
-			const auto textures_list{ p_resource_components.getComponentsByType<std::pair<size_t, std::pair<std::string, Texture>>>() };
+			const auto textures_list{ resource_components.getComponentsByType<std::pair<size_t, std::pair<std::string, Texture>>>() };
 			for (auto& e : textures_list)
 			{
 				auto& staged_texture{ e->getPurpose() };
 				Texture& texture{ staged_texture.second.second };
 				const auto filename{ staged_texture.second.first };
-					
+
 				const auto state{ texture.getState() };
 				if (Texture::State::INIT == state || Texture::State::BLOBLOADING == state)
 				{
 					ResourceStateControler::getInstance()->update(texture, Texture::State::BLOBLOADING);
-					handleTexture(filename, texture);					
+					handleTexture(filename, texture);
 				}
 			}
 
 			////// Handle meshes //////////////
-			const auto meshes_list{ p_resource_components.getComponentsByType<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>() };
-			const auto& nodes_list{ p_resource_components.getComponentsByType<std::map<std::string, SceneNode>>() };
-			
+			const auto meshes_list{ resource_components.getComponentsByType<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>() };
+			const auto& nodes_list{ resource_components.getComponentsByType<std::map<std::string, SceneNode>>() };
+
 			if (meshes_list.size() > 0)
 			{
 				auto& meshe_descr{ meshes_list.at(0)->getPurpose() };
@@ -171,13 +174,11 @@ void ResourceSystem::run()
 				if (TriangleMeshe::State::INIT == state)
 				{
 					ResourceStateControler::getInstance()->update(meshe, TriangleMeshe::State::BLOBLOADING);
-					handleSceneFile(file_path, meshe_id, meshe, nodes_list);					
+					handleSceneFile(file_path, meshe_id, meshe, nodes_list);
 				}
 			}
 		}
-	};
-
-	mage::helpers::extractAspectsTopDown<mage::core::resourcesAspect>(m_entitygraph, forEachResourceAspect);
+	}
 
 	for (int i = 0; i < nbRunners; i++)
 	{
