@@ -372,7 +372,6 @@ void SceneStreamerSystem::run()
 
             const auto& tagsAspect{ p_entity->aspectAccess(mage::core::tagsAspect::id)};
             const auto& entity_domains_list{ tagsAspect.getComponentsByType<mage::core::tagsAspect::GraphDomain>() };
-            //const auto& str_tags_list{ tagsAspect.getComponentsByType<std::unordered_set<std::string>>() };
 
             if (0 == entity_domains_list.size())
             {
