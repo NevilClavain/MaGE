@@ -96,7 +96,7 @@ m_localLoggerRunner("ResourceSystemRunner", mage::core::logger::Configuration::g
 			}
 			else if (mage::core::RunnerEvent::TASK_DONE == p_event)
 			{
-				_MAGE_DEBUG(m_localLoggerRunner, std::string("TASK_DONE ") + p_target_descr + " " + p_action_descr);
+				_MAGE_TRACE(m_localLoggerRunner, std::string("TASK_DONE ") + p_target_descr + " " + p_action_descr);
 			}
 
 		}

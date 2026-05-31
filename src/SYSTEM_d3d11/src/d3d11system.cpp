@@ -106,7 +106,7 @@ m_renderingqueuesystem_slot(p_renderingqueuesystem_slot)
 			{
 				auto& eventsLogger{ services::LoggerSharing::getInstance()->getLogger("Events") };
 
-				_MAGE_DEBUG(d3dimpl->logger(), std::string("TASK_DONE ") + p_target_descr + " " + p_action_descr);
+				_MAGE_TRACE(d3dimpl->logger(), std::string("TASK_DONE ") + p_target_descr + " " + p_action_descr);
 
 				if ("load_shader_d3d11" == p_action_descr)
 				{

@@ -69,8 +69,7 @@ static mage::core::maths::Matrix convertFromAssimpMatrix(const aiMatrix4x4& p_in
 
 void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::string& p_mesheid, TriangleMeshe& p_mesheInfos, const core::ComponentList<std::map<std::string, SceneNode>>& p_nodes_hierarchy_list)
 {
-	_MAGE_DEBUG(m_localLogger, std::string("Handle scene ") + p_filename);
-
+	
 	const std::string mesheAction{ "load_meshe" };
 
 	const std::string targetAction{ p_mesheid + "@" + p_filename };

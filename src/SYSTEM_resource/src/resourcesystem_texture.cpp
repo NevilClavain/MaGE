@@ -48,6 +48,8 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 
 	if (!m_texturesBlobCache.count(resourceUID))
 	{
+		_MAGE_DEBUG(m_localLogger, std::string("launching task because texture not found in resource cache : ") + p_textureInfos.getSourceID() + std::string(" ") + p_textureInfos.getResourceUID());
+
 		m_texturesBlobCache_mutex.lock();
 		m_texturesBlobCache[resourceUID]; // to create entry
 		m_texturesBlobCache[resourceUID].state = TextureCacheEntry::State::BLOBLOADING;
@@ -68,7 +70,7 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 				{
 					auto& eventsLogger{ services::LoggerSharing::getInstance()->getLogger("Events") };
 
-					_MAGE_DEBUG(m_localLoggerRunner, std::string("loading texture ") + filename + ", resource uid = " + resourceUID);
+					_MAGE_TRACE(m_localLoggerRunner, std::string("loading texture ") + filename + ", resource uid = " + resourceUID);
 
 					_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> RESOURCE_TEXTURE_LOAD_BEGIN : " + filename);
 					for (const auto& call : m_callbacks)
@@ -127,6 +129,8 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 	}
 	else
 	{
+		_MAGE_DEBUG(m_localLogger, std::string("texture found in resource cache : ") + p_textureInfos.getSourceID() + std::string(" ") + p_textureInfos.getResourceUID());
+
 		m_texturesBlobCache_mutex.lock();
 		const auto texture_state{ m_texturesBlobCache.at(resourceUID).state };
 		m_texturesBlobCache_mutex.unlock();

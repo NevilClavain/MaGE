@@ -48,6 +48,8 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 
 	if (!m_shadersCache.count(resourceUID))
 	{
+		_MAGE_DEBUG(m_localLogger, std::string("launching task because shader not found in resource cache : ") + p_shaderInfos.getSourceID() + std::string (" ") + p_shaderInfos.getResourceUID());
+
 		m_shadersCache_mutex.lock();
 		m_shadersCache[resourceUID]; // to create entry
 		m_shadersCache[resourceUID].state = ShaderCacheEntry::State::BLOBLOADING;
@@ -76,7 +78,7 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 
 					p_shaderInfos.setFileContent(m_shadersCache.at(resourceUID).shader_source.c_str(), m_shadersCache.at(resourceUID).shader_source.size());
 
-					_MAGE_DEBUG(m_localLoggerRunner, std::string("loading shader ") + filename + " type = " + std::to_string(shaderType) + ", resource uid = " + resourceUID);
+					_MAGE_TRACE(m_localLoggerRunner, std::string("loading shader ") + filename + " type = " + std::to_string(shaderType) + ", resource uid = " + resourceUID);
 
 					const auto shaderCacheDirectory{ m_shadersCachePath + "/" + filename };
 
@@ -352,6 +354,8 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 	}
 	else
 	{
+		_MAGE_DEBUG(m_localLogger, std::string("shader found in resource cache : ") + p_shaderInfos.getSourceID() + std::string(" ") + p_shaderInfos.getResourceUID());
+
 		m_shadersCache_mutex.lock();
 		const auto shader_state{ m_shadersCache.at(resourceUID).state };
 		m_shadersCache_mutex.unlock();
