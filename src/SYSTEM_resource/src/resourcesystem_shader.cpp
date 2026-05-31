@@ -322,6 +322,8 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 
 					////////////////////////////////
 
+					_MAGE_DEBUG(m_localLoggerRunner, std::string("task has loaded shader ") + p_shaderInfos.getSourceID() + ", resource uid = " + p_shaderInfos.getResourceUID());
+
 					ResourceStateControler::getInstance()->update(p_shaderInfos, Shader::State::BLOBLOADED);
 
 					m_shadersCache_mutex.lock();

@@ -85,6 +85,8 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 
 					p_textureInfos.setFileContent(m_texturesBlobCache.at(resourceUID).texture_content.getData(), m_texturesBlobCache.at(resourceUID).texture_content.getDataSize());
 
+					_MAGE_DEBUG(m_localLoggerRunner, std::string("task has loaded texture ") + p_textureInfos.getSourceID() + ", resource uid = " + p_textureInfos.getResourceUID());
+
 					_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> RESOURCE_TEXTURE_LOAD_SUCCESS : " + filename);
 					for (const auto& call : m_callbacks)
 					{

@@ -479,7 +479,7 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 				p_mesheInfos.computeSize();
 				p_mesheInfos.computeResourceUID();
 
-				_MAGE_DEBUG(m_localLoggerRunner, std::string("loading meshe ") + p_mesheInfos.getSourceID() + ", resource uid = " + p_mesheInfos.getResourceUID());
+				_MAGE_DEBUG(m_localLoggerRunner, std::string("task has loaded meshe ") + p_mesheInfos.getSourceID() + ", resource uid = " + p_mesheInfos.getResourceUID());
 
 				_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> RESOURCE_MESHE_LOAD_SUCCESS : " + filename);
 				for (const auto& call : m_callbacks)
