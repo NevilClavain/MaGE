@@ -269,6 +269,9 @@ void ModuleImpl::d3d11_system_events()
 						mage::transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT);
 
 
+					auto resourceSystemInstance{ dynamic_cast<mage::ResourceSystem*>(SystemEngine::getInstance()->getSystem(resourceSystemSlot)) };
+					resourceSystemInstance->request();
+
 				}
 				break;
 			}

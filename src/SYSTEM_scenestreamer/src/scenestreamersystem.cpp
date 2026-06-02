@@ -35,7 +35,8 @@
 #include "scenestreamersystem.h"
 #include "renderingqueuesystem.h"
 
-#include "sysengine.h"
+
+
 #include "entity.h"
 #include "entitygraph.h"
 #include "aspects.h"
@@ -1119,7 +1120,7 @@ void SceneStreamerSystem::register_scene_entity(mage::core::Entity* p_entity)
     }
 }
 
-void SceneStreamerSystem::buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot)
+void SceneStreamerSystem::buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot, int p_resourceSystemSlot)
 {
     json::ViewGroup vg;
 
@@ -1152,6 +1153,7 @@ void SceneStreamerSystem::buildViewgroup(const std::string& p_jsonsource, int p_
     init_XTree(m_rendergraphpart_data.at(vg.name));
 
     m_renderingQueueSystemSlot = p_renderingQueueSystemSlot;
+    m_resourceSystemSlot = p_resourceSystemSlot;
 }
 
 core::SyncVariable SceneStreamerSystem::build_syncvariable_fromjson(const json::SyncVariable& p_syncvar)

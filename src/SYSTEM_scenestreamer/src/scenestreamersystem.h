@@ -40,6 +40,9 @@
 
 #include "eventsource.h"
 
+#include "sysengine.h"
+#include "resourcesystem.h"
+
 #include "system.h"
 #include "matrix.h"
 #include "tvector.h"
@@ -750,7 +753,7 @@ namespace mage
                                     const std::unordered_map<std::string, std::unique_ptr<IValueGenerator>>& p_generators);
 
 
-        void buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot);
+        void buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot, int p_resourceSystemSlot);
 
         void requestEntityRendering(const std::string& p_entity_id, bool p_render_it);
 
@@ -816,6 +819,7 @@ namespace mage
 
 
         int                                                                                     m_renderingQueueSystemSlot{ -1 };
+        int                                                                                     m_resourceSystemSlot{ -1 };
         
         void register_scene_entity(mage::core::Entity* p_entity);
 
@@ -999,6 +1003,8 @@ namespace mage
                 }
             }
 
+            bool needTriggerResourcesSystem{ false };
+
             // new entities discovered, to render
             for (mage::core::Entity* entity : found_entities)
             {
@@ -1008,6 +1014,9 @@ namespace mage
                     if (!m_entity_renderings.at(entity->getId()).m_rendered)
                     {
                         m_entity_renderings.at(entity->getId()).m_request_rendering = true;
+
+                        // at least one entity added to rendergraph, we gonna need to reactivate the resource system
+                        needTriggerResourcesSystem = true;
                     }
                 }
             }
@@ -1028,6 +1037,13 @@ namespace mage
 
             // update...
             m_found_entities_to_render = found_entities;
+
+            if (needTriggerResourcesSystem)
+            {
+                // 
+                auto resourceSystemInstance{ dynamic_cast<mage::ResourceSystem*>(SystemEngine::getInstance()->getSystem(m_resourceSystemSlot)) };
+                resourceSystemInstance->request();
+            }
         }
     };
 }

@@ -118,6 +118,9 @@ void ResourceSystem::run()
 {
 	const auto start_time{ std::chrono::high_resolution_clock::now() };
 
+	bool allDone{ true };
+
+	if(m_requested)
 	{
 		auto entities_with_resources{ m_entitygraph.getEntitiesListForAspect(core::resourcesAspect::id) };
 		for (Entity* entity : entities_with_resources)
@@ -139,6 +142,11 @@ void ResourceSystem::run()
 					ResourceStateControler::getInstance()->update(shader, Shader::State::BLOBLOADING);
 					handleShader(filename, shader);
 				}
+
+				if (Shader::State::BLOBLOADED > state)
+				{
+					allDone = false;
+				}
 			}
 			////// Handle textures ///////////
 			const auto textures_list{ resource_components.getComponentsByType<std::pair<size_t, std::pair<std::string, Texture>>>() };
@@ -153,6 +161,11 @@ void ResourceSystem::run()
 				{
 					ResourceStateControler::getInstance()->update(texture, Texture::State::BLOBLOADING);
 					handleTexture(filename, texture);
+				}
+
+				if (Texture::State::BLOBLOADED > state)
+				{
+					allDone = false;
 				}
 			}
 
@@ -176,6 +189,11 @@ void ResourceSystem::run()
 					ResourceStateControler::getInstance()->update(meshe, TriangleMeshe::State::BLOBLOADING);
 					handleSceneFile(file_path, meshe_id, meshe, nodes_list);
 				}
+
+				if (TriangleMeshe::State::BLOBLOADED > state)
+				{
+					allDone = false;
+				}
 			}
 		}
 	}
@@ -189,6 +207,12 @@ void ResourceSystem::run()
 	const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 	dataCloud->updateDataValue<std::string>("mage.timings.resourcesystem", std::to_string(duration.count()) + " ms");
+
+	
+	if (m_requested && allDone)
+	{
+		m_requested = false;
+	}	
 }
 
 void ResourceSystem::killRunner()
@@ -215,4 +239,9 @@ size_t ResourceSystem::getNbBusyRunners() const
 	}
 
 	return count;
+}
+
+void ResourceSystem::request()
+{
+	m_requested = true;
 }

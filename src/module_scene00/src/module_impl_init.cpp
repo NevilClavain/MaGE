@@ -555,6 +555,9 @@ void ModuleImpl::d3d11_system_events()
 					helpers::getYPos(m_entitygraph, "plop_text") = 0.15;
 
 
+					auto resourceSystemInstance{ dynamic_cast<mage::ResourceSystem*>(SystemEngine::getInstance()->getSystem(resourceSystemSlot)) };
+					resourceSystemInstance->request();
+
 				}
 				break;
 			}
