@@ -792,9 +792,6 @@ namespace mage
                             const std::function<XTreeType* (const SceneStreamerSystem::XTreeEntity&)>& p_get_node_func);
 
 
-        bool check_tag(core::Entity* p_entity, const std::string& p_tag);
-
-
         bool                                                                                    m_enabled{ false };
 
         mutable mage::core::logger::Sink                                                        m_localLogger;

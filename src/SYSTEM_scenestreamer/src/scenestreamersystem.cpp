@@ -384,7 +384,7 @@ void SceneStreamerSystem::run()
                 return;
             }
 
-            if (check_tag(p_entity, "#alwaysRendered"))
+            if(mage::helpers::checkTag(p_entity, "#alwaysRendered"))
             {
                 // render it directly, and no need to add it in rgpd xtree_entities list
                 if (!m_entity_renderings.at(p_entity->getId()).m_rendered)
@@ -410,7 +410,7 @@ void SceneStreamerSystem::run()
                                     XTreeEntity xtreeEnt;
                                     xtreeEnt.entity = p_entity;
 
-                                    if (check_tag(p_entity, "#static"))
+                                    if (mage::helpers::checkTag(p_entity, "#static"))
                                     {
                                         // place it on xtree once for all
                                         const auto& resources_aspect{ p_entity->aspectAccess(resourcesAspect::id) };
@@ -1779,19 +1779,4 @@ std::string SceneStreamerSystem::filter_arguments_stack(const std::string p_inpu
     {
         return p_file_args.at(p_input);
     }
-}
-
-bool SceneStreamerSystem::check_tag(core::Entity* p_entity, const std::string& p_tag)
-{
-    const auto& tagsAspect{ p_entity->aspectAccess(mage::core::tagsAspect::id) };
-    const auto& str_tags_list{ tagsAspect.getComponentsByType<std::unordered_set<std::string>>() };
-    if (str_tags_list.size())
-    {
-        const auto str_tags{ str_tags_list.at(0)->getPurpose() };
-        if (str_tags.count(p_tag))
-        {
-            return true;
-        }
-    }
-    return false;
 }

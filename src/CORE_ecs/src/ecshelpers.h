@@ -66,5 +66,20 @@ namespace mage
 				}
 			}
 		}
+
+		inline bool checkTag(core::Entity* p_entity, const std::string& p_tag)
+		{
+			const auto& tagsAspect{ p_entity->aspectAccess(mage::core::tagsAspect::id) };
+			const auto& str_tags_list{ tagsAspect.getComponentsByType<std::unordered_set<std::string>>() };
+			if (str_tags_list.size())
+			{
+				const auto str_tags{ str_tags_list.at(0)->getPurpose() };
+				if (str_tags.count(p_tag))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }
