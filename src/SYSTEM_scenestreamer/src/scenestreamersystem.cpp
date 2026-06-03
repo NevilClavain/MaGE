@@ -410,11 +410,6 @@ void SceneStreamerSystem::run()
                                     XTreeEntity xtreeEnt;
                                     xtreeEnt.entity = p_entity;
 
-                                    //if (check_tag(p_entity, "#static"))
-                                    //{
-                                    //    xtreeEnt.is_static = true;
-                                    //}
-
                                     if (check_tag(p_entity, "#static"))
                                     {
                                         // place it on xtree once for all
