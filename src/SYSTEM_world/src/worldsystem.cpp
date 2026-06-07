@@ -42,16 +42,62 @@ using namespace mage::core;
 WorldSystem::WorldSystem(Entitygraph& p_entitygraph) : System(p_entitygraph)
 {
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-	dataCloud->registerData<std::string>("mage.timings.worldsystem");	
+	dataCloud->registerData<std::string>("mage.timings.worldsystem");
+	dataCloud->registerData<std::string>("mage.timings.worldsystem.part1");
+	dataCloud->registerData<std::string>("mage.timings.worldsystem.part2");
+}
+
+void WorldSystem::extractProjAndViewFromRenderingQueue(const std::string& p_current_view_entity_id, mage::core::maths::Matrix& p_current_view, mage::core::maths::Matrix& p_current_proj)
+{	
+	if (p_current_view_entity_id != "")
+	{
+		auto& viewode{ m_entitygraph.node(p_current_view_entity_id) };
+		const auto view_entity{ viewode.data() };
+
+		// extract cam aspect
+		const auto& cam_aspect{ view_entity->aspectAccess(cameraAspect::id) };
+		const auto& cam_projs_list{ cam_aspect.getComponentsByType<maths::Matrix>() };
+
+		if (0 == cam_projs_list.size())
+		{
+			_EXCEPTION("entity view aspect : missing projection definition " + view_entity->getId());
+		}
+		else
+		{
+			p_current_proj = cam_projs_list.at(0)->getPurpose();			
+		}
+
+		// extract world aspect
+
+		const auto& world_aspect{ view_entity->aspectAccess(worldAspect::id) };
+		const auto& worldpositions_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
+
+		if (0 == worldpositions_list.size())
+		{
+			_EXCEPTION("entity world aspect : missing world position " + view_entity->getId());
+		}
+		else
+		{
+			auto& entity_worldposition{ worldpositions_list.at(0)->getPurpose() };
+			const auto current_cam = entity_worldposition.global_pos;
+
+			p_current_view = current_cam;
+			p_current_view.inverse();
+		}
+	}
 }
 
 void WorldSystem::run()
 {
-	const auto start_time{ std::chrono::high_resolution_clock::now() };
+	const auto start_time_main{ std::chrono::high_resolution_clock::now() };
+
+	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 
 	//////////////////////////////////////////////////////////
 	/// I : compute transformations
 	//////////////////////////////////////////////////////////
+
+	const auto start_time_part1{ std::chrono::high_resolution_clock::now() };
 
 	const auto forEachWorldAspect
 	{
@@ -127,38 +173,37 @@ void WorldSystem::run()
 							break;
 
 						case transform::WorldPosition::TransformationComposition::TRANSFORMATION_PARENT_PROJECTEDPOS:
+						{
+							auto screenposition_components_list{ parent_worldaspect.getComponentsByType<std::pair<mage::rendering::Queue*, core::maths::Real3Vector>>() };						
+							if (screenposition_components_list.size())
 							{
-								auto screenposition_component{ parent_worldaspect.getComponent<core::maths::Real3Vector>("eg.std.projected_position") };
-								if (screenposition_component)
+								auto screenposition{ screenposition_components_list.at(0)->getPurpose().second};
+
+								auto updated_local_pos{ entity_worldposition.local_pos };
+
+								updated_local_pos(3, 0) += screenposition[0];
+								updated_local_pos(3, 1) += screenposition[1];
+
+								entity_worldposition.projected_z_neg = (screenposition[2] < 0);
+								entity_worldposition.global_pos = updated_local_pos;
+
+								if (p_entity->hasAspect(core::renderingAspect::id))
 								{
-									auto screenposition{ screenposition_component->getPurpose() };
+									const auto& entity_renderingaspect{ p_entity->aspectAccess(core::renderingAspect::id) };
 
-									auto updated_local_pos{ entity_worldposition.local_pos };
-
-									updated_local_pos(3, 0) += screenposition[0];
-									updated_local_pos(3, 1) += screenposition[1];
-
-									entity_worldposition.projected_z_neg = (screenposition[2] < 0);
-									entity_worldposition.global_pos = updated_local_pos;
-
-									if (p_entity->hasAspect(core::renderingAspect::id))
+									auto& entity_dc_list{ entity_renderingaspect.getComponentsByType<rendering::DrawingControl>() };
+									if (entity_dc_list.size() > 0)
 									{
-										const auto& entity_renderingaspect{ p_entity->aspectAccess(core::renderingAspect::id) };
-
-										auto& entity_dc_list{ entity_renderingaspect.getComponentsByType<rendering::DrawingControl>() };
-										if (entity_dc_list.size() > 0)
-										{
-											entity_dc_list.at(0)->getPurpose().projected_z_neg = (screenposition[2] < 0);
-										}
+										entity_dc_list.at(0)->getPurpose().projected_z_neg = (screenposition[2] < 0);
 									}
 								}
-								else
-								{
-									_EXCEPTION("TRANSFORMATION_PARENT_PROJECTEDPOS mode require 2D projected pos from parent")
-								}
-								
 							}
-							break;
+							else
+							{
+								_EXCEPTION("TRANSFORMATION_PARENT_PROJECTEDPOS mode require 2D projected pos from parent")
+							}								
+						}
+						break;
 					}
 				}
 			}
@@ -200,225 +245,146 @@ void WorldSystem::run()
 
 	mage::helpers::extractAspectsTopDown<mage::core::worldAspect>(m_entitygraph, forEachWorldAspect);
 
+	const auto end_time_part1{ std::chrono::high_resolution_clock::now() };
+	const auto duration_part1{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_part1 - start_time_part1) };
+
+	dataCloud->updateDataValue<std::string>("mage.timings.worldsystem.part1", std::to_string(duration_part1.count()) + " ms");
+
 	//////////////////////////////////////////////////////////
-	/// II : compute 2D pos (for entity that requires it)
+	/// II : compute 2D pos and distance to cam (for entity that requires it)
 	//////////////////////////////////////////////////////////
 
 	// rebuid hierarchical structure to be browsed recursively
+	
+	const auto start_time_part2{ std::chrono::high_resolution_clock::now() };
 
-	struct ENode
-	{
-		std::string					 id;
-		std::map<std::string, ENode> children;
-	};
-
-	ENode root;
-	// build node tree that will be dumped to log
 	for (auto it = m_entitygraph.preBegin(); it != m_entitygraph.preEnd(); ++it)
 	{
-		const mage::core::Entity* current_entity{ it->data() };
-		const std::string currId{ current_entity->getId() };
+		const mage::core::Entity* curr_entity{ it->data() };
 
-		const std::function<void(ENode&, const std::string&, const std::string&)> search
+		if (curr_entity->hasAspect(core::worldAspect::id))
 		{
-			[&](ENode& p_node, const std::string& p_parentId, const std::string& p_id)
+			const auto& world_aspect{ curr_entity->aspectAccess(worldAspect::id) };
+
+			//////// COMPUTE DISTANCE TO CAM
+
+			auto distancetocam_components_list{ world_aspect.getComponentsByType<std::pair<mage::rendering::Queue*, double>>() };
+			if (distancetocam_components_list.size())
 			{
-				if (p_node.id == p_parentId)
+				auto& distancetocamera_component{ distancetocam_components_list.at(0)->getPurpose().second };
+
+				maths::Matrix current_view;
+				maths::Matrix current_proj;
+
+				auto& renderingQueue{ distancetocam_components_list.at(0)->getPurpose().first };
+
+				const std::string current_view_entity_id{ renderingQueue->getMainView() };
+				extractProjAndViewFromRenderingQueue(current_view_entity_id, current_view, current_proj);
+
+				const auto& worldpositions_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
+
+				if (0 == worldpositions_list.size())
 				{
-					ENode child;
-					child.id = p_id;
-					// found parent
-					p_node.children[p_id] = child;
+					_EXCEPTION("entity world aspect : missing world position " + curr_entity->getId());
+				}
+				else
+				{
+					auto& entity_worldposition{ worldpositions_list.at(0)->getPurpose() };
+					maths::Matrix entity_world = entity_worldposition.global_pos;
+
+					maths::Matrix inv;
+					inv.identity();
+					inv(2, 2) = -1.0;
+					const auto final_view{ current_view * inv };
+
+					transform::MatrixChain chain;
+					chain.pushMatrix(final_view);
+					chain.pushMatrix(entity_world);
+					chain.buildResult();
+					auto final_mat{ chain.getResultTransform() };
+
+					core::maths::Real4Vector point(0, 0, 0, 1);
+					core::maths::Real4Vector res_point;
+
+					final_mat.transform(&point, &res_point);
+
+					const double distance_to_cam{ res_point.length() };
+
+					distancetocamera_component = distance_to_cam;
 				}
 
-				for (auto& e : p_node.children)
-				{
-					search(e.second, p_parentId, p_id);
-				}
 			}
-		};
 
-		const auto parent_entity{ current_entity->getParent() };
-		if (parent_entity)
-		{
-			const std::string parentId{ parent_entity->getId() };
-			search(root, parentId, currId);
-		}
-		else
-		{
-			// create root;
-			root.id = currId;
+			//////// COMPUTE2D SCREEN POS
+
+			auto screenposition_components_list{ world_aspect.getComponentsByType<std::pair<mage::rendering::Queue*, core::maths::Real3Vector>>() };
+			if (screenposition_components_list.size())
+			{
+				auto& screenposition_component{ screenposition_components_list.at(0)->getPurpose().second };
+
+				maths::Matrix current_view;
+				maths::Matrix current_proj;
+
+				auto& renderingQueue{ distancetocam_components_list.at(0)->getPurpose().first };
+
+				const std::string current_view_entity_id{ renderingQueue->getMainView() };
+				extractProjAndViewFromRenderingQueue(current_view_entity_id, current_view, current_proj);
+
+				const auto& worldpositions_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
+
+				if (0 == worldpositions_list.size())
+				{
+					_EXCEPTION("entity world aspect : missing world position " + curr_entity->getId());
+				}
+				else
+				{
+					auto& entity_worldposition{ worldpositions_list.at(0)->getPurpose() };
+					maths::Matrix entity_world = entity_worldposition.global_pos;
+
+					maths::Matrix inv;
+					inv.identity();
+					inv(2, 2) = -1.0;
+					const auto final_view{ current_view * inv };
+
+					transform::MatrixChain chain;
+					
+					chain.pushMatrix(current_proj);
+					chain.pushMatrix(final_view);
+					chain.pushMatrix(entity_world);
+					chain.buildResult();
+					auto final_mat{ chain.getResultTransform() };
+
+					core::maths::Real4Vector point(0, 0, 0, 1);
+					core::maths::Real4Vector res_point;
+
+					final_mat.transform(&point, &res_point);
+
+					const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+					const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("mage.infos.viewport") };
+
+
+					const double posx{ static_cast<double>(res_point[0] / (res_point[2] + 1.0)) * 0.5 * viewport[0] };
+					const double posy{ static_cast<double>(res_point[1] / (res_point[2] + 1.0)) * 0.5 * viewport[1] };
+
+					core::maths::Real3Vector projected_pos(posx, posy, res_point[2]);
+					screenposition_component = projected_pos;
+				}
+
+			}
+
+
 		}
 	}
 
-	maths::Matrix current_cam;
-	maths::Matrix current_view;
-	maths::Matrix current_proj;
+	const auto end_time_part2{ std::chrono::high_resolution_clock::now() };
+	const auto duration_part2{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_part2 - start_time_part2) };
 
-	current_cam.identity();
-	current_view.identity();
-
-	// set a dummy default perspective
-	current_proj.perspective(1.0, 0.5, 1.0, 100000.0);
-
-	const std::function<void(const ENode&, int)> browseHierarchy
-	{
-		[&](const ENode& p_node, int depth)
-		{
-			const auto& eg_node { m_entitygraph.node(p_node.id) };
-
-			const core::Entity* curr_entity{ eg_node.data() };
-
-			///////////////
-			// find current view and current proj
-
-			if (curr_entity->hasAspect(core::renderingAspect::id))
-			{
-				const auto& rendering_aspect{ curr_entity->aspectAccess(core::renderingAspect::id) };
-
-				const auto rendering_queues_list{ rendering_aspect.getComponentsByType<rendering::Queue>() };
-				if (rendering_queues_list.size() > 0)
-				{
-					auto& renderingQueue{ rendering_queues_list.at(0)->getPurpose() };
-
-					const std::string current_view_entity_id{ renderingQueue.getMainView() };
-
-					if (current_view_entity_id != "")
-					{
-						auto& viewode{ m_entitygraph.node(current_view_entity_id) };
-						const auto view_entity{ viewode.data() };
-
-						// extract cam aspect
-						const auto& cam_aspect{ view_entity->aspectAccess(cameraAspect::id) };
-						const auto& cam_projs_list{ cam_aspect.getComponentsByType<maths::Matrix>() };
-
-						if (0 == cam_projs_list.size())
-						{
-							_EXCEPTION("entity view aspect : missing projection definition " + view_entity->getId());
-						}
-						else
-						{
-							current_proj = cam_projs_list.at(0)->getPurpose();
-						}
-
-						// extract world aspect
-
-						const auto& world_aspect{ view_entity->aspectAccess(worldAspect::id) };
-						const auto& worldpositions_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
-
-						if (0 == worldpositions_list.size())
-						{
-							_EXCEPTION("entity world aspect : missing world position " + view_entity->getId());
-						}
-						else
-						{
-							auto& entity_worldposition{ worldpositions_list.at(0)->getPurpose() };
-							current_cam = entity_worldposition.global_pos;
-						}
-					}
-
-					current_view = current_cam;
-					current_view.inverse();					
-				}
-			}
-
-			if (curr_entity->hasAspect(core::worldAspect::id))
-			{
-				const auto& world_aspect{ curr_entity->aspectAccess(worldAspect::id) };
-
-				const auto distancetocamera_component{ world_aspect.getComponent<double>("eg.std.distance_to_camera") };
-				if (distancetocamera_component)
-				{
-					const auto& worldpositions_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
-
-					if (0 == worldpositions_list.size())
-					{
-						_EXCEPTION("entity world aspect : missing world position " + curr_entity->getId());
-					}
-					else
-					{
-						auto& entity_worldposition{ worldpositions_list.at(0)->getPurpose() };
-						maths::Matrix entity_world = entity_worldposition.global_pos;
-
-						maths::Matrix inv;
-						inv.identity();
-						inv(2, 2) = -1.0;
-						const auto final_view{ current_view * inv };
-
-						transform::MatrixChain chain;
-						chain.pushMatrix(final_view);
-						chain.pushMatrix(entity_world);
-						chain.buildResult();
-						auto final_mat{ chain.getResultTransform() };
-
-						core::maths::Real4Vector point(0, 0, 0, 1);
-						core::maths::Real4Vector res_point;
-
-						final_mat.transform(&point, &res_point);
-
-						const double distance_to_cam{ res_point.length() };
-
-						distancetocamera_component->getPurpose() = distance_to_cam;
-					}
-				}
-
-				const auto screenposition_component{ world_aspect.getComponent<core::maths::Real3Vector>("eg.std.projected_position") };
-				if (screenposition_component)
-				{
-					const auto& worldpositions_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
-
-					if (0 == worldpositions_list.size())
-					{
-						_EXCEPTION("entity world aspect : missing world position " + curr_entity->getId());
-					}
-					else
-					{
-						auto& entity_worldposition{ worldpositions_list.at(0)->getPurpose() };
-						maths::Matrix entity_world = entity_worldposition.global_pos;
-
-						maths::Matrix inv;
-						inv.identity();
-						inv(2, 2) = -1.0;
-						const auto final_view{ current_view * inv };
-
-						transform::MatrixChain chain;
-						chain.pushMatrix(current_proj);
-						chain.pushMatrix(final_view);
-						chain.pushMatrix(entity_world);
-						chain.buildResult();
-						auto final_mat{ chain.getResultTransform() };
-
-						core::maths::Real4Vector point(0, 0, 0, 1);
-						core::maths::Real4Vector res_point;
-
-						final_mat.transform(&point, &res_point);
-
-						const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-						const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("mage.infos.viewport") };
+	dataCloud->updateDataValue<std::string>("mage.timings.worldsystem.part2", std::to_string(duration_part2.count()) + " ms");
 
 
-						const double posx{ static_cast<double>(res_point[0] / (res_point[2] + 1.0)) * 0.5 * viewport[0] };
-						const double posy{ static_cast<double>(res_point[1] / (res_point[2] + 1.0)) * 0.5 * viewport[1] };
 
-						core::maths::Real3Vector projected_pos(posx, posy, res_point[2]);
-						screenposition_component->getPurpose() = projected_pos;
-					}
-				}
-			}	
-			///////////////
-
-			// recursive call
-			for (auto& e : p_node.children)
-			{
-				browseHierarchy(e.second, depth + 1);
-			}
-		}
-	};
-
-	browseHierarchy(root, 0);
-
-	const auto end_time{ std::chrono::high_resolution_clock::now() };
-	const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
-	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-	dataCloud->updateDataValue<std::string>("mage.timings.worldsystem", std::to_string(duration.count()) + " ms");
+	const auto end_time_main{ std::chrono::high_resolution_clock::now() };
+	const auto duration_main{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_main - start_time_main) };
+	
+	dataCloud->updateDataValue<std::string>("mage.timings.worldsystem", std::to_string(duration_main.count()) + " ms");
 }

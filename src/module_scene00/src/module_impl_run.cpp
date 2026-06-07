@@ -64,24 +64,21 @@ void ModuleImpl::run(void)
 	{
 		const auto quadEntity{ m_entitygraph.node("quadEntity2").data() };
 		const auto& world_aspect{ quadEntity->aspectAccess(core::worldAspect::id) };
-		const auto screenposition{ world_aspect.getComponent<core::maths::Real3Vector>("eg.std.projected_position")->getPurpose() };
 
-		
-		dataCloud->updateDataValue<maths::Real3Vector>("quadEntity2_projected_position", screenposition);
-
-
-		// update distance display
-		const auto distance_to_cam{ world_aspect.getComponent<double>("eg.std.distance_to_camera")->getPurpose() };
+		auto distancetocam_components_list{ world_aspect.getComponentsByType<std::pair<mage::rendering::Queue*, double>>() };
+		if (distancetocam_components_list.size())
+		{
+			auto distance_to_cam{ distancetocam_components_list.at(0)->getPurpose().second };
 
 
+			const auto collimator_text_node{ m_entitygraph.node("collimator_text") };
+			const auto collimator_text_entity{ collimator_text_node.data() };
+			const auto& rendering_aspect{ collimator_text_entity->aspectAccess(core::renderingAspect::id) };
 
-		const auto collimator_text_node{ m_entitygraph.node("collimator_text") };
-		const auto collimator_text_entity{ collimator_text_node.data() };
-		const auto& rendering_aspect{ collimator_text_entity->aspectAccess(core::renderingAspect::id) };
+			auto& queue_text{ rendering_aspect.getComponent<mage::rendering::Queue::Text>("queue_text")->getPurpose() };
 
-		auto& queue_text{ rendering_aspect.getComponent<mage::rendering::Queue::Text>("queue_text")->getPurpose() };
-
-		queue_text.text = std::to_string(distance_to_cam);
+			queue_text.text = std::to_string(distance_to_cam);
+		}
 	}
 	//////////////////////////////////////////////////////
 	// 	
@@ -397,12 +394,15 @@ void ModuleImpl::run(void)
 
 		auto& world_aspect{ quadEntity->makeAspect(core::worldAspect::id) };
 
+		/*
 		world_aspect.addComponent<core::maths::Real3Vector>("eg.std.projected_position", core::maths::Real3Vector(0.0, 0.0, 0.0));
 		world_aspect.addComponent<double>("eg.std.distance_to_camera");
+		*/
 
-		dataCloud->registerData<maths::Real3Vector>("quadEntity2_projected_position");
+		world_aspect.addComponent<std::pair<mage::rendering::Queue*, core::maths::Real3Vector>>("projected_position", std::make_pair(m_bufferRenderingQueue, core::maths::Real3Vector(0.0, 0.0, 0.0)));
+		world_aspect.addComponent<std::pair<mage::rendering::Queue*, double>>("distance_to_camera", std::make_pair(m_bufferRenderingQueue, 0));
 
-
+		
 		world_aspect.addComponent<transform::WorldPosition>("position");
 
 		core::maths::Quaternion quat1;
@@ -481,7 +481,7 @@ void ModuleImpl::run(void)
 		auto& quadNode{ m_entitygraph.node("quadEntity2") };
 		m_entitygraph.remove(quadNode);
 
-		dataCloud->removeData<maths::Real3Vector>("quadEntity2_projected_position");
+		
 
 		m_quadEntity2_state = false;
 	}

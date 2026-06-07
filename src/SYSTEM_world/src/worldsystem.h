@@ -24,6 +24,9 @@
 /* -*-LIC_END-*- */
 
 #pragma once
+
+#include <string>
+
 #include "system.h"
 #include "matrix.h"
 
@@ -40,5 +43,10 @@ namespace mage
         ~WorldSystem() = default;
 
         void run();
+
+    private:
+
+        void extractProjAndViewFromRenderingQueue(const std::string& p_current_view_entity_id, mage::core::maths::Matrix& p_current_view, mage::core::maths::Matrix& p_current_proj);
+
     };
 }
