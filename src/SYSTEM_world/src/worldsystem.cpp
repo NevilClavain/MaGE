@@ -35,6 +35,7 @@
 #include "renderingqueue.h"
 #include "matrixchain.h"
 #include "datacloud.h"
+#include "matrix.h"
 
 using namespace mage;
 using namespace mage::core;

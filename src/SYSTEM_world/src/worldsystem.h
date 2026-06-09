@@ -28,13 +28,21 @@
 #include <string>
 
 #include "system.h"
-#include "matrix.h"
 
 namespace mage
 {
-    namespace core { class Entity; }
-    namespace core { class Entitygraph; }
-   
+    namespace core 
+    {
+        class Entity; 
+        class Entitygraph;
+
+        namespace maths
+        {
+            class Matrix;
+        }
+    }
+
+
     class WorldSystem : public core::System
     {
     public:
