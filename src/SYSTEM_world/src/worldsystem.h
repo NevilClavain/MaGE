@@ -26,6 +26,8 @@
 #pragma once
 
 #include <string>
+#include <queue>
+#include <set>
 
 #include "system.h"
 
@@ -42,10 +44,10 @@ namespace mage
         }
     }
 
-
     class WorldSystem : public core::System
     {
     public:
+
         WorldSystem() = delete;
         WorldSystem(core::Entitygraph& p_entitygraph);
         ~WorldSystem() = default;
@@ -55,6 +57,11 @@ namespace mage
     private:
 
         void extractProjAndViewFromRenderingQueue(const std::string& p_current_view_entity_id, mage::core::maths::Matrix& p_current_view, mage::core::maths::Matrix& p_current_proj);
+
+        std::queue<core::Entity*> m_newly_added_entities;
+
+        std::set<core::Entity*>  m_entities_to_compute_distance;
+        std::set<core::Entity*>  m_entities_to_compute_2d_pos;;
 
     };
 }

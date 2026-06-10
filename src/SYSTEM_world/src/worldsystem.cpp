@@ -46,6 +46,27 @@ WorldSystem::WorldSystem(Entitygraph& p_entitygraph) : System(p_entitygraph)
 	dataCloud->registerData<std::string>("mage.timings.worldsystem");
 	dataCloud->registerData<std::string>("mage.timings.worldsystem.part1");
 	dataCloud->registerData<std::string>("mage.timings.worldsystem.part2");
+
+	// Register callback for entitygraph events
+	m_entitygraph.registerSubscriber([this](core::EntitygraphEvents p_event, const core::Entity& p_entity)
+	{
+		switch (p_event)
+		{
+			case core::EntitygraphEvents::ENTITYGRAPHNODE_ADDED:
+			{
+				// push it to the queue to be processed later - in next run() call, because entity was just created so no any aspects added yet at this moment
+
+				m_newly_added_entities.push(const_cast<core::Entity*>(&p_entity));
+			}
+			break;
+
+			case core::EntitygraphEvents::ENTITYGRAPHNODE_REMOVED:
+			{
+				// TO DO
+			}
+			break;
+		}
+	});
 }
 
 void WorldSystem::extractProjAndViewFromRenderingQueue(const std::string& p_current_view_entity_id, mage::core::maths::Matrix& p_current_view, mage::core::maths::Matrix& p_current_proj)
@@ -95,7 +116,43 @@ void WorldSystem::run()
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 
 	//////////////////////////////////////////////////////////
-	/// I : compute transformations
+	/// I : Process newly added entities from FIFO queue
+	//////////////////////////////////////////////////////////
+
+	while (!m_newly_added_entities.empty())
+	{
+		core::Entity* newly_added_entity{ m_newly_added_entities.front() };
+		m_newly_added_entities.pop();
+
+		// Process the newly added entity
+		// Entity pointer is examined and can be used for initialization, registration, etc.
+		if (newly_added_entity)
+		{
+			// specific logic to process the newly added entity
+
+			if (newly_added_entity->hasAspect(core::worldAspect::id))
+			{
+				const auto& world_aspect{ newly_added_entity->aspectAccess(worldAspect::id) };
+
+				auto distancetocam_components_list{ world_aspect.getComponentsByType<std::pair<mage::rendering::Queue*, double>>() };
+				if (distancetocam_components_list.size())
+				{
+					// add to related list
+					m_entities_to_compute_distance.insert(newly_added_entity);
+				}
+
+				auto screenposition_components_list{ world_aspect.getComponentsByType<std::pair<mage::rendering::Queue*, core::maths::Real3Vector>>() };
+				if (screenposition_components_list.size())
+				{
+					// add to related list
+					m_entities_to_compute_2d_pos.insert(newly_added_entity);
+				}
+			}
+		}
+	}
+
+	//////////////////////////////////////////////////////////
+	/// II : compute transformations
 	//////////////////////////////////////////////////////////
 
 	const auto start_time_part1{ std::chrono::high_resolution_clock::now() };
@@ -252,7 +309,7 @@ void WorldSystem::run()
 	dataCloud->updateDataValue<std::string>("mage.timings.worldsystem.part1", std::to_string(duration_part1.count()) + " ms");
 
 	//////////////////////////////////////////////////////////
-	/// II : compute 2D pos and distance to cam (for entity that requires it)
+	/// III : compute 2D pos and distance to cam (for entity that requires it)
 	//////////////////////////////////////////////////////////
 
 	// rebuid hierarchical structure to be browsed recursively
