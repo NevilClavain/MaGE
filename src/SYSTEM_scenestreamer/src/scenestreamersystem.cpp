@@ -410,7 +410,11 @@ void SceneStreamerSystem::run()
                                     XTreeEntity xtreeEnt;
                                     xtreeEnt.entity = p_entity;
 
-                                    if (mage::helpers::checkTag(p_entity, "#static"))
+                                    const bool frozen_tag { mage::helpers::checkTag(p_entity, "#frozen") };
+                                    const bool static_tag{ mage::helpers::checkTag(p_entity, "#static") };
+
+                                    // "#static" : no moving on scene, always stay at x,y,z coords, but can potentially be transforemed at each frame (ex: rotation on y axis)
+                                    if (static_tag || frozen_tag)
                                     {
                                         // place it on xtree once for all
                                         const auto& resources_aspect{ p_entity->aspectAccess(resourcesAspect::id) };
@@ -442,12 +446,11 @@ void SceneStreamerSystem::run()
                                                 }
                                             }
                                         }
-
                                     }
                                     else
                                     {
                                         rgpd.second.xtree_entities[p_entity->getId()] = xtreeEnt;
-                                    }                                    
+                                    }
                                 }
                             }
                         }

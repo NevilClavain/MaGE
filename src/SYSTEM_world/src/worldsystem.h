@@ -37,6 +37,7 @@ namespace mage
     {
         class Entity; 
         class Entitygraph;
+        class ComponentContainer;
 
         namespace maths
         {
@@ -58,10 +59,14 @@ namespace mage
 
         void extractProjAndViewFromRenderingQueue(const std::string& p_current_view_entity_id, mage::core::maths::Matrix& p_current_view, mage::core::maths::Matrix& p_current_proj);
 
+        void compute_entity(core::Entity* p_entity, const core:: ComponentContainer& p_world_components);
+
         std::queue<core::Entity*> m_newly_added_entities;
 
         std::set<core::Entity*>  m_entities_to_compute_distance;
-        std::set<core::Entity*>  m_entities_to_compute_2d_pos;;
+        std::set<core::Entity*>  m_entities_to_compute_2d_pos;
+
+        std::set<core::Entity*>  m_entities_to_compute;
 
     };
 }

@@ -81,5 +81,13 @@ namespace mage
 			}
 			return false;
 		}
+
+		inline core::tagsAspect::GraphDomain getEntityGraphdomain(core::Entity* p_entity)
+		{
+			const auto& tagsAspect{ p_entity->aspectAccess(mage::core::tagsAspect::id) };
+			auto gd_list{ tagsAspect.getComponentsByType<core::tagsAspect::GraphDomain>() };
+
+			return gd_list.at(0)->getPurpose();
+		}
 	}
 }

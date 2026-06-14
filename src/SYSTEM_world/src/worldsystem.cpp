@@ -49,9 +49,9 @@ WorldSystem::WorldSystem(Entitygraph& p_entitygraph) : System(p_entitygraph)
 
 	// Register callback for entitygraph events
 	m_entitygraph.registerSubscriber([this](core::EntitygraphEvents p_event, const core::Entity& p_entity)
+	{
+		switch (p_event)
 		{
-			switch (p_event)
-			{
 			case core::EntitygraphEvents::ENTITYGRAPHNODE_ADDED:
 			{
 				// push it to the queue to be processed later - in next run() call, because entity was just created so no any aspects added yet at this moment
@@ -70,6 +70,11 @@ WorldSystem::WorldSystem(Entitygraph& p_entitygraph) : System(p_entitygraph)
 				if (m_entities_to_compute_2d_pos.count(const_cast<core::Entity*>(&p_entity)))
 				{
 					m_entities_to_compute_2d_pos.erase(const_cast<core::Entity*>(&p_entity));
+				}
+
+				if (m_entities_to_compute.count(const_cast<core::Entity*>(&p_entity)))
+				{
+					m_entities_to_compute.erase(const_cast<core::Entity*>(&p_entity));
 				}
 			}
 			break;
@@ -142,6 +147,8 @@ void WorldSystem::run()
 			{
 				const auto& world_aspect{ newly_added_entity->aspectAccess(worldAspect::id) };
 
+				/////////////// manage 2D pos and distance computing
+
 				auto distancetocam_components_list{ world_aspect.getComponentsByType<std::pair<mage::rendering::Queue*, double>>() };
 				if (distancetocam_components_list.size())
 				{
@@ -155,6 +162,36 @@ void WorldSystem::run()
 					// add to related list
 					m_entities_to_compute_2d_pos.insert(newly_added_entity);
 				}
+
+				/////////////// manage frozen object
+
+				const bool frozen_tag{ mage::helpers::checkTag(newly_added_entity, "#frozen") };
+
+				if (frozen_tag)
+				{
+					// TO BE CONTINUED
+
+					// compute transformation only once
+				}
+				else
+				{
+					if (newly_added_entity->hasAspect(worldAspect::id))
+					{
+						const mage::core::tagsAspect::GraphDomain gd{ mage::helpers::getEntityGraphdomain(newly_added_entity) };
+
+						if (mage::core::tagsAspect::GraphDomain::SCENEGRAPH == gd)
+						{
+							m_entities_to_compute.insert(newly_added_entity);
+						}
+						else
+						{
+							// ??
+							// compute transformation only once
+						}
+					}					
+				}
+
+				///////////////////////////////////////////////////////////////
 			}
 		}
 	}
@@ -169,143 +206,7 @@ void WorldSystem::run()
 	{
 		[&](Entity* p_entity, const ComponentContainer& p_world_components)
 		{
-			///// compute matrix hierarchy
-
-			const auto& entity_worldposition_list { p_world_components.getComponentsByType<transform::WorldPosition>() };
-			if (0 == entity_worldposition_list.size())
-			{
-				//_EXCEPTION("Entity world aspect : missing world position " + p_entity->getId());
-
-				// just ignore
-				return;
-			}
-
-			auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose()};
-
-
-			// /!\ local_pos CLEARED HERE 
-			entity_worldposition.local_pos.identity();
-
-			// get parent entity if exists
-			const auto parent_entity{ p_entity->getParent() };
-
-			if (parent_entity && parent_entity->hasAspect(worldAspect::id))
-			{
-				const auto& parent_worldaspect{ parent_entity->aspectAccess(worldAspect::id) };
-				const auto& parententity_worldpositions_list{ parent_worldaspect.getComponentsByType<transform::WorldPosition>() };
-
-				if (0 == parententity_worldpositions_list.size())
-				{
-					// _EXCEPTION("Parent entity world aspect : missing world position " + parent_entity->getId());
-					// just ignore
-				}
-				else
-				{
-					auto& parententity_worldposition{ parententity_worldpositions_list.at(0)->getPurpose() };
-
-					///// compute animators -> result stored in local pos
-
-					auto& entity_animators_list{ p_world_components.getComponentsByType<transform::Animator>() };
-					if (entity_animators_list.size() > 0)
-					{
-						if (p_entity->hasAspect(core::timeAspect::id))
-						{
-							const auto& time_aspect{ p_entity->aspectAccess(core::timeAspect::id) };
-
-							for (const auto& animator_comp : entity_animators_list)
-							{
-								const auto& animator{ animator_comp->getPurpose() };
-								animator.func(p_world_components, time_aspect, parententity_worldposition, animator.component_keys);
-							}
-						}
-						else
-						{
-							_EXCEPTION("animator requires a time aspect")
-						}
-					}
-
-					///////////////////////
-
-					switch (entity_worldposition.composition_operation)
-					{
-						case transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT:
-
-							entity_worldposition.global_pos = entity_worldposition.local_pos * parententity_worldposition.global_pos;
-							break;
-
-						case transform::WorldPosition::TransformationComposition::TRANSFORMATION_ABSOLUTE:
-
-							entity_worldposition.global_pos = entity_worldposition.local_pos;
-							break;
-
-						case transform::WorldPosition::TransformationComposition::TRANSFORMATION_PARENT_PROJECTEDPOS:
-						{
-							auto screenposition_components_list{ parent_worldaspect.getComponentsByType<std::pair<mage::rendering::Queue*, core::maths::Real3Vector>>() };						
-							if (screenposition_components_list.size())
-							{
-								auto screenposition{ screenposition_components_list.at(0)->getPurpose().second};
-
-								auto updated_local_pos{ entity_worldposition.local_pos };
-
-								updated_local_pos(3, 0) += screenposition[0];
-								updated_local_pos(3, 1) += screenposition[1];
-
-								entity_worldposition.projected_z_neg = (screenposition[2] < 0);
-								entity_worldposition.global_pos = updated_local_pos;
-
-								if (p_entity->hasAspect(core::renderingAspect::id))
-								{
-									const auto& entity_renderingaspect{ p_entity->aspectAccess(core::renderingAspect::id) };
-
-									auto& entity_dc_list{ entity_renderingaspect.getComponentsByType<rendering::DrawingControl>() };
-									if (entity_dc_list.size() > 0)
-									{
-										entity_dc_list.at(0)->getPurpose().projected_z_neg = (screenposition[2] < 0);
-									}
-								}
-							}
-							else
-							{
-								_EXCEPTION("TRANSFORMATION_PARENT_PROJECTEDPOS mode require 2D projected pos from parent")
-							}								
-						}
-						break;
-					}
-				}
-			}
-			else 
-			{
-				///// compute animators -> result stored in local pos
-
-				auto& entity_animators_list{ p_world_components.getComponentsByType<transform::Animator>() };
-				if (entity_animators_list.size() > 0)
-				{
-					if (p_entity->hasAspect(core::timeAspect::id))
-					{
-						const auto& time_aspect{ p_entity->aspectAccess(core::timeAspect::id) };
-
-						for (const auto& animator_comp : entity_animators_list)
-						{
-							const auto& animator{ animator_comp->getPurpose() };
-
-							// no parent -> give WorldPosition with identity
-							transform::WorldPosition fake_parent_pos;
-							fake_parent_pos.global_pos.identity();
-							fake_parent_pos.local_pos.identity();
-
-							animator.func(p_world_components, time_aspect, fake_parent_pos, animator.component_keys);
-						}
-					}
-					else
-					{
-						_EXCEPTION("animator requires a time aspect")
-					}
-				}
-
-				///////////////////////
-
-				entity_worldposition.global_pos = entity_worldposition.local_pos;
-			}			
+			compute_entity(p_entity, p_world_components);
 		}
 	};
 
@@ -442,4 +343,146 @@ void WorldSystem::run()
 	const auto duration_main{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_main - start_time_main) };
 	
 	dataCloud->updateDataValue<std::string>("mage.timings.worldsystem", std::to_string(duration_main.count()) + " ms");
+}
+
+void WorldSystem::compute_entity(core::Entity* p_entity, const ComponentContainer& p_world_components)
+{
+	///// compute matrix hierarchy
+
+	const auto& entity_worldposition_list{ p_world_components.getComponentsByType<transform::WorldPosition>() };
+	if (0 == entity_worldposition_list.size())
+	{
+		//_EXCEPTION("Entity world aspect : missing world position " + p_entity->getId());
+
+		// just ignore
+		return;
+	}
+
+	auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
+
+
+	// /!\ local_pos CLEARED HERE 
+	entity_worldposition.local_pos.identity();
+
+	// get parent entity if exists
+	const auto parent_entity{ p_entity->getParent() };
+
+	if (parent_entity && parent_entity->hasAspect(worldAspect::id))
+	{
+		const auto& parent_worldaspect{ parent_entity->aspectAccess(worldAspect::id) };
+		const auto& parententity_worldpositions_list{ parent_worldaspect.getComponentsByType<transform::WorldPosition>() };
+
+		if (0 == parententity_worldpositions_list.size())
+		{
+			// _EXCEPTION("Parent entity world aspect : missing world position " + parent_entity->getId());
+			// just ignore
+		}
+		else
+		{
+			auto& parententity_worldposition{ parententity_worldpositions_list.at(0)->getPurpose() };
+
+			///// compute animators -> result stored in local pos
+
+			auto& entity_animators_list{ p_world_components.getComponentsByType<transform::Animator>() };
+			if (entity_animators_list.size() > 0)
+			{
+				if (p_entity->hasAspect(core::timeAspect::id))
+				{
+					const auto& time_aspect{ p_entity->aspectAccess(core::timeAspect::id) };
+
+					for (const auto& animator_comp : entity_animators_list)
+					{
+						const auto& animator{ animator_comp->getPurpose() };
+						animator.func(p_world_components, time_aspect, parententity_worldposition, animator.component_keys);
+					}
+				}
+				else
+				{
+					_EXCEPTION("animator requires a time aspect")
+				}
+			}
+
+			///////////////////////
+
+			switch (entity_worldposition.composition_operation)
+			{
+			case transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT:
+
+				entity_worldposition.global_pos = entity_worldposition.local_pos * parententity_worldposition.global_pos;
+				break;
+
+			case transform::WorldPosition::TransformationComposition::TRANSFORMATION_ABSOLUTE:
+
+				entity_worldposition.global_pos = entity_worldposition.local_pos;
+				break;
+
+			case transform::WorldPosition::TransformationComposition::TRANSFORMATION_PARENT_PROJECTEDPOS:
+			{
+				auto screenposition_components_list{ parent_worldaspect.getComponentsByType<std::pair<mage::rendering::Queue*, core::maths::Real3Vector>>() };
+				if (screenposition_components_list.size())
+				{
+					auto screenposition{ screenposition_components_list.at(0)->getPurpose().second };
+
+					auto updated_local_pos{ entity_worldposition.local_pos };
+
+					updated_local_pos(3, 0) += screenposition[0];
+					updated_local_pos(3, 1) += screenposition[1];
+
+					entity_worldposition.projected_z_neg = (screenposition[2] < 0);
+					entity_worldposition.global_pos = updated_local_pos;
+
+					if (p_entity->hasAspect(core::renderingAspect::id))
+					{
+						const auto& entity_renderingaspect{ p_entity->aspectAccess(core::renderingAspect::id) };
+
+						auto& entity_dc_list{ entity_renderingaspect.getComponentsByType<rendering::DrawingControl>() };
+						if (entity_dc_list.size() > 0)
+						{
+							entity_dc_list.at(0)->getPurpose().projected_z_neg = (screenposition[2] < 0);
+						}
+					}
+				}
+				else
+				{
+					_EXCEPTION("TRANSFORMATION_PARENT_PROJECTEDPOS mode require 2D projected pos from parent")
+				}
+			}
+			break;
+			}
+		}
+	}
+	else
+	{
+		///// compute animators -> result stored in local pos
+
+		auto& entity_animators_list{ p_world_components.getComponentsByType<transform::Animator>() };
+		if (entity_animators_list.size() > 0)
+		{
+			if (p_entity->hasAspect(core::timeAspect::id))
+			{
+				const auto& time_aspect{ p_entity->aspectAccess(core::timeAspect::id) };
+
+				for (const auto& animator_comp : entity_animators_list)
+				{
+					const auto& animator{ animator_comp->getPurpose() };
+
+					// no parent -> give WorldPosition with identity
+					transform::WorldPosition fake_parent_pos;
+					fake_parent_pos.global_pos.identity();
+					fake_parent_pos.local_pos.identity();
+
+					animator.func(p_world_components, time_aspect, fake_parent_pos, animator.component_keys);
+				}
+			}
+			else
+			{
+				_EXCEPTION("animator requires a time aspect")
+			}
+		}
+
+		///////////////////////
+
+		entity_worldposition.global_pos = entity_worldposition.local_pos;
+	}
+
 }

@@ -308,7 +308,8 @@
       ],
 
       "tags": [
-        "#static"
+        "#static",
+        "#frozen"
       ],
 
       "rendergraph_parts": [
@@ -380,7 +381,8 @@
       ],
 
       "tags": [
-        "#static"
+        "#static",
+        "#frozen"
       ],
 
       "rendergraph_parts": [
@@ -451,7 +453,8 @@
       ],
 
       "tags": [
-        "#static"
+        "#static",
+        "#frozen"
       ],
 
       "rendergraph_parts": [
@@ -534,7 +537,8 @@
       ],
 
       "tags": [
-        "#static"
+        "#static",
+        "#frozen"
       ],
 
       "rendergraph_parts": [
@@ -630,7 +634,8 @@
       ],
 
       "tags": [
-        "#static"
+        "#static",
+        "#frozen"
       ],
 
       "rendergraph_parts": [
