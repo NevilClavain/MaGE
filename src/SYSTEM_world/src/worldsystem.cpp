@@ -172,6 +172,9 @@ void WorldSystem::run()
 					// TO BE CONTINUED
 
 					// compute transformation only once
+
+					const auto& world_aspect{ newly_added_entity->aspectAccess(core::worldAspect::id) };
+					compute_entity(newly_added_entity, world_aspect);
 				}
 				else
 				{
@@ -187,6 +190,9 @@ void WorldSystem::run()
 						{
 							// ??
 							// compute transformation only once
+
+							const auto& world_aspect{ newly_added_entity->aspectAccess(core::worldAspect::id) };
+							compute_entity(newly_added_entity, world_aspect);
 						}
 					}					
 				}
@@ -202,15 +208,11 @@ void WorldSystem::run()
 
 	const auto start_time_part1{ std::chrono::high_resolution_clock::now() };
 
-	const auto forEachWorldAspect
+	for (auto curr_entity : m_entities_to_compute)
 	{
-		[&](Entity* p_entity, const ComponentContainer& p_world_components)
-		{
-			compute_entity(p_entity, p_world_components);
-		}
-	};
-
-	mage::helpers::extractAspectsTopDown<mage::core::worldAspect>(m_entitygraph, forEachWorldAspect);
+		const auto& world_aspect{ curr_entity->aspectAccess(core::worldAspect::id) };
+		compute_entity(curr_entity, world_aspect);
+	}
 
 	const auto end_time_part1{ std::chrono::high_resolution_clock::now() };
 	const auto duration_part1{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_part1 - start_time_part1) };
