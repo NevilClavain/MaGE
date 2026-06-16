@@ -173,17 +173,27 @@ void WorldSystem::run()
 				}
 				else
 				{
-					const mage::core::tagsAspect::GraphDomain gd{ mage::helpers::getEntityGraphdomain(newly_added_entity) };
-					if (mage::core::tagsAspect::GraphDomain::SCENEGRAPH == gd)
+					bool compute_now_and_once{ false };
+
+					if (newly_added_entity->hasAspect(mage::core::tagsAspect::id))
 					{
-						m_entities_to_compute.insert(newly_added_entity);
+						const mage::core::tagsAspect::GraphDomain gd{ mage::helpers::getEntityGraphdomain(newly_added_entity) };
+						if (mage::core::tagsAspect::GraphDomain::RENDERGRAPH == gd)
+						{
+							compute_now_and_once = true;
+						}
 					}
-					else
-					{						
+
+					if (compute_now_and_once)
+					{
 						// compute transformation only once
 
 						const auto& world_aspect{ newly_added_entity->aspectAccess(core::worldAspect::id) };
 						compute_entity(newly_added_entity, world_aspect);
+					}
+					else
+					{
+						m_entities_to_compute.insert(newly_added_entity);
 					}
 				}
 
