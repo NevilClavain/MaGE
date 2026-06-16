@@ -164,11 +164,8 @@ void WorldSystem::run()
 				/////////////// manage frozen object
 
 				const bool frozen_tag{ mage::helpers::checkTag(newly_added_entity, "#frozen") };
-
 				if (frozen_tag)
 				{
-					// TO BE CONTINUED
-
 					// compute transformation only once
 
 					const auto& world_aspect{ newly_added_entity->aspectAccess(core::worldAspect::id) };
@@ -176,23 +173,18 @@ void WorldSystem::run()
 				}
 				else
 				{
-					if (newly_added_entity->hasAspect(worldAspect::id))
+					const mage::core::tagsAspect::GraphDomain gd{ mage::helpers::getEntityGraphdomain(newly_added_entity) };
+					if (mage::core::tagsAspect::GraphDomain::SCENEGRAPH == gd)
 					{
-						const mage::core::tagsAspect::GraphDomain gd{ mage::helpers::getEntityGraphdomain(newly_added_entity) };
+						m_entities_to_compute.insert(newly_added_entity);
+					}
+					else
+					{						
+						// compute transformation only once
 
-						if (mage::core::tagsAspect::GraphDomain::SCENEGRAPH == gd)
-						{
-							m_entities_to_compute.insert(newly_added_entity);
-						}
-						else
-						{
-							// ??
-							// compute transformation only once
-
-							const auto& world_aspect{ newly_added_entity->aspectAccess(core::worldAspect::id) };
-							compute_entity(newly_added_entity, world_aspect);
-						}
-					}					
+						const auto& world_aspect{ newly_added_entity->aspectAccess(core::worldAspect::id) };
+						compute_entity(newly_added_entity, world_aspect);
+					}
 				}
 
 				///////////////////////////////////////////////////////////////

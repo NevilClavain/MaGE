@@ -26,6 +26,7 @@
 #pragma once
 
 #include <vector>
+#include <queue>
 #include <unordered_map>
 #include <unordered_set>
 #include <string>
@@ -817,6 +818,11 @@ namespace mage
 
         int                                                                                     m_renderingQueueSystemSlot{ -1 };
         int                                                                                     m_resourceSystemSlot{ -1 };
+
+
+        /////////////////////////////////
+
+        std::queue<core::Entity*>                                                               m_newly_added_entities;
         
         void register_scene_entity(mage::core::Entity* p_entity);
 

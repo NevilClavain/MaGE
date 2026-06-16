@@ -66,6 +66,28 @@ m_localLogger("SceneStreamerSystem", mage::core::logger::Configuration::getInsta
     dataCloud->registerData<std::string>("mage.timings.scenestreamersystem.2");
     dataCloud->registerData<std::string>("mage.timings.scenestreamersystem.3");
     dataCloud->registerData<std::string>("mage.timings.scenestreamersystem.4");
+
+
+    // Register callback for entitygraph events
+    m_entitygraph.registerSubscriber([this](core::EntitygraphEvents p_event, const core::Entity& p_entity)
+        {
+            switch (p_event)
+            {
+            case core::EntitygraphEvents::ENTITYGRAPHNODE_ADDED:
+            {
+                // push it to the queue to be processed later - in next run() call, because entity was just created so no any aspects added yet at this moment
+
+                m_newly_added_entities.push(const_cast<core::Entity*>(&p_entity));
+            }
+            break;
+
+            case core::EntitygraphEvents::ENTITYGRAPHNODE_REMOVED:
+            {
+                // TODO
+            }
+            break;
+            }
+        });
 }
 
 void SceneStreamerSystem::enableSystem(bool p_enabled)
@@ -282,6 +304,47 @@ void SceneStreamerSystem::run()
     if (!m_enabled)
     {
         return;
+    }
+
+    while (!m_newly_added_entities.empty())
+    {
+        core::Entity* newly_added_entity{ m_newly_added_entities.front() };
+        m_newly_added_entities.pop();
+
+        if (newly_added_entity->hasAspect(core::worldAspect::id))
+        {
+            const auto& world_aspect{ newly_added_entity->aspectAccess(worldAspect::id) };
+
+            const bool frozen_tag{ mage::helpers::checkTag(newly_added_entity, "#frozen") };
+            const bool static_tag{ mage::helpers::checkTag(newly_added_entity, "#static") };
+
+            if (frozen_tag || static_tag)
+            {
+                // process once and now
+
+                // TODO
+            }
+            else
+            {
+                const mage::core::tagsAspect::GraphDomain gd{ mage::helpers::getEntityGraphdomain(newly_added_entity) };
+                if (mage::core::tagsAspect::GraphDomain::SCENEGRAPH == gd)
+                {
+                    if (mage::helpers::checkTag(newly_added_entity, "#alwaysRendered"))
+                    {
+                        // TODO
+
+                    }
+                    else
+                    {
+                        // add
+
+                        // TODO
+
+                        _asm nop
+                    }
+                }
+            }
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////
