@@ -62,6 +62,10 @@ m_localLogger("SceneStreamerSystem", mage::core::logger::Configuration::getInsta
 {
     const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
     dataCloud->registerData<std::string>("mage.timings.scenestreamersystem");
+    dataCloud->registerData<std::string>("mage.timings.scenestreamersystem.1");
+    dataCloud->registerData<std::string>("mage.timings.scenestreamersystem.2");
+    dataCloud->registerData<std::string>("mage.timings.scenestreamersystem.3");
+    dataCloud->registerData<std::string>("mage.timings.scenestreamersystem.4");
 }
 
 void SceneStreamerSystem::enableSystem(bool p_enabled)
@@ -271,6 +275,8 @@ void SceneStreamerSystem::init_XTree(RendergraphPartData& p_rgpd)
 
 void SceneStreamerSystem::run()
 {
+    const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+
     const auto start_time{ std::chrono::high_resolution_clock::now() };
 
     if (!m_enabled)
@@ -355,7 +361,7 @@ void SceneStreamerSystem::run()
     };
 
 
-
+    const auto start_time_1{ std::chrono::high_resolution_clock::now() };
 
     /////////////////////////////////////////////////////////
     // detect new entities to insert in the XTree
@@ -460,6 +466,14 @@ void SceneStreamerSystem::run()
         }
     };
     mage::helpers::extractAspectsTopDown<mage::core::worldAspect>(m_entitygraph, forEachWorldAspect);
+
+    const auto end_time_1{ std::chrono::high_resolution_clock::now() };
+    const auto duration_1{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_1 - start_time_1) };
+
+    dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem.1", std::to_string(duration_1.count()) + " ms");
+
+
+    const auto start_time_2{ std::chrono::high_resolution_clock::now() };
 
     /////////////////////////////////////////////////////////
     // XTrees updating
@@ -573,6 +587,14 @@ void SceneStreamerSystem::run()
         }
     }
 
+    const auto end_time_2{ std::chrono::high_resolution_clock::now() };
+    const auto duration_2{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_2 - start_time_2) };
+
+    dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem.2", std::to_string(duration_2.count()) + " ms");
+
+
+    const auto start_time_3{ std::chrono::high_resolution_clock::now() };
+
     /////////////////////////////////////////////////////////
     // XTree check
     //
@@ -606,6 +628,14 @@ void SceneStreamerSystem::run()
         }
     }
 
+    const auto end_time_3{ std::chrono::high_resolution_clock::now() };
+    const auto duration_3{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_3 - start_time_3) };
+
+    dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem.3", std::to_string(duration_3.count()) + " ms");
+
+
+    const auto start_time_4{ std::chrono::high_resolution_clock::now() };
+
     /////////////////////////////////////////////////////////
     // loop on entity rendering entries
     /////////////////////////////////////////////////////////
@@ -635,9 +665,15 @@ void SceneStreamerSystem::run()
         }
     }
 
+    const auto end_time_4{ std::chrono::high_resolution_clock::now() };
+    const auto duration_4{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_4 - start_time_4) };
+
+    dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem.4", std::to_string(duration_3.count()) + " ms");
+
+
     const auto end_time{ std::chrono::high_resolution_clock::now() };
     const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
-    const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+    
     dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem", std::to_string(duration.count()) + " ms");
 }
 

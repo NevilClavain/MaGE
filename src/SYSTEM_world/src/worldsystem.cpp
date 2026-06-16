@@ -44,8 +44,6 @@ WorldSystem::WorldSystem(Entitygraph& p_entitygraph) : System(p_entitygraph)
 {
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 	dataCloud->registerData<std::string>("mage.timings.worldsystem");
-	dataCloud->registerData<std::string>("mage.timings.worldsystem.part1");
-	dataCloud->registerData<std::string>("mage.timings.worldsystem.part2");
 
 	// Register callback for entitygraph events
 	m_entitygraph.registerSubscriber([this](core::EntitygraphEvents p_event, const core::Entity& p_entity)
@@ -206,18 +204,11 @@ void WorldSystem::run()
 	/// II : compute transformations
 	//////////////////////////////////////////////////////////
 
-	const auto start_time_part1{ std::chrono::high_resolution_clock::now() };
-
 	for (auto curr_entity : m_entities_to_compute)
 	{
 		const auto& world_aspect{ curr_entity->aspectAccess(core::worldAspect::id) };
 		compute_entity(curr_entity, world_aspect);
 	}
-
-	const auto end_time_part1{ std::chrono::high_resolution_clock::now() };
-	const auto duration_part1{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_part1 - start_time_part1) };
-
-	dataCloud->updateDataValue<std::string>("mage.timings.worldsystem.part1", std::to_string(duration_part1.count()) + " ms");
 
 	//////////////////////////////////////////////////////////
 	/// III : compute 2D pos and distance to cam (for entity that requires it)
@@ -225,8 +216,6 @@ void WorldSystem::run()
 
 	// rebuid hierarchical structure to be browsed recursively
 	
-	const auto start_time_part2{ std::chrono::high_resolution_clock::now() };
-
 	for (auto curr_entity : m_entities_to_compute_distance)
 	{
 		const auto& world_aspect{ curr_entity->aspectAccess(worldAspect::id) };
@@ -333,13 +322,6 @@ void WorldSystem::run()
 		}
 
 	}
-
-	const auto end_time_part2{ std::chrono::high_resolution_clock::now() };
-	const auto duration_part2{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_part2 - start_time_part2) };
-
-	dataCloud->updateDataValue<std::string>("mage.timings.worldsystem.part2", std::to_string(duration_part2.count()) + " ms");
-
-
 
 	const auto end_time_main{ std::chrono::high_resolution_clock::now() };
 	const auto duration_main{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_main - start_time_main) };
