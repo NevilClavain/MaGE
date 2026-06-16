@@ -27,6 +27,7 @@
 
 #include <vector>
 #include <queue>
+#include <unordered_set>
 #include <unordered_map>
 #include <unordered_set>
 #include <string>
@@ -823,6 +824,12 @@ namespace mage
         /////////////////////////////////
 
         std::queue<core::Entity*>                                                               m_newly_added_entities;
+
+        std::unordered_set<core::Entity*>                                                       m_entities_to_compute;
+
+
+        /////////////////////////////////
+
         
         void register_scene_entity(mage::core::Entity* p_entity);
 

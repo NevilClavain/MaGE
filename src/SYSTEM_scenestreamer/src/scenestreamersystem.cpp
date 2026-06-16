@@ -73,19 +73,22 @@ m_localLogger("SceneStreamerSystem", mage::core::logger::Configuration::getInsta
         {
             switch (p_event)
             {
-            case core::EntitygraphEvents::ENTITYGRAPHNODE_ADDED:
-            {
-                // push it to the queue to be processed later - in next run() call, because entity was just created so no any aspects added yet at this moment
+                case core::EntitygraphEvents::ENTITYGRAPHNODE_ADDED:
+                {
+                    // push it to the queue to be processed later - in next run() call, because entity was just created so no any aspects added yet at this moment
 
-                m_newly_added_entities.push(const_cast<core::Entity*>(&p_entity));
-            }
-            break;
+                    m_newly_added_entities.push(const_cast<core::Entity*>(&p_entity));
+                }
+                break;
 
-            case core::EntitygraphEvents::ENTITYGRAPHNODE_REMOVED:
-            {
-                // TODO
-            }
-            break;
+                case core::EntitygraphEvents::ENTITYGRAPHNODE_REMOVED:
+                {
+                    if (m_entities_to_compute.count(const_cast<core::Entity*>(&p_entity)))
+                    {
+                        m_entities_to_compute.erase(const_cast<core::Entity*>(&p_entity));
+                    }
+                }
+                break;
             }
         });
 }
@@ -338,9 +341,7 @@ void SceneStreamerSystem::run()
                     {
                         // add
 
-                        // TODO
-
-                        _asm nop
+                        m_entities_to_compute.insert(newly_added_entity);
                     }
                 }
             }

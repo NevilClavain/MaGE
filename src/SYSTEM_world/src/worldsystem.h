@@ -27,7 +27,7 @@
 
 #include <string>
 #include <queue>
-#include <set>
+#include <unordered_set>
 
 #include "system.h"
 
@@ -63,10 +63,10 @@ namespace mage
 
         std::queue<core::Entity*> m_newly_added_entities;
 
-        std::set<core::Entity*>  m_entities_to_compute_distance;
-        std::set<core::Entity*>  m_entities_to_compute_2d_pos;
+        std::unordered_set<core::Entity*>  m_entities_to_compute_distance;
+        std::unordered_set<core::Entity*>  m_entities_to_compute_2d_pos;
 
-        std::set<core::Entity*>  m_entities_to_compute;
+        std::unordered_set<core::Entity*>  m_entities_to_compute;
 
     };
 }
