@@ -57,6 +57,7 @@ using namespace mage;
 using namespace mage::core;
 using namespace mage::core::maths;
 
+
 SceneStreamerSystem::SceneStreamerSystem(Entitygraph& p_entitygraph) : System(p_entitygraph),
 m_localLogger("SceneStreamerSystem", mage::core::logger::Configuration::getInstance())
 {
@@ -294,8 +295,104 @@ void SceneStreamerSystem::init_XTree(RendergraphPartData& p_rgpd)
 
         expand(p_rgpd.octree_root.get(), m_configuration.xtree_max_depth);
     }
+}
+
+void SceneStreamerSystem::compute_entity(core::Entity* p_entity, const core::ComponentContainer& p_world_components)
+{
+    ///// compute matrix hierarchy
+
+    const auto& entity_worldposition_list{ p_world_components.getComponentsByType<transform::WorldPosition>() };
+    if (0 == entity_worldposition_list.size())
+    {
+        return;
+    }
+
+    const auto& tagsAspect{ p_entity->aspectAccess(mage::core::tagsAspect::id) };
+    const auto& entity_domains_list{ tagsAspect.getComponentsByType<mage::core::tagsAspect::GraphDomain>() };
+
+    if (0 == entity_domains_list.size())
+    {
+        return;
+    }
+
+    if (entity_domains_list.at(0)->getPurpose() != mage::core::tagsAspect::GraphDomain::SCENEGRAPH)
+    {
+        return;
+    }
+
+    if (mage::helpers::checkTag(p_entity, "#alwaysRendered"))
+    {
+        // render it directly, and no need to add it in rgpd xtree_entities list
+        if (!m_entity_renderings.at(p_entity->getId()).m_rendered)
+        {
+            m_entity_renderings.at(p_entity->getId()).m_request_rendering = true;
+        }
+    }
+    else
+    {
+        if (m_scene_entities_rg_parts.count(p_entity->getId()))
+        {
+            const std::unordered_set<std::string> scene_entity_rg_parts{ m_scene_entities_rg_parts.at(p_entity->getId()) };
+
+            for (auto& rgpd : m_rendergraphpart_data)
+            {
+                for (const std::string& rendering_queue_id : rgpd.second.viewgroup.queue_entities)
+                {
+                    if (scene_entity_rg_parts.count(rendering_queue_id))
+                    {
+                        // can add this entity in this viewgroup/rgpd xtree
+                        if (!rgpd.second.xtree_entities.count(p_entity->getId()))
+                        {
+                            XTreeEntity xtreeEnt;
+                            xtreeEnt.entity = p_entity;
+
+                            const bool frozen_tag{ mage::helpers::checkTag(p_entity, "#frozen") };
+                            const bool static_tag{ mage::helpers::checkTag(p_entity, "#static") };
+
+                            // "#static" : no moving on scene, always stay at x,y,z coords, but can potentially be transforemed at each frame (ex: rotation on y axis)
+                            if (static_tag || frozen_tag)
+                            {
+                                // place it on xtree once for all
+                                const auto& resources_aspect{ p_entity->aspectAccess(resourcesAspect::id) };
+
+                                const auto meshes_list{ resources_aspect.getComponentsByType<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>() };
+                                if (meshes_list.size() > 0)
+                                {
+                                    auto& meshe_descr{ meshes_list.at(0)->getPurpose() };
+                                    TriangleMeshe& meshe{ meshe_descr.second };
+
+                                    if (TriangleMeshe::State::RENDERERLOADED == meshe.getState())
+                                    {
+                                        const double meshe_size{ meshe.getSize() };
+
+                                        const auto& world_aspect{ p_entity->aspectAccess(worldAspect::id) };
+
+                                        const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
+                                        auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
+                                        const auto global_pos = entity_worldposition.global_pos;
 
 
+                                        if (XtreeType::QUADTREE == m_configuration.xtree_type)
+                                        {
+                                            m_place_obj_on_quadtree_leaf(rgpd.second.quadtree_root.get(), meshe_size, global_pos, p_entity, xtreeEnt);
+                                        }
+                                        else // XtreeType::OCTREE
+                                        {
+                                            m_place_obj_on_octree_leaf(rgpd.second.octree_root.get(), meshe_size, global_pos, p_entity, xtreeEnt);
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                rgpd.second.xtree_entities[p_entity->getId()] = xtreeEnt;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 void SceneStreamerSystem::run()
@@ -325,7 +422,7 @@ void SceneStreamerSystem::run()
             {
                 // process once and now
 
-                // TODO
+
             }
             else
             {
@@ -334,8 +431,11 @@ void SceneStreamerSystem::run()
                 {
                     if (mage::helpers::checkTag(newly_added_entity, "#alwaysRendered"))
                     {
-                        // TODO
-
+                        // render it directly, and no need to add it in rgpd xtree_entities list
+                        if (!m_entity_renderings.at(newly_added_entity->getId()).m_rendered)
+                        {
+                            m_entity_renderings.at(newly_added_entity->getId()).m_request_rendering = true;
+                        }
                     }
                     else
                     {
@@ -348,83 +448,6 @@ void SceneStreamerSystem::run()
         }
     }
 
-    /////////////////////////////////////////////////////////////////////////////////
-    // place 3D object in appropriate xtree leaf : utility lambda
-
-    const std::function<void(core::QuadTreeNode<SceneQuadTreeNode>*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> place_obj_on_quadtree_leaf
-    {
-        [&](core::QuadTreeNode<SceneQuadTreeNode>* p_current_node, double p_obj_size, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
-        {
-            if (p_current_node->isLeaf())
-            {
-                // leaf reached, cannt go beyond, so place it anyway
-                p_current_node->dataAccess().entities.insert(p_entity);
-                p_xtreeEntity.quadtree_node = p_current_node;
-            }
-            else
-            {
-                if (SceneStreamerSystem::is_inside_quadtreenode(p_current_node->getData(), p_global_pos))
-                {
-                    const double node_size{ p_current_node->getData().side_length };
-
-                    if (p_obj_size / node_size > m_configuration.object_xtreenode_ratio)
-                    {
-                        //place it
-                        p_current_node->dataAccess().entities.insert(p_entity);
-                        p_xtreeEntity.quadtree_node = p_current_node;
-                    }
-                    else
-                    {
-                        for (int i = 0; i < core::QuadTreeNode<SceneQuadTreeNode>::ChildCount; i++)
-                        {
-                            auto child{ p_current_node->getChild(i) };
-                            place_obj_on_quadtree_leaf(child, p_obj_size, p_global_pos, p_entity, p_xtreeEntity);
-                        }
-                    }
-                }
-            }
-        }
-    };
-
-    /////////////////////////////////////////////////////////////////////////////////
-    // place 3D object in appropriate xtree leaf : utility lambda
-
-    const std::function<void(core::OctreeNode<SceneOctreeNode>*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> place_obj_on_octree_leaf
-    {
-        [&](core::OctreeNode<SceneOctreeNode>* p_current_node, double p_obj_size, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
-        {
-            if (p_current_node->isLeaf())
-            {
-                // leaf reached, cannt go beyond, so place it anyway
-                p_current_node->dataAccess().entities.insert(p_entity);
-                p_xtreeEntity.octree_node = p_current_node;
-            }
-            else
-            {
-                if (SceneStreamerSystem::is_inside_octreenode(p_current_node->getData(), p_global_pos))
-                {
-                    const double node_size{ p_current_node->getData().side_length };
-
-                    if (p_obj_size / node_size > m_configuration.object_xtreenode_ratio)
-                    {
-                        //place it
-                        p_current_node->dataAccess().entities.insert(p_entity);
-                        p_xtreeEntity.octree_node = p_current_node;
-                    }
-                    else
-                    {
-                        for (int i = 0; i < core::OctreeNode<SceneOctreeNode>::ChildCount; i++)
-                        {
-                            auto child{ p_current_node->getChild(i) };
-                            place_obj_on_octree_leaf(child, p_obj_size, p_global_pos, p_entity, p_xtreeEntity);
-                        }
-                    }
-                }
-            }
-        }
-    };
-
-
     const auto start_time_1{ std::chrono::high_resolution_clock::now() };
 
     /////////////////////////////////////////////////////////
@@ -433,100 +456,9 @@ void SceneStreamerSystem::run()
     {
         [&](Entity* p_entity, const ComponentContainer& p_world_components)
         {
-            ///// compute matrix hierarchy
+            auto& world_aspect { p_entity->aspectAccess(mage::core::worldAspect::id) };
 
-            const auto& entity_worldposition_list { p_world_components.getComponentsByType<transform::WorldPosition>() };
-            if (0 == entity_worldposition_list.size())
-            {
-                return;
-            }
-
-            const auto& tagsAspect{ p_entity->aspectAccess(mage::core::tagsAspect::id)};
-            const auto& entity_domains_list{ tagsAspect.getComponentsByType<mage::core::tagsAspect::GraphDomain>() };
-
-            if (0 == entity_domains_list.size())
-            {
-                return;
-            }
-
-            if (entity_domains_list.at(0)->getPurpose() != mage::core::tagsAspect::GraphDomain::SCENEGRAPH)
-            {
-                return;
-            }
-
-            if(mage::helpers::checkTag(p_entity, "#alwaysRendered"))
-            {
-                // render it directly, and no need to add it in rgpd xtree_entities list
-                if (!m_entity_renderings.at(p_entity->getId()).m_rendered)
-                {
-                    m_entity_renderings.at(p_entity->getId()).m_request_rendering = true;
-                }
-            }
-            else
-            {
-                if (m_scene_entities_rg_parts.count(p_entity->getId()))
-                {
-                    const std::unordered_set<std::string> scene_entity_rg_parts{ m_scene_entities_rg_parts.at(p_entity->getId()) };
-
-                    for (auto& rgpd : m_rendergraphpart_data)
-                    {
-                        for (const std::string& rendering_queue_id : rgpd.second.viewgroup.queue_entities)
-                        {
-                            if (scene_entity_rg_parts.count(rendering_queue_id))
-                            {
-                                // can add this entity in this viewgroup/rgpd xtree
-                                if (!rgpd.second.xtree_entities.count(p_entity->getId()))
-                                {
-                                    XTreeEntity xtreeEnt;
-                                    xtreeEnt.entity = p_entity;
-
-                                    const bool frozen_tag { mage::helpers::checkTag(p_entity, "#frozen") };
-                                    const bool static_tag{ mage::helpers::checkTag(p_entity, "#static") };
-
-                                    // "#static" : no moving on scene, always stay at x,y,z coords, but can potentially be transforemed at each frame (ex: rotation on y axis)
-                                    if (static_tag || frozen_tag)
-                                    {
-                                        // place it on xtree once for all
-                                        const auto& resources_aspect{ p_entity->aspectAccess(resourcesAspect::id) };
-
-                                        const auto meshes_list{ resources_aspect.getComponentsByType<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>() };
-                                        if (meshes_list.size() > 0)
-                                        {
-                                            auto& meshe_descr{ meshes_list.at(0)->getPurpose() };
-                                            TriangleMeshe& meshe{ meshe_descr.second };
-
-                                            if (TriangleMeshe::State::RENDERERLOADED == meshe.getState())
-                                            {
-                                                const double meshe_size{ meshe.getSize() };
-
-                                                const auto& world_aspect{ p_entity->aspectAccess(worldAspect::id) };
-
-                                                const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
-                                                auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
-                                                const auto global_pos = entity_worldposition.global_pos;
-
-
-                                                if (XtreeType::QUADTREE == m_configuration.xtree_type)
-                                                {
-                                                    place_obj_on_quadtree_leaf(rgpd.second.quadtree_root.get(), meshe_size, global_pos, p_entity, xtreeEnt);
-                                                }
-                                                else // XtreeType::OCTREE
-                                                {
-                                                    place_obj_on_octree_leaf(rgpd.second.octree_root.get(), meshe_size, global_pos, p_entity, xtreeEnt);
-                                                }
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        rgpd.second.xtree_entities[p_entity->getId()] = xtreeEnt;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            compute_entity(p_entity, world_aspect);
         }
     };
     mage::helpers::extractAspectsTopDown<mage::core::worldAspect>(m_entitygraph, forEachWorldAspect);
@@ -594,7 +526,7 @@ void SceneStreamerSystem::run()
                 }
             };
 
-            update_XTree<SceneQuadTreeNode, core::QuadTreeNode<SceneQuadTreeNode>>(rgpd_data.quadtree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, place_obj_on_quadtree_leaf, has_node, is_inside);
+            update_XTree<SceneQuadTreeNode, core::QuadTreeNode<SceneQuadTreeNode>>(rgpd_data.quadtree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, m_place_obj_on_quadtree_leaf, has_node, is_inside);
         }
         else // XtreeType::OCTREE
         {           
@@ -647,7 +579,7 @@ void SceneStreamerSystem::run()
             };
 
 
-            update_XTree<SceneOctreeNode, core::OctreeNode<SceneOctreeNode>>(rgpd_data.octree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, place_obj_on_octree_leaf, has_node, is_inside);
+            update_XTree<SceneOctreeNode, core::OctreeNode<SceneOctreeNode>>(rgpd_data.octree_root.get(), rgpd_data.xtree_entities, place_cam_on_leaf, m_place_obj_on_octree_leaf, has_node, is_inside);
         }
     }
 

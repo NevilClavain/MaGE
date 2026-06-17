@@ -708,6 +708,80 @@ namespace mage
         };
 
 
+
+        const std::function<void(core::QuadTreeNode<SceneQuadTreeNode>*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> m_place_obj_on_quadtree_leaf
+        {
+            [&](core::QuadTreeNode<SceneQuadTreeNode>* p_current_node, double p_obj_size, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
+            {
+                if (p_current_node->isLeaf())
+                {
+                    // leaf reached, cannt go beyond, so place it anyway
+                    p_current_node->dataAccess().entities.insert(p_entity);
+                    p_xtreeEntity.quadtree_node = p_current_node;
+                }
+                else
+                {
+                    if (SceneStreamerSystem::is_inside_quadtreenode(p_current_node->getData(), p_global_pos))
+                    {
+                        const double node_size{ p_current_node->getData().side_length };
+
+                        if (p_obj_size / node_size > m_configuration.object_xtreenode_ratio)
+                        {
+                            //place it
+                            p_current_node->dataAccess().entities.insert(p_entity);
+                            p_xtreeEntity.quadtree_node = p_current_node;
+                        }
+                        else
+                        {
+                            for (int i = 0; i < core::QuadTreeNode<SceneQuadTreeNode>::ChildCount; i++)
+                            {
+                                auto child{ p_current_node->getChild(i) };
+                                m_place_obj_on_quadtree_leaf(child, p_obj_size, p_global_pos, p_entity, p_xtreeEntity);
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        /////////////////////////////////////////////////////////////////////////////////
+        // place 3D object in appropriate xtree leaf : utility lambda
+
+        const std::function<void(core::OctreeNode<SceneOctreeNode>*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> m_place_obj_on_octree_leaf
+        {
+            [&](core::OctreeNode<SceneOctreeNode>* p_current_node, double p_obj_size, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
+            {
+                if (p_current_node->isLeaf())
+                {
+                    // leaf reached, cannt go beyond, so place it anyway
+                    p_current_node->dataAccess().entities.insert(p_entity);
+                    p_xtreeEntity.octree_node = p_current_node;
+                }
+                else
+                {
+                    if (SceneStreamerSystem::is_inside_octreenode(p_current_node->getData(), p_global_pos))
+                    {
+                        const double node_size{ p_current_node->getData().side_length };
+
+                        if (p_obj_size / node_size > m_configuration.object_xtreenode_ratio)
+                        {
+                            //place it
+                            p_current_node->dataAccess().entities.insert(p_entity);
+                            p_xtreeEntity.octree_node = p_current_node;
+                        }
+                        else
+                        {
+                            for (int i = 0; i < core::OctreeNode<SceneOctreeNode>::ChildCount; i++)
+                            {
+                                auto child{ p_current_node->getChild(i) };
+                                m_place_obj_on_octree_leaf(child, p_obj_size, p_global_pos, p_entity, p_xtreeEntity);
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
     public:
 
         enum class XtreeType
@@ -792,6 +866,9 @@ namespace mage
         void check_XTree(std::unordered_map<std::string, SceneStreamerSystem::XTreeEntity>& p_xtree_entities, 
                             const json::ViewGroup& p_viewgroup, 
                             const std::function<XTreeType* (const SceneStreamerSystem::XTreeEntity&)>& p_get_node_func);
+
+
+        void compute_entity(core::Entity* p_entity, const core::ComponentContainer& p_world_components);
 
 
         bool                                                                                    m_enabled{ false };
