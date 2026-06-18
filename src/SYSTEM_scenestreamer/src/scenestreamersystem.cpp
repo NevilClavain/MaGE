@@ -411,6 +411,7 @@ void SceneStreamerSystem::run()
         core::Entity* newly_added_entity{ m_newly_added_entities.front() };
         m_newly_added_entities.pop();
 
+        /*
         if (newly_added_entity->hasAspect(core::worldAspect::id))
         {
             const auto& world_aspect{ newly_added_entity->aspectAccess(worldAspect::id) };
@@ -446,6 +447,7 @@ void SceneStreamerSystem::run()
                 }
             }
         }
+        */
     }
 
     const auto start_time_1{ std::chrono::high_resolution_clock::now() };
