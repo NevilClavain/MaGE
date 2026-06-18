@@ -684,10 +684,11 @@ namespace mage
 
         struct XTreeEntity
         {
-            core::Entity* entity{ nullptr };
-            core::QuadTreeNode<SceneQuadTreeNode>*              quadtree_node{ nullptr };
+            core::Entity*                                       entity{ nullptr };
+
+            //ptr vers le node correspondant dans le xtree 
+            core::QuadTreeNode<SceneQuadTreeNode>*              quadtree_node{ nullptr }; 
             core::OctreeNode<SceneOctreeNode>*                  octree_node{ nullptr };
-            //bool is_static{ false };
         };
 
 
