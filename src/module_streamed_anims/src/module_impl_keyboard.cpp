@@ -231,7 +231,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 	else if (VK_F9 == p_key)
 	{
-		helpers::logEntitygraph(m_entitygraph, false);
+		//helpers::logEntitygraph(m_entitygraph, false);
 		
 		//auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
 		//auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
@@ -240,11 +240,11 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		//renderingQueueSystemInstance->requestRenderingqueueLogging("screenRendering_Filter_DirectForward_Queue_Entity");
 		
 
-		//auto sceneStreamerSystem{ SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot) };
-		//auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(sceneStreamerSystem) };
+		auto sceneStreamerSystem{ SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot) };
+		auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(sceneStreamerSystem) };
 
 		//sceneStreamerSystemInstance->dumpXTreeEntities();
-		//sceneStreamerSystemInstance->dumpXTree();
+		sceneStreamerSystemInstance->dumpXTree();
 
 		::MessageBox(0, "Log dump done", "Mage", MB_OK | MB_ICONINFORMATION);
 	}

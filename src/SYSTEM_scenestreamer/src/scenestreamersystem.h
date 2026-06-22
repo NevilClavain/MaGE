@@ -705,7 +705,7 @@ namespace mage
             std::unique_ptr<core::OctreeNode<SceneOctreeNode>>                                      octree_root;
 
             // regrouping here all entities dispatched in m_xtree_root above
-            std::unordered_map<std::string, XTreeEntity>                                            xtree_entities;
+            std::unordered_map<std::string, XTreeEntity>                                            xtree_moving_entities_to_monitor;
         };
 
 
@@ -726,7 +726,8 @@ namespace mage
                     {
                         const double node_size{ p_current_node->getData().side_length };
 
-                        if (p_obj_size / node_size > m_configuration.object_xtreenode_ratio)
+                        const auto ratio{ p_obj_size / node_size };
+                        if (ratio > m_configuration.object_xtreenode_ratio)
                         {
                             //place it
                             p_current_node->dataAccess().entities.insert(p_entity);
@@ -764,7 +765,8 @@ namespace mage
                     {
                         const double node_size{ p_current_node->getData().side_length };
 
-                        if (p_obj_size / node_size > m_configuration.object_xtreenode_ratio)
+                        const auto ratio{ p_obj_size / node_size };
+                        if (ratio > m_configuration.object_xtreenode_ratio)
                         {
                             //place it
                             p_current_node->dataAccess().entities.insert(p_entity);
@@ -869,7 +871,7 @@ namespace mage
                             const std::function<XTreeType* (const SceneStreamerSystem::XTreeEntity&)>& p_get_node_func);
 
 
-        void compute_entity(core::Entity* p_entity, const core::ComponentContainer& p_world_components);
+        bool compute_entity(core::Entity* p_entity, const core::ComponentContainer& p_world_components);
 
 
         bool                                                                                    m_enabled{ false };
