@@ -63,7 +63,6 @@ m_localLogger("SceneStreamerSystem", mage::core::logger::Configuration::getInsta
 {
     const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
     dataCloud->registerData<std::string>("mage.timings.scenestreamersystem");
-    dataCloud->registerData<std::string>("mage.timings.scenestreamersystem.1");
     dataCloud->registerData<std::string>("mage.timings.scenestreamersystem.2");
     dataCloud->registerData<std::string>("mage.timings.scenestreamersystem.3");
     dataCloud->registerData<std::string>("mage.timings.scenestreamersystem.4");
@@ -443,16 +442,7 @@ void SceneStreamerSystem::run()
             m_newly_added_entities.pop();
         }        
     }
-
-    const auto start_time_1{ std::chrono::high_resolution_clock::now() };
-
-
-    const auto end_time_1{ std::chrono::high_resolution_clock::now() };
-    const auto duration_1{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_1 - start_time_1) };
-
-    dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem.1", std::to_string(duration_1.count()) + " ms");
-
-
+    
     const auto start_time_2{ std::chrono::high_resolution_clock::now() };
 
     /////////////////////////////////////////////////////////
