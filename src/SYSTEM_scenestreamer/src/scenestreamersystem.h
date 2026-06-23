@@ -905,9 +905,6 @@ namespace mage
 
         std::queue<core::Entity*>                                                               m_newly_added_entities;
 
-        std::unordered_set<core::Entity*>                                                       m_entities_to_compute;
-
-
         /////////////////////////////////
 
         

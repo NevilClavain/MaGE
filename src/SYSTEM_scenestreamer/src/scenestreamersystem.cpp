@@ -63,7 +63,6 @@ m_localLogger("SceneStreamerSystem", mage::core::logger::Configuration::getInsta
 {
     const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
     dataCloud->registerData<std::string>("mage.timings.scenestreamersystem");
-    dataCloud->registerData<std::string>("mage.timings.scenestreamersystem.2");
     dataCloud->registerData<std::string>("mage.timings.scenestreamersystem.3");
     dataCloud->registerData<std::string>("mage.timings.scenestreamersystem.4");
 
@@ -83,10 +82,7 @@ m_localLogger("SceneStreamerSystem", mage::core::logger::Configuration::getInsta
 
                 case core::EntitygraphEvents::ENTITYGRAPHNODE_REMOVED:
                 {
-                    if (m_entities_to_compute.count(const_cast<core::Entity*>(&p_entity)))
-                    {
-                        m_entities_to_compute.erase(const_cast<core::Entity*>(&p_entity));
-                    }
+                    // TODO !!!
                 }
                 break;
             }
@@ -443,8 +439,6 @@ void SceneStreamerSystem::run()
         }        
     }
     
-    const auto start_time_2{ std::chrono::high_resolution_clock::now() };
-
     /////////////////////////////////////////////////////////
     // XTrees updating
     // 
@@ -556,12 +550,6 @@ void SceneStreamerSystem::run()
             update_XTree<SceneOctreeNode, core::OctreeNode<SceneOctreeNode>>(rgpd_data.octree_root.get(), rgpd_data.xtree_moving_entities_to_monitor, place_cam_on_leaf, m_place_obj_on_octree_leaf, has_node, is_inside);
         }
     }
-
-    const auto end_time_2{ std::chrono::high_resolution_clock::now() };
-    const auto duration_2{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_2 - start_time_2) };
-
-    dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem.2", std::to_string(duration_2.count()) + " ms");
-
 
     const auto start_time_3{ std::chrono::high_resolution_clock::now() };
 
