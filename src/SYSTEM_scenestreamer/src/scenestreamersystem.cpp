@@ -486,11 +486,11 @@ void SceneStreamerSystem::run()
 
             /////////////////////////////////////////////////////////////////////////////////
 
-            const std::function<bool(const SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> is_inside
+            const std::function<bool(SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> is_inside
             {
-                [&](const SceneStreamerSystem::XTreeEntity& p_xe, const core::maths::Matrix& p_global_pos) -> bool
+                [&](SceneStreamerSystem::XTreeEntity& p_xe, const core::maths::Matrix& p_global_pos) -> bool
                 {
-                    return false;
+                    return is_inside_quadtreenode(p_xe.quadtree_node->getData(), p_global_pos);
                 }
             };
 
@@ -515,8 +515,7 @@ void SceneStreamerSystem::run()
                         {
                             auto child { p_current_node->getChild(i) };
 
-                            const bool is_inside{ SceneStreamerSystem::is_inside_octreenode(child->getData(), p_global_pos) };
-                            if(is_inside)
+                            if(SceneStreamerSystem::is_inside_octreenode(child->getData(), p_global_pos))
                             {
                                 place_cam_on_leaf(child, p_global_pos, p_entity, p_xtreeEntity);
                             }
@@ -538,11 +537,11 @@ void SceneStreamerSystem::run()
 
             /////////////////////////////////////////////////////////////////////////////////
 
-            const std::function<bool(const SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> is_inside
+            const std::function<bool(SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> is_inside
             {
-                [&](const SceneStreamerSystem::XTreeEntity& p_xe, const core::maths::Matrix& p_global_pos) -> bool
+                [&](SceneStreamerSystem::XTreeEntity& p_xe, const core::maths::Matrix& p_global_pos) -> bool
                 {
-                    return false;
+                    return is_inside_octreenode(p_xe.octree_node->getData(), p_global_pos);
                 }
             };
 

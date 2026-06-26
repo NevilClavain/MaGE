@@ -863,7 +863,7 @@ namespace mage
                             const std::function<void(XTreeType*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_cam_on_leaf_func,
                             const std::function<void(XTreeType*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_obj_on_leaf_func,
                             const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> p_hasnode_func,
-                            const std::function<bool(const SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> p_is_inside_func);
+                            const std::function<bool(SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> p_is_inside_func);
 
         template<typename SceneXTreeNode, typename XTreeType>
         void check_XTree(std::unordered_map<std::string, SceneStreamerSystem::XTreeEntity>& p_xtree_entities, 
@@ -934,7 +934,7 @@ namespace mage
                                                 const std::function<void(XTreeType*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_cam_on_leaf_func,
                                                 const std::function<void(XTreeType*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_obj_on_leaf_func,
                                                 const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> p_hasnode_func,
-                                                const std::function<bool(const SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> p_is_inside_func)
+                                                const std::function<bool(SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> p_is_inside_func)
     {
         for (auto& xe : p_xtree_entities)
         {
