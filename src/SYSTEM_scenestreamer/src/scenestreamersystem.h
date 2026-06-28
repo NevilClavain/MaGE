@@ -68,8 +68,6 @@ namespace mage
 
     enum class SceneStreamerSystemEvent
     {
-        RENDERING_ENABLED,
-        RENDERING_DISABLED,
     };
 
     namespace json

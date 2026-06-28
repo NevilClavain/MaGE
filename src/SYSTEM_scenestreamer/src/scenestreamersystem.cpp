@@ -603,22 +603,11 @@ void SceneStreamerSystem::run()
             register_to_queues(e.second.m_channels, m_scene_entities.at(e.first));
             e.second.m_rendered = true;
 
-            for (const auto& call : m_callbacks)
-            {
-                call(SceneStreamerSystemEvent::RENDERING_ENABLED, e.first);
-            }
-            _MAGE_DEBUG(m_localLogger, "SceneStreamerSystemEvent::RENDERING_ENABLED for " + e.first);
         }
         else if (!e.second.m_request_rendering && e.second.m_rendered)
         {
             unregister_from_queues(m_scene_entities.at(e.first));
             e.second.m_rendered = false;
-
-            for (const auto& call : m_callbacks)
-            {
-                call(SceneStreamerSystemEvent::RENDERING_DISABLED, e.first);
-            }
-            _MAGE_DEBUG(m_localLogger, "SceneStreamerSystemEvent::RENDERING_DISABLED for " + e.first);
         }
     }
 
