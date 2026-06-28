@@ -593,6 +593,7 @@ void SceneStreamerSystem::run()
 
     const auto start_time_4{ std::chrono::high_resolution_clock::now() };
 
+    
     /////////////////////////////////////////////////////////
     // loop on entity rendering entries
     /////////////////////////////////////////////////////////
@@ -610,11 +611,12 @@ void SceneStreamerSystem::run()
             e.second.m_rendered = false;
         }
     }
+    
 
     const auto end_time_4{ std::chrono::high_resolution_clock::now() };
     const auto duration_4{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_4 - start_time_4) };
 
-    dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem.4", std::to_string(duration_3.count()) + " ms");
+    dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem.4", std::to_string(duration_4.count()) + " ms");
 
 
     const auto end_time{ std::chrono::high_resolution_clock::now() };
