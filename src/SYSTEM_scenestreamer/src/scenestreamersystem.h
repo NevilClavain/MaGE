@@ -840,6 +840,9 @@ namespace mage
 
         void enableSystem(bool p_enabled);
 
+        void enableXTreeCheck(bool p_enabled);
+        void enableEntitiesUpdate(bool p_enabled);
+
         bool isEnabled() const;
 
     private:
@@ -873,6 +876,9 @@ namespace mage
 
 
         bool                                                                                    m_enabled{ false };
+
+        bool                                                                                    m_xtree_check_enabled{ true };
+        bool                                                                                    m_update_entities_enabled{ true };
 
         mutable mage::core::logger::Sink                                                        m_localLogger;
 

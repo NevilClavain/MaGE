@@ -219,13 +219,17 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		auto sceneStreamerSystem{ SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot) };
 		auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(sceneStreamerSystem) };
 
-		if (sceneStreamerSystemInstance->isEnabled())
+		static bool enabled = true;
+
+		if (enabled)
 		{
-			sceneStreamerSystemInstance->enableSystem(false);
+			sceneStreamerSystemInstance->enableEntitiesUpdate(false);
+			enabled = false;
 		}
 		else
 		{
-			sceneStreamerSystemInstance->enableSystem(true);
+			sceneStreamerSystemInstance->enableEntitiesUpdate(true);
+			enabled = true;
 		}
 	}
 

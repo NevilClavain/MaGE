@@ -552,36 +552,39 @@ void SceneStreamerSystem::run()
 
     const auto start_time_3{ std::chrono::high_resolution_clock::now() };
 
-    /////////////////////////////////////////////////////////
-    // XTree check
-    //
-    for (auto& rgpd : m_rendergraphpart_data)
+    if (m_xtree_check_enabled)
     {
-        auto& rgpd_data = rgpd.second;
-
-        if (XtreeType::QUADTREE == m_configuration.xtree_type)
+        /////////////////////////////////////////////////////////
+        // XTree check
+        //
+        for (auto& rgpd : m_rendergraphpart_data)
         {
-            const std::function<core::QuadTreeNode<SceneQuadTreeNode>* (const XTreeEntity&)> get_quadtree_node_func
-            {
-                [](const XTreeEntity& p_xe) -> core::QuadTreeNode<SceneQuadTreeNode>*
-                {
-                    return p_xe.quadtree_node;
-                }
-            };
+            auto& rgpd_data = rgpd.second;
 
-            check_XTree<SceneQuadTreeNode, core::QuadTreeNode<SceneQuadTreeNode>>(rgpd_data.xtree_moving_entities_to_monitor, rgpd_data.viewgroup, get_quadtree_node_func);
-        }
-        else // XtreeType::OCTREE
-        {
-            const std::function<core::OctreeNode<SceneOctreeNode>* (const XTreeEntity&)> get_octree_node_func
+            if (XtreeType::QUADTREE == m_configuration.xtree_type)
             {
-                [](const XTreeEntity& p_xe) -> core::OctreeNode<SceneOctreeNode>*
+                const std::function<core::QuadTreeNode<SceneQuadTreeNode>* (const XTreeEntity&)> get_quadtree_node_func
                 {
-                    return p_xe.octree_node;
-                }
-            };
+                    [](const XTreeEntity& p_xe) -> core::QuadTreeNode<SceneQuadTreeNode>*
+                    {
+                        return p_xe.quadtree_node;
+                    }
+                };
 
-            check_XTree<SceneOctreeNode, core::OctreeNode<SceneOctreeNode>>(rgpd_data.xtree_moving_entities_to_monitor, rgpd_data.viewgroup, get_octree_node_func);
+                check_XTree<SceneQuadTreeNode, core::QuadTreeNode<SceneQuadTreeNode>>(rgpd_data.xtree_moving_entities_to_monitor, rgpd_data.viewgroup, get_quadtree_node_func);
+            }
+            else // XtreeType::OCTREE
+            {
+                const std::function<core::OctreeNode<SceneOctreeNode>* (const XTreeEntity&)> get_octree_node_func
+                {
+                    [](const XTreeEntity& p_xe) -> core::OctreeNode<SceneOctreeNode>*
+                    {
+                        return p_xe.octree_node;
+                    }
+                };
+
+                check_XTree<SceneOctreeNode, core::OctreeNode<SceneOctreeNode>>(rgpd_data.xtree_moving_entities_to_monitor, rgpd_data.viewgroup, get_octree_node_func);
+            }
         }
     }
 
@@ -593,22 +596,24 @@ void SceneStreamerSystem::run()
 
     const auto start_time_4{ std::chrono::high_resolution_clock::now() };
 
-    
-    /////////////////////////////////////////////////////////
-    // loop on entity rendering entries
-    /////////////////////////////////////////////////////////
-    for (auto& e : m_entity_renderings)
+    if (m_update_entities_enabled)
     {
-        if (e.second.m_request_rendering && !e.second.m_rendered)
-        {            
-            register_to_queues(e.second.m_channels, m_scene_entities.at(e.first));
-            e.second.m_rendered = true;
-
-        }
-        else if (!e.second.m_request_rendering && e.second.m_rendered)
+        /////////////////////////////////////////////////////////
+        // loop on entity rendering entries
+        /////////////////////////////////////////////////////////
+        for (auto& e : m_entity_renderings)
         {
-            unregister_from_queues(m_scene_entities.at(e.first));
-            e.second.m_rendered = false;
+            if (e.second.m_request_rendering && !e.second.m_rendered)
+            {
+                register_to_queues(e.second.m_channels, m_scene_entities.at(e.first));
+                e.second.m_rendered = true;
+
+            }
+            else if (!e.second.m_request_rendering && e.second.m_rendered)
+            {
+                unregister_from_queues(m_scene_entities.at(e.first));
+                e.second.m_rendered = false;
+            }
         }
     }
     
@@ -1776,4 +1781,14 @@ std::string SceneStreamerSystem::filter_arguments_stack(const std::string p_inpu
     {
         return p_file_args.at(p_input);
     }
+}
+
+void SceneStreamerSystem::enableXTreeCheck(bool p_enabled)
+{
+    m_xtree_check_enabled = p_enabled;
+}
+
+void SceneStreamerSystem::enableEntitiesUpdate(bool p_enabled)
+{
+    m_update_entities_enabled = p_enabled;
 }
