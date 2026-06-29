@@ -227,100 +227,98 @@ static rendering::Queue* searchRenderingQueueInAncestors(core::Entity* p_entity)
 
 void RenderingQueueSystem::manageRenderingQueue()
 {	
+	auto entities_with_rendering{ m_entitygraph.getEntitiesListForAspect(core::renderingAspect::id) };
+	for (Entity* entity : entities_with_rendering)
 	{
-		auto entities_with_rendering{ m_entitygraph.getEntitiesListForAspect(core::renderingAspect::id) };
-		for (Entity* entity : entities_with_rendering)
-		{
-			const auto currEntityId{ entity->getId() };
+		const auto currEntityId{ entity->getId() };
 		
-			const auto& rendering_aspect{ entity->aspectAccess(mage::core::renderingAspect::id) };
+		const auto& rendering_aspect{ entity->aspectAccess(mage::core::renderingAspect::id) };
 
-			const auto rendering_queues_list{ rendering_aspect.getComponentsByType<rendering::Queue>() };
-			if (rendering_queues_list.size() > 0)
-			{				
-				auto& renderingQueue{ rendering_queues_list.at(0)->getPurpose() };
+		const auto rendering_queues_list{ rendering_aspect.getComponentsByType<rendering::Queue>() };
+		if (rendering_queues_list.size() > 0)
+		{				
+			auto& renderingQueue{ rendering_queues_list.at(0)->getPurpose() };
 
-				////////Manage Queues states//////////////////////////////////////
+			////////Manage Queues states//////////////////////////////////////
 
-				handleRenderingQueuesState(entity, renderingQueue);
+			handleRenderingQueuesState(entity, renderingQueue);
 
-				////////Manage Queues main and secondary views//////////////////////////////////////
+			////////Manage Queues main and secondary views//////////////////////////////////////
 
-				for (const auto& vp : m_cameraViewGroups)
+			for (const auto& vp : m_cameraViewGroups)
+			{
+				for (const std::string& queue_id : vp.second.queues_id_list)
 				{
-					for (const std::string& queue_id : vp.second.queues_id_list)
+					if (queue_id == currEntityId)
 					{
-						if (queue_id == currEntityId)
+						if (vp.second.main_view != renderingQueue.getMainView())
 						{
-							if (vp.second.main_view != renderingQueue.getMainView())
+							renderingQueue.setMainView(vp.second.main_view);
+							for (const auto& call : m_callbacks)
 							{
-								renderingQueue.setMainView(vp.second.main_view);
-								for (const auto& call : m_callbacks)
-								{
-									call(RenderingQueueSystemEvent::MAINVIEW_QUEUE_UPDATED, queue_id + ", " + vp.second.main_view, renderingQueue);
-								}
+								call(RenderingQueueSystemEvent::MAINVIEW_QUEUE_UPDATED, queue_id + ", " + vp.second.main_view, renderingQueue);
 							}
-							if (vp.second.secondary_view != renderingQueue.getSecondaryView())
+						}
+						if (vp.second.secondary_view != renderingQueue.getSecondaryView())
+						{
+							renderingQueue.setSecondaryView(vp.second.secondary_view);
+							for (const auto& call : m_callbacks)
 							{
-								renderingQueue.setSecondaryView(vp.second.secondary_view);
-								for (const auto& call : m_callbacks)
-								{
-									call(RenderingQueueSystemEvent::SECONDARYVIEW_QUEUE_UPDATED, queue_id + ", " + vp.second.secondary_view, renderingQueue);
-								}
+								call(RenderingQueueSystemEvent::SECONDARYVIEW_QUEUE_UPDATED, queue_id + ", " + vp.second.secondary_view, renderingQueue);
 							}
 						}
 					}
 				}
-
-				////////Manage Queues log//////////////////////////////////////
-
-				if (m_queuesToLog.count(currEntityId))
-				{
-					logRenderingqueue(currEntityId, renderingQueue);
-					m_queuesToLog.erase(currEntityId);
-				}
-
 			}
 
-			////////Manage Queues build/updates//////////////////////////////////////
-			
-			rendering::Queue* current_queue{ searchRenderingQueueInAncestors(entity) };
+			////////Manage Queues log//////////////////////////////////////
 
-			if (current_queue)
+			if (m_queuesToLog.count(currEntityId))
 			{
-				if (entity->hasAspect(mage::core::resourcesAspect::id))
+				logRenderingqueue(currEntityId, renderingQueue);
+				m_queuesToLog.erase(currEntityId);
+			}
+
+		}
+
+		////////Manage Queues build/updates//////////////////////////////////////
+			
+		rendering::Queue* current_queue{ searchRenderingQueueInAncestors(entity) };
+
+		if (current_queue)
+		{
+			if (entity->hasAspect(mage::core::resourcesAspect::id))
+			{
+				const auto& resource_aspect{ entity->aspectAccess(mage::core::resourcesAspect::id) };
+				checkEntityInsertion(currEntityId, resource_aspect, rendering_aspect, *current_queue);
+			}
+
+			// search for text rendering in rendering aspect
+
+			const auto texts{ rendering_aspect.getComponentsByType<rendering::Queue::Text>() };
+			if (texts.size() > 0)
+			{
+				auto& text{ texts.at(0)->getPurpose() };
+
+				bool projected_z_neg{ false };
+
+				if (entity->hasAspect(mage::core::worldAspect::id))
 				{
-					const auto& resource_aspect{ entity->aspectAccess(mage::core::resourcesAspect::id) };
-					checkEntityInsertion(currEntityId, resource_aspect, rendering_aspect, *current_queue);
+					const auto& world_aspect{ entity->aspectAccess(mage::core::worldAspect::id) };
+					const auto wp{ world_aspect.getComponentsByType<mage::transform::WorldPosition>().at(0)->getPurpose() };
+
+					projected_z_neg = wp.projected_z_neg;
+
+					const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+					const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("mage.infos.viewport") };
+					const auto window_dims{ dataCloud->readDataValue<mage::core::maths::IntCoords2D>("mage.infos.window_resol") };
+
+					text.position[0] = ((wp.global_pos(3, 0) + (viewport[0] * 0.5f)) * window_dims[0]) / viewport[0];
+					text.position[1] = (((viewport[1] * 0.5f) - wp.global_pos(3, 1)) * window_dims[1]) / viewport[1];
 				}
-
-				// search for text rendering in rendering aspect
-
-				const auto texts{ rendering_aspect.getComponentsByType<rendering::Queue::Text>() };
-				if (texts.size() > 0)
+				if (!projected_z_neg)
 				{
-					auto& text{ texts.at(0)->getPurpose() };
-
-					bool projected_z_neg{ false };
-
-					if (entity->hasAspect(mage::core::worldAspect::id))
-					{
-						const auto& world_aspect{ entity->aspectAccess(mage::core::worldAspect::id) };
-						const auto wp{ world_aspect.getComponentsByType<mage::transform::WorldPosition>().at(0)->getPurpose() };
-
-						projected_z_neg = wp.projected_z_neg;
-
-						const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-						const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("mage.infos.viewport") };
-						const auto window_dims{ dataCloud->readDataValue<mage::core::maths::IntCoords2D>("mage.infos.window_resol") };
-
-						text.position[0] = ((wp.global_pos(3, 0) + (viewport[0] * 0.5f)) * window_dims[0]) / viewport[0];
-						text.position[1] = (((viewport[1] * 0.5f) - wp.global_pos(3, 1)) * window_dims[1]) / viewport[1];
-					}
-					if (!projected_z_neg)
-					{
-						current_queue->pushText(text);
-					}
+					current_queue->pushText(text);
 				}
 			}
 		}
