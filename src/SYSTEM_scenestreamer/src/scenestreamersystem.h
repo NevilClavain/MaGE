@@ -1025,8 +1025,6 @@ namespace mage
                                             const json::ViewGroup& p_viewgroup, 
                                             const std::function<XTreeType* (const SceneStreamerSystem::XTreeEntity&)>& p_get_node_func)
     {
-        bool needTriggerResourcesSystem{ false };
-
         // for current view group, find current camera id 
 
         auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(m_renderingQueueSystemSlot)) };
@@ -1055,20 +1053,6 @@ namespace mage
                     {
                         // store only those than can be rendered
                         p_found_entities.insert(e);
-
-                        // new entities discovered, to render
-                        if (!m_found_entities_to_render.count(e))
-                        {
-                            // just discovered -> ask for rendering
-                            if (!m_entity_renderings.at(e->getId()).m_rendered)
-                            {
-                                m_entity_renderings.at(e->getId()).m_request_rendering = true;
-
-                                // at least one entity added to rendergraph, we gonna need to reactivate the resource system
-                                needTriggerResourcesSystem = true;
-                            }
-                        }
-
                     }
                 }
 
@@ -1086,20 +1070,6 @@ namespace mage
                             {
                                 // store only those than can be rendered
                                 p_found_entities.insert(e);
-
-                                // new entities discovered, to render
-                                if (!m_found_entities_to_render.count(e))
-                                {
-                                    // just discovered -> ask for rendering
-                                    if (!m_entity_renderings.at(e->getId()).m_rendered)
-                                    {
-                                        m_entity_renderings.at(e->getId()).m_request_rendering = true;
-
-                                        // at least one entity added to rendergraph, we gonna need to reactivate the resource system
-                                        needTriggerResourcesSystem = true;
-                                    }
-                                }
-
                             }
                         }
                         search_near_entities(p_found_entities, n, p_neighbourood_depth + 1);
@@ -1121,6 +1091,24 @@ namespace mage
                 if (nullptr == curr)
                 {
                     break;
+                }
+            }
+
+            bool needTriggerResourcesSystem{ false };
+
+            // new entities discovered, to render
+            for (mage::core::Entity* entity : found_entities)
+            {
+                if (!m_found_entities_to_render.count(entity))
+                {
+                    // just discovered -> ask for rendering
+                    if (!m_entity_renderings.at(entity->getId()).m_rendered)
+                    {
+                        m_entity_renderings.at(entity->getId()).m_request_rendering = true;
+
+                        // at least one entity added to rendergraph, we gonna need to reactivate the resource system
+                        needTriggerResourcesSystem = true;
+                    }
                 }
             }
 
