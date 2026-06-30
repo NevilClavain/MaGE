@@ -593,14 +593,15 @@ void SceneStreamerSystem::run()
 
     dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem.3", std::to_string(duration_3.count()) + " ms");
 
-
-    const auto start_time_4{ std::chrono::high_resolution_clock::now() };
-
+    
     if (m_update_entities_enabled)
     {
         /////////////////////////////////////////////////////////
         // loop on entity rendering entries
         /////////////////////////////////////////////////////////
+
+        const auto start_time_4{ std::chrono::high_resolution_clock::now() };
+
         for (auto& e : m_entity_renderings)
         {
             if (e.second.m_request_rendering && !e.second.m_rendered)
@@ -615,15 +616,16 @@ void SceneStreamerSystem::run()
                 e.second.m_rendered = false;
             }
         }
+
+        const auto end_time_4{ std::chrono::high_resolution_clock::now() };
+        const auto duration_4{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_4 - start_time_4) };
+
+        if (duration_4.count() > 0)
+        {
+            dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem.4", std::to_string(duration_4.count()) + " ms");
+        }                    
     }
     
-
-    const auto end_time_4{ std::chrono::high_resolution_clock::now() };
-    const auto duration_4{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_4 - start_time_4) };
-
-    dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem.4", std::to_string(duration_4.count()) + " ms");
-
-
     const auto end_time{ std::chrono::high_resolution_clock::now() };
     const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
     
