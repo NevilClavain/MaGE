@@ -592,39 +592,44 @@ void SceneStreamerSystem::run()
     const auto duration_3{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_3 - start_time_3) };
 
     dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem.3", std::to_string(duration_3.count()) + " ms");
-
     
-    if (m_update_entities_enabled)
+    /////////////////////////////////////////////////////////
+    // loop on entity rendering entries
+    /////////////////////////////////////////////////////////
+
+    const auto start_time_4{ std::chrono::high_resolution_clock::now() };
+
+    //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+    //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+    //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+
+    for (auto& e : m_entity_renderings)
     {
-        /////////////////////////////////////////////////////////
-        // loop on entity rendering entries
-        /////////////////////////////////////////////////////////
-
-        const auto start_time_4{ std::chrono::high_resolution_clock::now() };
-
-        for (auto& e : m_entity_renderings)
+        if (e.second.m_request_rendering && !e.second.m_rendered)
         {
-            if (e.second.m_request_rendering && !e.second.m_rendered)
-            {
-                register_to_queues(e.second.m_channels, m_scene_entities.at(e.first));
-                e.second.m_rendered = true;
+            register_to_queues(e.second.m_channels, m_scene_entities.at(e.first));
+            e.second.m_rendered = true;
 
-            }
-            else if (!e.second.m_request_rendering && e.second.m_rendered)
-            {
-                unregister_from_queues(m_scene_entities.at(e.first));
-                e.second.m_rendered = false;
-            }
         }
-
-        const auto end_time_4{ std::chrono::high_resolution_clock::now() };
-        const auto duration_4{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_4 - start_time_4) };
-
-        if (duration_4.count() > 0)
+        else if (!e.second.m_request_rendering && e.second.m_rendered)
         {
-            dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem.4", std::to_string(duration_4.count()) + " ms");
-        }                    
+            unregister_from_queues(m_scene_entities.at(e.first));
+            e.second.m_rendered = false;
+        }
     }
+
+    //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+    //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+    //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+
+    const auto end_time_4{ std::chrono::high_resolution_clock::now() };
+    const auto duration_4{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_4 - start_time_4) };
+
+    if (duration_4.count() > 0)
+    {
+        dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem.4", std::to_string(duration_4.count()) + " ms");
+    }                    
+
     
     const auto end_time{ std::chrono::high_resolution_clock::now() };
     const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
@@ -1582,7 +1587,6 @@ void SceneStreamerSystem::register_to_queues(const json::Channels& p_channels, m
 
     for (const auto& pass_pshader_param : p_channels.pixel_shaders_params)
     {
-
         for (const auto& e : default_channel_configs_list)
         {
             if (e.second.rendering_channel_type == pass_pshader_param.rendering_channel_type)
@@ -1785,12 +1789,3 @@ std::string SceneStreamerSystem::filter_arguments_stack(const std::string p_inpu
     }
 }
 
-void SceneStreamerSystem::enableXTreeCheck(bool p_enabled)
-{
-    m_xtree_check_enabled = p_enabled;
-}
-
-void SceneStreamerSystem::enableEntitiesUpdate(bool p_enabled)
-{
-    m_update_entities_enabled = p_enabled;
-}
