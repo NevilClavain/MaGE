@@ -85,7 +85,7 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	auto sysEngine{ SystemEngine::getInstance() };
 
 	sysEngine->makeSystem<mage::TimeSystem>(0, m_entitygraph);
-	sysEngine->makeSystem<mage::D3D11System>(1, m_entitygraph);
+	sysEngine->makeSystem<mage::D3D11System>(1, m_entitygraph, 4);
 	sysEngine->makeSystem<mage::ResourceSystem>(2, m_entitygraph);
 	sysEngine->makeSystem<mage::WorldSystem>(3, m_entitygraph);
 	sysEngine->makeSystem<mage::RenderingQueueSystem>(4, m_entitygraph);
@@ -525,9 +525,9 @@ void ModuleImpl::d3d11_system_events()
 
 					m_bufferRenderingQueue = &renderingAspect.getComponent<rendering::Queue>("renderingQueue")->getPurpose();
 
-					//m_bufferRenderingQueue->setMainView("Camera01Entity");
+					m_bufferRenderingQueue->setMainView("Camera01Entity");
 					//m_bufferRenderingQueue->setMainView("Camera02Entity");
-					m_bufferRenderingQueue->setMainView("Camera03Entity");
+					//m_bufferRenderingQueue->setMainView("Camera03Entity");
 
 
 					////////////////////////////////////////////////////////////////////////////////////
@@ -554,6 +554,9 @@ void ModuleImpl::d3d11_system_events()
 					helpers::getXPos(m_entitygraph, "plop_text") = 0.2;
 					helpers::getYPos(m_entitygraph, "plop_text") = 0.15;
 
+
+					auto resourceSystemInstance{ dynamic_cast<mage::ResourceSystem*>(SystemEngine::getInstance()->getSystem(resourceSystemSlot)) };
+					resourceSystemInstance->request();
 
 				}
 				break;

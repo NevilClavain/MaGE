@@ -318,244 +318,241 @@ void AnimationsSystem::run()
 {
 	const auto start_time{ std::chrono::high_resolution_clock::now() };
 
-	const auto forEachAnimationAspect
+	auto entities_with_anim{ m_entitygraph.getEntitiesListForAspect(core::animationsAspect::id) };
+	for (Entity* entity : entities_with_anim)
 	{
-		[&](Entity* p_entity, const ComponentContainer& p_animation_components)
+		const ComponentContainer& animation_components{ entity->aspectAccess(core::animationsAspect::id) };
+
+		if (entity->hasAspect(mage::core::resourcesAspect::id))
 		{
-			// search for resources
-			if (p_entity->hasAspect(mage::core::resourcesAspect::id))
+			const ComponentContainer& resource_components{ entity->aspectAccess(mage::core::resourcesAspect::id) };
+
+			// search triangle meshe
+			const auto meshes_list{ resource_components.getComponentsByType<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>() };
+
+			// search the shaders refs
+			const auto vshaders_refs_list{ animation_components.getComponentsByType<std::vector<std::pair<std::string, Shader>*>>() };
+
+			if (meshes_list.size() > 0 && vshaders_refs_list.size() > 0)
 			{
-				const ComponentContainer& resource_components{ p_entity->aspectAccess(mage::core::resourcesAspect::id)};
+				std::vector<std::pair<std::string, Shader>*>& vshaders_refs{ vshaders_refs_list.at(0)->getPurpose() };
 
-				// search triangle meshe
-				const auto meshes_list{ resource_components.getComponentsByType<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>() };
-								
-				// search the shaders refs
-				const auto vshaders_refs_list{ p_animation_components.getComponentsByType<std::vector<std::pair<std::string, Shader>*>>() };
+				auto& meshe_comp{ meshes_list.at(0)->getPurpose() };
+				TriangleMeshe& meshe{ meshe_comp.second };
 
-				if (meshes_list.size() > 0 && /* shaders_list.size() > 0 */ vshaders_refs_list.size() > 0)
+				bool all_targetvertexshaders_ready{ true };
+
+				for (const auto& e : vshaders_refs)
 				{
-					std::vector<std::pair<std::string, Shader>*>& vshaders_refs{ vshaders_refs_list.at(0)->getPurpose() };
+					const auto vertex_shader{ e->second };
 
-					auto& meshe_comp{ meshes_list.at(0)->getPurpose() };
-					TriangleMeshe& meshe{ meshe_comp.second };
-
-					bool all_targetvertexshaders_ready{ true };
-
-					for (const auto& e : vshaders_refs)
+					if (Shader::State::RENDERERLOADED != vertex_shader.getState())
 					{
-						const auto vertex_shader{ e->second };
-
-						if (Shader::State::RENDERERLOADED != vertex_shader.getState())
-						{
-							all_targetvertexshaders_ready = false;
-							break;
-						}
+						all_targetvertexshaders_ready = false;
+						break;
 					}
+				}
 
-					if (/*Shader::State::RENDERERLOADED == vertex_shader.getState()*/ all_targetvertexshaders_ready && TriangleMeshe::State::RENDERERLOADED == meshe.getState())
+				if (all_targetvertexshaders_ready && TriangleMeshe::State::RENDERERLOADED == meshe.getState())
+				{
+					const auto animationbones_array_arg_index_comp{ animation_components.getComponent<int>("eg.std.animationbonesArrayArgIndex") };
+					if (animationbones_array_arg_index_comp)
 					{
-						const auto animationbones_array_arg_index_comp{ p_animation_components.getComponent<int>("eg.std.animationbonesArrayArgIndex") };
-						if (animationbones_array_arg_index_comp)
+						const int animationbones_array_arg_index{ animationbones_array_arg_index_comp->getPurpose() };
+
+						///////////////////////////////////////////////
+
+						auto& animationIdList{ animation_components.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose() };
+						auto& animationsList{ animation_components.getComponent<std::list<std::pair<std::string,AnimationKeys>>>("eg.std.animationsList")->getPurpose() };
+
+						auto& animationsTimeMark{ animation_components.getComponent<core::TimeMark>("eg.std.animationsTimeMark")->getPurpose() };
+
+						auto& currentAnimationTicksDuration{ animation_components.getComponent<double>("eg.std.currentAnimationTicksDuration")->getPurpose() };
+						auto& currentAnimationSecondsDuration{ animation_components.getComponent<double>("eg.std.currentAnimationSecondsDuration")->getPurpose() };
+
+						auto& currentAnimationTicksProgress{ animation_components.getComponent<double>("eg.std.currentAnimationTicksProgress")->getPurpose() };
+						auto& currentAnimationSecondsProgress{ animation_components.getComponent<double>("eg.std.currentAnimationSecondsProgress")->getPurpose() };
+
+
+						if (0 == animationsList.size())
 						{
-							const int animationbones_array_arg_index{ animationbones_array_arg_index_comp->getPurpose() };
-
-							///////////////////////////////////////////////
-							
-							auto& animationIdList{ p_animation_components.getComponent<std::list<std::string>>("eg.std.animationsIdList")->getPurpose() };
-							auto& animationsList{ p_animation_components.getComponent<std::list<std::pair<std::string,AnimationKeys>>>("eg.std.animationsList")->getPurpose() };
-
-							auto& animationsTimeMark{ p_animation_components.getComponent<core::TimeMark>("eg.std.animationsTimeMark")->getPurpose() };
-						
-							auto& currentAnimationTicksDuration{ p_animation_components.getComponent<double>("eg.std.currentAnimationTicksDuration")->getPurpose() };
-							auto& currentAnimationSecondsDuration{ p_animation_components.getComponent<double>("eg.std.currentAnimationSecondsDuration")->getPurpose() };
-
-							auto& currentAnimationTicksProgress{ p_animation_components.getComponent<double>("eg.std.currentAnimationTicksProgress")->getPurpose() };
-							auto& currentAnimationSecondsProgress{ p_animation_components.getComponent<double>("eg.std.currentAnimationSecondsProgress")->getPurpose() };
-
-							
-							if (0 == animationsList.size())
+							if (animationIdList.size() > 0)
 							{
-								if (animationIdList.size() > 0)
-								{			
-									const auto& animationId{ animationIdList.front() };
+								const auto& animationId{ animationIdList.front() };
 
-									///////////////////////////////////////////////////////////////////
-									// manage transition animation
+								///////////////////////////////////////////////////////////////////
+								// manage transition animation
 
-									const std::string prev_anim_id{ meshe.getPreviousAnimation() };
-									if (prev_anim_id != "")
+								const std::string prev_anim_id{ meshe.getPreviousAnimation() };
+								if (prev_anim_id != "")
+								{
+									const auto& animationKeysList{ meshe.getAnimationsKeys() };
+
+									if (animationKeysList.count(prev_anim_id))
 									{
-										const auto& animationKeysList{ meshe.getAnimationsKeys() };
-
-										if (animationKeysList.count(prev_anim_id))
+										if (animationKeysList.count(animationId))
 										{
-											if (animationKeysList.count(animationId))
+											const AnimationKeys& prev_anim{ animationKeysList.at(prev_anim_id) };
+											const AnimationKeys& next_anim{ animationKeysList.at(animationId) };
+
+											// compute and push transition animation here
+
+											AnimationKeys transition_animation;
+											transition_animation.is_transition = true;
+
+											transition_animation.ticks_per_seconds = 30;
+											transition_animation.duration_ticks = 5;
+
+											transition_animation.name = "transition";
+
+											for (auto& e : prev_anim.channels)
 											{
-												const AnimationKeys& prev_anim{ animationKeysList.at(prev_anim_id) };
-												const AnimationKeys& next_anim{ animationKeysList.at(animationId) };
-
-												// compute and push transition animation here
-
-												AnimationKeys transition_animation;
-												transition_animation.is_transition = true;
-
-												transition_animation.ticks_per_seconds = 30;
-												transition_animation.duration_ticks = 5;
-
-												transition_animation.name = "transition";
-
-												for (auto& e : prev_anim.channels)
+												if (next_anim.channels.count(e.second.node_name))
 												{
-													if (next_anim.channels.count(e.second.node_name))
-													{
-														const NodeAnimation next_anim_node{ next_anim.channels.at(e.second.node_name) };
-														const NodeAnimation prev_anim_node{ e.second };
+													const NodeAnimation next_anim_node{ next_anim.channels.at(e.second.node_name) };
+													const NodeAnimation prev_anim_node{ e.second };
 
-														NodeAnimation transition_node_anim;
-														transition_node_anim.node_name = e.second.node_name;
+													NodeAnimation transition_node_anim;
+													transition_node_anim.node_name = e.second.node_name;
 
-														transition_node_anim.position_keys.push_back(prev_anim_node.position_keys[prev_anim_node.position_keys.size() - 1]);
-														transition_node_anim.position_keys.push_back(next_anim_node.position_keys[0]);
+													transition_node_anim.position_keys.push_back(prev_anim_node.position_keys[prev_anim_node.position_keys.size() - 1]);
+													transition_node_anim.position_keys.push_back(next_anim_node.position_keys[0]);
 
-														transition_node_anim.position_keys[0].time_tick = 0;
-														transition_node_anim.position_keys[1].time_tick = transition_animation.duration_ticks;
+													transition_node_anim.position_keys[0].time_tick = 0;
+													transition_node_anim.position_keys[1].time_tick = transition_animation.duration_ticks;
 
 
-														transition_node_anim.rotations_keys.push_back(prev_anim_node.rotations_keys[prev_anim_node.rotations_keys.size() - 1]);
-														transition_node_anim.rotations_keys.push_back(next_anim_node.rotations_keys[0]);
+													transition_node_anim.rotations_keys.push_back(prev_anim_node.rotations_keys[prev_anim_node.rotations_keys.size() - 1]);
+													transition_node_anim.rotations_keys.push_back(next_anim_node.rotations_keys[0]);
 
-														transition_node_anim.rotations_keys[0].time_tick = 0;
-														transition_node_anim.rotations_keys[1].time_tick = transition_animation.duration_ticks;
+													transition_node_anim.rotations_keys[0].time_tick = 0;
+													transition_node_anim.rotations_keys[1].time_tick = transition_animation.duration_ticks;
 
 
-														transition_node_anim.scaling_keys.push_back(prev_anim_node.scaling_keys[prev_anim_node.scaling_keys.size() - 1]);
-														transition_node_anim.scaling_keys.push_back(next_anim_node.scaling_keys[0]);
+													transition_node_anim.scaling_keys.push_back(prev_anim_node.scaling_keys[prev_anim_node.scaling_keys.size() - 1]);
+													transition_node_anim.scaling_keys.push_back(next_anim_node.scaling_keys[0]);
 
-														transition_node_anim.scaling_keys[0].time_tick = 0;
-														transition_node_anim.scaling_keys[1].time_tick = transition_animation.duration_ticks;
+													transition_node_anim.scaling_keys[0].time_tick = 0;
+													transition_node_anim.scaling_keys[1].time_tick = transition_animation.duration_ticks;
 
-														transition_animation.channels[e.second.node_name] = transition_node_anim;
-													}
+													transition_animation.channels[e.second.node_name] = transition_node_anim;
 												}
+											}
 
-												animationsList.push_back(std::make_pair(transition_animation.name, transition_animation));
-											}
-											else
-											{
-												_EXCEPTION("unknown animation : " + animationId);
-											}
+											animationsList.push_back(std::make_pair(transition_animation.name, transition_animation));
 										}
 										else
 										{
-											_EXCEPTION("unknown prev animation : " + prev_anim_id);
+											_EXCEPTION("unknown animation : " + animationId);
 										}
-									}									
-									//////////////////////////////////////////////////////////////////
-									// take next input anim id, setup and push it
-
-									
-									const auto& animationKeysList{ meshe.getAnimationsKeys() };
-
-									if (animationKeysList.count(animationId))
-									{
-										const AnimationKeys& next_animation{ animationKeysList.at(animationId) };
-										animationsList.push_back(std::make_pair(animationId, next_animation));
 									}
 									else
 									{
-										_EXCEPTION("unknown animation : " + animationId);
+										_EXCEPTION("unknown prev animation : " + prev_anim_id);
 									}
+								}
+								//////////////////////////////////////////////////////////////////
+								// take next input anim id, setup and push it
+
+
+								const auto& animationKeysList{ meshe.getAnimationsKeys() };
+
+								if (animationKeysList.count(animationId))
+								{
+									const AnimationKeys& next_animation{ animationKeysList.at(animationId) };
+									animationsList.push_back(std::make_pair(animationId, next_animation));
+								}
+								else
+								{
+									_EXCEPTION("unknown animation : " + animationId);
 								}
 							}
-							else
-							{
-								// roll and play anims in animationsList
-
-								auto& currentAnimationId{ p_animation_components.getComponent<std::string>("eg.std.currentAnimationId")->getPurpose() };
-								auto& currentAnimationKey{ p_animation_components.getComponent<AnimationKeys>("eg.std.currentAnimation")->getPurpose() };
-								
-								if ("" == currentAnimationId)
-								{
-									// next animation begins
-
-									const auto& animation{ animationsList.front() };
-
-									const std::string& animationId{ animation.first };
-									const AnimationKeys& animationkeys{ animation.second };
-
-									currentAnimationId = animationId;
-									currentAnimationKey = animationkeys;
-
-									currentAnimationTicksDuration = animationkeys.duration_ticks;
-									currentAnimationSecondsDuration = currentAnimationTicksDuration / animationkeys.ticks_per_seconds;
-
-									animationsTimeMark.reset();
-
-									if (!animationkeys.is_transition)
-									{
-										auto& eventsLogger{ services::LoggerSharing::getInstance()->getLogger("Events") };
-										_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> ANIMATION_START : " + p_entity->getId() + " " + animationId);
-
-										for (const auto& call : m_callbacks)
-										{
-											call(AnimationSystemEvent::ANIMATION_START, p_entity->getId(), animationId);
-										}
-									}
-								}
-
-								const long tms = { animationsTimeMark.computeTimeMs() };
-								const double nb_seconds{ (double)tms / 1000.0 };
-								currentAnimationSecondsProgress = nb_seconds;
-
-								double nb_ticks = currentAnimationKey.ticks_per_seconds * nb_seconds;
-								currentAnimationTicksProgress = nb_ticks;
-
-								bool animation_ends{ animation_step(animationsTimeMark, currentAnimationKey, meshe.sceneNodesAccess()) };
-
-								if (animation_ends)
-								{
-									// this animation ended
-									if (!currentAnimationKey.is_transition)
-									{
-										animationIdList.pop_front();
-
-										meshe.setPreviousAnimation(currentAnimationId);
-
-										auto& eventsLogger{ services::LoggerSharing::getInstance()->getLogger("Events") };
-										_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> ANIMATION_END : " + p_entity->getId() + " " + currentAnimationId);
-
-										for (const auto& call : m_callbacks)
-										{
-											call(AnimationSystemEvent::ANIMATION_END, p_entity->getId(), currentAnimationId);
-										}
-									}
-									
-									animationsList.pop_front();
-
-									currentAnimationId = "";
-									currentAnimationTicksDuration = 0;
-									currentAnimationSecondsDuration = 0;
-									currentAnimationSecondsProgress = 0;
-									currentAnimationTicksProgress = 0;
-								}
-							}						
-							send_bones_to_shaders(meshe, vshaders_refs, animationbones_array_arg_index);
-							
-							////////////////////////////////////////////////
 						}
 						else
 						{
-							_EXCEPTION("missing animationbones_array_arg_index");
+							// roll and play anims in animationsList
+
+							auto& currentAnimationId{ animation_components.getComponent<std::string>("eg.std.currentAnimationId")->getPurpose() };
+							auto& currentAnimationKey{ animation_components.getComponent<AnimationKeys>("eg.std.currentAnimation")->getPurpose() };
+
+							if ("" == currentAnimationId)
+							{
+								// next animation begins
+
+								const auto& animation{ animationsList.front() };
+
+								const std::string& animationId{ animation.first };
+								const AnimationKeys& animationkeys{ animation.second };
+
+								currentAnimationId = animationId;
+								currentAnimationKey = animationkeys;
+
+								currentAnimationTicksDuration = animationkeys.duration_ticks;
+								currentAnimationSecondsDuration = currentAnimationTicksDuration / animationkeys.ticks_per_seconds;
+
+								animationsTimeMark.reset();
+
+								if (!animationkeys.is_transition)
+								{
+									auto& eventsLogger{ services::LoggerSharing::getInstance()->getLogger("Events") };
+									_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> ANIMATION_START : " + entity->getId() + " " + animationId);
+
+									for (const auto& call : m_callbacks)
+									{
+										call(AnimationSystemEvent::ANIMATION_START, entity->getId(), animationId);
+									}
+								}
+							}
+
+							const long tms = { animationsTimeMark.computeTimeMs() };
+							const double nb_seconds{ (double)tms / 1000.0 };
+							currentAnimationSecondsProgress = nb_seconds;
+
+							double nb_ticks = currentAnimationKey.ticks_per_seconds * nb_seconds;
+							currentAnimationTicksProgress = nb_ticks;
+
+							bool animation_ends{ animation_step(animationsTimeMark, currentAnimationKey, meshe.sceneNodesAccess()) };
+
+							if (animation_ends)
+							{
+								// this animation ended
+								if (!currentAnimationKey.is_transition)
+								{
+									animationIdList.pop_front();
+
+									meshe.setPreviousAnimation(currentAnimationId);
+
+									auto& eventsLogger{ services::LoggerSharing::getInstance()->getLogger("Events") };
+									_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> ANIMATION_END : " + entity->getId() + " " + currentAnimationId);
+
+									for (const auto& call : m_callbacks)
+									{
+										call(AnimationSystemEvent::ANIMATION_END, entity->getId(), currentAnimationId);
+									}
+								}
+
+								animationsList.pop_front();
+
+								currentAnimationId = "";
+								currentAnimationTicksDuration = 0;
+								currentAnimationSecondsDuration = 0;
+								currentAnimationSecondsProgress = 0;
+								currentAnimationTicksProgress = 0;
+							}
 						}
+						send_bones_to_shaders(meshe, vshaders_refs, animationbones_array_arg_index);
+
+						////////////////////////////////////////////////
+					}
+					else
+					{
+						_EXCEPTION("missing animationbones_array_arg_index");
 					}
 				}
 			}
-
 		}
-	};
 
-	mage::helpers::extractAspectsTopDown<mage::core::animationsAspect>(m_entitygraph, forEachAnimationAspect);
+	}
 
 	const auto end_time{ std::chrono::high_resolution_clock::now() };
 	const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };

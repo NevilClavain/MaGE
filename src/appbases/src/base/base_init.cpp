@@ -90,7 +90,7 @@ void Base::init(const std::string p_appWindowsEntityName)
 	auto sysEngine{ SystemEngine::getInstance() };
 
 	sysEngine->makeSystem<mage::TimeSystem>(timeSystemSlot, m_entitygraph);
-	sysEngine->makeSystem<mage::D3D11System>(d3d11SystemSlot, m_entitygraph);
+	sysEngine->makeSystem<mage::D3D11System>(d3d11SystemSlot, m_entitygraph, renderingQueueSystemSlot);
 	sysEngine->makeSystem<mage::ResourceSystem>(resourceSystemSlot, m_entitygraph);
 	sysEngine->makeSystem<mage::WorldSystem>(worldSystemSlot, m_entitygraph);
 	sysEngine->makeSystem<mage::RenderingQueueSystem>(renderingQueueSystemSlot, m_entitygraph);

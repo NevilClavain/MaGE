@@ -25,6 +25,7 @@
 #include "renderingqueue.h"
 #include "component.h"
 #include "exceptions.h"
+#include "resourcestatecontroler.h"
 
 using namespace mage::rendering;
 using namespace mage::core;
@@ -65,13 +66,11 @@ void Queue::setBufferRenderingPurpose(mage::Texture& p_target_texture)
 
 	auto& render_target{ p_target_texture };
 
-	render_target.m_source = Texture::Source::CONTENT_FROM_RENDERINGQUEUE;
-	render_target.m_source_id = m_name;
-
-	render_target.compute_resource_uid();
+	render_target.setSource(Texture::Source::CONTENT_FROM_RENDERINGQUEUE, m_name);
 
 	m_targetTextureUID = render_target.getResourceUID();
-	render_target.setState(Texture::State::BLOBLOADED);	
+		
+	ResourceStateControler::getInstance()->update(render_target, Texture::State::BLOBLOADED);
 }
 
 void Queue::enableTargetClearing(bool p_enable)

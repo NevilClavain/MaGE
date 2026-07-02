@@ -26,8 +26,9 @@
 #pragma once
 
 #include <vector>
-#include <unordered_map>
+#include <queue>
 #include <unordered_set>
+#include <unordered_map>
 #include <string>
 #include <memory>
 #include <algorithm>
@@ -39,6 +40,9 @@
 #include <json_struct/json_struct.h>
 
 #include "eventsource.h"
+
+#include "sysengine.h"
+#include "resourcesystem.h"
 
 #include "system.h"
 #include "matrix.h"
@@ -63,8 +67,6 @@ namespace mage
 
     enum class SceneStreamerSystemEvent
     {
-        RENDERING_ENABLED,
-        RENDERING_DISABLED,
     };
 
     namespace json
@@ -679,10 +681,11 @@ namespace mage
 
         struct XTreeEntity
         {
-            core::Entity* entity{ nullptr };
-            core::QuadTreeNode<SceneQuadTreeNode>*              quadtree_node{ nullptr };
+            core::Entity*                                       entity{ nullptr };
+
+            //ptr vers le node correspondant dans le xtree 
+            core::QuadTreeNode<SceneQuadTreeNode>*              quadtree_node{ nullptr }; 
             core::OctreeNode<SceneOctreeNode>*                  octree_node{ nullptr };
-            //bool is_static{ false };
         };
 
 
@@ -699,9 +702,85 @@ namespace mage
             std::unique_ptr<core::OctreeNode<SceneOctreeNode>>                                      octree_root;
 
             // regrouping here all entities dispatched in m_xtree_root above
-            std::unordered_map<std::string, XTreeEntity>                                            xtree_entities;
+            std::unordered_map<std::string, XTreeEntity>                                            xtree_moving_entities_to_monitor;
         };
 
+
+
+        const std::function<void(core::QuadTreeNode<SceneQuadTreeNode>*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> m_place_obj_on_quadtree_leaf
+        {
+            [&](core::QuadTreeNode<SceneQuadTreeNode>* p_current_node, double p_obj_size, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
+            {
+                if (p_current_node->isLeaf())
+                {
+                    // leaf reached, cannt go beyond, so place it anyway
+                    p_current_node->dataAccess().entities.insert(p_entity);
+                    p_xtreeEntity.quadtree_node = p_current_node;
+                }
+                else
+                {
+                    if (SceneStreamerSystem::is_inside_quadtreenode(p_current_node->getData(), p_global_pos))
+                    {
+                        const double node_size{ p_current_node->getData().side_length };
+
+                        const auto ratio{ p_obj_size / node_size };
+                        if (ratio > m_configuration.object_xtreenode_ratio)
+                        {
+                            //place it
+                            p_current_node->dataAccess().entities.insert(p_entity);
+                            p_xtreeEntity.quadtree_node = p_current_node;
+                        }
+                        else
+                        {
+                            for (int i = 0; i < core::QuadTreeNode<SceneQuadTreeNode>::ChildCount; i++)
+                            {
+                                auto child{ p_current_node->getChild(i) };
+                                m_place_obj_on_quadtree_leaf(child, p_obj_size, p_global_pos, p_entity, p_xtreeEntity);
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        /////////////////////////////////////////////////////////////////////////////////
+        // place 3D object in appropriate xtree leaf : utility lambda
+
+        const std::function<void(core::OctreeNode<SceneOctreeNode>*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> m_place_obj_on_octree_leaf
+        {
+            [&](core::OctreeNode<SceneOctreeNode>* p_current_node, double p_obj_size, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
+            {
+                if (p_current_node->isLeaf())
+                {
+                    // leaf reached, cannt go beyond, so place it anyway
+                    p_current_node->dataAccess().entities.insert(p_entity);
+                    p_xtreeEntity.octree_node = p_current_node;
+                }
+                else
+                {
+                    if (SceneStreamerSystem::is_inside_octreenode(p_current_node->getData(), p_global_pos))
+                    {
+                        const double node_size{ p_current_node->getData().side_length };
+
+                        const auto ratio{ p_obj_size / node_size };
+                        if (ratio > m_configuration.object_xtreenode_ratio)
+                        {
+                            //place it
+                            p_current_node->dataAccess().entities.insert(p_entity);
+                            p_xtreeEntity.octree_node = p_current_node;
+                        }
+                        else
+                        {
+                            for (int i = 0; i < core::OctreeNode<SceneOctreeNode>::ChildCount; i++)
+                            {
+                                auto child{ p_current_node->getChild(i) };
+                                m_place_obj_on_octree_leaf(child, p_obj_size, p_global_pos, p_entity, p_xtreeEntity);
+                            }
+                        }
+                    }
+                }
+            }
+        };
 
     public:
 
@@ -750,7 +829,7 @@ namespace mage
                                     const std::unordered_map<std::string, std::unique_ptr<IValueGenerator>>& p_generators);
 
 
-        void buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot);
+        void buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot, int p_resourceSystemSlot);
 
         void requestEntityRendering(const std::string& p_entity_id, bool p_render_it);
 
@@ -781,7 +860,7 @@ namespace mage
                             const std::function<void(XTreeType*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_cam_on_leaf_func,
                             const std::function<void(XTreeType*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_obj_on_leaf_func,
                             const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> p_hasnode_func,
-                            const std::function<bool(const SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> p_is_inside_func);
+                            const std::function<bool(SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> p_is_inside_func);
 
         template<typename SceneXTreeNode, typename XTreeType>
         void check_XTree(std::unordered_map<std::string, SceneStreamerSystem::XTreeEntity>& p_xtree_entities, 
@@ -789,10 +868,12 @@ namespace mage
                             const std::function<XTreeType* (const SceneStreamerSystem::XTreeEntity&)>& p_get_node_func);
 
 
-        bool check_tag(core::Entity* p_entity, const std::string& p_tag);
+        bool compute_entity(core::Entity* p_entity, const core::ComponentContainer& p_world_components);
 
 
         bool                                                                                    m_enabled{ false };
+
+        bool                                                                                    m_xtree_check_enabled{ true };
 
         mutable mage::core::logger::Sink                                                        m_localLogger;
 
@@ -816,6 +897,15 @@ namespace mage
 
 
         int                                                                                     m_renderingQueueSystemSlot{ -1 };
+        int                                                                                     m_resourceSystemSlot{ -1 };
+
+
+        /////////////////////////////////
+
+        std::queue<core::Entity*>                                                               m_newly_added_entities;
+
+        /////////////////////////////////
+
         
         void register_scene_entity(mage::core::Entity* p_entity);
 
@@ -843,7 +933,7 @@ namespace mage
                                                 const std::function<void(XTreeType*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_cam_on_leaf_func,
                                                 const std::function<void(XTreeType*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_obj_on_leaf_func,
                                                 const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> p_hasnode_func,
-                                                const std::function<bool(const SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> p_is_inside_func)
+                                                const std::function<bool(SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> p_is_inside_func)
     {
         for (auto& xe : p_xtree_entities)
         {
@@ -999,6 +1089,8 @@ namespace mage
                 }
             }
 
+            bool needTriggerResourcesSystem{ false };
+
             // new entities discovered, to render
             for (mage::core::Entity* entity : found_entities)
             {
@@ -1008,6 +1100,9 @@ namespace mage
                     if (!m_entity_renderings.at(entity->getId()).m_rendered)
                     {
                         m_entity_renderings.at(entity->getId()).m_request_rendering = true;
+
+                        // at least one entity added to rendergraph, we gonna need to reactivate the resource system
+                        needTriggerResourcesSystem = true;
                     }
                 }
             }
@@ -1028,6 +1123,13 @@ namespace mage
 
             // update...
             m_found_entities_to_render = found_entities;
+
+            if (needTriggerResourcesSystem)
+            {
+                // 
+                auto resourceSystemInstance{ dynamic_cast<mage::ResourceSystem*>(SystemEngine::getInstance()->getSystem(m_resourceSystemSlot)) };
+                resourceSystemInstance->request();
+            }
         }
     };
 }

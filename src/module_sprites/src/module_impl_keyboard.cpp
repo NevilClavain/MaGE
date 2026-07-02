@@ -36,6 +36,9 @@
 #include "syncvariable.h"
 #include "entitygraph_helpers.h"
 
+#include "sysengine.h"
+#include "resourcesystem.h"
+
 #include "worldposition.h"
 
 using namespace mage;
@@ -84,6 +87,10 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		auto ball{ helpers::plug2DSpriteWithSyncVariables(m_entitygraph, "bufferRendering_Filter_DirectForward_Queue_Entity", "sprite#" + std::to_string(m_sprites.size()), 0.05, 0.05, "sprite_vs", "sprite_ps", "tennis_ball.bmp", rs_list, 1000,
 																mage::transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT) };
 		m_sprites.push_back(ball);
+
+		auto resourceSystemInstance{ dynamic_cast<mage::ResourceSystem*>(SystemEngine::getInstance()->getSystem(resourceSystemSlot)) };
+		resourceSystemInstance->request();
+
 	}
 }
 

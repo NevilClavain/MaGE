@@ -40,7 +40,7 @@ namespace mage
     namespace core { class Entity; }
     namespace core { class Entitygraph; }
     namespace core { class ComponentContainer; }
-    namespace rendering { struct Queue; }
+    namespace rendering { struct Queue; struct QueueDrawingControl; }
 
     enum class RenderingQueueSystemEvent
     {
@@ -50,6 +50,7 @@ namespace mage
         TRIANGLEDRAWING_REMOVED,
         MAINVIEW_QUEUE_UPDATED,
         SECONDARYVIEW_QUEUE_UPDATED,
+        RENDERINGQUEUE_STATE_READY
     };
 
     struct ViewGroup
@@ -62,7 +63,7 @@ namespace mage
         std::unordered_set<std::string>     queues_id_list;
     };
 
-    class RenderingQueueSystem : public core::System, public mage::property::EventSource<RenderingQueueSystemEvent, const std::string&>
+    class RenderingQueueSystem : public core::System, public mage::property::EventSource<RenderingQueueSystemEvent, const std::string&, const mage::rendering::Queue&>
     {
     public:
 
@@ -106,6 +107,8 @@ namespace mage
 
 
         void logRenderingqueue(const std::string& p_entity_id, mage::rendering::Queue& p_renderingQueue) const;
+
+        void pushWorldOutputToQueueDrawingControl(const std::string& p_entity_id, rendering::QueueDrawingControl& p_outqtdc);
 
     };
 }

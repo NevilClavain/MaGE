@@ -40,6 +40,7 @@
 namespace mage
 {
 	class RenderingQueueSystem;
+	class D3D11System;
 
 	namespace core
 	{
@@ -64,12 +65,12 @@ namespace mage
 
 			DrawingControl()
 			{
-				world.identity();
+				//world.identity();
 			}
 
 			~DrawingControl() = default;
 
-			core::maths::Matrix world;
+			//core::maths::Matrix world;
 
 			bool				ready{ false };
 
@@ -95,9 +96,8 @@ namespace mage
 			virtual ~QueueDrawingControl() = default;
 
 			// transformations to apply;
-			//core::maths::Matrix* world{ nullptr };
 
-			std::vector< core::maths::Matrix*> worlds;
+			std::vector<const core::maths::Matrix*> worlds;
 
 			bool* projected_z_neg{ nullptr };
 

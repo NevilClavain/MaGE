@@ -664,6 +664,9 @@ void OpenEnv::d3d11_system_events_openenv()
 
 					// SETUP SHADOWS
 					enable_shadows();
+
+					auto resourceSystemInstance{ dynamic_cast<mage::ResourceSystem*>(SystemEngine::getInstance()->getSystem(resourceSystemSlot)) };
+					resourceSystemInstance->request();
 				}
 				break;
 			}

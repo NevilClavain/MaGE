@@ -66,5 +66,31 @@ namespace mage
 				}
 			}
 		}
+
+		inline bool checkTag(core::Entity* p_entity, const std::string& p_tag)
+		{
+			if (p_entity->hasAspect(mage::core::tagsAspect::id))
+			{
+				const auto& tagsAspect{ p_entity->aspectAccess(mage::core::tagsAspect::id) };
+				const auto& str_tags_list{ tagsAspect.getComponentsByType<std::unordered_set<std::string>>() };
+				if (str_tags_list.size())
+				{
+					const auto str_tags{ str_tags_list.at(0)->getPurpose() };
+					if (str_tags.count(p_tag))
+					{
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		inline core::tagsAspect::GraphDomain getEntityGraphdomain(core::Entity* p_entity)
+		{
+			const auto& tagsAspect{ p_entity->aspectAccess(mage::core::tagsAspect::id) };
+			auto gd_list{ tagsAspect.getComponentsByType<core::tagsAspect::GraphDomain>() };
+
+			return gd_list.at(0)->getPurpose();
+		}
 	}
 }

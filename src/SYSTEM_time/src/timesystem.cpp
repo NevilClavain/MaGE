@@ -51,25 +51,23 @@ void TimeSystem::run()
 	tc->update();
 	if (tc->isReady())
 	{
-
-		const auto forEachTimeAspect
+		auto entities_with_time{ m_entitygraph.getEntitiesListForAspect(core::timeAspect::id) };
+		for (Entity* entity : entities_with_time)
 		{
-			[&](Entity* p_entity, const ComponentContainer& p_time_components)
-			{
-				// search for TimeManager::Variable objects
+			const ComponentContainer& components{ entity->aspectAccess(core::timeAspect::id) };
 
-				const auto syncvars_list{ p_time_components.getComponentsByType<SyncVariable>() };
-				if (syncvars_list.size())
+			// search for TimeManager::Variable objects
+
+			const auto syncvars_list{ components.getComponentsByType<SyncVariable>() };
+			if (syncvars_list.size())
+			{
+				for (auto& v : syncvars_list)
 				{
-					for (auto& v : syncvars_list)
-					{
-						tc->manageVariable(v->getPurpose());
-					}
+					tc->manageVariable(v->getPurpose());
 				}
 			}
-		};
+		}
 
-		mage::helpers::extractAspectsTopDown<mage::core::timeAspect>(m_entitygraph, forEachTimeAspect);
 	}
 
 	const auto end_time{ std::chrono::high_resolution_clock::now() };

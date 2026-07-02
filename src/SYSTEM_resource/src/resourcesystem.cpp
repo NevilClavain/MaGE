@@ -42,6 +42,8 @@
 
 #include "datacloud.h"
 
+#include "resourcestatecontroler.h"
+
 using namespace mage;
 using namespace mage::core;
 
@@ -94,7 +96,7 @@ m_localLoggerRunner("ResourceSystemRunner", mage::core::logger::Configuration::g
 			}
 			else if (mage::core::RunnerEvent::TASK_DONE == p_event)
 			{
-				_MAGE_DEBUG(m_localLoggerRunner, std::string("TASK_DONE ") + p_target_descr + " " + p_action_descr);
+				_MAGE_TRACE(m_localLoggerRunner, std::string("TASK_DONE ") + p_target_descr + " " + p_action_descr);
 			}
 
 		}
@@ -116,45 +118,61 @@ void ResourceSystem::run()
 {
 	const auto start_time{ std::chrono::high_resolution_clock::now() };
 
-	const auto forEachResourceAspect
+	bool allDone{ true };
+
+	if(m_requested)
 	{
-		[&](Entity* p_entity, const ComponentContainer& p_resource_components)
+		auto entities_with_resources{ m_entitygraph.getEntitiesListForAspect(core::resourcesAspect::id) };
+		for (Entity* entity : entities_with_resources)
 		{
+			const ComponentContainer& resource_components{ entity->aspectAccess(core::resourcesAspect::id) };
+
+
 			////// Handle shaders ///////////
 
-			const auto shaders_list{ p_resource_components.getComponentsByType<std::pair<std::string, Shader>>() };
+			const auto shaders_list{ resource_components.getComponentsByType<std::pair<std::string, Shader>>() };
 			for (auto& e : shaders_list)
 			{
 				auto& shader{ e->getPurpose().second };
-				const auto filename{ e->getPurpose().first};
+				const auto filename{ e->getPurpose().first };
 
 				const auto state{ shader.getState() };
 				if (Shader::State::INIT == state || Shader::State::BLOBLOADING == state)
 				{
-					shader.setState(Shader::State::BLOBLOADING);
-					handleShader(filename, shader);					
+					ResourceStateControler::getInstance()->update(shader, Shader::State::BLOBLOADING);
+					handleShader(filename, shader);
+				}
+
+				if (Shader::State::BLOBLOADED > state)
+				{
+					allDone = false;
 				}
 			}
 			////// Handle textures ///////////
-			const auto textures_list{ p_resource_components.getComponentsByType<std::pair<size_t, std::pair<std::string, Texture>>>() };
+			const auto textures_list{ resource_components.getComponentsByType<std::pair<size_t, std::pair<std::string, Texture>>>() };
 			for (auto& e : textures_list)
 			{
 				auto& staged_texture{ e->getPurpose() };
 				Texture& texture{ staged_texture.second.second };
 				const auto filename{ staged_texture.second.first };
-					
+
 				const auto state{ texture.getState() };
 				if (Texture::State::INIT == state || Texture::State::BLOBLOADING == state)
 				{
-					texture.setState(Texture::State::BLOBLOADING);
-					handleTexture(filename, texture);					
+					ResourceStateControler::getInstance()->update(texture, Texture::State::BLOBLOADING);
+					handleTexture(filename, texture);
+				}
+
+				if (Texture::State::BLOBLOADED > state)
+				{
+					allDone = false;
 				}
 			}
 
 			////// Handle meshes //////////////
-			const auto meshes_list{ p_resource_components.getComponentsByType<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>() };
-			const auto& nodes_list{ p_resource_components.getComponentsByType<std::map<std::string, SceneNode>>() };
-			
+			const auto meshes_list{ resource_components.getComponentsByType<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>() };
+			const auto& nodes_list{ resource_components.getComponentsByType<std::map<std::string, SceneNode>>() };
+
 			if (meshes_list.size() > 0)
 			{
 				auto& meshe_descr{ meshes_list.at(0)->getPurpose() };
@@ -168,14 +186,17 @@ void ResourceSystem::run()
 				const auto state{ meshe.getState() };
 				if (TriangleMeshe::State::INIT == state)
 				{
-					meshe.setState(TriangleMeshe::State::BLOBLOADING);
-					handleSceneFile(file_path, meshe_id, meshe, nodes_list);					
+					ResourceStateControler::getInstance()->update(meshe, TriangleMeshe::State::BLOBLOADING);
+					handleSceneFile(file_path, meshe_id, meshe, nodes_list);
+				}
+
+				if (TriangleMeshe::State::BLOBLOADED > state)
+				{
+					allDone = false;
 				}
 			}
 		}
-	};
-
-	mage::helpers::extractAspectsTopDown<mage::core::resourcesAspect>(m_entitygraph, forEachResourceAspect);
+	}
 
 	for (int i = 0; i < nbRunners; i++)
 	{
@@ -186,6 +207,12 @@ void ResourceSystem::run()
 	const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 	dataCloud->updateDataValue<std::string>("mage.timings.resourcesystem", std::to_string(duration.count()) + " ms");
+
+	
+	if (m_requested && allDone)
+	{
+		m_requested = false;
+	}	
 }
 
 void ResourceSystem::killRunner()
@@ -212,4 +239,9 @@ size_t ResourceSystem::getNbBusyRunners() const
 	}
 
 	return count;
+}
+
+void ResourceSystem::request()
+{
+	m_requested = true;
 }

@@ -39,6 +39,7 @@
 #include "matrix.h"
 
 #include "datacloud.h"
+#include "resourcestatecontroler.h"
 
 using namespace mage;
 using namespace mage::core;
@@ -68,8 +69,7 @@ static mage::core::maths::Matrix convertFromAssimpMatrix(const aiMatrix4x4& p_in
 
 void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::string& p_mesheid, TriangleMeshe& p_mesheInfos, const core::ComponentList<std::map<std::string, SceneNode>>& p_nodes_hierarchy_list)
 {
-	_MAGE_DEBUG(m_localLogger, std::string("Handle scene ") + p_filename);
-
+	
 	const std::string mesheAction{ "load_meshe" };
 
 	const std::string targetAction{ p_mesheid + "@" + p_filename };
@@ -90,8 +90,9 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 			{
 				auto& eventsLogger{ services::LoggerSharing::getInstance()->getLogger("Events") };
 
-				p_mesheInfos.m_source = TriangleMeshe::Source::CONTENT_FROM_FILE;
-				p_mesheInfos.m_source_id = meshe_id + "@" + filename;
+				p_mesheInfos.setSource(TriangleMeshe::Source::CONTENT_FROM_FILE);
+				p_mesheInfos.setSourceID(meshe_id + "@" + filename);
+
 
 				_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> RESOURCE_MESHE_LOAD_BEGIN : " + filename);
 				for (const auto& call : m_callbacks)
@@ -477,7 +478,7 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 				p_mesheInfos.computeSize();
 				p_mesheInfos.computeResourceUID();
 
-				_MAGE_DEBUG(m_localLoggerRunner, std::string("loading meshe ") + p_mesheInfos.m_source_id + ", resource uid = " + p_mesheInfos.getResourceUID());
+				_MAGE_DEBUG(m_localLoggerRunner, std::string("task has loaded meshe ") + p_mesheInfos.getSourceID() + ", resource uid = " + p_mesheInfos.getResourceUID());
 
 				_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> RESOURCE_MESHE_LOAD_SUCCESS : " + filename);
 				for (const auto& call : m_callbacks)
@@ -488,7 +489,8 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 				const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 				dataCloud->updateDataValue<std::string>("mage.resourcesystem.event", "Meshe loaded :" + filename);
 
-				p_mesheInfos.setState(TriangleMeshe::State::BLOBLOADED);
+
+				ResourceStateControler::getInstance()->update(p_mesheInfos, TriangleMeshe::State::BLOBLOADED);
 			}
 			catch (const std::exception& e)
 			{

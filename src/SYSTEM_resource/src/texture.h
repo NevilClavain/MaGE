@@ -37,8 +37,9 @@ class D3D11SystemImpl;
 namespace mage
 {
     //fwd decl
-    class ResourceSystem;
-    class D3D11System;
+    //class ResourceSystem;
+    //class D3D11System;
+    class ResourceStateControler;
 
     namespace rendering
     {
@@ -122,9 +123,13 @@ namespace mage
 
         Source                              getSource() const;
 
+        void                                setSource(Source p_source, const std::string& p_source_id);
+
         int                                 getWidth() const;
         int                                 getHeight() const;
         Format                              getFormat() const;
+
+        void                                setFormat(Format p_format, size_t p_width, size_t p_height);
 
         State                               getState() const;
 
@@ -133,6 +138,8 @@ namespace mage
         unsigned char*                      getFileContent() const;
         size_t                              getFileContentSize() const;
 
+        void                                setFileContent(unsigned char* p_file_content, size_t p_file_content_size);
+
         std::string                         getResourceUID() const;
 
         std::string                         getSourceID() const;
@@ -140,12 +147,13 @@ namespace mage
         template<typename T>
         void                                getTextureContent(mage::core::Buffer<T>& p_destbuffer);
 
+        void                                computeResourceUid();
+
     private:
 
         std::string                         m_resource_uid;       // texture content source unique identifier
 
         Source                              m_source            { Source::CONTENT_FROM_FILE };
-
         std::string                         m_source_id;        
 
         unsigned char*                      m_file_content{ nullptr }; // ptr to core::Buffer data in resource system textures cache
@@ -153,6 +161,7 @@ namespace mage
 
         int                                 m_width             { 0 };
         int                                 m_height            { 0 };
+
         Format                              m_format            { Format::TEXTURE_RGB };
 
         ContentAccessMode                   m_content_access_mode{ ContentAccessMode::NO_CONTENT_ACCESS };
@@ -166,11 +175,12 @@ namespace mage
         void setState(Texture::State p_state);
         void compute_resource_uid();
         
-        friend class mage::ResourceSystem;
-        friend class mage::D3D11System;
-        friend class D3D11SystemImpl;
+        //friend class mage::ResourceSystem;
+        //friend class mage::D3D11System;
+        //friend class D3D11SystemImpl;
+        friend class mage::ResourceStateControler;
 
-        friend struct mage::rendering::Queue;
+        //friend struct mage::rendering::Queue;
     };
 
     template<typename T>

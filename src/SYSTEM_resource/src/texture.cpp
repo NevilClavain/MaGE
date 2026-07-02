@@ -58,6 +58,13 @@ Texture::Source Texture::getSource() const
     return m_source;
 }
 
+void Texture::setSource(Source p_source, const std::string& p_source_id)
+{
+    m_source = p_source;
+    m_source_id = p_source_id;
+    compute_resource_uid();
+}
+
 int Texture::getWidth() const
 {
     return m_width;
@@ -71,6 +78,13 @@ int Texture::getHeight() const
 Texture::Format Texture::getFormat() const
 {
     return m_format;
+}
+
+void Texture::setFormat(Format p_format, size_t p_width, size_t p_height)
+{
+    m_format = p_format;
+    m_width = static_cast<int>(p_width);
+    m_height = static_cast<int>(p_height);
 }
 
 Texture::State Texture::getState() const
@@ -120,7 +134,18 @@ size_t Texture::getFileContentSize() const
     return m_file_content_size;
 }
 
+void Texture::setFileContent(unsigned char* p_file_content, size_t p_file_content_size)
+{
+    m_file_content = p_file_content;
+    m_file_content_size = p_file_content_size;
+}
+
 std::string Texture::getSourceID() const
 {
     return m_source_id;
+}
+
+void Texture::computeResourceUid()
+{
+    compute_resource_uid();
 }

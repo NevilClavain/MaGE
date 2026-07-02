@@ -350,6 +350,9 @@ void ModuleImpl::d3d11_system_events()
 					// SETUP SHADOWS
 					complete_install_shadows_renderer_objects();
 
+					auto resourceSystemInstance{ dynamic_cast<mage::ResourceSystem*>(SystemEngine::getInstance()->getSystem(resourceSystemSlot)) };
+					resourceSystemInstance->request();
+
 					m_appReady = true;
 				}
 				break;

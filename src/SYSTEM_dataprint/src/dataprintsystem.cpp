@@ -276,104 +276,93 @@ void DataPrintSystem::collectData()
 
 	m_sv_strings.clear();
 
-	const auto forEachTimeAspect
+	auto entities_with_time{ m_entitygraph.getEntitiesListForAspect(core::timeAspect::id) };
+	for (Entity* entity : entities_with_time)
 	{
-		[&](Entity* p_entity, const ComponentContainer& p_time_components)
+		const ComponentContainer& time_components{ entity->aspectAccess(core::timeAspect::id) };
+
+		const auto comps{ time_components.getComponentsIdList() };
+		const size_t sv_hash{ typeid(core::SyncVariable).hash_code() };
+
+		for (const auto& e : comps)
 		{
-			const auto comps { p_time_components.getComponentsIdList() };
-			const size_t sv_hash{ typeid(core::SyncVariable).hash_code() };
-
-			for (const auto& e : comps)
+			if (e.second == sv_hash)
 			{
-				if (e.second == sv_hash)
+				const std::string id{ e.first };
+
+				const auto& sync_var{ time_components.getComponent<core::SyncVariable>(id)->getPurpose() };
+
+				const std::string type{ core::SyncVariable::Type::ANGLE == sync_var.type ? "ANGLE" : "POS" };
+
+
+				//const std::string direction { SyncVariable::Direction::INC == sync_var.direction ? "INC" : "DEC" };
+
+				std::string direction{ "?" };
+
+				if (SyncVariable::Direction::INC == sync_var.direction)
 				{
-					const std::string id{ e.first };
-
-					const auto& sync_var{ p_time_components.getComponent<core::SyncVariable>(id)->getPurpose() };
-
-					const std::string type { core::SyncVariable::Type::ANGLE == sync_var.type ? "ANGLE" : "POS" };
-
-
-					//const std::string direction { SyncVariable::Direction::INC == sync_var.direction ? "INC" : "DEC" };
-
-					std::string direction{ "?" };
-
-					if (SyncVariable::Direction::INC == sync_var.direction)
-					{
-						direction = "INC";
-					}
-					else if (SyncVariable::Direction::DEC == sync_var.direction)
-					{
-						direction = "DEC";
-					}
-					else // ZERO
-					{
-						direction = "ZERO";
-					}
-
-
-
-					const std::string value { std::to_string(sync_var.value) };
-					const std::string step { std::to_string(sync_var.step) };
-					const std::string var_str_value{ "syncv." + id + " = " + value + "(" + direction + " " + step + ")"};
-
-					m_sv_strings.push_back(var_str_value);
+					direction = "INC";
 				}
+				else if (SyncVariable::Direction::DEC == sync_var.direction)
+				{
+					direction = "DEC";
+				}
+				else // ZERO
+				{
+					direction = "ZERO";
+				}
+
+				const std::string value{ std::to_string(sync_var.value) };
+				const std::string step{ std::to_string(sync_var.step) };
+				const std::string var_str_value{ "syncv." + id + " = " + value + "(" + direction + " " + step + ")" };
+
+				m_sv_strings.push_back(var_str_value);
 			}
 		}
-	};
-
-	mage::helpers::extractAspectsTopDown<mage::core::timeAspect>(m_entitygraph, forEachTimeAspect);
+	}
 
 	/////// collect rendering queues
 
 	m_rq_strings.clear();
 
-	const auto forEachRenderingAspect
+	auto entities_with_rendering{ m_entitygraph.getEntitiesListForAspect(core::renderingAspect::id) };
+	for (Entity* entity : entities_with_rendering)
 	{
-		[&](Entity* p_entity, const ComponentContainer& p_rendering_components)
+		const ComponentContainer& rendering_components{ entity->aspectAccess(core::renderingAspect::id) };
+
+		const auto rendering_queues_list{ rendering_components.getComponentsByType<rendering::Queue>() };
+		if (rendering_queues_list.size() > 0)
 		{
-			const auto rendering_queues_list { p_rendering_components.getComponentsByType<rendering::Queue>() };
-			if (rendering_queues_list.size() > 0)
+			auto& renderingQueue{ rendering_queues_list.at(0)->getPurpose() };
+
+			std::string infos;
+
+			infos += renderingQueue.getName();
+
+			if (rendering::Queue::Purpose::BUFFER_RENDERING == renderingQueue.getPurpose())
 			{
-				auto& renderingQueue{ rendering_queues_list.at(0)->getPurpose() };				
-				
-				std::string infos;
-
-				infos += renderingQueue.getName();
-
-				if (rendering::Queue::Purpose::BUFFER_RENDERING == renderingQueue.getPurpose())
-				{
-					infos += " - to buffer";
-				}
-				else if (rendering::Queue::Purpose::SCREEN_RENDERING == renderingQueue.getPurpose())
-				{
-					infos += " - to screen";
-				}
-
-
-				/*if (rendering::Queue::State::ERROR_ORPHAN == renderingQueue.getState())
-				{
-					infos += " - ERR ORPHAN";
-				}
-				else*/ if (rendering::Queue::State::READY == renderingQueue.getState())
-				{
-					infos += " - READY";
-				}
-				else if (rendering::Queue::State::WAIT_INIT == renderingQueue.getState())
-				{
-					infos += " - WAIT INIT";
-				}
-
-				infos += " - current view = " + renderingQueue.getMainView();
-
-
-				m_rq_strings.push_back(infos);
+				infos += " - to buffer";
 			}
-		}
-	};
+			else if (rendering::Queue::Purpose::SCREEN_RENDERING == renderingQueue.getPurpose())
+			{
+				infos += " - to screen";
+			}
 
-	mage::helpers::extractAspectsTopDown<mage::core::renderingAspect>(m_entitygraph, forEachRenderingAspect);
+			if (rendering::Queue::State::READY == renderingQueue.getState())
+			{
+				infos += " - READY";
+			}
+			else if (rendering::Queue::State::WAIT_INIT == renderingQueue.getState())
+			{
+				infos += " - WAIT INIT";
+			}
+
+			infos += " - current view = " + renderingQueue.getMainView();
+
+
+			m_rq_strings.push_back(infos);
+		}
+	}
 }
 
 void DataPrintSystem::print(const std::vector<std::string>& p_list, int p_x_base, int p_y_base, int p_nbCols, int p_nbRows, int p_colWidth, int p_rowHeight)

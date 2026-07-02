@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <unordered_set>
 #include "system.h"
 #include "shaders_service.h"
 #include "textures_service.h"
@@ -71,7 +70,7 @@ namespace mage
     {
     public:
 
-        D3D11System(core::Entitygraph& p_entitygraph);
+        D3D11System(core::Entitygraph& p_entitygraph, int p_renderingqueuesystem_slot);
         ~D3D11System() = default;
 
         void run();
@@ -94,10 +93,11 @@ namespace mage
 
         mage::core::Runner                                      m_runner;
 
+        int                                                     m_renderingqueuesystem_slot;
+
+        std::vector<rendering::Queue*>                          m_queues; // /!\ /!\ /!\ queue MUST BE ordered here in correct rendering order : from leaf to root of rendergraph part of entity graph
+
         void    manageInitialization();       
-        void    manageResources();
-        void    manageRenderingQueue();
-        void    collectWorldTransformations() const;
 
         void    handleShaderCreation(Shader& p_shaderInfos, int p_shaderType);
         void    handleShaderRelease(Shader& p_shaderInfos, int p_shaderType);

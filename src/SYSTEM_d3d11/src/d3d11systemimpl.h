@@ -231,7 +231,7 @@ public:
 
     struct TextureData
     {
-        mage::Texture::Source           source;
+        mage::Texture::Source               source;
         D3D11_TEXTURE2D_DESC                desc;
 
         // common
@@ -433,14 +433,14 @@ public:
     };
 
     bool updateMesheTransformers(MesheData& p_meshe_data, 
-        const std::vector<mage::core::maths::Matrix*>& p_worlds,
+        const std::vector<const mage::core::maths::Matrix*>& p_worlds,
         const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
         const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2);
 
 
     template<Primitives p>
     bool updateMesheTransformersForPrimitive(const std::string& p_meshe_id,
-        const std::vector<mage::core::maths::Matrix*>& p_worlds,
+        const std::vector<const mage::core::maths::Matrix*>& p_worlds,
         const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
         const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2)
     {

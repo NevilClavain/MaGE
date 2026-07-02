@@ -233,9 +233,6 @@ bool D3D11SystemImpl::createTexture(mage::Texture& p_texture)
 
                 _MAGE_DEBUG(m_localLogger, "Texture infos : " + std::to_string(desc.Width) + "x" + std::to_string(desc.Height) + " format : " + std::to_string(desc.Format));
 
-                p_texture.m_width = desc.Width;
-                p_texture.m_height = desc.Height;
-
                 mage::Texture::Format format;
 
                 switch(desc.Format)
@@ -272,8 +269,7 @@ bool D3D11SystemImpl::createTexture(mage::Texture& p_texture)
                         break;
                 }
 
-                //p_texture.setFormat(format);
-                p_texture.m_format = format;
+                p_texture.setFormat(format, desc.Width, desc.Height);
 
                 TextureData texture_data;
                 texture_data.source = mage::Texture::Source::CONTENT_FROM_FILE;

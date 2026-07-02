@@ -219,19 +219,12 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		auto sceneStreamerSystem{ SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot) };
 		auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(sceneStreamerSystem) };
 
-		if (sceneStreamerSystemInstance->isEnabled())
-		{
-			sceneStreamerSystemInstance->enableSystem(false);
-		}
-		else
-		{
-			sceneStreamerSystemInstance->enableSystem(true);
-		}
+		//...
 	}
 
 	else if (VK_F9 == p_key)
 	{
-		//helpers::logEntitygraph(m_entitygraph, true);
+		//helpers::logEntitygraph(m_entitygraph, false);
 		
 		//auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
 		//auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
@@ -243,7 +236,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		auto sceneStreamerSystem{ SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot) };
 		auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(sceneStreamerSystem) };
 
-		sceneStreamerSystemInstance->dumpXTreeEntities();
+		//sceneStreamerSystemInstance->dumpXTreeEntities();
 		sceneStreamerSystemInstance->dumpXTree();
 
 		::MessageBox(0, "Log dump done", "Mage", MB_OK | MB_ICONINFORMATION);
