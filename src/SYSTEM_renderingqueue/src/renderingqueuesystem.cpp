@@ -379,7 +379,7 @@ void RenderingQueueSystem::handleRenderingQueuesState(Entity* p_entity, renderin
 									const auto& parent_resource_aspect{ parent_entity->aspectAccess(core::resourcesAspect::id) };
 									const ComponentList<std::pair<size_t, mage::Texture>> textures_list{ parent_resource_aspect.getComponentsByType<std::pair<size_t,mage::Texture>>() };
 
-									const auto queue_target_stage{ p_renderingQueue.m_targetStage };
+									const auto queue_target_stage{ p_renderingQueue.getTargetStage()};
 
 									if (queue_target_stage < textures_list.size())
 									{

@@ -98,6 +98,21 @@ void Queue::pushText(const Queue::Text& p_text)
 	m_texts.push_back(p_text);
 }
 
+std::vector<Queue::Text> Queue::getTexts() const
+{
+	return m_texts;
+}
+
+void Queue::setTexts(const std::vector<Queue::Text>& p_texts)
+{
+	m_texts = p_texts;
+}
+
+void Queue::clearTexts()
+{
+	m_texts.clear();
+}
+
 Queue::QueueNodes Queue::getQueueNodes() const
 {
 	return m_queueNodes;
@@ -136,6 +151,11 @@ std::string	Queue::getTargetTextureUID() const
 void Queue::setTargetStage(size_t p_stage)
 {
 	m_targetStage = p_stage;
+}
+
+size_t Queue::getTargetStage() const
+{
+	return m_targetStage;
 }
 
 void Queue::enableTargetDepthClearing(bool p_enable)
