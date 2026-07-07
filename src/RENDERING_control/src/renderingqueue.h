@@ -31,7 +31,6 @@
 #include <tuple>
 #include <unordered_map>
 #include <functional>
-#include <mutex>
 #include "tvector.h"
 #include "matrix.h"
 #include "renderstate.h"
@@ -216,38 +215,6 @@ namespace mage
 			////////////////////////////////////////////////////////////////////
 
 			Queue(const std::string& p_name);
-			Queue(const Queue& p_other);
-
-			Queue& operator=(const Queue& p_other)
-			{
-				m_name = p_other.m_name;
-				m_purpose = p_other.m_purpose;
-				m_state = p_other.m_state;
-				m_clear_target = p_other.m_clear_target;
-				m_target_clear_color = p_other.m_target_clear_color;
-				m_clear_target_depth = p_other.m_clear_target_depth;
-				m_texts = p_other.m_texts;
-				m_queueNodes = p_other.m_queueNodes;
-				
-				
-				m_queueNodesA = p_other.m_queueNodesA;
-				m_queueNodesB = p_other.m_queueNodesB;
-
-				m_queueMutex.lock();
-				m_queueNodesFront = p_other.m_queueNodesFront;
-				m_queueNodesBack = p_other.m_queueNodesBack;
-				m_queueMutex.unlock();
-
-				m_mainView = p_other.m_mainView;
-				m_secondaryView = p_other.m_secondaryView;
-				m_targetStage = p_other.m_targetStage;
-
-				m_targetTextureUID = p_other.m_targetTextureUID;
-
-				return *this;
-			}
-
-
 			~Queue() = default;
 
 			std::string					getName() const;
@@ -272,10 +239,6 @@ namespace mage
 
 			QueueNodes					getQueueNodes() const;
 			void						setQueueNodes(const QueueNodes& p_nodes);
-
-			QueueNodes*					queueNodesFrontAccess();
-			QueueNodes*					queueNodesBackAccess();
-			void						switchQueues();
 
 			void						setMainView(const std::string& p_entityId);
 			std::string					getMainView() const;
@@ -313,25 +276,13 @@ namespace mage
 
 			QueueNodes						m_queueNodes;
 
-			QueueNodes						m_queueNodesA;
-			QueueNodes						m_queueNodesB;
-
-			QueueNodes*						m_queueNodesFront	{ &m_queueNodesA };
-			QueueNodes*						m_queueNodesBack	{ &m_queueNodesB };
-
-			mutable std::mutex				m_queueMutex;
-
 			std::string						m_mainView; // entity name
 			std::string						m_secondaryView; // entity name
 
 
 			size_t							m_targetStage{ 0 };
 
-			std::string						m_targetTextureUID; // for BUFFER_RENDERING			
-
-			// IF NEW MEMBERS HERE :
-			// UPDATE COPY CTOR AND OPERATOR !!!!!!
-
+			std::string						m_targetTextureUID; // for BUFFER_RENDERING						
 		};
 	}
 }

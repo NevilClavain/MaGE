@@ -35,33 +35,6 @@ Queue::Queue(const std::string& p_name) :
 m_name(p_name)
 {}
 
-Queue::Queue(const Queue& p_other)
-{
-	m_name = p_other.m_name;
-	m_purpose = p_other.m_purpose;
-	m_state = p_other.m_state;
-	m_clear_target = p_other.m_clear_target;
-	m_target_clear_color = p_other.m_target_clear_color;
-	m_clear_target_depth = p_other.m_clear_target_depth;
-	m_texts = p_other.m_texts;
-	m_queueNodes = p_other.m_queueNodes;
-
-
-	m_queueNodesA = p_other.m_queueNodesA;
-	m_queueNodesB = p_other.m_queueNodesB;
-
-	m_queueMutex.lock();
-	m_queueNodesFront = p_other.m_queueNodesFront;
-	m_queueNodesBack = p_other.m_queueNodesBack;
-	m_queueMutex.unlock();
-
-	m_mainView = p_other.m_mainView;
-	m_secondaryView = p_other.m_secondaryView;
-	m_targetStage = p_other.m_targetStage;
-
-	m_targetTextureUID = p_other.m_targetTextureUID;
-}
-
 std::string Queue::getName() const
 {
 	return m_name;
@@ -200,32 +173,3 @@ void Queue::resetStates()
 	m_purpose = Purpose::UNDEFINED;
 	m_state = State::WAIT_INIT;
 }
-
-Queue::QueueNodes* Queue::queueNodesFrontAccess()
-{
-	std::lock_guard<std::mutex> lock(m_queueMutex);
-	return m_queueNodesFront;
-}
-
-Queue::QueueNodes* Queue::queueNodesBackAccess()
-{
-	std::lock_guard<std::mutex> lock(m_queueMutex);
-	return m_queueNodesBack;
-}
-
-void Queue::switchQueues()
-{
-	std::lock_guard<std::mutex> lock(m_queueMutex);
-
-	if (m_queueNodesFront == &m_queueNodesA)
-	{
-		m_queueNodesFront = &m_queueNodesB;
-		m_queueNodesBack = &m_queueNodesA;
-	}
-	else // (m_queueNodesFront == &m_queueNodesB)
-	{
-		m_queueNodesFront = &m_queueNodesA;
-		m_queueNodesBack = &m_queueNodesB;
-	}
-}
-
