@@ -52,52 +52,36 @@ using namespace mage;
 using namespace mage::core;
 
 
+static rendering::Queue* searchRenderingQueueInAncestors(core::Entity* p_entity)
+{
+	rendering::Queue* rqueue{ nullptr };
+	core::Entity* curr_parent{ p_entity->getParent() };
+
+	while (curr_parent)
+	{
+		if (curr_parent->hasAspect(mage::core::renderingAspect::id))
+		{
+			const auto& rendering_aspect{ curr_parent->aspectAccess(mage::core::renderingAspect::id) };
+
+			const auto rendering_queues_list{ rendering_aspect.getComponentsByType<rendering::Queue>() };
+			if (rendering_queues_list.size() > 0)
+			{
+				auto& renderingQueue{ rendering_queues_list.at(0)->getPurpose() };
+				rqueue = &renderingQueue;
+				break;
+			}
+		}
+		curr_parent = curr_parent->getParent();
+	}
+	return rqueue;
+}
+
 RenderingQueueSystem::RenderingQueueSystem(Entitygraph& p_entitygraph, int p_streamersystem_slot) : System(p_entitygraph),
 m_streamersystem_slot(p_streamersystem_slot),
 m_localLogger("RenderingQueueSystem", mage::core::logger::Configuration::getInstance())
 {
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 	dataCloud->registerData<std::string>("mage.timings.renderingqueuesystem");
-
-	////// Register callback to entitygraph
-
-	const Entitygraph::Callback eg_cb
-	{
-		[&, this](mage::core::EntitygraphEvents p_event, const core::Entity& p_removed_entity)
-		{
-			if (mage::core::EntitygraphEvents::ENTITYGRAPHNODE_REMOVED == p_event)
-			{		
-				rendering::Queue* current_queue{ nullptr };
-
-				for (auto it = m_entitygraph.preBegin(); it != m_entitygraph.preEnd(); ++it)
-				{
-					const auto current_entity{ it->data() };
-					const auto currEntityId{ current_entity->getId() };
-
-					if (current_entity->hasAspect(mage::core::renderingAspect::id))
-					{
-						const auto& rendering_aspect{ current_entity->aspectAccess(mage::core::renderingAspect::id) };
-
-						const auto rendering_queues_list{ rendering_aspect.getComponentsByType<rendering::Queue>() };
-						if (rendering_queues_list.size() > 0)
-						{
-							auto& renderingQueue{ rendering_queues_list.at(0)->getPurpose() };
-							current_queue = &renderingQueue;
-						}
-					}
-
-					if (currEntityId == p_removed_entity.getId() && 
-						current_queue)
-					{
-						// found the entity that will be removed...
-
-						removeFromRenderingQueue(p_removed_entity.getId(), *current_queue);
-					}
-				}
-			}
-		}
-	};
-	p_entitygraph.registerSubscriber(eg_cb);
 }
 
 void RenderingQueueSystem::run()
@@ -118,7 +102,10 @@ void RenderingQueueSystem::run()
 				}
 				else if (mage::SceneStreamerSystemEvent::UNREGISTER_RENDERING_PROXY == p_event)
 				{
-					// TO BE CONTINUED...
+					Entity* current_entity{ m_entitygraph.node(p_entity_id).data() };
+					rendering::Queue* current_queue{ searchRenderingQueueInAncestors(current_entity) };
+
+					removeFromRenderingQueue(p_entity_id, *current_queue);
 				}
 			}
 		};
@@ -224,30 +211,6 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 	}
 
 	_MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> QUEUE DUMP END <<<<<<<<<<<<<<<<<<<<<<<<<<");
-}
-
-static rendering::Queue* searchRenderingQueueInAncestors(core::Entity* p_entity)
-{
-	rendering::Queue* rqueue { nullptr };
-	core::Entity* curr_parent{ p_entity->getParent() };
-
-	while (curr_parent)
-	{
-		if (curr_parent->hasAspect(mage::core::renderingAspect::id))
-		{
-			const auto& rendering_aspect{ curr_parent->aspectAccess(mage::core::renderingAspect::id) };
-
-			const auto rendering_queues_list{ rendering_aspect.getComponentsByType<rendering::Queue>() };
-			if (rendering_queues_list.size() > 0)
-			{
-				auto& renderingQueue{ rendering_queues_list.at(0)->getPurpose() };
-				rqueue = &renderingQueue;
-				break;
-			}
-		}
-		curr_parent = curr_parent->getParent();
-	}
-	return rqueue;
 }
 
 void RenderingQueueSystem::manageRenderingQueue()
