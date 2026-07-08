@@ -41,17 +41,19 @@
 #include "exceptions.h"
 #include "worldposition.h"
 #include "datacloud.h"
+#include "sysengine.h"
 
 #include "logsink.h"
 #include "logconf.h"
 #include "logging.h"
-
+#include "scenestreamersystem.h"
 
 using namespace mage;
 using namespace mage::core;
 
 
-RenderingQueueSystem::RenderingQueueSystem(Entitygraph& p_entitygraph) : System(p_entitygraph),
+RenderingQueueSystem::RenderingQueueSystem(Entitygraph& p_entitygraph, int p_streamersystem_slot) : System(p_entitygraph),
+m_streamersystem_slot(p_streamersystem_slot),
 m_localLogger("RenderingQueueSystem", mage::core::logger::Configuration::getInstance())
 {
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
@@ -101,6 +103,29 @@ m_localLogger("RenderingQueueSystem", mage::core::logger::Configuration::getInst
 void RenderingQueueSystem::run()
 {
 	const auto start_time{ std::chrono::high_resolution_clock::now() };
+
+	std::call_once(m_initialization_once_flag, [this]()
+	{
+		auto streamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(SystemEngine::getInstance()->getSystem(m_streamersystem_slot)) };
+
+		mage::SceneStreamerSystem::Callback streamer_system_cb
+		{
+			[&, this](mage::SceneStreamerSystemEvent p_event, const std::string& p_entity_id)
+			{
+				if (mage::SceneStreamerSystemEvent::REGISTER_RENDERING_PROXY == p_event)
+				{
+					// TO BE CONTINUED...
+				}
+				else if (mage::SceneStreamerSystemEvent::UNREGISTER_RENDERING_PROXY == p_event)
+				{
+					// TO BE CONTINUED...
+				}
+			}
+		};
+
+		streamerSystemInstance->registerSubscriber(streamer_system_cb);
+
+	});
 
 	manageRenderingQueue();
 

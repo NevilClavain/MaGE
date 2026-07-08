@@ -25,10 +25,12 @@
 
 #pragma once
 
+#include <mutex>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
+
 #include "system.h"
 #include "logsink.h"
 #include "logconf.h"
@@ -68,7 +70,7 @@ namespace mage
     public:
 
         RenderingQueueSystem() = delete;
-        RenderingQueueSystem(core::Entitygraph& p_entitygraph);
+        RenderingQueueSystem(core::Entitygraph& p_entitygraph, int p_streamersystem_slot);
         ~RenderingQueueSystem() = default;
 
         void        run();
@@ -89,6 +91,9 @@ namespace mage
         std::unordered_set<std::string>                     m_queuesToLog;
 
         std::unordered_map<std::string, ViewGroup>          m_cameraViewGroups;
+
+        int                                                 m_streamersystem_slot;
+        std::once_flag                                      m_initialization_once_flag;
 
         void manageRenderingQueue();
         void handleRenderingQueuesState(core::Entity* p_entity, rendering::Queue& p_renderingQueue);

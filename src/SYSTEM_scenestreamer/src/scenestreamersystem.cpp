@@ -1602,11 +1602,27 @@ void SceneStreamerSystem::register_to_queues(const json::Channels& p_channels, m
     const auto rendering_proxies{ renderingHelper->registerToQueues(m_entitygraph, p_entity, channelsRendering) };
 
     m_rendering_proxies[p_entity->getId()] = rendering_proxies;
+
+    for(auto& e : rendering_proxies)
+    {
+        for (const auto& call : m_callbacks)
+        {
+            call(SceneStreamerSystemEvent::REGISTER_RENDERING_PROXY, e.second->getId());
+        }
+	}
 }
 
 void SceneStreamerSystem::unregister_from_queues(mage::core::Entity* p_entity)
 {
     const auto rendering_proxies = m_rendering_proxies.at(p_entity->getId());
+
+    for (auto& e : rendering_proxies)
+    {
+        for (const auto& call : m_callbacks)
+        {
+            call(SceneStreamerSystemEvent::UNREGISTER_RENDERING_PROXY, e.second->getId());
+        }
+    }
 
     const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
     renderingHelper->unregisterFromQueues(m_entitygraph, p_entity, rendering_proxies);

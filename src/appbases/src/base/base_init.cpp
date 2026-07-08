@@ -93,7 +93,7 @@ void Base::init(const std::string p_appWindowsEntityName)
 	sysEngine->makeSystem<mage::D3D11System>(d3d11SystemSlot, m_entitygraph, renderingQueueSystemSlot);
 	sysEngine->makeSystem<mage::ResourceSystem>(resourceSystemSlot, m_entitygraph);
 	sysEngine->makeSystem<mage::WorldSystem>(worldSystemSlot, m_entitygraph);
-	sysEngine->makeSystem<mage::RenderingQueueSystem>(renderingQueueSystemSlot, m_entitygraph);
+	sysEngine->makeSystem<mage::RenderingQueueSystem>(renderingQueueSystemSlot, m_entitygraph, sceneStreamSystemSlot);
 	sysEngine->makeSystem<mage::DataPrintSystem>(dataPrintSystemSlot, m_entitygraph);
 	sysEngine->makeSystem<mage::AnimationsSystem>(animationsSystemSlot, m_entitygraph);
 	sysEngine->makeSystem<mage::SceneStreamerSystem>(sceneStreamSystemSlot, m_entitygraph);
