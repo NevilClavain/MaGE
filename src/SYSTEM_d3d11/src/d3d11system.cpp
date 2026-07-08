@@ -637,9 +637,8 @@ void D3D11System::run()
 {
 	const auto start_time{ std::chrono::high_resolution_clock::now() };
 
-	if (!m_initialized)
-	{
-	
+	std::call_once(m_initialization_once_flag, [this]()
+	{	
 		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(m_renderingqueuesystem_slot))};
 
 		RenderingQueueSystem::Callback renderingqueue_system_cb
@@ -753,14 +752,14 @@ void D3D11System::run()
 		ResourceStateControler::getInstance()->registerSubscriber(trianglemeshe_cb);
 
 		manageInitialization();
-	}
+	});
 
 	for (rendering::Queue* rendering_queue : m_queues)
 	{
 		renderQueue(*rendering_queue);
 		rendering_queue->clearTexts();
 	}
-		
+
 
 	if (m_initialized)
 	{
