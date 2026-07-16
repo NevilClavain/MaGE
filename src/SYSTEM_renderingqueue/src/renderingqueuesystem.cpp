@@ -82,6 +82,7 @@ m_localLogger("RenderingQueueSystem", mage::core::logger::Configuration::getInst
 {
 	const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 	dataCloud->registerData<std::string>("mage.timings.renderingqueuesystem");
+
 }
 
 void RenderingQueueSystem::run()
@@ -90,28 +91,74 @@ void RenderingQueueSystem::run()
 
 	std::call_once(m_initialization_once_flag, [this]()
 	{
-		auto streamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(SystemEngine::getInstance()->getSystem(m_streamersystem_slot)) };
-
-		mage::SceneStreamerSystem::Callback streamer_system_cb
+		if (!m_scan_entitygraph )
 		{
-			[&, this](mage::SceneStreamerSystemEvent p_event, const std::string& p_entity_id)
+			auto streamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(SystemEngine::getInstance()->getSystem(m_streamersystem_slot)) };
+
+			mage::SceneStreamerSystem::Callback streamer_system_cb
 			{
-				if (mage::SceneStreamerSystemEvent::REGISTER_RENDERING_PROXY == p_event)
+				[&, this](mage::SceneStreamerSystemEvent p_event, const std::string& p_entity_id)
 				{
-					// TO BE CONTINUED...
+					if (mage::SceneStreamerSystemEvent::REGISTER_RENDERING_PROXY == p_event)
+					{
+						// for rendering entities from entities controlled by scene streamer (scene rendering queues)
+
+						Entity* entity{ m_entitygraph.node(p_entity_id).data() };
+
+						const auto& rendering_aspect{ entity->aspectAccess(mage::core::renderingAspect::id) };
+						rendering::Queue* current_queue{ searchRenderingQueueInAncestors(entity) };
+
+						if (current_queue)
+						{
+							if (entity->hasAspect(mage::core::resourcesAspect::id))
+							{
+								const auto& resource_aspect{ entity->aspectAccess(mage::core::resourcesAspect::id) };
+								checkEntityInsertion(p_entity_id, resource_aspect, rendering_aspect, *current_queue);
+							}
+
+							// search for text rendering in rendering aspect
+
+							const auto texts{ rendering_aspect.getComponentsByType<rendering::Queue::Text>() };
+							if (texts.size() > 0)
+							{
+								auto& text{ texts.at(0)->getPurpose() };
+
+								bool projected_z_neg{ false };
+
+								if (entity->hasAspect(mage::core::worldAspect::id))
+								{
+									const auto& world_aspect{ entity->aspectAccess(mage::core::worldAspect::id) };
+									const auto wp{ world_aspect.getComponentsByType<mage::transform::WorldPosition>().at(0)->getPurpose() };
+
+									projected_z_neg = wp.projected_z_neg;
+
+									const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+									const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("mage.infos.viewport") };
+									const auto window_dims{ dataCloud->readDataValue<mage::core::maths::IntCoords2D>("mage.infos.window_resol") };
+
+									text.position[0] = ((wp.global_pos(3, 0) + (viewport[0] * 0.5f)) * window_dims[0]) / viewport[0];
+									text.position[1] = (((viewport[1] * 0.5f) - wp.global_pos(3, 1)) * window_dims[1]) / viewport[1];
+								}
+								if (!projected_z_neg)
+								{
+									current_queue->pushText(text);
+								}
+							}
+						}
+
+					}
+					else if (mage::SceneStreamerSystemEvent::UNREGISTER_RENDERING_PROXY == p_event)
+					{
+						Entity* current_entity{ m_entitygraph.node(p_entity_id).data() };
+						rendering::Queue* current_queue{ searchRenderingQueueInAncestors(current_entity) };
+
+						removeFromRenderingQueue(p_entity_id, *current_queue);
+					}
 				}
-				else if (mage::SceneStreamerSystemEvent::UNREGISTER_RENDERING_PROXY == p_event)
-				{
-					Entity* current_entity{ m_entitygraph.node(p_entity_id).data() };
-					rendering::Queue* current_queue{ searchRenderingQueueInAncestors(current_entity) };
+			};
 
-					removeFromRenderingQueue(p_entity_id, *current_queue);
-				}
-			}
-		};
-
-		streamerSystemInstance->registerSubscriber(streamer_system_cb);
-
+			streamerSystemInstance->registerSubscriber(streamer_system_cb);
+		}
 	});
 
 	manageRenderingQueue();
@@ -269,44 +316,48 @@ void RenderingQueueSystem::manageRenderingQueue()
 
 		}
 
-		////////Manage Queues build/updates//////////////////////////////////////
-			
-		rendering::Queue* current_queue{ searchRenderingQueueInAncestors(entity) };
-
-		if (current_queue)
 		{
-			if (entity->hasAspect(mage::core::resourcesAspect::id))
+			////////Manage Queues build/updates//////////////////////////////////////
+
+			// for rendering entities that depends on rendering quads compositions queues (entities not controlled by scene streamer system
+
+			rendering::Queue* current_queue{ searchRenderingQueueInAncestors(entity) };
+
+			if (current_queue)
 			{
-				const auto& resource_aspect{ entity->aspectAccess(mage::core::resourcesAspect::id) };
-				checkEntityInsertion(currEntityId, resource_aspect, rendering_aspect, *current_queue);
-			}
-
-			// search for text rendering in rendering aspect
-
-			const auto texts{ rendering_aspect.getComponentsByType<rendering::Queue::Text>() };
-			if (texts.size() > 0)
-			{
-				auto& text{ texts.at(0)->getPurpose() };
-
-				bool projected_z_neg{ false };
-
-				if (entity->hasAspect(mage::core::worldAspect::id))
+				if (entity->hasAspect(mage::core::resourcesAspect::id))
 				{
-					const auto& world_aspect{ entity->aspectAccess(mage::core::worldAspect::id) };
-					const auto wp{ world_aspect.getComponentsByType<mage::transform::WorldPosition>().at(0)->getPurpose() };
-
-					projected_z_neg = wp.projected_z_neg;
-
-					const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-					const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("mage.infos.viewport") };
-					const auto window_dims{ dataCloud->readDataValue<mage::core::maths::IntCoords2D>("mage.infos.window_resol") };
-
-					text.position[0] = ((wp.global_pos(3, 0) + (viewport[0] * 0.5f)) * window_dims[0]) / viewport[0];
-					text.position[1] = (((viewport[1] * 0.5f) - wp.global_pos(3, 1)) * window_dims[1]) / viewport[1];
+					const auto& resource_aspect{ entity->aspectAccess(mage::core::resourcesAspect::id) };
+					checkEntityInsertion(currEntityId, resource_aspect, rendering_aspect, *current_queue);
 				}
-				if (!projected_z_neg)
+
+				// search for text rendering in rendering aspect
+
+				const auto texts{ rendering_aspect.getComponentsByType<rendering::Queue::Text>() };
+				if (texts.size() > 0)
 				{
-					current_queue->pushText(text);
+					auto& text{ texts.at(0)->getPurpose() };
+
+					bool projected_z_neg{ false };
+
+					if (entity->hasAspect(mage::core::worldAspect::id))
+					{
+						const auto& world_aspect{ entity->aspectAccess(mage::core::worldAspect::id) };
+						const auto wp{ world_aspect.getComponentsByType<mage::transform::WorldPosition>().at(0)->getPurpose() };
+
+						projected_z_neg = wp.projected_z_neg;
+
+						const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+						const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("mage.infos.viewport") };
+						const auto window_dims{ dataCloud->readDataValue<mage::core::maths::IntCoords2D>("mage.infos.window_resol") };
+
+						text.position[0] = ((wp.global_pos(3, 0) + (viewport[0] * 0.5f)) * window_dims[0]) / viewport[0];
+						text.position[1] = (((viewport[1] * 0.5f) - wp.global_pos(3, 1)) * window_dims[1]) / viewport[1];
+					}
+					if (!projected_z_neg)
+					{
+						current_queue->pushText(text);
+					}
 				}
 			}
 		}
@@ -1126,4 +1177,9 @@ void RenderingQueueSystem::pushWorldOutputToQueueDrawingControl(const std::strin
 
 		p_outqtdc.worlds.push_back(&worldposition.global_pos);
 	}
+}
+
+void RenderingQueueSystem::enableRendergraphScan(bool p_enable)
+{
+	m_scan_entitygraph = p_enable;
 }

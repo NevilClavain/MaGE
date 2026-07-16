@@ -85,6 +85,8 @@ namespace mage
 
         std::pair<std::string, std::string> getViewGroupCurrentViews(const std::string& p_viewGroupId) const;
 
+        void        enableRendergraphScan(bool p_enable);
+
     private:
 
         mutable mage::core::logger::Sink                    m_localLogger;
@@ -94,6 +96,8 @@ namespace mage
 
         int                                                 m_streamersystem_slot;
         std::once_flag                                      m_initialization_once_flag;
+
+		bool                                                m_scan_entitygraph{ true };
 
         void manageRenderingQueue();
         void handleRenderingQueuesState(core::Entity* p_entity, rendering::Queue& p_renderingQueue);
@@ -113,7 +117,6 @@ namespace mage
 
         void logRenderingqueue(const std::string& p_entity_id, mage::rendering::Queue& p_renderingQueue) const;
 
-        void pushWorldOutputToQueueDrawingControl(const std::string& p_entity_id, rendering::QueueDrawingControl& p_outqtdc);
-
+        void pushWorldOutputToQueueDrawingControl(const std::string& p_entity_id, rendering::QueueDrawingControl& p_outqtdc);       
     };
 }
