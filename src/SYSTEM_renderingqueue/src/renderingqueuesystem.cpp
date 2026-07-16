@@ -48,33 +48,35 @@
 #include "logging.h"
 #include "scenestreamersystem.h"
 
+#include "entitygraph_helpers.h"
+
 using namespace mage;
 using namespace mage::core;
 
 
-static rendering::Queue* searchRenderingQueueInAncestors(core::Entity* p_entity)
-{
-	rendering::Queue* rqueue{ nullptr };
-	core::Entity* curr_parent{ p_entity->getParent() };
-
-	while (curr_parent)
-	{
-		if (curr_parent->hasAspect(mage::core::renderingAspect::id))
-		{
-			const auto& rendering_aspect{ curr_parent->aspectAccess(mage::core::renderingAspect::id) };
-
-			const auto rendering_queues_list{ rendering_aspect.getComponentsByType<rendering::Queue>() };
-			if (rendering_queues_list.size() > 0)
-			{
-				auto& renderingQueue{ rendering_queues_list.at(0)->getPurpose() };
-				rqueue = &renderingQueue;
-				break;
-			}
-		}
-		curr_parent = curr_parent->getParent();
-	}
-	return rqueue;
-}
+//static rendering::Queue* searchRenderingQueueInAncestors(core::Entity* p_entity)
+//{
+//	rendering::Queue* rqueue{ nullptr };
+//	core::Entity* curr_parent{ p_entity->getParent() };
+//
+//	while (curr_parent)
+//	{
+//		if (curr_parent->hasAspect(mage::core::renderingAspect::id))
+//		{
+//			const auto& rendering_aspect{ curr_parent->aspectAccess(mage::core::renderingAspect::id) };
+//
+//			const auto rendering_queues_list{ rendering_aspect.getComponentsByType<rendering::Queue>() };
+//			if (rendering_queues_list.size() > 0)
+//			{
+//				auto& renderingQueue{ rendering_queues_list.at(0)->getPurpose() };
+//				rqueue = &renderingQueue;
+//				break;
+//			}
+//		}
+//		curr_parent = curr_parent->getParent();
+//	}
+//	return rqueue;
+//}
 
 RenderingQueueSystem::RenderingQueueSystem(Entitygraph& p_entitygraph, int p_streamersystem_slot) : System(p_entitygraph),
 m_streamersystem_slot(p_streamersystem_slot),
@@ -106,7 +108,7 @@ void RenderingQueueSystem::run()
 						Entity* entity{ m_entitygraph.node(p_entity_id).data() };
 
 						const auto& rendering_aspect{ entity->aspectAccess(mage::core::renderingAspect::id) };
-						rendering::Queue* current_queue{ searchRenderingQueueInAncestors(entity) };
+						rendering::Queue* current_queue{ helpers::findRenderingQueueInAncestors(entity) };
 
 						if (current_queue)
 						{
@@ -150,7 +152,7 @@ void RenderingQueueSystem::run()
 					else if (mage::SceneStreamerSystemEvent::UNREGISTER_RENDERING_PROXY == p_event)
 					{
 						Entity* current_entity{ m_entitygraph.node(p_entity_id).data() };
-						rendering::Queue* current_queue{ searchRenderingQueueInAncestors(current_entity) };
+						rendering::Queue* current_queue{ helpers::findRenderingQueueInAncestors(current_entity) };
 
 						removeFromRenderingQueue(p_entity_id, *current_queue);
 					}
@@ -321,7 +323,7 @@ void RenderingQueueSystem::manageRenderingQueue()
 
 			// for rendering entities that depends on rendering quads compositions queues (entities not controlled by scene streamer system
 
-			rendering::Queue* current_queue{ searchRenderingQueueInAncestors(entity) };
+			rendering::Queue* current_queue{ helpers::findRenderingQueueInAncestors(entity) };
 
 			if (current_queue)
 			{

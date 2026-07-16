@@ -52,6 +52,7 @@ namespace mage
 	namespace rendering
 	{
 		class RenderState;
+		struct Queue;
 	}
 
 	class Texture;
@@ -158,6 +159,8 @@ namespace mage
 			const std::string& p_parentid,
 			const std::string& p_entityid,
 			const std::pair<size_t, Texture>& p_renderTargetTexture);
+
+		rendering::Queue* findRenderingQueueInAncestors(core::Entity* p_entity);
 	}
 }
 

@@ -37,6 +37,7 @@ include_directories(${CMAKE_SOURCE_DIR}/CORE_xtree/src)
 include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_resource/src)
 include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_scenestreamer/src)
 include_directories(${CMAKE_SOURCE_DIR}/TRANSFORM_control/src)
+include_directories(${CMAKE_SOURCE_DIR}/helpers)
 
 include_directories(${st_tree_include_dir})
 include_directories(${jsonstruct_include_dir})
