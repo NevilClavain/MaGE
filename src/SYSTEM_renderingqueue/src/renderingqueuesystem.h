@@ -66,7 +66,7 @@ namespace mage
     public:
 
         RenderingQueueSystem() = delete;
-        RenderingQueueSystem(core::Entitygraph& p_entitygraph, int p_streamersystem_slot);
+        RenderingQueueSystem(core::Entitygraph& p_entitygraph);
         ~RenderingQueueSystem() = default;
 
         void        run();
@@ -80,8 +80,6 @@ namespace mage
         void        addQueuesToViewGroup(const std::string& p_viewGroupId, const std::unordered_set<std::string>& p_queues_id_list);
 
         std::pair<std::string, std::string> getViewGroupCurrentViews(const std::string& p_viewGroupId) const;
-
-        void        enableRendergraphScan(bool p_enable);
 
         static void checkEntityInsertion(
             mage::core::Entity* p_entity,
@@ -102,8 +100,6 @@ namespace mage
 
         int                                                 m_streamersystem_slot;
         std::once_flag                                      m_initialization_once_flag;
-
-		bool                                                m_scan_entitygraph{ true };
 
         void manageRenderingQueue();
         void handleRenderingQueuesState(core::Entity* p_entity, rendering::Queue& p_renderingQueue);

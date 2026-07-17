@@ -67,8 +67,6 @@ namespace mage
 
     enum class SceneStreamerSystemEvent
     {
-        REGISTER_RENDERING_PROXY,
-		UNREGISTER_RENDERING_PROXY,
     };
 
     namespace json

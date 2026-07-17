@@ -82,10 +82,6 @@ void StreamedOpenEnv::init(const std::string p_appWindowsEntityName)
 {
 	Base::init(p_appWindowsEntityName);
 	d3d11_system_events_openenv();
-
-	auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot)) };
-
-	renderingQueueSystemInstance->enableRendergraphScan(false); // streamer sytem controls renderingQueueSystem
 }
 
 

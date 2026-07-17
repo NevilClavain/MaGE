@@ -88,7 +88,7 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 	sysEngine->makeSystem<mage::D3D11System>(1, m_entitygraph, 4);
 	sysEngine->makeSystem<mage::ResourceSystem>(2, m_entitygraph);
 	sysEngine->makeSystem<mage::WorldSystem>(3, m_entitygraph);
-	sysEngine->makeSystem<mage::RenderingQueueSystem>(4, m_entitygraph, -1);
+	sysEngine->makeSystem<mage::RenderingQueueSystem>(4, m_entitygraph);
 	sysEngine->makeSystem<mage::DataPrintSystem>(5, m_entitygraph);
 
 	// D3D11 system provides compilation shader service : give access to this to resources sytem
