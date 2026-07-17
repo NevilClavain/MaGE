@@ -53,31 +53,6 @@
 using namespace mage;
 using namespace mage::core;
 
-
-//static rendering::Queue* searchRenderingQueueInAncestors(core::Entity* p_entity)
-//{
-//	rendering::Queue* rqueue{ nullptr };
-//	core::Entity* curr_parent{ p_entity->getParent() };
-//
-//	while (curr_parent)
-//	{
-//		if (curr_parent->hasAspect(mage::core::renderingAspect::id))
-//		{
-//			const auto& rendering_aspect{ curr_parent->aspectAccess(mage::core::renderingAspect::id) };
-//
-//			const auto rendering_queues_list{ rendering_aspect.getComponentsByType<rendering::Queue>() };
-//			if (rendering_queues_list.size() > 0)
-//			{
-//				auto& renderingQueue{ rendering_queues_list.at(0)->getPurpose() };
-//				rqueue = &renderingQueue;
-//				break;
-//			}
-//		}
-//		curr_parent = curr_parent->getParent();
-//	}
-//	return rqueue;
-//}
-
 RenderingQueueSystem::RenderingQueueSystem(Entitygraph& p_entitygraph, int p_streamersystem_slot) : System(p_entitygraph),
 m_streamersystem_slot(p_streamersystem_slot),
 m_localLogger("RenderingQueueSystem", mage::core::logger::Configuration::getInstance())
