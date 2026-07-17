@@ -46,10 +46,6 @@ namespace mage
 
     enum class RenderingQueueSystemEvent
     {
-        LINEDRAWING_ADDED,
-        LINEDRAWING_REMOVED,
-        TRIANGLEDRAWING_ADDED,
-        TRIANGLEDRAWING_REMOVED,
         MAINVIEW_QUEUE_UPDATED,
         SECONDARYVIEW_QUEUE_UPDATED,
         RENDERINGQUEUE_STATE_READY
@@ -87,6 +83,16 @@ namespace mage
 
         void        enableRendergraphScan(bool p_enable);
 
+        static void checkEntityInsertion(
+            mage::core::Entity* p_entity,
+            const mage::core::ComponentContainer& p_resourceAspect,
+            const mage::core::ComponentContainer& p_renderingAspect,
+            mage::rendering::Queue& p_renderingQueue);
+
+        static void removeFromRenderingQueue(
+            const std::string& p_entity_id,
+            mage::rendering::Queue& p_renderingQueue);
+
     private:
 
         mutable mage::core::logger::Sink                    m_localLogger;
@@ -102,21 +108,8 @@ namespace mage
         void manageRenderingQueue();
         void handleRenderingQueuesState(core::Entity* p_entity, rendering::Queue& p_renderingQueue);
 
-        void checkEntityInsertion(
-                                    const std::string& p_entity_id, 
-                                    const mage::core::ComponentContainer& p_resourceAspect,
-                                    const mage::core::ComponentContainer& p_renderingAspect, 
-                                    mage::rendering::Queue& p_renderingQueue
-                                );
-
-        void removeFromRenderingQueue(
-                                    const std::string& p_entity_id, 
-                                    mage::rendering::Queue& p_renderingQueue
-                                );
-
-
         void logRenderingqueue(const std::string& p_entity_id, mage::rendering::Queue& p_renderingQueue) const;
 
-        void pushWorldOutputToQueueDrawingControl(const std::string& p_entity_id, rendering::QueueDrawingControl& p_outqtdc);       
+        static void pushWorldOutputToQueueDrawingControl(mage::core::Entity* p_entity, rendering::QueueDrawingControl& p_outqtdc);
     };
 }

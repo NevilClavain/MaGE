@@ -90,7 +90,7 @@ void RenderingQueueSystem::run()
 							if (entity->hasAspect(mage::core::resourcesAspect::id))
 							{
 								const auto& resource_aspect{ entity->aspectAccess(mage::core::resourcesAspect::id) };
-								checkEntityInsertion(p_entity_id, resource_aspect, rendering_aspect, *current_queue);
+								checkEntityInsertion(entity, resource_aspect, rendering_aspect, *current_queue);
 							}
 
 							// search for text rendering in rendering aspect
@@ -305,7 +305,7 @@ void RenderingQueueSystem::manageRenderingQueue()
 				if (entity->hasAspect(mage::core::resourcesAspect::id))
 				{
 					const auto& resource_aspect{ entity->aspectAccess(mage::core::resourcesAspect::id) };
-					checkEntityInsertion(currEntityId, resource_aspect, rendering_aspect, *current_queue);
+					checkEntityInsertion(entity, resource_aspect, rendering_aspect, *current_queue);
 				}
 
 				// search for text rendering in rendering aspect
@@ -496,7 +496,8 @@ static void const connect_shaders_args(/*mage::core::logger::Sink& p_localLogger
 }
 
 
-void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, const mage::core::ComponentContainer& p_resourceAspect,
+void RenderingQueueSystem::checkEntityInsertion(mage::core::Entity* p_entity, 
+												const mage::core::ComponentContainer& p_resourceAspect,
 												const mage::core::ComponentContainer& p_renderingAspect, 
 												mage::rendering::Queue& p_renderingQueue)
 {	
@@ -513,7 +514,7 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 			if (!drawingControl.ready)
 			{
 				notAllReady = true;
-				drawingControl.owner_entity_id = p_entity_id;
+				drawingControl.owner_entity_id = p_entity->getId();
 			}
 		}
 
@@ -758,7 +759,7 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 										
 								linesQueueDrawingControl.owner_entity_id = linesDrawingControl.owner_entity_id;
 
-								pushWorldOutputToQueueDrawingControl(p_entity_id, linesQueueDrawingControl);
+								pushWorldOutputToQueueDrawingControl(p_entity, linesQueueDrawingControl);
 
 								connect_shaders_args(linesDrawingControl, linesQueueDrawingControl, vshader, pshader);
 
@@ -767,11 +768,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								linesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
 
 								linesQueueDrawingControl.draw = &linesDrawingControl.draw;
-
-								for (const auto& call : m_callbacks)
-								{
-									call(RenderingQueueSystemEvent::LINEDRAWING_ADDED, linesDrawingControl.owner_entity_id, p_renderingQueue);
-								}
 
 								/// specific part
 
@@ -808,7 +804,7 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 
 								trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
 
-								pushWorldOutputToQueueDrawingControl(p_entity_id, trianglesQueueDrawingControl);
+								pushWorldOutputToQueueDrawingControl(p_entity, trianglesQueueDrawingControl);
 	
 
 								trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
@@ -820,11 +816,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
 
 								trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
-
-								for (const auto& call : m_callbacks)
-								{
-									call(RenderingQueueSystemEvent::TRIANGLEDRAWING_ADDED, trianglesDrawingControl.owner_entity_id, p_renderingQueue);
-								}
 
 								/// specific part
 
@@ -863,7 +854,7 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 
 								trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
 				
-								pushWorldOutputToQueueDrawingControl(p_entity_id, trianglesQueueDrawingControl);
+								pushWorldOutputToQueueDrawingControl(p_entity, trianglesQueueDrawingControl);
 
 								trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
 
@@ -874,11 +865,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
 
 								trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
-
-								for (const auto& call : m_callbacks)
-								{
-									call(RenderingQueueSystemEvent::TRIANGLEDRAWING_ADDED, trianglesDrawingControl.owner_entity_id, p_renderingQueue);
-								}
 
 								/// specific part
 
@@ -916,7 +902,7 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 									{
 										auto& qtdc = renderStatePayloadPtr->triangles_dc_list.at(found_trianglesQueueDrawingControl_owner_entity_id);
 
-										pushWorldOutputToQueueDrawingControl(p_entity_id, qtdc);
+										pushWorldOutputToQueueDrawingControl(p_entity, qtdc);
 									}
 								}
 							}
@@ -973,11 +959,6 @@ void RenderingQueueSystem::removeFromRenderingQueue(const std::string& p_entity_
 					if (ldc.second.owner_entity_id == p_entity_id)
 					{
 						ldc_to_remove.push_back(p_entity_id);
-
-						for (const auto& call : m_callbacks)
-						{
-							call(RenderingQueueSystemEvent::LINEDRAWING_REMOVED, p_entity_id, p_renderingQueue);
-						}
 					}
 				}
 
@@ -996,11 +977,6 @@ void RenderingQueueSystem::removeFromRenderingQueue(const std::string& p_entity_
 					{						
 						// remove this triangle dc
 						tdc_to_remove.push_back(p_entity_id);
-
-						for (const auto& call : m_callbacks)
-						{
-							call(RenderingQueueSystemEvent::TRIANGLEDRAWING_REMOVED, p_entity_id, p_renderingQueue);
-						}
 					}
 				}
 
@@ -1039,8 +1015,7 @@ void RenderingQueueSystem::removeFromRenderingQueue(const std::string& p_entity_
 		////////////////////////////////////////////////
 
 		if (0 == rendering_channel.list.size())
-		{
-			_MAGE_DEBUG(m_localLogger, "rendering order channel is now empty, remove : " + std::to_string(qnode.first))
+		{			
 			roc_to_remove.push_back(qnode.first);
 		}
 	}
@@ -1116,11 +1091,9 @@ void RenderingQueueSystem::addQueuesToViewGroup(const std::string& p_viewGroupId
 	}
 }
 
-void RenderingQueueSystem::pushWorldOutputToQueueDrawingControl(const std::string& p_entity_id, rendering::QueueDrawingControl& p_outqtdc)
+void RenderingQueueSystem::pushWorldOutputToQueueDrawingControl(mage::core::Entity* p_entity, rendering::QueueDrawingControl& p_outqtdc)
 {
-	const Entitygraph::Node& node{ m_entitygraph.node(p_entity_id) };
-	const auto entity{ node.data() };
-	auto& world_aspect{ entity->aspectAccess(mage::core::worldAspect::id) };
+	auto& world_aspect{ p_entity->aspectAccess(mage::core::worldAspect::id) };
 
 	// search if world aspect is delegated to a separated scene entity, represented by a Entity* component in this local entity world aspect
 
@@ -1148,7 +1121,7 @@ void RenderingQueueSystem::pushWorldOutputToQueueDrawingControl(const std::strin
 		const auto& worldpositions_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
 		if (0 == worldpositions_list.size())
 		{
-			_EXCEPTION("entity world aspect : missing world position on entity " + p_entity_id);
+			_EXCEPTION("entity world aspect : missing world position on entity " + p_entity->getId());
 		}
 		const transform::WorldPosition& worldposition{ worldpositions_list.at(0)->getPurpose() };
 
