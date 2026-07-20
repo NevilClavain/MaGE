@@ -831,8 +831,6 @@ namespace mage
 
         void buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot, int p_resourceSystemSlot);
 
-        void requestEntityRendering(const std::string& p_entity_id, bool p_render_it);
-
 
         void dumpXTree();
         void dumpXTreeEntities();
@@ -885,7 +883,12 @@ namespace mage
 
         std::unordered_map<std::string, std::unordered_set<std::string>>                        m_scene_entities_rg_parts; // rendergraph parts for each scene entity (defined in json as "rendergraph_parts" array)
 
-        std::unordered_map<std::string, EntityRendering>                                        m_entity_renderings;        // entities rendering infos (channels, etc...)
+
+        
+        // entities rendering infos (channels, etc...)
+        std::unordered_map<std::string, EntityRendering>                                        m_entity_renderings;        
+		// same, but for entites with "always_rendered" tag in json, i.e. entities that are always rendered, even if not in any viewgroup
+        std::unordered_map<std::string, EntityRendering>                                        m_entity_renderings_always_rendered;
 
         std::unordered_map<std::string, RendergraphPartData>                                    m_rendergraphpart_data;
 

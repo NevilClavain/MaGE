@@ -321,17 +321,17 @@ bool SceneStreamerSystem::compute_entity(core::Entity* p_entity, const core::Com
         return computed;
     }
 
-    if (mage::helpers::checkTag(p_entity, "#alwaysRendered"))
-    {
-        // render it directly, and no need to add it in rgpd xtree_entities list
-        if (!m_entity_renderings.at(p_entity->getId()).m_rendered)
-        {
-            m_entity_renderings.at(p_entity->getId()).m_request_rendering = true;
-        }
+    //if (mage::helpers::checkTag(p_entity, "#alwaysRendered"))
+    //{
+    //    // render it directly, and no need to add it in rgpd xtree_entities list
+    //    if (!m_entity_renderings.at(p_entity->getId()).m_rendered)
+    //    {
+    //        m_entity_renderings.at(p_entity->getId()).m_request_rendering = true;
+    //    }
 
-        computed = true;
-    }
-    else
+    //    computed = true;
+    //}
+    //else
     {
         if (m_scene_entities_rg_parts.count(p_entity->getId()))
         {
@@ -602,6 +602,33 @@ void SceneStreamerSystem::run()
     //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
     //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
     //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+
+	// to treat in PRIORITY the entities that are tagged as "always_rendered" (i.e. always rendered, even if not in any viewgroup)
+    for (auto& e : m_entity_renderings_always_rendered)
+    {
+        bool one_treated{ false };
+
+        if (e.second.m_request_rendering && !e.second.m_rendered)
+        {
+            register_to_queues(e.second.m_channels, m_scene_entities.at(e.first));
+            e.second.m_rendered = true;
+
+            one_treated = true;
+        }
+        else if (!e.second.m_request_rendering && e.second.m_rendered)
+        {
+            unregister_from_queues(m_scene_entities.at(e.first));
+            e.second.m_rendered = false;
+
+            one_treated = true;
+        }
+
+        if (one_treated)
+        {
+            break;
+        }
+    }
+
 
     for (auto& e : m_entity_renderings)
     {
@@ -1082,14 +1109,35 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
     
                 if (p_node.channels.configs.size() > 0) // store only entites that can be "rendered" -> those with number of channels > 0
                 {
-                    if (m_entity_renderings.count(entity_id) > 0)
+
+                    if (mage::helpers::checkTag(entity, "#alwaysRendered"))
                     {
-                        _EXCEPTION("Already registered " + entity_id);
+                        if (m_entity_renderings_always_rendered.count(entity_id) > 0)
+                        {
+                            _EXCEPTION("Already registered " + entity_id);
+                        }
+                        else
+                        {
+                            EntityRendering rendering_infos(p_node.channels);
+                            m_entity_renderings_always_rendered[entity_id] = rendering_infos;
+
+                            if (!m_entity_renderings_always_rendered.at(entity->getId()).m_rendered)
+                            {
+                                m_entity_renderings_always_rendered.at(entity->getId()).m_request_rendering = true;
+                            }
+                        }
                     }
                     else
                     {
-                        EntityRendering rendering_infos(p_node.channels);
-                        m_entity_renderings[entity_id] = rendering_infos;
+                        if (m_entity_renderings.count(entity_id) > 0)
+                        {
+                            _EXCEPTION("Already registered " + entity_id);
+                        }
+                        else
+                        {
+                            EntityRendering rendering_infos(p_node.channels);
+                            m_entity_renderings[entity_id] = rendering_infos;
+                        }
                     }
                 }
             }
@@ -1479,17 +1527,6 @@ void SceneStreamerSystem::init_values_generator_from_matrix_factory(const std::v
     }
 }
 
-void SceneStreamerSystem::requestEntityRendering(const std::string& p_entity_id, bool p_render_it)
-{
-    if (m_entity_renderings.count(p_entity_id))
-    {
-        m_entity_renderings.at(p_entity_id).m_request_rendering = p_render_it;
-    }
-    else
-    {
-        _EXCEPTION("Unknown entity id : " + p_entity_id);
-    }
-}
 
 void SceneStreamerSystem::register_to_queues(const json::Channels& p_channels, mage::core::Entity* p_entity)
 {
