@@ -605,19 +605,29 @@ void SceneStreamerSystem::run()
 
     for (auto& e : m_entity_renderings)
     {
+        bool one_treated{ false };
+
         if (e.second.m_request_rendering && !e.second.m_rendered)
         {
             register_to_queues(e.second.m_channels, m_scene_entities.at(e.first));
             e.second.m_rendered = true;
 
+            one_treated = true;
         }
         else if (!e.second.m_request_rendering && e.second.m_rendered)
         {
             unregister_from_queues(m_scene_entities.at(e.first));
             e.second.m_rendered = false;
+
+            one_treated = true;
+        }
+
+        if (one_treated)
+        {
+            break;
         }
     }
-
+   
     //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
     //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
     //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
@@ -628,9 +638,8 @@ void SceneStreamerSystem::run()
     if (duration_4.count() > 0)
     {
         dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem.4", std::to_string(duration_4.count()) + " ms");
-    }                    
+    }
 
-    
     const auto end_time{ std::chrono::high_resolution_clock::now() };
     const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
     
