@@ -133,12 +133,13 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 
 		m_texturesBlobCache_mutex.lock();
 		const auto texture_state{ m_texturesBlobCache.at(resourceUID).state };
-		m_texturesBlobCache_mutex.unlock();
 
 		if (TextureCacheEntry::State::BLOBLOADED == texture_state)
 		{
 			p_textureInfos.setFileContent(m_texturesBlobCache.at(resourceUID).texture_content.getData(), m_texturesBlobCache.at(resourceUID).texture_content.getDataSize());
 			ResourceStateControler::getInstance()->update(p_textureInfos, Texture::State::BLOBLOADED);
 		}
+
+		m_texturesBlobCache_mutex.unlock();
 	}
 }

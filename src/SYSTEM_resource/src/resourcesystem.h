@@ -174,8 +174,6 @@ namespace mage
         std::unordered_map<std::string, TextureCacheEntry>                              m_texturesBlobCache;
 
         std::mutex	                                                                    m_shadersCache_mutex;
-
-
         std::unordered_map<std::string, ShaderCacheEntry>                               m_shadersCache;
 
         bool                                                                            m_requested{ false };
