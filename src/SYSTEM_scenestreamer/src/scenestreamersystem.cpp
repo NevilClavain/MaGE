@@ -63,9 +63,6 @@ m_localLogger("SceneStreamerSystem", mage::core::logger::Configuration::getInsta
 {
     const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
     dataCloud->registerData<std::string>("mage.timings.scenestreamersystem");
-    dataCloud->registerData<std::string>("mage.timings.scenestreamersystem.3");
-    dataCloud->registerData<std::string>("mage.timings.scenestreamersystem.4");
-
 
     // Register callback for entitygraph events
     m_entitygraph.registerSubscriber([this](core::EntitygraphEvents p_event, const core::Entity& p_entity)
@@ -320,89 +317,77 @@ bool SceneStreamerSystem::compute_entity(core::Entity* p_entity, const core::Com
         computed = true;
         return computed;
     }
-
-    //if (mage::helpers::checkTag(p_entity, "#alwaysRendered"))
-    //{
-    //    // render it directly, and no need to add it in rgpd xtree_entities list
-    //    if (!m_entity_renderings.at(p_entity->getId()).m_rendered)
-    //    {
-    //        m_entity_renderings.at(p_entity->getId()).m_request_rendering = true;
-    //    }
-
-    //    computed = true;
-    //}
-    //else
+    
+    if (m_scene_entities_rg_parts.count(p_entity->getId()))
     {
-        if (m_scene_entities_rg_parts.count(p_entity->getId()))
+        const std::unordered_set<std::string> scene_entity_rg_parts{ m_scene_entities_rg_parts.at(p_entity->getId()) };
+
+        for (auto& rgpd : m_rendergraphpart_data)
         {
-            const std::unordered_set<std::string> scene_entity_rg_parts{ m_scene_entities_rg_parts.at(p_entity->getId()) };
-
-            for (auto& rgpd : m_rendergraphpart_data)
+            for (const std::string& rendering_queue_id : rgpd.second.viewgroup.queue_entities)
             {
-                for (const std::string& rendering_queue_id : rgpd.second.viewgroup.queue_entities)
+                if (scene_entity_rg_parts.count(rendering_queue_id))
                 {
-                    if (scene_entity_rg_parts.count(rendering_queue_id))
+                    // can add this entity in this viewgroup/rgpd xtree
+                    if (!rgpd.second.xtree_moving_entities_to_monitor.count(p_entity->getId()))
                     {
-                        // can add this entity in this viewgroup/rgpd xtree
-                        if (!rgpd.second.xtree_moving_entities_to_monitor.count(p_entity->getId()))
+                        XTreeEntity xtreeEnt;
+                        xtreeEnt.entity = p_entity;
+
+                        const bool frozen_tag{ mage::helpers::checkTag(p_entity, "#frozen") };
+                        const bool static_tag{ mage::helpers::checkTag(p_entity, "#static") };
+
+                        // "#static" : no moving on scene, always stay at x,y,z coords, but can potentially be transforemed at each frame (ex: rotation on y axis)
+                        if (static_tag || frozen_tag)
                         {
-                            XTreeEntity xtreeEnt;
-                            xtreeEnt.entity = p_entity;
+                            // place it on xtree once for all
+                            const auto& resources_aspect{ p_entity->aspectAccess(resourcesAspect::id) };
 
-                            const bool frozen_tag{ mage::helpers::checkTag(p_entity, "#frozen") };
-                            const bool static_tag{ mage::helpers::checkTag(p_entity, "#static") };
-
-                            // "#static" : no moving on scene, always stay at x,y,z coords, but can potentially be transforemed at each frame (ex: rotation on y axis)
-                            if (static_tag || frozen_tag)
+                            const auto meshes_list{ resources_aspect.getComponentsByType<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>() };
+                            if (meshes_list.size() > 0)
                             {
-                                // place it on xtree once for all
-                                const auto& resources_aspect{ p_entity->aspectAccess(resourcesAspect::id) };
+                                auto& meshe_descr{ meshes_list.at(0)->getPurpose() };
+                                TriangleMeshe& meshe{ meshe_descr.second };
 
-                                const auto meshes_list{ resources_aspect.getComponentsByType<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>() };
-                                if (meshes_list.size() > 0)
+                                if (TriangleMeshe::State::RENDERERLOADED == meshe.getState())
                                 {
-                                    auto& meshe_descr{ meshes_list.at(0)->getPurpose() };
-                                    TriangleMeshe& meshe{ meshe_descr.second };
+                                    const double meshe_size{ meshe.getSize() };
 
-                                    if (TriangleMeshe::State::RENDERERLOADED == meshe.getState())
+                                    const auto& world_aspect{ p_entity->aspectAccess(worldAspect::id) };
+
+                                    const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
+                                    auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
+                                    const auto global_pos = entity_worldposition.global_pos;
+
+
+                                    if (XtreeType::QUADTREE == m_configuration.xtree_type)
                                     {
-                                        const double meshe_size{ meshe.getSize() };
-
-                                        const auto& world_aspect{ p_entity->aspectAccess(worldAspect::id) };
-
-                                        const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
-                                        auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
-                                        const auto global_pos = entity_worldposition.global_pos;
-
-
-                                        if (XtreeType::QUADTREE == m_configuration.xtree_type)
-                                        {
-                                            m_place_obj_on_quadtree_leaf(rgpd.second.quadtree_root.get(), meshe_size, global_pos, p_entity, xtreeEnt);
-                                        }
-                                        else // XtreeType::OCTREE
-                                        {
-                                            m_place_obj_on_octree_leaf(rgpd.second.octree_root.get(), meshe_size, global_pos, p_entity, xtreeEnt);
-                                        }
-                                        computed = true;
+                                        m_place_obj_on_quadtree_leaf(rgpd.second.quadtree_root.get(), meshe_size, global_pos, p_entity, xtreeEnt);
                                     }
-                                    // else (not RENDERERLOADED) : computed stay FALSE !!! -> continue watching
-                                }
-                                else
-                                {
+                                    else // XtreeType::OCTREE
+                                    {
+                                        m_place_obj_on_octree_leaf(rgpd.second.octree_root.get(), meshe_size, global_pos, p_entity, xtreeEnt);
+                                    }
                                     computed = true;
                                 }
+                                // else (not RENDERERLOADED) : computed stay FALSE !!! -> continue watching
                             }
                             else
                             {
-                                rgpd.second.xtree_moving_entities_to_monitor[p_entity->getId()] = xtreeEnt;
                                 computed = true;
                             }
+                        }
+                        else
+                        {
+                            rgpd.second.xtree_moving_entities_to_monitor[p_entity->getId()] = xtreeEnt;
+                            computed = true;
                         }
                     }
                 }
             }
         }
     }
+    
 
     return computed;
 }
@@ -550,8 +535,6 @@ void SceneStreamerSystem::run()
         }
     }
 
-    const auto start_time_3{ std::chrono::high_resolution_clock::now() };
-
     if (m_xtree_check_enabled)
     {
         /////////////////////////////////////////////////////////
@@ -588,10 +571,6 @@ void SceneStreamerSystem::run()
         }
     }
 
-    const auto end_time_3{ std::chrono::high_resolution_clock::now() };
-    const auto duration_3{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_3 - start_time_3) };
-
-    dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem.3", std::to_string(duration_3.count()) + " ms");
     
     /////////////////////////////////////////////////////////
     // loop on entity rendering entries
@@ -659,13 +638,6 @@ void SceneStreamerSystem::run()
     //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
     //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 
-    const auto end_time_4{ std::chrono::high_resolution_clock::now() };
-    const auto duration_4{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_4 - start_time_4) };
-
-    if (duration_4.count() > 0)
-    {
-        dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem.4", std::to_string(duration_4.count()) + " ms");
-    }
 
     const auto end_time{ std::chrono::high_resolution_clock::now() };
     const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
