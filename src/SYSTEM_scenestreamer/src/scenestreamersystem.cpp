@@ -602,19 +602,28 @@ void SceneStreamerSystem::run()
     //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
     //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
     //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-
     for (auto& e : m_entity_renderings)
     {
+		bool one_treated{ false };
+
         if (e.second.m_request_rendering && !e.second.m_rendered)
         {
             register_to_queues(e.second.m_channels, m_scene_entities.at(e.first));
             e.second.m_rendered = true;
 
+            one_treated = true;
         }
         else if (!e.second.m_request_rendering && e.second.m_rendered)
         {
             unregister_from_queues(m_scene_entities.at(e.first));
             e.second.m_rendered = false;
+
+            one_treated = true;
+        }
+
+        if (one_treated)
+        {
+            break;
         }
     }
 
@@ -1678,6 +1687,7 @@ void SceneStreamerSystem::dumpXTree()
                             const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
                             auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
                             const auto global_pos = entity_worldposition.global_pos;
+
 
                             _MAGE_DEBUG(m_localLogger, "-> " + tab + e->getId() + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 2)));
                         }
