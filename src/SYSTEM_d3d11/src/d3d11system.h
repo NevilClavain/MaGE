@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <mutex>
+
 #include "system.h"
 #include "shaders_service.h"
 #include "textures_service.h"
@@ -96,6 +98,8 @@ namespace mage
         int                                                     m_renderingqueuesystem_slot;
 
         std::vector<rendering::Queue*>                          m_queues; // /!\ /!\ /!\ queue MUST BE ordered here in correct rendering order : from leaf to root of rendergraph part of entity graph
+
+        std::once_flag                                          m_initialization_once_flag;
 
         void    manageInitialization();       
 

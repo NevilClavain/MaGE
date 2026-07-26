@@ -233,7 +233,10 @@ namespace mage
 			bool						getTargetDepthClearing() const;
 
 			void						pushText(const Text& p_text);
-			
+			std::vector<Text>			getTexts() const;
+			void						setTexts(const std::vector<Text>& p_texts);
+			void						clearTexts();
+
 			QueueNodes					getQueueNodes() const;
 			void						setQueueNodes(const QueueNodes& p_nodes);
 
@@ -247,8 +250,15 @@ namespace mage
 			std::string					getTargetTextureUID() const;
 
 			void						setTargetStage(size_t p_stage);
+			size_t						getTargetStage() const;
 
 			void						resetStates();
+
+			void						setState(State p_newstate);
+
+			void						setScreenRenderingPurpose();
+			void						setBufferRenderingPurpose(mage::Texture& p_target_texture);
+
 								
 		private:
 	
@@ -272,15 +282,7 @@ namespace mage
 
 			size_t							m_targetStage{ 0 };
 
-			std::string						m_targetTextureUID; // for BUFFER_RENDERING
-	
-			void							setState(State p_newstate);
-
-			void							setScreenRenderingPurpose();
-			void							setBufferRenderingPurpose(mage::Texture& p_target_texture);
-					
-			friend class mage::RenderingQueueSystem;
-			friend class mage::D3D11System;
+			std::string						m_targetTextureUID; // for BUFFER_RENDERING						
 		};
 	}
 }

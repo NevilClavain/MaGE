@@ -358,8 +358,7 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 
 		m_shadersCache_mutex.lock();
 		const auto shader_state{ m_shadersCache.at(resourceUID).state };
-		m_shadersCache_mutex.unlock();
-
+		
 		if (ShaderCacheEntry::State::BLOBLOADED == shader_state)
 		{
 			p_shaderInfos.setFileContent(m_shadersCache.at(resourceUID).shader_source.c_str(), m_shadersCache.at(resourceUID).shader_source.size());
@@ -378,5 +377,7 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 
 			ResourceStateControler::getInstance()->update(p_shaderInfos, Shader::State::BLOBLOADED);
 		}
+
+		m_shadersCache_mutex.unlock();
 	}
 }

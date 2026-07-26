@@ -73,7 +73,7 @@ namespace mage
 
 			Node&						node(const std::string& p_entity_id);
 
-			bool						hasNode(const std::string& p_entity_id);
+			bool						hasNode(const std::string& p_entity_id) const;
 
 			PreIterator					preBegin();
 			PreIterator					preEnd();
@@ -83,7 +83,7 @@ namespace mage
 
 			void						move_subtree(Node& p_parent_dest, Node& p_src);
 
-			std::unordered_set<Entity*> getEntitiesListForAspect(int p_aspect);
+			std::unordered_set<Entity*> getEntitiesListForAspect(int p_aspect) const;
 
 			void						registerEntityInAspect(Entity* p_entity, int p_aspect);
 

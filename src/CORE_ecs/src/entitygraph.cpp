@@ -224,12 +224,12 @@ Entitygraph::PostIterator Entitygraph::postEnd()
 	return m_tree.df_post_end();
 }
 
-bool Entitygraph::hasNode(const std::string& p_entity_id)
+bool Entitygraph::hasNode(const std::string& p_entity_id) const
 {
 	return (m_nodes.count(p_entity_id) > 0);
 }
 
-std::unordered_set<Entity*> Entitygraph::getEntitiesListForAspect(int p_aspect)
+std::unordered_set<Entity*> Entitygraph::getEntitiesListForAspect(int p_aspect) const
 {
 	if (m_entities_by_aspect.count(p_aspect) == 0)
 	{

@@ -344,7 +344,7 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 	}
 	else
 	{
-		_EXCEPTION("entity world aspect : renderingQueue missing main view id " + p_renderingQueue.m_name);
+		_EXCEPTION("entity world aspect : renderingQueue missing main view id " + p_renderingQueue.getName());
 	}
 
 	maths::Matrix current_mainview_view = current_mainview_cam;
@@ -610,7 +610,7 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 	}
 
 	// render texts
-	for (auto& text : p_renderingQueue.m_texts)
+	for (auto& text : p_renderingQueue.getTexts())
 	{
 		d3dimpl->drawText(text.font, text.color, text.position, text.rotation_rad, text.text);
 
@@ -637,9 +637,8 @@ void D3D11System::run()
 {
 	const auto start_time{ std::chrono::high_resolution_clock::now() };
 
-	if (!m_initialized)
-	{
-	
+	std::call_once(m_initialization_once_flag, [this]()
+	{	
 		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(m_renderingqueuesystem_slot))};
 
 		RenderingQueueSystem::Callback renderingqueue_system_cb
@@ -753,14 +752,14 @@ void D3D11System::run()
 		ResourceStateControler::getInstance()->registerSubscriber(trianglemeshe_cb);
 
 		manageInitialization();
-	}
+	});
 
 	for (rendering::Queue* rendering_queue : m_queues)
 	{
 		renderQueue(*rendering_queue);
-		rendering_queue->m_texts.clear();
+		rendering_queue->clearTexts();
 	}
-		
+
 
 	if (m_initialized)
 	{
