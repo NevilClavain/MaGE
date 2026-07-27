@@ -644,9 +644,13 @@ namespace mage
         }
 
     private:
-        json::Channels  m_channels;
-        bool            m_request_rendering         { false };
-        bool            m_rendered                  { false }; // if true, passes are actually mapped in rendergraph side and so entity is normally rendered
+        json::Channels      m_channels;
+        bool                m_request_rendering         { false };
+        bool                m_rendered                  { false }; // if true, passes are actually mapped in rendergraph side and so entity is normally rendered
+
+        static constexpr int m_rendering_state_ttl_max{ 20 };  // in number of frames
+
+        int                 m_rendering_state_current_ttl{ 0 };
 
         friend class SceneStreamerSystem;
     };

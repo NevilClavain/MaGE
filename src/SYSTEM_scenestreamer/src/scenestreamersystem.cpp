@@ -606,19 +606,30 @@ void SceneStreamerSystem::run()
     {
 		bool one_treated{ false };
 
-        if (e.second.m_request_rendering && !e.second.m_rendered)
+        if (0 == e.second.m_rendering_state_current_ttl)
         {
-            register_to_queues(e.second.m_channels, m_scene_entities.at(e.first));
-            e.second.m_rendered = true;
+            if (e.second.m_request_rendering && !e.second.m_rendered)
+            {
+                register_to_queues(e.second.m_channels, m_scene_entities.at(e.first));
+                e.second.m_rendered = true;
 
-            one_treated = true;
+                one_treated = true;
+                e.second.m_rendering_state_current_ttl = EntityRendering::m_rendering_state_ttl_max;
+            }
+            else if (!e.second.m_request_rendering && e.second.m_rendered)
+            {
+                unregister_from_queues(m_scene_entities.at(e.first));
+                e.second.m_rendered = false;
+
+                one_treated = true;
+                e.second.m_rendering_state_current_ttl = EntityRendering::m_rendering_state_ttl_max;
+            }
         }
-        else if (!e.second.m_request_rendering && e.second.m_rendered)
-        {
-            unregister_from_queues(m_scene_entities.at(e.first));
-            e.second.m_rendered = false;
 
-            one_treated = true;
+		e.second.m_rendering_state_current_ttl--;
+        if (e.second.m_rendering_state_current_ttl < 0)
+        {
+            e.second.m_rendering_state_current_ttl = 0;
         }
 
         if (one_treated)
