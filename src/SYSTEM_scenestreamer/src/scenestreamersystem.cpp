@@ -456,6 +456,12 @@ void SceneStreamerSystem::run()
                 {
                     if (p_current_node->isLeaf())
                     {
+                        // REMOVE from previous location
+                        if (p_xtreeEntity.quadtree_node)
+                        {
+							p_xtreeEntity.quadtree_node->dataAccess().entities.erase(p_entity);
+                        }
+
                         p_current_node->dataAccess().entities.insert(p_entity);
                         p_xtreeEntity.quadtree_node = p_current_node;
                     }
@@ -506,6 +512,12 @@ void SceneStreamerSystem::run()
                 {
                     if (p_current_node->isLeaf())
                     {
+                        // REMOVE from previous location
+                        if (p_xtreeEntity.octree_node)
+                        {
+                            p_xtreeEntity.octree_node->dataAccess().entities.erase(p_entity);
+                        }
+
                         p_current_node->dataAccess().entities.insert(p_entity);
                         p_xtreeEntity.octree_node = p_current_node;
                     }
@@ -1686,8 +1698,8 @@ void SceneStreamerSystem::dumpXTree()
 
                     _MAGE_DEBUG(m_localLogger, tab + "depth = " + std::to_string(p_depth)
 
-                        + " side_length = " + std::to_string(p_data.side_length)
-                        + " local_position = " + std::to_string(p_data.local_position[0]) + " " + std::to_string(p_data.local_position[1])
+                        //+ " side_length = " + std::to_string(p_data.side_length)
+                        //+ " local_position = " + std::to_string(p_data.local_position[0]) + " " + std::to_string(p_data.local_position[1])
 
                         + " xz min = " + std::to_string(p_data.xz_min[0]) + " " + std::to_string(p_data.xz_min[1])
                         + " xz max = " + std::to_string(p_data.xz_max[0]) + " " + std::to_string(p_data.xz_max[1]))

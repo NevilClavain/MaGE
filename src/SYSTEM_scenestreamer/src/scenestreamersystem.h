@@ -710,6 +710,8 @@ namespace mage
         };
 
 
+        /////////////////////////////////////////////////////////////////////////////////
+        // place 3D object in appropriate xtree leaf : utility lambda
 
         const std::function<void(core::QuadTreeNode<SceneQuadTreeNode>*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> m_place_obj_on_quadtree_leaf
         {
@@ -718,6 +720,13 @@ namespace mage
                 if (p_current_node->isLeaf())
                 {
                     // leaf reached, cannt go beyond, so place it anyway
+
+                    // REMOVE from previous location
+                    if (p_xtreeEntity.quadtree_node)
+                    {
+                        p_xtreeEntity.quadtree_node->dataAccess().entities.erase(p_entity);
+                    }
+
                     p_current_node->dataAccess().entities.insert(p_entity);
                     p_xtreeEntity.quadtree_node = p_current_node;
                 }
@@ -731,6 +740,13 @@ namespace mage
                         if (ratio > m_configuration.object_xtreenode_ratio)
                         {
                             //place it
+                            
+                            // REMOVE from previous location
+                            if (p_xtreeEntity.quadtree_node)
+                            {
+                                p_xtreeEntity.quadtree_node->dataAccess().entities.erase(p_entity);
+                            }
+
                             p_current_node->dataAccess().entities.insert(p_entity);
                             p_xtreeEntity.quadtree_node = p_current_node;
                         }
@@ -747,9 +763,6 @@ namespace mage
             }
         };
 
-        /////////////////////////////////////////////////////////////////////////////////
-        // place 3D object in appropriate xtree leaf : utility lambda
-
         const std::function<void(core::OctreeNode<SceneOctreeNode>*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> m_place_obj_on_octree_leaf
         {
             [&](core::OctreeNode<SceneOctreeNode>* p_current_node, double p_obj_size, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
@@ -757,6 +770,13 @@ namespace mage
                 if (p_current_node->isLeaf())
                 {
                     // leaf reached, cannt go beyond, so place it anyway
+
+                    // REMOVE from previous location
+                    if (p_xtreeEntity.octree_node)
+                    {
+                        p_xtreeEntity.octree_node->dataAccess().entities.erase(p_entity);
+                    }
+
                     p_current_node->dataAccess().entities.insert(p_entity);
                     p_xtreeEntity.octree_node = p_current_node;
                 }
@@ -770,6 +790,13 @@ namespace mage
                         if (ratio > m_configuration.object_xtreenode_ratio)
                         {
                             //place it
+
+                            // REMOVE from previous location
+                            if (p_xtreeEntity.octree_node)
+                            {
+                                p_xtreeEntity.octree_node->dataAccess().entities.erase(p_entity);
+                            }
+
                             p_current_node->dataAccess().entities.insert(p_entity);
                             p_xtreeEntity.octree_node = p_current_node;
                         }
@@ -1103,6 +1130,8 @@ namespace mage
                     // just discovered -> ask for rendering
                     if (!m_entity_renderings.at(entity->getId()).m_rendered)
                     {
+						_MAGE_DEBUG(m_localLogger, "Now discovered = " + entity->getId() + " -> ask for rendering");
+                     
                         m_entity_renderings.at(entity->getId()).m_request_rendering = true;
 
                         // at least one entity added to rendergraph, we gonna need to reactivate the resource system
@@ -1120,6 +1149,8 @@ namespace mage
 
                     if (m_entity_renderings.at(rendered_entity->getId()).m_rendered)
                     {
+                        _MAGE_DEBUG(m_localLogger, "Not found no more in neigbourood: " + rendered_entity->getId() + " -> STOP rendering");
+
                         m_entity_renderings.at(rendered_entity->getId()).m_request_rendering = false;
                     }
                 }
