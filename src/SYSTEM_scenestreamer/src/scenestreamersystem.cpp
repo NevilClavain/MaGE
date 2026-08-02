@@ -1698,7 +1698,7 @@ void SceneStreamerSystem::dumpXTree()
 
                     _MAGE_DEBUG(m_localLogger, tab + "depth = " + std::to_string(p_depth)
 
-                        //+ " side_length = " + std::to_string(p_data.side_length)
+                        + " side_length = " + std::to_string(p_data.side_length)
                         //+ " local_position = " + std::to_string(p_data.local_position[0]) + " " + std::to_string(p_data.local_position[1])
 
                         + " xz min = " + std::to_string(p_data.xz_min[0]) + " " + std::to_string(p_data.xz_min[1])
