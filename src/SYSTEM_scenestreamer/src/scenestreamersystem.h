@@ -884,19 +884,19 @@ namespace mage
 
         void init_XTree(RendergraphPartData& p_rgpd);
 
-        template<typename SceneXTreeNode, typename XTreeNodeType>
-        void update_XTree(XTreeNodeType* p_xtree_root,
+        template<typename SceneXTreeNode, typename XTreeType>
+        void update_XTree(XTreeType* p_xtree_root,
                             std::unordered_map<std::string,
                             XTreeEntity>& p_xtree_entities,
-                            const std::function<void(XTreeNodeType*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_cam_on_leaf_func,
-                            const std::function<void(XTreeNodeType*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_obj_on_leaf_func,
+                            const std::function<void(XTreeType*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_cam_on_leaf_func,
+                            const std::function<void(XTreeType*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_obj_on_leaf_func,
                             const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> p_hasnode_func,
                             const std::function<bool(SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> p_is_inside_func);
 
-        template<typename SceneXTreeNode, typename XTreeNodeType>
+        template<typename SceneXTreeNode, typename XTreeType>
         void check_XTree(std::unordered_map<std::string, SceneStreamerSystem::XTreeEntity>& p_xtree_entities, 
                             const json::ViewGroup& p_viewgroup, 
-                            const std::function<XTreeNodeType* (const SceneStreamerSystem::XTreeEntity&)>& p_get_node_func);
+                            const std::function<XTreeType* (const SceneStreamerSystem::XTreeEntity&)>& p_get_node_func);
 
 
         bool compute_entity(core::Entity* p_entity, const core::ComponentContainer& p_world_components);
@@ -958,11 +958,11 @@ namespace mage
     /////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////
 
-    template<typename SceneXTreeNode, typename XTreeNodeType>
-    void SceneStreamerSystem::update_XTree(XTreeNodeType* p_xtree_root, 
+    template<typename SceneXTreeNode, typename XTreeType>
+    void SceneStreamerSystem::update_XTree(XTreeType* p_xtree_root, 
                                                 std::unordered_map<std::string, SceneStreamerSystem::XTreeEntity>& p_xtree_entities,
-                                                const std::function<void(XTreeNodeType*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_cam_on_leaf_func,
-                                                const std::function<void(XTreeNodeType*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_obj_on_leaf_func,
+                                                const std::function<void(XTreeType*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_cam_on_leaf_func,
+                                                const std::function<void(XTreeType*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_obj_on_leaf_func,
                                                 const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> p_hasnode_func,
                                                 const std::function<bool(SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> p_is_inside_func)
     {
@@ -1001,6 +1001,7 @@ namespace mage
                         {
                             const double meshe_size{ meshe.getSize() };
                             p_place_obj_on_leaf_func(p_xtree_root, meshe_size, global_pos, entity, xe.second);
+                            /// ON NE PASSE JAMAIS ICI ???
                         }
                     }
                 }
@@ -1046,10 +1047,10 @@ namespace mage
     }
 
 
-    template<typename SceneXTreeNode, typename XTreeNodeType>
+    template<typename SceneXTreeNode, typename XTreeType>
     void SceneStreamerSystem::check_XTree(std::unordered_map<std::string, SceneStreamerSystem::XTreeEntity>& p_xtree_entities, 
                                             const json::ViewGroup& p_viewgroup, 
-                                            const std::function<XTreeNodeType* (const SceneStreamerSystem::XTreeEntity&)>& p_get_node_func)
+                                            const std::function<XTreeType* (const SceneStreamerSystem::XTreeEntity&)>& p_get_node_func)
     {
         // for current view group, find current camera id 
 
@@ -1058,13 +1059,13 @@ namespace mage
 
         const std::string main_camera_id{ current_views.first };
 
-        XTreeEntity xe{ p_xtree_entities.at(main_camera_id) };
+        XTreeEntity camera_xe{ p_xtree_entities.at(main_camera_id) };
 
         std::unordered_set<mage::core::Entity*> found_entities; // search entities in camera's neighbourood
 
-        const std::function<void(std::unordered_set<mage::core::Entity*>&, XTreeNodeType*, int)> search_near_entities
+        const std::function<void(std::unordered_set<mage::core::Entity*>&, XTreeType*, int)> search_near_entities
         {
-            [&](std::unordered_set<mage::core::Entity*>& p_found_entities, XTreeNodeType* p_node, int p_neighbourood_depth)
+            [&](std::unordered_set<mage::core::Entity*>& p_found_entities, XTreeType* p_node, int p_neighbourood_depth)
             {
                 if (p_neighbourood_depth > m_configuration.max_neighbourood_depth)
                 {
@@ -1084,37 +1085,37 @@ namespace mage
 
                 ////////// search in current node neighbours
 
-                std::vector<XTreeNodeType*> neighbours{ p_node->getNeighbours() };
-                for (XTreeNodeType* n : neighbours)
-                {
-                    if (nullptr != n)
-                    {
-                        const SceneXTreeNode& n_scene_xtree_node{ n->getData() };
-                        for (mage::core::Entity* e : n_scene_xtree_node.entities)
-                        {
-                            if (m_entity_renderings.count(e->getId()) > 0)
-                            {
-                                // store only those than can be rendered
-                                p_found_entities.insert(e);
-                            }
-                        }
-                        search_near_entities(p_found_entities, n, p_neighbourood_depth + 1);
-                    }
-                }
+                //std::vector<XTreeType*> neighbours{ p_node->getNeighbours() };
+                //for (XTreeType* n : neighbours)
+                //{
+                //    if (nullptr != n)
+                //    {
+                //        const SceneXTreeNode& n_scene_xtree_node{ n->getData() };
+                //        for (mage::core::Entity* e : n_scene_xtree_node.entities)
+                //        {
+                //            if (m_entity_renderings.count(e->getId()) > 0)
+                //            {
+                //                // store only those than can be rendered
+                //                p_found_entities.insert(e);
+                //            }
+                //        }
+                //        search_near_entities(p_found_entities, n, p_neighbourood_depth + 1);
+                //    }
+                //}
             }
         };
 
+        // XTree node where camera is actualy locat
+        XTreeType* node_containing_camera = p_get_node_func(camera_xe); // get xe.quadtree or xe.octree regarding XTreeType used :)
 
-        XTreeNodeType* curr = p_get_node_func(xe); // get xe.quadtree or xe.octree regarding XTreeNodeType used :)
-
-        if (curr)
+        if (node_containing_camera)
         {
             while (1)
             {
-                search_near_entities(found_entities, curr, 0);
+                search_near_entities(found_entities, node_containing_camera, 0);
 
-                curr = curr->getParent();
-                if (nullptr == curr)
+                node_containing_camera = node_containing_camera->getParent();
+                if (nullptr == node_containing_camera)
                 {
                     break;
                 }
