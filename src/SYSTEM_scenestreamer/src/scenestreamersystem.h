@@ -690,6 +690,8 @@ namespace mage
             //ptr vers le node correspondant dans le xtree 
             core::QuadTreeNode<SceneQuadTreeNode>*              quadtree_node{ nullptr }; 
             core::OctreeNode<SceneOctreeNode>*                  octree_node{ nullptr };
+
+			bool												static_object{ false };
         };
 
 
@@ -706,7 +708,7 @@ namespace mage
             std::unique_ptr<core::OctreeNode<SceneOctreeNode>>                                      octree_root;
 
             // regrouping here all entities dispatched in m_xtree_root above
-            std::unordered_map<std::string, XTreeEntity>                                            xtree_moving_entities_to_monitor;
+            std::unordered_map<std::string, XTreeEntity>                                            entities_to_monitor;
         };
 
 
@@ -966,6 +968,9 @@ namespace mage
                                                 const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> p_hasnode_func,
                                                 const std::function<bool(SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> p_is_inside_func)
     {
+		
+        std::vector<SceneStreamerSystem::XTreeEntity > entities_to_remove;
+
         for (auto& xe : p_xtree_entities)
         {
             core::Entity* entity{ xe.second.entity };
@@ -973,7 +978,7 @@ namespace mage
 
             const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
             auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
-            const auto global_pos = entity_worldposition.global_pos;
+            const auto global_pos = entity_worldposition.global_pos;            
 
             ///////////////////////////////////////////////
 
@@ -1000,14 +1005,18 @@ namespace mage
                         if (TriangleMeshe::State::RENDERERLOADED == meshe.getState())
                         {
                             const double meshe_size{ meshe.getSize() };
-                            p_place_obj_on_leaf_func(p_xtree_root, meshe_size, global_pos, entity, xe.second);
-                            /// ON NE PASSE JAMAIS ICI ???
+                            p_place_obj_on_leaf_func(p_xtree_root, meshe_size, global_pos, entity, xe.second);                            
                         }
                     }
                 }
             }
             else
             {
+                if (entity_worldposition.globalpos_is_valid && xe.second.static_object)
+                {
+                    entities_to_remove.push_back(xe.second); // correctly placed at final location and static, so dont need to monitor this one : remove from p_xtree_entities list
+                }
+
                 //// UPDATE
 
                 if (entity->hasAspect(cameraAspect::id))
@@ -1044,6 +1053,11 @@ namespace mage
                 }
             }
         }
+
+        for(auto e : entities_to_remove)
+        {
+            p_xtree_entities.erase(e.entity->getId());
+		}
     }
 
 
@@ -1085,23 +1099,23 @@ namespace mage
 
                 ////////// search in current node neighbours
 
-                //std::vector<XTreeType*> neighbours{ p_node->getNeighbours() };
-                //for (XTreeType* n : neighbours)
-                //{
-                //    if (nullptr != n)
-                //    {
-                //        const SceneXTreeNode& n_scene_xtree_node{ n->getData() };
-                //        for (mage::core::Entity* e : n_scene_xtree_node.entities)
-                //        {
-                //            if (m_entity_renderings.count(e->getId()) > 0)
-                //            {
-                //                // store only those than can be rendered
-                //                p_found_entities.insert(e);
-                //            }
-                //        }
-                //        search_near_entities(p_found_entities, n, p_neighbourood_depth + 1);
-                //    }
-                //}
+                std::vector<XTreeType*> neighbours{ p_node->getNeighbours() };
+                for (XTreeType* n : neighbours)
+                {
+                    if (nullptr != n)
+                    {
+                        //const SceneXTreeNode& n_scene_xtree_node{ n->getData() };
+                        //for (mage::core::Entity* e : n_scene_xtree_node.entities)
+                        //{
+                        //    if (m_entity_renderings.count(e->getId()) > 0)
+                        //    {
+                        //        // store only those than can be rendered
+                        //        p_found_entities.insert(e);
+                        //    }
+                        //}
+                        search_near_entities(p_found_entities, n, p_neighbourood_depth + 1);
+                    }
+                }
             }
         };
 

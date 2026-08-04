@@ -51,10 +51,16 @@ namespace mage
                 TRANSFORMATION_PARENT_PROJECTEDPOS 
             };
 
+            //////////
             core::maths::Matrix local_pos;
+
             core::maths::Matrix global_pos;
+			bool				globalpos_is_valid{ false }; // was computed at least once
+            //////////
 
             bool                projected_z_neg{ false };
+
+            
 
             TransformationComposition composition_operation{ TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT };
         };

@@ -392,48 +392,51 @@ void WorldSystem::compute_entity(core::Entity* p_entity, const ComponentContaine
 
 			switch (entity_worldposition.composition_operation)
 			{
-			case transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT:
+				case transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT:
 
-				entity_worldposition.global_pos = entity_worldposition.local_pos * parententity_worldposition.global_pos;
-				break;
+					entity_worldposition.global_pos = entity_worldposition.local_pos * parententity_worldposition.global_pos;
+					entity_worldposition.globalpos_is_valid = true;
+					break;
 
-			case transform::WorldPosition::TransformationComposition::TRANSFORMATION_ABSOLUTE:
+				case transform::WorldPosition::TransformationComposition::TRANSFORMATION_ABSOLUTE:
 
-				entity_worldposition.global_pos = entity_worldposition.local_pos;
-				break;
+					entity_worldposition.global_pos = entity_worldposition.local_pos;
+					entity_worldposition.globalpos_is_valid = true;
+					break;
 
-			case transform::WorldPosition::TransformationComposition::TRANSFORMATION_PARENT_PROJECTEDPOS:
-			{
-				auto screenposition_components_list{ parent_worldaspect.getComponentsByType<std::pair<mage::rendering::Queue*, core::maths::Real3Vector>>() };
-				if (screenposition_components_list.size())
+				case transform::WorldPosition::TransformationComposition::TRANSFORMATION_PARENT_PROJECTEDPOS:
 				{
-					auto screenposition{ screenposition_components_list.at(0)->getPurpose().second };
-
-					auto updated_local_pos{ entity_worldposition.local_pos };
-
-					updated_local_pos(3, 0) += screenposition[0];
-					updated_local_pos(3, 1) += screenposition[1];
-
-					entity_worldposition.projected_z_neg = (screenposition[2] < 0);
-					entity_worldposition.global_pos = updated_local_pos;
-
-					if (p_entity->hasAspect(core::renderingAspect::id))
+					auto screenposition_components_list{ parent_worldaspect.getComponentsByType<std::pair<mage::rendering::Queue*, core::maths::Real3Vector>>() };
+					if (screenposition_components_list.size())
 					{
-						const auto& entity_renderingaspect{ p_entity->aspectAccess(core::renderingAspect::id) };
+						auto screenposition{ screenposition_components_list.at(0)->getPurpose().second };
 
-						auto& entity_dc_list{ entity_renderingaspect.getComponentsByType<rendering::DrawingControl>() };
-						if (entity_dc_list.size() > 0)
+						auto updated_local_pos{ entity_worldposition.local_pos };
+
+						updated_local_pos(3, 0) += screenposition[0];
+						updated_local_pos(3, 1) += screenposition[1];
+
+						entity_worldposition.projected_z_neg = (screenposition[2] < 0);
+						entity_worldposition.global_pos = updated_local_pos;
+						entity_worldposition.globalpos_is_valid = true;
+
+						if (p_entity->hasAspect(core::renderingAspect::id))
 						{
-							entity_dc_list.at(0)->getPurpose().projected_z_neg = (screenposition[2] < 0);
+							const auto& entity_renderingaspect{ p_entity->aspectAccess(core::renderingAspect::id) };
+
+							auto& entity_dc_list{ entity_renderingaspect.getComponentsByType<rendering::DrawingControl>() };
+							if (entity_dc_list.size() > 0)
+							{
+								entity_dc_list.at(0)->getPurpose().projected_z_neg = (screenposition[2] < 0);
+							}
 						}
 					}
+					else
+					{
+						_EXCEPTION("TRANSFORMATION_PARENT_PROJECTEDPOS mode require 2D projected pos from parent")
+					}
 				}
-				else
-				{
-					_EXCEPTION("TRANSFORMATION_PARENT_PROJECTEDPOS mode require 2D projected pos from parent")
-				}
-			}
-			break;
+				break;
 			}
 		}
 	}
@@ -456,6 +459,7 @@ void WorldSystem::compute_entity(core::Entity* p_entity, const ComponentContaine
 					transform::WorldPosition fake_parent_pos;
 					fake_parent_pos.global_pos.identity();
 					fake_parent_pos.local_pos.identity();
+					fake_parent_pos.globalpos_is_valid = true;
 
 					animator.func(p_world_components, time_aspect, fake_parent_pos, animator.component_keys);
 				}
@@ -469,6 +473,7 @@ void WorldSystem::compute_entity(core::Entity* p_entity, const ComponentContaine
 		///////////////////////
 
 		entity_worldposition.global_pos = entity_worldposition.local_pos;
+		entity_worldposition.globalpos_is_valid = true;
 	}
 
 }
