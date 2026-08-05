@@ -633,8 +633,8 @@
                       "rand_interval_min": 0.1,
                       "rand_distribution_type": "uniform",
                       "rand_distribution_arguments": [
-                        -1100.0,
-                        1100.0
+                        -1200.0,
+                        1200.0
                       ]
                     }
                   },
@@ -652,8 +652,8 @@
                       "rand_interval_min": 0.1,
                       "rand_distribution_type": "uniform",
                       "rand_distribution_arguments": [
-                        -1100.0,
-                        1100.0
+                        -1200.0,
+                        1200.0
                       ]
                     }
                   }
