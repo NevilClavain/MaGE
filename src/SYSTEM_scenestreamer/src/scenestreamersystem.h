@@ -1145,7 +1145,7 @@ namespace mage
                     // just discovered -> ask for rendering
                     if (!m_entity_renderings.at(entity->getId()).m_rendered)
                     {
-						_MAGE_DEBUG(m_localLogger, "Now discovered = " + entity->getId() + " -> ask for rendering");
+						_MAGE_DEBUG(m_localLogger, "Now discovered = " + entity->getId() + " -> START_rendering");
                      
                         m_entity_renderings.at(entity->getId()).m_request_rendering = true;
 
@@ -1164,7 +1164,7 @@ namespace mage
 
                     if (m_entity_renderings.at(rendered_entity->getId()).m_rendered)
                     {
-                        _MAGE_DEBUG(m_localLogger, "Not found no more in neigbourood: " + rendered_entity->getId() + " -> STOP rendering");
+                        _MAGE_DEBUG(m_localLogger, "Not found no more in neigbourood: " + rendered_entity->getId() + " -> STOP_rendering");
 
                         m_entity_renderings.at(rendered_entity->getId()).m_request_rendering = false;
                     }
