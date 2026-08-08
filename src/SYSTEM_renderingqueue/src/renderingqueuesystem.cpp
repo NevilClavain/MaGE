@@ -935,6 +935,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 
 void RenderingQueueSystem::removeFromRenderingQueue(const std::string& p_entity_id, mage::rendering::Queue& p_renderingQueue)
 {
+	_MAGE_DEBUG(m_localLogger, "Remove from rendering queue " + p_renderingQueue.getName() + " for " + p_entity_id);
+
 	auto queueNodes{ p_renderingQueue.getQueueNodes() };
 
 	std::vector<int> roc_to_remove;
