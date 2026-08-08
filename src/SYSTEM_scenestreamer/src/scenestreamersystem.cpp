@@ -1606,7 +1606,7 @@ void SceneStreamerSystem::register_to_queues(const json::Channels& p_channels, m
                 default_channel_config.queue_entity_id = e.second.queue_entity_id;
                 channelsRendering.configs[e.second.queue_entity_id] = default_channel_config;
 
-                _MAGE_DEBUG(m_localLogger, "register_to_queues Entity " + p_entity->getId() + " for queue " + e.second.queue_entity_id + " " + e.first);
+                _MAGE_TRACE(m_localLogger, "register_to_queues Entity " + p_entity->getId() + " for queue " + e.second.queue_entity_id + " " + e.first);
             }
         }
     }
@@ -1648,10 +1648,10 @@ void SceneStreamerSystem::unregister_from_queues(mage::core::Entity* p_entity)
 {
     const auto rendering_proxies = m_rendering_proxies.at(p_entity->getId());
     
-    _MAGE_DEBUG(m_localLogger, "unregister_from_queues Entity " + p_entity->getId());
+    _MAGE_TRACE(m_localLogger, "unregister_from_queues Entity " + p_entity->getId());
     for(auto& e : rendering_proxies)
     {
-        _MAGE_DEBUG(m_localLogger, "    -> for queue " + e.first);
+        _MAGE_TRACE(m_localLogger, "    -> for queue " + e.first);
 	}
 
     const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };

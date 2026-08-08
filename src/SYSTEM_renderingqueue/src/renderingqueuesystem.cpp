@@ -693,6 +693,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 					if (resources_D3D11ready && rsStates.size() > 0 && (line_meshe_ref || triangle_meshe_ref || file_triangle_meshe_ref))
 					{
 						// ok, can update queue
+
+						_MAGE_DEBUG(m_localLogger, "Can update rendering queue " + p_renderingQueue.getName() + " for " + p_entity_id);
 						
 						if (!queueNodes.count(rendering_channel)) 
 						{
