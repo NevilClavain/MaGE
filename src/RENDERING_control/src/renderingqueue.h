@@ -178,22 +178,13 @@ namespace mage
 			struct RenderStatePayload
 			{
 				// renderstates set
-				std::vector<RenderState>								description;
-
-				// key = triangleMeshe D3D11 id
-				//std::unordered_map<std::string, TriangleMeshePayload>	trianglemeshes_list;
-
-				// key = lineMeshe D3D11 id
-				//std::unordered_map<std::string, LineMeshePayload>		linemeshes_list;
+				std::vector<RenderState>										description;
 
 				// key = QueueTrianglesDrawingControl unique id
 				std::unordered_map<std::string, QueueTrianglesDrawingControl>	triangles_dc_list;
 
 				// key = QueueLinesDrawingControl unique id
 				std::unordered_map<std::string, QueueLinesDrawingControl>		lines_dc_list;
-
-				
-
 			};
 
 			struct ShadersPayload

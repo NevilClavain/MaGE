@@ -937,7 +937,7 @@ void RenderingQueueSystem::removeFromRenderingQueue(const std::string& p_entity_
 {
 	_MAGE_DEBUG(m_localLogger, "Remove from rendering queue " + p_renderingQueue.getName() + " for " + p_entity_id);
 
-	auto queueNodes{ p_renderingQueue.getQueueNodes() };
+	mage::rendering::Queue::QueueNodes queueNodes{ p_renderingQueue.getQueueNodes() };
 
 	std::vector<int> roc_to_remove;
 
