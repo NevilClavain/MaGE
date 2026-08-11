@@ -184,14 +184,30 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 						_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> number of triangles_dc : " + std::to_string(rs.second.triangles_dc_list.size()));
 					}
 
+					if (rs.second.lines_dc_list.size() > 0)
+					{
+						_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> number of lines_dc : " + std::to_string(rs.second.triangles_dc_list.size()));
+					}
+
 					for (const auto& triangles_dc : rs.second.triangles_dc_list)
 					{
 						_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> triangles_dc : " + triangles_dc.first + " worlds stack size = " + std::to_string(triangles_dc.second.worlds.size()) );
+					
+						for (const auto& e : triangles_dc.second.worlds)
+						{
+							_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t-> triangles transformer instance : " + e.first);
+						}
 					}
 
 					for (const auto& lines_dc : rs.second.lines_dc_list)
 					{
-						_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> lines_dc : " + lines_dc.first + " worlds stack size = " + std::to_string(lines_dc.second.worlds.size()));						
+						_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> lines_dc : " + lines_dc.first + " worlds stack size = " + std::to_string(lines_dc.second.worlds.size()));
+					
+						for (const auto& e : lines_dc.second.worlds)
+						{
+							_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t-> lines transformer instance : " + e.first);
+						}
+					
 					}
 				}
 			}
@@ -1126,7 +1142,9 @@ void RenderingQueueSystem::pushWorldOutputToQueueDrawingControl(const std::strin
 		}
 		const transform::WorldPosition& scene_entity_worldposition{ scene_entity_worldpositions_list.at(0)->getPurpose() };
 
-		p_outqtdc.worlds.push_back(&scene_entity_worldposition.global_pos);
+		//p_outqtdc.worlds.push_back(&scene_entity_worldposition.global_pos);
+		p_outqtdc.worlds[p_outqtdc.owner_entity_id] = &scene_entity_worldposition.global_pos;
+
 
 	}
 	else
@@ -1140,6 +1158,7 @@ void RenderingQueueSystem::pushWorldOutputToQueueDrawingControl(const std::strin
 		}
 		const transform::WorldPosition& worldposition{ worldpositions_list.at(0)->getPurpose() };
 
-		p_outqtdc.worlds.push_back(&worldposition.global_pos);
+		//p_outqtdc.worlds.push_back(&worldposition.global_pos);
+		p_outqtdc.worlds[p_outqtdc.owner_entity_id] = &worldposition.global_pos;
 	}
 }

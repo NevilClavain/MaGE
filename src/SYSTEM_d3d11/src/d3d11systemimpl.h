@@ -433,14 +433,16 @@ public:
     };
 
     bool updateMesheTransformers(MesheData& p_meshe_data, 
-        const std::vector<const mage::core::maths::Matrix*>& p_worlds,
+        //const std::vector<const mage::core::maths::Matrix*>& p_worlds,
+        const std::unordered_map<std::string, const mage::core::maths::Matrix*>& p_worlds,
         const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
         const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2);
 
 
     template<Primitives p>
     bool updateMesheTransformersForPrimitive(const std::string& p_meshe_id,
-        const std::vector<const mage::core::maths::Matrix*>& p_worlds,
+        //const std::vector<const mage::core::maths::Matrix*>& p_worlds,
+        const std::unordered_map<std::string, const mage::core::maths::Matrix*>& p_worlds,
         const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
         const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2)
     {

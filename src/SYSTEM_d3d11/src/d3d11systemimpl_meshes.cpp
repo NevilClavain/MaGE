@@ -387,7 +387,9 @@ void D3D11SystemImpl::forceCurrentMeshe()
     }
 }
 
-bool D3D11SystemImpl::updateMesheTransformers(MesheData& p_meshe_data, const std::vector<const mage::core::maths::Matrix*>& p_worlds,
+bool D3D11SystemImpl::updateMesheTransformers(MesheData& p_meshe_data, 
+    //const std::vector<const mage::core::maths::Matrix*>& p_worlds,
+    const std::unordered_map<std::string, const mage::core::maths::Matrix*>& p_worlds,
     const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
     const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2)
 {
@@ -432,13 +434,16 @@ bool D3D11SystemImpl::updateMesheTransformers(MesheData& p_meshe_data, const std
 
     // looks like fps is degraded with omp ! :(
     //#pragma omp parallel for default(shared) schedule(static)
-    for (int i = 0; i < static_cast<int>(p_worlds.size()); ++i)
+    //for (int i = 0; i < static_cast<int>(p_worlds.size()); ++i)
+    int dest_index = 0;
+    for(const auto& e : p_worlds)
     {
         mage::transform::MatrixChain chain;
 
         chain.pushMatrix(p_proj);
         chain.pushMatrix(final_view);
-        chain.pushMatrix(*p_worlds[i]);
+        //chain.pushMatrix(*p_worlds[i]);
+        chain.pushMatrix(*e.second);
         chain.buildResult();
         auto result{ chain.getResultTransform() };
 
@@ -446,16 +451,20 @@ bool D3D11SystemImpl::updateMesheTransformers(MesheData& p_meshe_data, const std
 
         chain2.pushMatrix(p_proj2);
         chain2.pushMatrix(final_view2);
-        chain2.pushMatrix(*p_worlds[i]);
+        //chain2.pushMatrix(*p_worlds[i]);
+        chain2.pushMatrix(*e.second);
         chain2.buildResult();
         auto result2{ chain2.getResultTransform() };
 
         d3d11transformers tr;
         tr.wordlViewProj = convertMatrixToXMFloat44(result);
-        tr.world = convertMatrixToXMFloat44(*p_worlds[i]);
+        //tr.world = convertMatrixToXMFloat44(*p_worlds[i]);
+        tr.world = convertMatrixToXMFloat44(*e.second);
         tr.wordlView2Proj2 = convertMatrixToXMFloat44(result2);
 
-        instances[i] = tr;
+        //instances[i] = tr;
+        instances[dest_index] = tr;
+        dest_index++;
     }
 
     D3D11_MAPPED_SUBRESOURCE mapped = {};

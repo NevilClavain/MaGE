@@ -63,17 +63,11 @@ namespace mage
 		{
 		public:
 
-			DrawingControl()
-			{
-				//world.identity();
-			}
+			DrawingControl() = default;
 
 			~DrawingControl() = default;
 
-			//core::maths::Matrix world;
-
 			bool				ready{ false };
-
 			bool                projected_z_neg{ false }; // for objects that takes their pos from projected position (some 2d sprites...)
 
 
@@ -97,7 +91,8 @@ namespace mage
 
 			// transformations to apply;
 
-			std::vector<const core::maths::Matrix*> worlds;
+			//std::vector<const core::maths::Matrix*> worlds;
+			std::unordered_map<std::string, const core::maths::Matrix*> worlds;
 
 			bool* projected_z_neg{ nullptr };
 
