@@ -44,10 +44,6 @@ namespace mage
 
     enum class RenderingQueueSystemEvent
     {
-        LINEDRAWING_ADDED,
-        LINEDRAWING_REMOVED,
-        TRIANGLEDRAWING_ADDED,
-        TRIANGLEDRAWING_REMOVED,
         MAINVIEW_QUEUE_UPDATED,
         SECONDARYVIEW_QUEUE_UPDATED,
         RENDERINGQUEUE_STATE_READY

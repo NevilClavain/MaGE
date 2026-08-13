@@ -268,7 +268,7 @@ private:
     // render states
     struct RSCacheEntry
     {
-        D3D11_RASTERIZER_DESC       rs_desc  { 0 };
+        D3D11_RASTERIZER_DESC       rs_desc{ 0 };
         ID3D11RasterizerState*      rs_state { nullptr };
     };
 

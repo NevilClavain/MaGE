@@ -461,10 +461,11 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 					{
 						d3dimpl->setTriangleListTopology();
 					}
-
-					for (const auto& triangleMesheInfo : renderStatesInfo.second.triangles_dc_list)
+					
+					//for (const auto& triangleMesheInfo : renderStatesInfo.second.triangles_dc_list)
+					for (auto tdc : renderStatesInfo.second.triangles_dc_list)
 					{
-						const mage::rendering::QueueTrianglesDrawingControl tdc{ triangleMesheInfo.second };
+						//const mage::rendering::QueueTrianglesDrawingControl tdc{ triangleMesheInfo.second };
 
 						if (*tdc.draw)
 						{
@@ -551,6 +552,7 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 							}
 						}
 					}
+					
 
 					///////////// TriangleMeshes END
 
@@ -560,10 +562,11 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 					{
 						d3dimpl->setLineListTopology();
 					}
-
-					for (const auto& lineMesheInfo : renderStatesInfo.second.lines_dc_list)
+					
+					//for (const auto& lineMesheInfo : renderStatesInfo.second.lines_dc_list)
+					for (auto ldc : renderStatesInfo.second.lines_dc_list)
 					{						
-						const mage::rendering::QueueLinesDrawingControl ldc{ lineMesheInfo.second };
+						//const mage::rendering::QueueLinesDrawingControl ldc{ lineMesheInfo.second };
 
 						if (*(ldc.draw))
 						{
@@ -602,6 +605,7 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 							d3dimpl->drawIndexedInstancedLines(ldc.worlds.size());
 						}
 					}
+					
 
 					///////////// LineMeshes END
 				}

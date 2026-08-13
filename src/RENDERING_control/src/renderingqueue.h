@@ -30,6 +30,7 @@
 #include <map>
 #include <tuple>
 #include <unordered_map>
+#include <unordered_set>
 #include <functional>
 #include "tvector.h"
 #include "matrix.h"
@@ -77,7 +78,7 @@ namespace mage
 			std::vector<std::pair<std::string, std::string>> pshaders_map;
 
 
-			std::string owner_entity_id; // to be completed by queue system
+			
 
 			bool				draw{ true };
 
@@ -87,6 +88,7 @@ namespace mage
 
 		struct QueueDrawingControl
 		{
+			QueueDrawingControl() = default;
 			virtual ~QueueDrawingControl() = default;
 
 			// transformations to apply;
@@ -105,7 +107,7 @@ namespace mage
 			const std::vector<mage::Shader::VectorArrayArgument>* vshaders_vector_array{ nullptr };
 			const std::vector<mage::Shader::VectorArrayArgument>* pshaders_vector_array{ nullptr };
 
-			std::string owner_entity_id;
+			
 
 			bool* draw{ nullptr };
 		};
@@ -114,6 +116,9 @@ namespace mage
 		struct QueueTrianglesDrawingControl : public QueueDrawingControl
 		{
 		public:
+
+			QueueTrianglesDrawingControl() = default;
+			~QueueTrianglesDrawingControl() = default;
 
 			// meshe to set
 			std::string						meshe_id;
@@ -130,7 +135,10 @@ namespace mage
 
 		struct QueueLinesDrawingControl : public QueueDrawingControl
 		{
-		public:			
+		public:
+			QueueLinesDrawingControl() = default;
+			~QueueLinesDrawingControl() = default;
+
 			// meshe to set
 			std::string						meshe_id;
 
@@ -173,13 +181,21 @@ namespace mage
 			struct RenderStatePayload
 			{
 				// renderstates set
-				std::vector<RenderState>										description;
+				std::vector<RenderState>							description;
 
 				// key = QueueTrianglesDrawingControl unique id
-				std::unordered_map<std::string, QueueTrianglesDrawingControl>	triangles_dc_list;
+				//std::unordered_map<std::string, QueueTrianglesDrawingControl>	triangles_dc_list;
+		
+
+				//std::unordered_set<QueueTrianglesDrawingControl>	triangles_dc_list;
+				std::vector<QueueTrianglesDrawingControl>		triangles_dc_list;
 
 				// key = QueueLinesDrawingControl unique id
-				std::unordered_map<std::string, QueueLinesDrawingControl>		lines_dc_list;
+				//std::unordered_map<std::string, QueueLinesDrawingControl>		lines_dc_list;
+				
+		
+				//std::unordered_set<QueueLinesDrawingControl>		lines_dc_list;
+				std::vector<QueueLinesDrawingControl>		lines_dc_list;
 			};
 
 			struct ShadersPayload
