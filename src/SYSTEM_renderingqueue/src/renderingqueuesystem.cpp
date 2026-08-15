@@ -191,33 +191,23 @@ void RenderingQueueSystem::logRenderingqueue(const std::string& p_entity_id, mag
 
 					for (const mage::rendering::QueueTrianglesDrawingControl& triangles_dc : rs.second.triangles_dc_list)
 					{
-						//_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> triangles_dc : " + triangles_dc.first + " worlds stack size = " + std::to_string(triangles_dc.second.worlds.size()) );
-					
-						//for (const auto& e : triangles_dc.second.worlds)
-						//{
-						//	_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t-> triangles transformer instance : " + e.first);
-						//}
-
 						_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> triangles_dc : worlds stack size = " + std::to_string(triangles_dc.worlds.size()));
 						for (const auto& e : triangles_dc.worlds)
 						{
 							_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t-> triangles transformer instance : " + e.first);
+
+							const mage::core::maths::Matrix mat{ *e.second };
+
+							_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t: position = " + std::to_string(mat(3, 0)) + " " + std::to_string(mat(3,1)) + " " + std::to_string(mat(3, 2)));
 						}
 					}
 
 					for (const mage::rendering::QueueDrawingControl lines_dc : rs.second.lines_dc_list)
 					{
-						//_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> lines_dc : " + lines_dc.first + " worlds stack size = " + std::to_string(lines_dc.second.worlds.size()));
-					
-						//for (const auto& e : lines_dc.second.worlds)
-						//{
-						//	_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t-> lines transformer instance : " + e.first);
-						//}
-
 						_MAGE_DEBUG(m_localLogger, "\t\t\t\t-> lines_dc : worlds stack size = " + std::to_string(lines_dc.worlds.size()));
 						for (const auto& e : lines_dc.worlds)
 						{
-							_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t-> triangles transformer instance : " + e.first);
+							_MAGE_DEBUG(m_localLogger, "\t\t\t\t\t-> lines transformer instance : " + e.first);
 						}
 					}
 				}
@@ -769,7 +759,7 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 
 								/// common parts
 										
-								//linesQueueDrawingControl.owner_entity_id = linesDrawingControl.owner_entity_id;
+	
 
 								pushWorldOutputToQueueDrawingControl(p_entity_id, linesQueueDrawingControl);
 
@@ -787,8 +777,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								linesQueueDrawingControl.meshe_id = line_meshe_ref->getResourceUID();
 
 								/// register
-										
-								//renderStatePayloadPtr->lines_dc_list[linesDrawingControl.owner_entity_id] = linesQueueDrawingControl;
+									
+								renderStatePayloadPtr->lines_dc_list.push_back(linesQueueDrawingControl);
 							}
 						}
 						else if (triangle_meshe_ref)
@@ -815,8 +805,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 
 								/// common parts
 
-								//trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
-
 								pushWorldOutputToQueueDrawingControl(p_entity_id, trianglesQueueDrawingControl);
 	
 								trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
@@ -835,10 +823,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								trianglesQueueDrawingControl.textures = textures;
 
 								/// register
-								//
-								//renderStatePayloadPtr->triangles_dc_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
-
-								
 								renderStatePayloadPtr->triangles_dc_list.push_back(trianglesQueueDrawingControl);
 							}
 						}
@@ -905,67 +889,6 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 										pushWorldOutputToQueueDrawingControl(p_entity_id, *matching_qtdc);
 									}
 								}
-
-
-
-
-
-								///// common parts
-
-								////trianglesQueueDrawingControl.owner_entity_id = trianglesDrawingControl.owner_entity_id;
-				
-								//pushWorldOutputToQueueDrawingControl(p_entity_id, trianglesQueueDrawingControl);
-
-								//trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
-
-								//connect_shaders_args(trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
-
-								///////////////// HERE manage vector array for shaders
-								//trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
-								//trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
-
-								//trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
-
-
-								///// specific part
-
-								//trianglesQueueDrawingControl.meshe_id = file_triangle_meshe_ref->second.getResourceUID();
-								//trianglesQueueDrawingControl.textures = textures;
-
-								/// register
-								
-								//if (0 == renderStatePayloadPtr->triangles_dc_list.size())
-								//{
-								//	renderStatePayloadPtr->triangles_dc_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
-								//}
-								//else
-								//{
-								//	// POUR LA GESTION DU DRAWINDEXEDINSTANCED !!! -> push les matrices worlds sur le meme QueueDrawingControl !!!!
-
-								//	bool found = false;
-								//	std::string found_trianglesQueueDrawingControl_owner_entity_id;
-
-								//	for (const auto& qtdc : renderStatePayloadPtr->triangles_dc_list)
-								//	{										
-								//		if (qtdc.second == trianglesQueueDrawingControl) // cf bool QueueTrianglesDrawingControl::operator==(const QueueTrianglesDrawingControl& p_other) const -> même meshe id et textures !!
-								//		{
-								//			found = true;
-								//			found_trianglesQueueDrawingControl_owner_entity_id = qtdc.first;
-								//			break;
-								//		}
-								//	}
-
-								//	if (!found)
-								//	{
-								//		renderStatePayloadPtr->triangles_dc_list[trianglesDrawingControl.owner_entity_id] = trianglesQueueDrawingControl;
-								//	}
-								//	else
-								//	{
-								//		auto& qtdc = renderStatePayloadPtr->triangles_dc_list.at(found_trianglesQueueDrawingControl_owner_entity_id);
-
-								//		pushWorldOutputToQueueDrawingControl(p_entity_id, qtdc);
-								//	}
-								//}
 							}
 						}
 
@@ -1013,39 +936,74 @@ void RenderingQueueSystem::removeFromRenderingQueue(const std::string& p_entity_
 
 			for (auto& rs : shaders.second.list)
 			{
+				//////////////////////////////////// line meshes
 
-				//// line meshes
-				std::vector<std::string> ldc_to_remove;
-		
-				for (auto& ldc : rs.second.lines_dc_list)
+				std::vector<std::vector<mage::rendering::QueueLinesDrawingControl>::iterator> ldc_to_remove;
+
+				for(std::vector<mage::rendering::QueueLinesDrawingControl>::iterator it = rs.second.lines_dc_list.begin(); it != rs.second.lines_dc_list.end(); it++)
 				{
-					//if (ldc.second.owner_entity_id == p_entity_id)
-					//{
-					//	ldc_to_remove.push_back(p_entity_id);
-					//}
+					mage::rendering::QueueLinesDrawingControl& ldc{ *it };
+
+					std::vector<std::string> worlds_to_remove;
+					for(auto & world_output : ldc.worlds)
+					{
+						if (world_output.first == p_entity_id)
+						{
+							worlds_to_remove.push_back(world_output.first);
+							break;
+						}
+					}
+
+					for (const std::string& id : worlds_to_remove)
+					{
+						ldc.worlds.erase(id);
+					}
+
+					if(0 == ldc.worlds.size())
+					{
+						// empty, remove this QueueLinesDrawingControl
+						ldc_to_remove.push_back(it);
+					}
 				}
 
-				for (const std::string& id : ldc_to_remove)
+				for (auto& e : ldc_to_remove)
 				{
-					//rs.second.lines_dc_list.erase(id);
+					rs.second.lines_dc_list.erase(e);
 				}
 
+				//////////////////////////////////// triangle meshes
 
-				//// triangle meshes
-				std::vector<std::string> tdc_to_remove;
-				
-				for (auto& tdc : rs.second.triangles_dc_list)
+				std::vector<std::vector<mage::rendering::QueueTrianglesDrawingControl>::iterator> tdc_to_remove;
+
+				for (std::vector<mage::rendering::QueueTrianglesDrawingControl>::iterator it = rs.second.triangles_dc_list.begin(); it != rs.second.triangles_dc_list.end(); it++)
 				{
-					//if (tdc.second.owner_entity_id == p_entity_id)
-					//{						
-					//	// remove this triangle dc
-					//	tdc_to_remove.push_back(p_entity_id);
-					//}
+					mage::rendering::QueueTrianglesDrawingControl& tdc{ *it };
+
+					std::vector<std::string> worlds_to_remove;
+					for (auto& world_output : tdc.worlds)
+					{
+						if (world_output.first == p_entity_id)
+						{
+							worlds_to_remove.push_back(world_output.first);
+							break;
+						}
+					}
+
+					for (const std::string& id : worlds_to_remove)
+					{
+						tdc.worlds.erase(id);
+					}
+
+					if (0 == tdc.worlds.size())
+					{
+						// empty, remove this QueueLinesDrawingControl
+						tdc_to_remove.push_back(it);
+					}
 				}
 
-				for (const std::string& id : tdc_to_remove)
+				for (auto& e : tdc_to_remove)
 				{
-					//rs.second.triangles_dc_list.erase(id);
+					rs.second.triangles_dc_list.erase(e);
 				}
 
 				////////////////////
