@@ -58,7 +58,7 @@ namespace mage
 			bool				globalpos_is_valid{ false }; // was computed at least once
             //////////
 
-            bool                projected_z_neg{ false };
+            bool                wp_projected_z_neg{ false };
 
             
 

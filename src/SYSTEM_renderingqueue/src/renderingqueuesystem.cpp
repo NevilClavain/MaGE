@@ -324,7 +324,7 @@ void RenderingQueueSystem::manageRenderingQueue()
 					const auto& world_aspect{ entity->aspectAccess(mage::core::worldAspect::id) };
 					const auto wp{ world_aspect.getComponentsByType<mage::transform::WorldPosition>().at(0)->getPurpose() };
 
-					projected_z_neg = wp.projected_z_neg;
+					projected_z_neg = wp.wp_projected_z_neg;
 
 					const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 					const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("mage.infos.viewport") };
@@ -770,6 +770,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								linesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
 
 								linesQueueDrawingControl.draw = &linesDrawingControl.draw;
+
+								linesQueueDrawingControl.projected_z_neg = &linesDrawingControl.projected_z_neg;
 
 
 								/// specific part

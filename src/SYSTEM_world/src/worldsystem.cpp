@@ -416,7 +416,7 @@ void WorldSystem::compute_entity(core::Entity* p_entity, const ComponentContaine
 						updated_local_pos(3, 0) += screenposition[0];
 						updated_local_pos(3, 1) += screenposition[1];
 
-						entity_worldposition.projected_z_neg = (screenposition[2] < 0);
+						entity_worldposition.wp_projected_z_neg = (screenposition[2] < 0);
 						entity_worldposition.global_pos = updated_local_pos;
 						entity_worldposition.globalpos_is_valid = true;
 
