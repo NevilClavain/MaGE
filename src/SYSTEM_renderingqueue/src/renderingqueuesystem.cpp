@@ -317,14 +317,14 @@ void RenderingQueueSystem::manageRenderingQueue()
 			{
 				auto& text{ texts.at(0)->getPurpose() };
 
-				bool projected_z_neg{ false };
+				bool wp_projected_z_neg{ false };
 
 				if (entity->hasAspect(mage::core::worldAspect::id))
 				{
 					const auto& world_aspect{ entity->aspectAccess(mage::core::worldAspect::id) };
 					const auto wp{ world_aspect.getComponentsByType<mage::transform::WorldPosition>().at(0)->getPurpose() };
 
-					projected_z_neg = wp.wp_projected_z_neg;
+					wp_projected_z_neg = wp.wp_projected_z_neg;
 
 					const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 					const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("mage.infos.viewport") };
@@ -333,7 +333,7 @@ void RenderingQueueSystem::manageRenderingQueue()
 					text.position[0] = ((wp.global_pos(3, 0) + (viewport[0] * 0.5f)) * window_dims[0]) / viewport[0];
 					text.position[1] = (((viewport[1] * 0.5f) - wp.global_pos(3, 1)) * window_dims[1]) / viewport[1];
 				}
-				if (!projected_z_neg)
+				if (!wp_projected_z_neg)
 				{
 					current_queue->pushText(text);
 				}
