@@ -1104,15 +1104,6 @@ namespace mage
                 {
                     if (nullptr != n)
                     {
-                        //const SceneXTreeNode& n_scene_xtree_node{ n->getData() };
-                        //for (mage::core::Entity* e : n_scene_xtree_node.entities)
-                        //{
-                        //    if (m_entity_renderings.count(e->getId()) > 0)
-                        //    {
-                        //        // store only those than can be rendered
-                        //        p_found_entities.insert(e);
-                        //    }
-                        //}
                         search_near_entities(p_found_entities, n, p_neighbourood_depth + 1);
                     }
                 }

@@ -427,7 +427,6 @@ void SceneStreamerSystem::run()
     while (!m_newly_added_entities.empty())
     {
         core::Entity* newly_added_entity{ m_newly_added_entities.front() };
-        //m_newly_added_entities.pop();
         
         if (newly_added_entity->hasAspect(core::worldAspect::id))
         {
