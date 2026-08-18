@@ -357,52 +357,8 @@ bool SceneStreamerSystem::compute_entity(core::Entity* p_entity, const core::Com
                                 xtreeEnt.static_object = true;
                             }
 
-
-                            // "#static" : no moving on scene, always stay at x,y,z coords, but can potentially be transforemed at each frame (ex: rotation on y axis)
-                            //if (static_tag || frozen_tag)
-                            //{
-                            //    // place it on xtree once for all
-                            //    const auto& resources_aspect{ p_entity->aspectAccess(resourcesAspect::id) };
-
-                            //    const auto meshes_list{ resources_aspect.getComponentsByType<std::pair<std::pair<std::string, std::string>, TriangleMeshe>>() };
-                            //    if (meshes_list.size() > 0)
-                            //    {
-                            //        auto& meshe_descr{ meshes_list.at(0)->getPurpose() };
-                            //        TriangleMeshe& meshe{ meshe_descr.second };
-
-                            //        if (TriangleMeshe::State::RENDERERLOADED == meshe.getState())
-                            //        {
-                            //            const double meshe_size{ meshe.getSize() };
-
-                            //            const auto& world_aspect{ p_entity->aspectAccess(worldAspect::id) };
-
-                            //            const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
-                            //            auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
-                            //            const auto global_pos = entity_worldposition.global_pos;
-
-
-                            //            if (XtreeType::QUADTREE == m_configuration.xtree_type)
-                            //            {
-                            //                m_place_obj_on_quadtree_leaf(rgpd.second.quadtree_root.get(), meshe_size, global_pos, p_entity, xtreeEnt);
-                            //            }
-                            //            else // XtreeType::OCTREE
-                            //            {
-                            //                m_place_obj_on_octree_leaf(rgpd.second.octree_root.get(), meshe_size, global_pos, p_entity, xtreeEnt);
-                            //            }
-                            //            computed = true;
-                            //        }
-                            //        // else (not RENDERERLOADED) : computed stay FALSE !!! -> continue watching
-                            //    }
-                            //    else
-                            //    {
-                            //        computed = true;
-                            //    }
-                            //}
-                            //else
-                            {
-                                rgpd.second.entities_to_monitor[p_entity->getId()] = xtreeEnt;
-                                computed = true;
-                            }
+                            rgpd.second.entities_to_monitor[p_entity->getId()] = xtreeEnt;
+                            computed = true;
                         }
                     }
                 }
