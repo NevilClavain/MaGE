@@ -93,10 +93,11 @@ namespace mage
 
 			// transformations to apply;
 
-			//std::vector<const core::maths::Matrix*> worlds;
 			std::unordered_map<std::string, const core::maths::Matrix*> worlds;
 
-			bool* projected_z_neg{ nullptr };
+
+			std::unordered_map<std::string, bool*> projected_z_neg_states;
+			std::unordered_map<std::string, bool*> draw_states;
 
 			// shaders generic params to apply
 			// dataCloud variable id/shader argument
@@ -107,11 +108,7 @@ namespace mage
 			const std::vector<mage::Shader::VectorArrayArgument>* vshaders_vector_array{ nullptr };
 			const std::vector<mage::Shader::VectorArrayArgument>* pshaders_vector_array{ nullptr };
 
-			
-
-			bool* draw{ nullptr };
 		};
-
 
 		struct QueueTrianglesDrawingControl : public QueueDrawingControl
 		{

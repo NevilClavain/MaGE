@@ -762,17 +762,14 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 	
 
 								pushWorldOutputToQueueDrawingControl(p_entity_id, linesQueueDrawingControl);
+								linesQueueDrawingControl.draw_states[p_entity_id] = &linesDrawingControl.draw;
+								linesQueueDrawingControl.projected_z_neg_states[p_entity_id] = &linesDrawingControl.projected_z_neg;
 
 								connect_shaders_args(linesDrawingControl, linesQueueDrawingControl, vshader, pshader);
 
 								/////////////// HERE manage vector array for shaders
 								linesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
 								linesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
-
-								linesQueueDrawingControl.draw = &linesDrawingControl.draw;
-
-								linesQueueDrawingControl.projected_z_neg = &linesDrawingControl.projected_z_neg;
-
 
 								/// specific part
 
@@ -808,17 +805,17 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								/// common parts
 
 								pushWorldOutputToQueueDrawingControl(p_entity_id, trianglesQueueDrawingControl);
+								trianglesQueueDrawingControl.draw_states[p_entity_id] = &trianglesDrawingControl.draw;
+								trianglesQueueDrawingControl.projected_z_neg_states[p_entity_id] = &trianglesDrawingControl.projected_z_neg;
 	
-								trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
-
+								
 								connect_shaders_args(trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
 
 								/////////////// HERE manage vector array for shaders
 								trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
 								trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
 
-								trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
-
+								
 								/// specific part
 
 								trianglesQueueDrawingControl.meshe_id = triangle_meshe_ref->getResourceUID();
@@ -851,14 +848,15 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								rendering::QueueTrianglesDrawingControl trianglesQueueDrawingControl;
 
 								pushWorldOutputToQueueDrawingControl(p_entity_id, trianglesQueueDrawingControl);
-								trianglesQueueDrawingControl.projected_z_neg = &trianglesDrawingControl.projected_z_neg;
+								trianglesQueueDrawingControl.draw_states[p_entity_id] = &trianglesDrawingControl.draw;
+								trianglesQueueDrawingControl.projected_z_neg_states[p_entity_id] = &trianglesDrawingControl.projected_z_neg;
+
 								connect_shaders_args(trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
 
 								/////////////// HERE manage vector array for shaders
 								trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
 								trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
-								trianglesQueueDrawingControl.draw = &trianglesDrawingControl.draw;
-
+								
 								/// specific part
 								trianglesQueueDrawingControl.meshe_id = file_triangle_meshe_ref->second.getResourceUID();
 								trianglesQueueDrawingControl.textures = textures;
@@ -889,6 +887,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 									else
 									{
 										pushWorldOutputToQueueDrawingControl(p_entity_id, *matching_qtdc);
+										matching_qtdc->draw_states[p_entity_id] = &trianglesDrawingControl.draw;
+										matching_qtdc->projected_z_neg_states[p_entity_id] = &trianglesDrawingControl.projected_z_neg;
 									}
 								}
 							}
@@ -959,6 +959,8 @@ void RenderingQueueSystem::removeFromRenderingQueue(const std::string& p_entity_
 					for (const std::string& id : worlds_to_remove)
 					{
 						ldc.worlds.erase(id);
+						ldc.draw_states.erase(id);
+						ldc.projected_z_neg_states.erase(id);
 					}
 
 					if(0 == ldc.worlds.size())
@@ -994,6 +996,8 @@ void RenderingQueueSystem::removeFromRenderingQueue(const std::string& p_entity_
 					for (const std::string& id : worlds_to_remove)
 					{
 						tdc.worlds.erase(id);
+						tdc.draw_states.erase(id);
+						tdc.projected_z_neg_states.erase(id);
 					}
 
 					if (0 == tdc.worlds.size())
@@ -1024,10 +1028,8 @@ void RenderingQueueSystem::removeFromRenderingQueue(const std::string& p_entity_
 
 			if (0 == shaders.second.list.size())
 			{
-				
 				shaders_pair_to_remove.push_back(shaders.first);
 			}
-
 		}
 
 		for (const std::string& id : shaders_pair_to_remove)
@@ -1137,7 +1139,6 @@ void RenderingQueueSystem::pushWorldOutputToQueueDrawingControl(const std::strin
 		}
 		const transform::WorldPosition& scene_entity_worldposition{ scene_entity_worldpositions_list.at(0)->getPurpose() };
 
-		//p_outqtdc.worlds.push_back(&scene_entity_worldposition.global_pos);
 		p_outqtdc.worlds[p_entity_id] = &scene_entity_worldposition.global_pos;
 	}
 	else
@@ -1151,7 +1152,6 @@ void RenderingQueueSystem::pushWorldOutputToQueueDrawingControl(const std::strin
 		}
 		const transform::WorldPosition& worldposition{ worldpositions_list.at(0)->getPurpose() };
 
-		//p_outqtdc.worlds.push_back(&worldposition.global_pos);
 		p_outqtdc.worlds[p_entity_id] = &worldposition.global_pos;
 	}
 }
