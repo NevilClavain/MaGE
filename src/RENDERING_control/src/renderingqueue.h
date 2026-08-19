@@ -139,7 +139,7 @@ namespace mage
 			// meshe to set
 			std::string						meshe_id;
 
-			bool operator==(const QueueTrianglesDrawingControl& p_other) const
+			bool operator==(const QueueLinesDrawingControl& p_other) const
 			{
 				return meshe_id == p_other.meshe_id;
 			}

@@ -748,7 +748,10 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 						}
 
 						if (line_meshe_ref)
-						{	
+						{
+							/////////////////////////////////////
+							/////////////////////////////// LINES
+
 							for (const auto& ldc : drawingControls)
 							{
 								auto& linesDrawingControl{ ldc->getPurpose() };
@@ -777,56 +780,44 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 
 								/// register
 									
-								renderStatePayloadPtr->lines_dc_list.push_back(linesQueueDrawingControl);
+								//renderStatePayloadPtr->lines_dc_list.push_back(linesQueueDrawingControl);
+
+								if (0 == renderStatePayloadPtr->lines_dc_list.size())
+								{
+									renderStatePayloadPtr->lines_dc_list.push_back(linesQueueDrawingControl);
+								}
+								else
+								{
+									bool found = false;
+									rendering::QueueLinesDrawingControl* matching_qldc;
+									for (auto& qldc : renderStatePayloadPtr->lines_dc_list)
+									{
+										if (qldc == linesQueueDrawingControl) // cf bool QueueLinesDrawingControl::operator==(const QueueLinesDrawingControl& p_other) const -> même meshe id !!
+										{
+											found = true;
+											matching_qldc = &qldc;
+											break;
+										}
+									}
+
+									if (!found)
+									{
+										renderStatePayloadPtr->lines_dc_list.push_back(linesQueueDrawingControl);
+									}
+									else
+									{
+										pushWorldOutputToQueueDrawingControl(p_entity_id, *matching_qldc);
+										matching_qldc->draw_states[p_entity_id] = &linesDrawingControl.draw;
+										matching_qldc->projected_z_neg_states[p_entity_id] = &linesDrawingControl.projected_z_neg;
+									}
+								}
 							}
 						}
-						else if (triangle_meshe_ref)
-						{																						
-							std::unordered_map<size_t, std::string> textures;
+						else
+						{
+							/////////////////////////////////////////
+							/////////////////////////////// TRIANGLES
 
-							for (const auto& e : texturesSet)
-							{
-								const auto& staged_texture{ e->getPurpose() };
-
-								const size_t stage{ staged_texture.first };
-								const Texture& texture{ staged_texture.second };
-
-								textures[stage] = texture.getResourceUID();
-							}
-									
-							for (const auto& tdc : drawingControls)
-							{
-								auto& trianglesDrawingControl{ tdc->getPurpose() };
-
-								trianglesDrawingControl.ready = true;
-
-								rendering::QueueTrianglesDrawingControl trianglesQueueDrawingControl;
-
-								/// common parts
-
-								pushWorldOutputToQueueDrawingControl(p_entity_id, trianglesQueueDrawingControl);
-								trianglesQueueDrawingControl.draw_states[p_entity_id] = &trianglesDrawingControl.draw;
-								trianglesQueueDrawingControl.projected_z_neg_states[p_entity_id] = &trianglesDrawingControl.projected_z_neg;
-	
-								
-								connect_shaders_args(trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
-
-								/////////////// HERE manage vector array for shaders
-								trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
-								trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
-
-								
-								/// specific part
-
-								trianglesQueueDrawingControl.meshe_id = triangle_meshe_ref->getResourceUID();
-								trianglesQueueDrawingControl.textures = textures;
-
-								/// register
-								renderStatePayloadPtr->triangles_dc_list.push_back(trianglesQueueDrawingControl);
-							}
-						}
-						else if (file_triangle_meshe_ref)
-						{							
 							std::unordered_map<size_t, std::string> textures;
 
 							for (const auto& e : texturesSet)
@@ -856,11 +847,24 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								/////////////// HERE manage vector array for shaders
 								trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
 								trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
-								
-								/// specific part
-								trianglesQueueDrawingControl.meshe_id = file_triangle_meshe_ref->second.getResourceUID();
-								trianglesQueueDrawingControl.textures = textures;
 
+								/// specific part
+								if (triangle_meshe_ref)
+								{
+									trianglesQueueDrawingControl.meshe_id = triangle_meshe_ref->getResourceUID();
+								}
+								else if(file_triangle_meshe_ref)
+								{
+									trianglesQueueDrawingControl.meshe_id = file_triangle_meshe_ref->second.getResourceUID();
+								}
+								else
+								{
+									// wtf
+									_EXCEPTION("no meshes refs for triangles")
+								}
+							
+
+								trianglesQueueDrawingControl.textures = textures;
 
 								if (0 == renderStatePayloadPtr->triangles_dc_list.size())
 								{
@@ -893,6 +897,7 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								}
 							}
 						}
+
 
 						if (!shaderPayloadPtr->list.count(rs_list_id))
 						{
