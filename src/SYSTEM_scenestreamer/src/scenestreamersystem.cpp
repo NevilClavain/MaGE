@@ -409,40 +409,6 @@ void SceneStreamerSystem::run()
 
         if (XtreeType::QUADTREE == m_configuration.xtree_type)
         {
-            /////////////////////////////////////////////////////////////////////////////////
-            // place cam in appropriate xtree leaf : utility lambda
-            const std::function<void(core::QuadTreeNode<SceneQuadTreeNode>*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> place_cam_on_leaf
-            {
-                [&](core::QuadTreeNode<SceneQuadTreeNode>* p_current_node, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
-                {
-                    if (p_current_node->isLeaf())
-                    {
-                        // REMOVE from previous location
-                        if (p_xtreeEntity.quadtree_node)
-                        {
-							p_xtreeEntity.quadtree_node->dataAccess().entities.erase(p_entity);
-                        }
-
-                        p_current_node->dataAccess().entities.insert(p_entity);
-                        p_xtreeEntity.quadtree_node = p_current_node;
-                    }
-                    else
-                    {
-                        for (int i = 0; i < core::QuadTreeNode<SceneQuadTreeNode>::ChildCount; i++)
-                        {
-                            auto child { p_current_node->getChild(i) };
-
-                            if (SceneStreamerSystem::is_inside_quadtreenode(child->getData(), p_global_pos))
-                            {
-                                place_cam_on_leaf(child, p_global_pos, p_entity, p_xtreeEntity);
-                            }
-                        }
-                    }
-                }
-            };
-            /////////////////////////////////////////////////////////////////////////////////
-
-
             const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> has_node
             {
                 [&](const SceneStreamerSystem::XTreeEntity& p_xe) -> bool
@@ -461,45 +427,10 @@ void SceneStreamerSystem::run()
                 }
             };
 
-            update_XTree<SceneQuadTreeNode, core::QuadTreeNode<SceneQuadTreeNode>>(rgpd_data.quadtree_root.get(), rgpd_data.entities_to_monitor, place_cam_on_leaf, m_place_obj_on_quadtree_leaf, has_node, is_inside);
+            update_XTree<SceneQuadTreeNode, core::QuadTreeNode<SceneQuadTreeNode>>(rgpd_data.quadtree_root.get(), rgpd_data.entities_to_monitor, m_place_cam_on_quadtree_leaf, m_place_obj_on_quadtree_leaf, has_node, is_inside);
         }
         else // XtreeType::OCTREE
-        {           
-            /////////////////////////////////////////////////////////////////////////////////
-            // place cam in appropriate xtree leaf : utility lambda
-            const std::function<void(core::OctreeNode<SceneOctreeNode>*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> place_cam_on_leaf
-            {
-                [&](core::OctreeNode<SceneOctreeNode>* p_current_node, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
-                {
-                    if (p_current_node->isLeaf())
-                    {
-                        // REMOVE from previous location
-                        if (p_xtreeEntity.octree_node)
-                        {
-                            p_xtreeEntity.octree_node->dataAccess().entities.erase(p_entity);
-                        }
-
-                        p_current_node->dataAccess().entities.insert(p_entity);
-                        p_xtreeEntity.octree_node = p_current_node;
-                    }
-                    else
-                    {
-                        for (int i = 0; i < core::OctreeNode<SceneOctreeNode>::ChildCount; i++)
-                        {
-                            auto child { p_current_node->getChild(i) };
-
-                            if(SceneStreamerSystem::is_inside_octreenode(child->getData(), p_global_pos))
-                            {
-                                place_cam_on_leaf(child, p_global_pos, p_entity, p_xtreeEntity);
-                            }
-                        }
-                    }
-                }
-            };
-            /////////////////////////////////////////////////////////////////////////////////
-
-
-
+        {
             const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> has_node
             {
                 [&](const SceneStreamerSystem::XTreeEntity& p_xe) -> bool
@@ -519,7 +450,7 @@ void SceneStreamerSystem::run()
             };
 
 
-            update_XTree<SceneOctreeNode, core::OctreeNode<SceneOctreeNode>>(rgpd_data.octree_root.get(), rgpd_data.entities_to_monitor, place_cam_on_leaf, m_place_obj_on_octree_leaf, has_node, is_inside);
+            update_XTree<SceneOctreeNode, core::OctreeNode<SceneOctreeNode>>(rgpd_data.octree_root.get(), rgpd_data.entities_to_monitor, m_place_cam_on_octree_leaf, m_place_obj_on_octree_leaf, has_node, is_inside);
         }
     }
 
