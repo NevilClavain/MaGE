@@ -63,16 +63,19 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 	else if (VK_F8 == p_key)
 	{
-		auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
-		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
-
-		renderingQueueSystemInstance->requestRenderingqueueLogging("screenRenderingEntity");
-		renderingQueueSystemInstance->requestRenderingqueueLogging("bufferRenderingEntity");		
+	
 	}
 
 	else if (VK_F9 == p_key)
 	{
-		helpers::logEntitygraph(m_entitygraph, true);
+		//helpers::logEntitygraph(m_entitygraph, true);
+
+		auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
+		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
+
+		renderingQueueSystemInstance->requestRenderingqueueLogging("bufferRendering_Filter_DirectForward_Queue_Entity");
+
+		
 	}
 
 	else if (VK_SPACE)
