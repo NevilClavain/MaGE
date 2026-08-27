@@ -279,6 +279,10 @@ ALL_BUILD.vcxproj*
 /src/hlsl40_shaders/*.sln
 /src/hlsl40_shaders/*.vcxproj*
 
+/src/hlsl50_shaders/CMakeFiles/
+/src/hlsl50_shaders/*.sln
+/src/hlsl50_shaders/*.vcxproj*
+
 
 # ReSharper is a .NET coding add-in
 _ReSharper*/

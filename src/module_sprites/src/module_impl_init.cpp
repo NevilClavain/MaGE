@@ -95,6 +95,9 @@ void ModuleImpl::init(const std::string p_appWindowsEntityName)
 
 	// dataprint system filters
 	const auto dataPrintSystem{ sysEngine->getSystem<mage::DataPrintSystem>(dataPrintSystemSlot) };
+
+	const std::vector<std::string>& mage_infos_filter = { "mage","infos" };
+	dataPrintSystem->addDatacloudFilter(mage_infos_filter);
 	
 
 	d3d11_system_events();

@@ -268,7 +268,7 @@ private:
     // render states
     struct RSCacheEntry
     {
-        D3D11_RASTERIZER_DESC       rs_desc  { 0 };
+        D3D11_RASTERIZER_DESC       rs_desc{ 0 };
         ID3D11RasterizerState*      rs_state { nullptr };
     };
 
@@ -433,16 +433,26 @@ public:
     };
 
     bool updateMesheTransformers(MesheData& p_meshe_data, 
-        const std::vector<const mage::core::maths::Matrix*>& p_worlds,
-        const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
-        const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2);
+        const std::unordered_map<std::string, const mage::core::maths::Matrix*>& p_worlds,
+        const std::unordered_map<std::string, bool*>& p_draw_states,
+        const std::unordered_map<std::string, bool*>& p_projected_z_neg_states,
+        const mage::core::maths::Matrix& p_view, 
+        const mage::core::maths::Matrix& p_proj,
+        const mage::core::maths::Matrix& p_view2, 
+        const mage::core::maths::Matrix& p_proj2,
+        int& p_number_of_instances);
 
 
     template<Primitives p>
     bool updateMesheTransformersForPrimitive(const std::string& p_meshe_id,
-        const std::vector<const mage::core::maths::Matrix*>& p_worlds,
-        const mage::core::maths::Matrix& p_view, const mage::core::maths::Matrix& p_proj,
-        const mage::core::maths::Matrix& p_view2, const mage::core::maths::Matrix& p_proj2)
+        const std::unordered_map<std::string, const mage::core::maths::Matrix*>& p_worlds,
+        const std::unordered_map<std::string, bool*>& p_draw_states,
+        const std::unordered_map<std::string, bool*>& p_projected_z_neg_states,
+        const mage::core::maths::Matrix& p_view, 
+        const mage::core::maths::Matrix& p_proj,
+        const mage::core::maths::Matrix& p_view2, 
+        const mage::core::maths::Matrix& p_proj2,
+        int& p_number_of_instances)
     {
         // ICI
         MesheList* ml;
@@ -460,6 +470,6 @@ public:
         {
             _EXCEPTION("unknown meshes :" + p_meshe_id)
         }
-        return updateMesheTransformers(ml->at(p_meshe_id), p_worlds, p_view, p_proj, p_view2, p_proj2);
+        return updateMesheTransformers(ml->at(p_meshe_id), p_worlds, p_draw_states, p_projected_z_neg_states, p_view, p_proj, p_view2, p_proj2, p_number_of_instances);
     }
 };

@@ -30,6 +30,7 @@
 #include <map>
 #include <tuple>
 #include <unordered_map>
+#include <unordered_set>
 #include <functional>
 #include "tvector.h"
 #include "matrix.h"
@@ -63,17 +64,11 @@ namespace mage
 		{
 		public:
 
-			DrawingControl()
-			{
-				//world.identity();
-			}
+			DrawingControl() = default;
 
 			~DrawingControl() = default;
 
-			//core::maths::Matrix world;
-
 			bool				ready{ false };
-
 			bool                projected_z_neg{ false }; // for objects that takes their pos from projected position (some 2d sprites...)
 
 
@@ -83,7 +78,7 @@ namespace mage
 			std::vector<std::pair<std::string, std::string>> pshaders_map;
 
 
-			std::string owner_entity_id; // to be completed by queue system
+			
 
 			bool				draw{ true };
 
@@ -93,13 +88,16 @@ namespace mage
 
 		struct QueueDrawingControl
 		{
+			QueueDrawingControl() = default;
 			virtual ~QueueDrawingControl() = default;
 
 			// transformations to apply;
 
-			std::vector<const core::maths::Matrix*> worlds;
+			std::unordered_map<std::string, const core::maths::Matrix*> worlds;
 
-			bool* projected_z_neg{ nullptr };
+
+			std::unordered_map<std::string, bool*> projected_z_neg_states;
+			std::unordered_map<std::string, bool*> draw_states;
 
 			// shaders generic params to apply
 			// dataCloud variable id/shader argument
@@ -110,15 +108,14 @@ namespace mage
 			const std::vector<mage::Shader::VectorArrayArgument>* vshaders_vector_array{ nullptr };
 			const std::vector<mage::Shader::VectorArrayArgument>* pshaders_vector_array{ nullptr };
 
-			std::string owner_entity_id;
-
-			bool* draw{ nullptr };
 		};
-
 
 		struct QueueTrianglesDrawingControl : public QueueDrawingControl
 		{
 		public:
+
+			QueueTrianglesDrawingControl() = default;
+			~QueueTrianglesDrawingControl() = default;
 
 			// meshe to set
 			std::string						meshe_id;
@@ -135,11 +132,14 @@ namespace mage
 
 		struct QueueLinesDrawingControl : public QueueDrawingControl
 		{
-		public:			
+		public:
+			QueueLinesDrawingControl() = default;
+			~QueueLinesDrawingControl() = default;
+
 			// meshe to set
 			std::string						meshe_id;
 
-			bool operator==(const QueueTrianglesDrawingControl& p_other) const
+			bool operator==(const QueueLinesDrawingControl& p_other) const
 			{
 				return meshe_id == p_other.meshe_id;
 			}
@@ -178,22 +178,10 @@ namespace mage
 			struct RenderStatePayload
 			{
 				// renderstates set
-				std::vector<RenderState>								description;
+				std::vector<RenderState>						description;
 
-				// key = triangleMeshe D3D11 id
-				//std::unordered_map<std::string, TriangleMeshePayload>	trianglemeshes_list;
-
-				// key = lineMeshe D3D11 id
-				//std::unordered_map<std::string, LineMeshePayload>		linemeshes_list;
-
-				// key = QueueTrianglesDrawingControl unique id
-				std::unordered_map<std::string, QueueTrianglesDrawingControl>	triangles_dc_list;
-
-				// key = QueueLinesDrawingControl unique id
-				std::unordered_map<std::string, QueueLinesDrawingControl>		lines_dc_list;
-
-				
-
+				std::vector<QueueTrianglesDrawingControl>		triangles_dc_list;
+				std::vector<QueueLinesDrawingControl>			lines_dc_list;
 			};
 
 			struct ShadersPayload

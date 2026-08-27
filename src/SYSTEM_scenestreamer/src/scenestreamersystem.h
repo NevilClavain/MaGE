@@ -644,9 +644,13 @@ namespace mage
         }
 
     private:
-        json::Channels  m_channels;
-        bool            m_request_rendering         { false };
-        bool            m_rendered                  { false }; // if true, passes are actually mapped in rendergraph side and so entity is normally rendered
+        json::Channels      m_channels;
+        bool                m_request_rendering         { false };
+        bool                m_rendered                  { false }; // if true, passes are actually mapped in rendergraph side and so entity is normally rendered
+
+        static constexpr int m_rendering_state_ttl_max{ 20 };  // in number of frames
+
+        int                 m_rendering_state_current_ttl{ 0 };
 
         friend class SceneStreamerSystem;
     };
@@ -686,6 +690,8 @@ namespace mage
             //ptr vers le node correspondant dans le xtree 
             core::QuadTreeNode<SceneQuadTreeNode>*              quadtree_node{ nullptr }; 
             core::OctreeNode<SceneOctreeNode>*                  octree_node{ nullptr };
+
+			bool												static_object{ false };
         };
 
 
@@ -702,10 +708,75 @@ namespace mage
             std::unique_ptr<core::OctreeNode<SceneOctreeNode>>                                      octree_root;
 
             // regrouping here all entities dispatched in m_xtree_root above
-            std::unordered_map<std::string, XTreeEntity>                                            xtree_moving_entities_to_monitor;
+            std::unordered_map<std::string, XTreeEntity>                                            entities_to_monitor;
+        };
+
+        /////////////////////////////////////////////////////////////////////////////////
+        // place cam in appropriate xtree leaf : utility lambda
+
+        const std::function<void(core::QuadTreeNode<SceneQuadTreeNode>*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> m_place_cam_on_quadtree_leaf
+        {
+            [&](core::QuadTreeNode<SceneQuadTreeNode>* p_current_node, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
+            {
+                if (p_current_node->isLeaf())
+                {
+                    // REMOVE from previous location
+                    if (p_xtreeEntity.quadtree_node)
+                    {
+                        p_xtreeEntity.quadtree_node->dataAccess().entities.erase(p_entity);
+                    }
+
+                    p_current_node->dataAccess().entities.insert(p_entity);
+                    p_xtreeEntity.quadtree_node = p_current_node;
+                }
+                else
+                {
+                    for (int i = 0; i < core::QuadTreeNode<SceneQuadTreeNode>::ChildCount; i++)
+                    {
+                        auto child { p_current_node->getChild(i) };
+
+                        if (SceneStreamerSystem::is_inside_quadtreenode(child->getData(), p_global_pos))
+                        {
+                            m_place_cam_on_quadtree_leaf(child, p_global_pos, p_entity, p_xtreeEntity);
+                        }
+                    }
+                }
+            }
+        };
+
+        const std::function<void(core::OctreeNode<SceneOctreeNode>*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> m_place_cam_on_octree_leaf
+        {
+            [&](core::OctreeNode<SceneOctreeNode>* p_current_node, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
+            {
+                if (p_current_node->isLeaf())
+                {
+                    // REMOVE from previous location
+                    if (p_xtreeEntity.octree_node)
+                    {
+                        p_xtreeEntity.octree_node->dataAccess().entities.erase(p_entity);
+                    }
+
+                    p_current_node->dataAccess().entities.insert(p_entity);
+                    p_xtreeEntity.octree_node = p_current_node;
+                }
+                else
+                {
+                    for (int i = 0; i < core::OctreeNode<SceneOctreeNode>::ChildCount; i++)
+                    {
+                        auto child { p_current_node->getChild(i) };
+
+                        if (SceneStreamerSystem::is_inside_octreenode(child->getData(), p_global_pos))
+                        {
+                            m_place_cam_on_octree_leaf(child, p_global_pos, p_entity, p_xtreeEntity);
+                        }
+                    }
+                }
+            }
         };
 
 
+        /////////////////////////////////////////////////////////////////////////////////
+        // place 3D object in appropriate xtree leaf : utility lambda
 
         const std::function<void(core::QuadTreeNode<SceneQuadTreeNode>*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> m_place_obj_on_quadtree_leaf
         {
@@ -714,6 +785,13 @@ namespace mage
                 if (p_current_node->isLeaf())
                 {
                     // leaf reached, cannt go beyond, so place it anyway
+
+                    // REMOVE from previous location
+                    if (p_xtreeEntity.quadtree_node)
+                    {
+                        p_xtreeEntity.quadtree_node->dataAccess().entities.erase(p_entity);
+                    }
+
                     p_current_node->dataAccess().entities.insert(p_entity);
                     p_xtreeEntity.quadtree_node = p_current_node;
                 }
@@ -727,6 +805,13 @@ namespace mage
                         if (ratio > m_configuration.object_xtreenode_ratio)
                         {
                             //place it
+                            
+                            // REMOVE from previous location
+                            if (p_xtreeEntity.quadtree_node)
+                            {
+                                p_xtreeEntity.quadtree_node->dataAccess().entities.erase(p_entity);
+                            }
+
                             p_current_node->dataAccess().entities.insert(p_entity);
                             p_xtreeEntity.quadtree_node = p_current_node;
                         }
@@ -743,9 +828,6 @@ namespace mage
             }
         };
 
-        /////////////////////////////////////////////////////////////////////////////////
-        // place 3D object in appropriate xtree leaf : utility lambda
-
         const std::function<void(core::OctreeNode<SceneOctreeNode>*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> m_place_obj_on_octree_leaf
         {
             [&](core::OctreeNode<SceneOctreeNode>* p_current_node, double p_obj_size, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
@@ -753,6 +835,13 @@ namespace mage
                 if (p_current_node->isLeaf())
                 {
                     // leaf reached, cannt go beyond, so place it anyway
+
+                    // REMOVE from previous location
+                    if (p_xtreeEntity.octree_node)
+                    {
+                        p_xtreeEntity.octree_node->dataAccess().entities.erase(p_entity);
+                    }
+
                     p_current_node->dataAccess().entities.insert(p_entity);
                     p_xtreeEntity.octree_node = p_current_node;
                 }
@@ -766,6 +855,13 @@ namespace mage
                         if (ratio > m_configuration.object_xtreenode_ratio)
                         {
                             //place it
+
+                            // REMOVE from previous location
+                            if (p_xtreeEntity.octree_node)
+                            {
+                                p_xtreeEntity.octree_node->dataAccess().entities.erase(p_entity);
+                            }
+
                             p_current_node->dataAccess().entities.insert(p_entity);
                             p_xtreeEntity.octree_node = p_current_node;
                         }
@@ -935,6 +1031,9 @@ namespace mage
                                                 const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> p_hasnode_func,
                                                 const std::function<bool(SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> p_is_inside_func)
     {
+		
+        std::vector<SceneStreamerSystem::XTreeEntity > entities_to_remove;
+
         for (auto& xe : p_xtree_entities)
         {
             core::Entity* entity{ xe.second.entity };
@@ -942,7 +1041,7 @@ namespace mage
 
             const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
             auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
-            const auto global_pos = entity_worldposition.global_pos;
+            const auto global_pos = entity_worldposition.global_pos;            
 
             ///////////////////////////////////////////////
 
@@ -969,13 +1068,18 @@ namespace mage
                         if (TriangleMeshe::State::RENDERERLOADED == meshe.getState())
                         {
                             const double meshe_size{ meshe.getSize() };
-                            p_place_obj_on_leaf_func(p_xtree_root, meshe_size, global_pos, entity, xe.second);
+                            p_place_obj_on_leaf_func(p_xtree_root, meshe_size, global_pos, entity, xe.second);                            
                         }
                     }
                 }
             }
             else
             {
+                if (entity_worldposition.globalpos_is_valid && xe.second.static_object)
+                {
+                    entities_to_remove.push_back(xe.second); // correctly placed at final location and static, so dont need to monitor this one : remove from p_xtree_entities list
+                }
+
                 //// UPDATE
 
                 if (entity->hasAspect(cameraAspect::id))
@@ -1012,6 +1116,11 @@ namespace mage
                 }
             }
         }
+
+        for(auto e : entities_to_remove)
+        {
+            p_xtree_entities.erase(e.entity->getId());
+		}
     }
 
 
@@ -1027,7 +1136,7 @@ namespace mage
 
         const std::string main_camera_id{ current_views.first };
 
-        XTreeEntity xe{ p_xtree_entities.at(main_camera_id) };
+        XTreeEntity camera_xe{ p_xtree_entities.at(main_camera_id) };
 
         std::unordered_set<mage::core::Entity*> found_entities; // search entities in camera's neighbourood
 
@@ -1058,32 +1167,23 @@ namespace mage
                 {
                     if (nullptr != n)
                     {
-                        const SceneXTreeNode& n_scene_xtree_node{ n->getData() };
-                        for (mage::core::Entity* e : n_scene_xtree_node.entities)
-                        {
-                            if (m_entity_renderings.count(e->getId()) > 0)
-                            {
-                                // store only those than can be rendered
-                                p_found_entities.insert(e);
-                            }
-                        }
                         search_near_entities(p_found_entities, n, p_neighbourood_depth + 1);
                     }
                 }
             }
         };
 
+        // XTree node where camera is actualy locat
+        XTreeType* node_containing_camera = p_get_node_func(camera_xe); // get xe.quadtree or xe.octree regarding XTreeType used :)
 
-        XTreeType* curr = p_get_node_func(xe); // get xe.quadtree or xe.octree regarding XTreeType used :)
-
-        if (curr)
+        if (node_containing_camera)
         {
             while (1)
             {
-                search_near_entities(found_entities, curr, 0);
+                search_near_entities(found_entities, node_containing_camera, 0);
 
-                curr = curr->getParent();
-                if (nullptr == curr)
+                node_containing_camera = node_containing_camera->getParent();
+                if (nullptr == node_containing_camera)
                 {
                     break;
                 }
@@ -1099,6 +1199,8 @@ namespace mage
                     // just discovered -> ask for rendering
                     if (!m_entity_renderings.at(entity->getId()).m_rendered)
                     {
+						_MAGE_DEBUG(m_localLogger, "Now discovered = " + entity->getId() + " -> START_rendering");
+                     
                         m_entity_renderings.at(entity->getId()).m_request_rendering = true;
 
                         // at least one entity added to rendergraph, we gonna need to reactivate the resource system
@@ -1116,6 +1218,8 @@ namespace mage
 
                     if (m_entity_renderings.at(rendered_entity->getId()).m_rendered)
                     {
+                        _MAGE_DEBUG(m_localLogger, "Not found no more in neigbourood: " + rendered_entity->getId() + " -> STOP_rendering");
+
                         m_entity_renderings.at(rendered_entity->getId()).m_request_rendering = false;
                     }
                 }

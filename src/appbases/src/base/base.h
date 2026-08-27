@@ -88,14 +88,27 @@ namespace mage
         void                            registerSubscriber(const Callback& p_callback);
         void                            d3d11_system_events_base();
 
+        //static constexpr int            timeSystemSlot{ 0 };
+        //static constexpr int            d3d11SystemSlot{ 1 };
+        //static constexpr int            resourceSystemSlot{ 2 };
+        //static constexpr int            worldSystemSlot{ 3 };
+        //static constexpr int            renderingQueueSystemSlot{ 4 };
+        //static constexpr int            dataPrintSystemSlot{ 5 };
+        //static constexpr int            animationsSystemSlot{ 6 };
+        //static constexpr int            sceneStreamSystemSlot{ 7 };
+
+
         static constexpr int            timeSystemSlot{ 0 };
-        static constexpr int            d3d11SystemSlot{ 1 };
-        static constexpr int            resourceSystemSlot{ 2 };
-        static constexpr int            worldSystemSlot{ 3 };
-        static constexpr int            renderingQueueSystemSlot{ 4 };
-        static constexpr int            dataPrintSystemSlot{ 5 };
-        static constexpr int            animationsSystemSlot{ 6 };
-        static constexpr int            sceneStreamSystemSlot{ 7 };
+        static constexpr int            worldSystemSlot{ 1 };
+        static constexpr int            d3d11SystemSlot{ 2 };
+        static constexpr int            resourceSystemSlot{ 3 };        
+        static constexpr int            sceneStreamSystemSlot{ 4 };
+        static constexpr int            renderingQueueSystemSlot{ 5 };
+        static constexpr int            dataPrintSystemSlot{ 6 };
+        static constexpr int            animationsSystemSlot{ 7 };
+
+
+
 
         bool                            m_show_mouse_cursor{ false };
         bool                            m_mouse_relative_mode{ true };
