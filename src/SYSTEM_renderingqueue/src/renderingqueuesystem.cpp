@@ -771,8 +771,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								connect_shaders_args(linesDrawingControl, linesQueueDrawingControl, vshader, pshader);
 
 								/////////////// HERE manage vector array for shaders
-								linesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
-								linesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
+								linesQueueDrawingControl.vshaders_vector_array = vshader.getVectorArrayArgumentsPtr();
+								linesQueueDrawingControl.pshaders_vector_array = pshader.getVectorArrayArgumentsPtr();
 
 								/// specific part
 
@@ -845,8 +845,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								connect_shaders_args(trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
 
 								/////////////// HERE manage vector array for shaders
-								trianglesQueueDrawingControl.vshaders_vector_array = &vshader.getVectorArrayArguments();
-								trianglesQueueDrawingControl.pshaders_vector_array = &pshader.getVectorArrayArguments();
+								trianglesQueueDrawingControl.vshaders_vector_array = vshader.getVectorArrayArgumentsPtr();
+								trianglesQueueDrawingControl.pshaders_vector_array = pshader.getVectorArrayArgumentsPtr();
 
 								/// specific part
 								if (triangle_meshe_ref)

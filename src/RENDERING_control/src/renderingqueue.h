@@ -32,6 +32,8 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <functional>
+#include <memory>
+
 #include "tvector.h"
 #include "matrix.h"
 #include "renderstate.h"
@@ -105,8 +107,9 @@ namespace mage
 			std::vector<std::pair<std::string, mage::Shader::GenericArgument>>	pshaders_map_cnx; // computed from pshaders_map and the queue current pshader
 
 			// shaders vector arrays to apply
-			const std::vector<mage::Shader::VectorArrayArgument>* vshaders_vector_array{ nullptr };
-			const std::vector<mage::Shader::VectorArrayArgument>* pshaders_vector_array{ nullptr };
+
+			std::shared_ptr<const std::vector<mage::Shader::VectorArrayArgument>> vshaders_vector_array{ nullptr };
+			std::shared_ptr<const std::vector<mage::Shader::VectorArrayArgument>> pshaders_vector_array{ nullptr };
 
 		};
 

@@ -29,6 +29,7 @@
 #include <string>
 #include <mutex>
 #include <vector>
+#include <memory>
 
 #include "buffer.h"
 
@@ -89,7 +90,7 @@ namespace mage
             m_state_mutex.unlock();
 
             m_generic_arguments = p_other.m_generic_arguments;
-            m_vectorarray_arguments = p_other.m_vectorarray_arguments;
+            m_vectorarray_arguments_ptr = p_other.m_vectorarray_arguments_ptr;
 
             return *this;
         }
@@ -130,7 +131,7 @@ namespace mage
 
         void addVectorArrayArgument(const VectorArrayArgument& p_arg);
 
-        const std::vector<VectorArrayArgument>& getVectorArrayArguments() const;
+        std::shared_ptr<std::vector<VectorArrayArgument>> getVectorArrayArgumentsPtr() const;
         std::vector<VectorArrayArgument>& vectorArrayArgumentsAccess();
 
     private:
@@ -153,7 +154,9 @@ namespace mage
         State                               m_state{ State::INIT };
 
         std::vector<GenericArgument>        m_generic_arguments;
-        std::vector<VectorArrayArgument>    m_vectorarray_arguments;
+
+
+        std::shared_ptr<std::vector<VectorArrayArgument>>    m_vectorarray_arguments_ptr;
 
         // IF NEW MEMBERS HERE :
         // UPDATE COPY CTOR AND OPERATOR !!!!!!

@@ -31,6 +31,7 @@ using namespace mage;
 Shader::Shader(int p_type) :
 m_type(p_type)
 {
+    m_vectorarray_arguments_ptr = std::make_shared <std::vector<VectorArrayArgument>>();
 }
 
 Shader::Shader(const Shader& p_other)
@@ -56,7 +57,7 @@ Shader::Shader(const Shader& p_other)
     m_state_mutex.unlock();
 
     m_generic_arguments = p_other.m_generic_arguments;
-    m_vectorarray_arguments = p_other.m_vectorarray_arguments;
+    m_vectorarray_arguments_ptr = p_other.m_vectorarray_arguments_ptr;
 }
 
 std::string Shader::getResourceUID() const
@@ -146,17 +147,17 @@ std::vector<Shader::GenericArgument> Shader::getGenericArguments() const
 
 void Shader::addVectorArrayArgument(const VectorArrayArgument& p_arg)
 {
-    m_vectorarray_arguments.push_back(p_arg);
+    m_vectorarray_arguments_ptr->push_back(p_arg);
 }
 
 std::vector<Shader::VectorArrayArgument>& Shader::vectorArrayArgumentsAccess()
 {
-    return m_vectorarray_arguments;
+    return *m_vectorarray_arguments_ptr;
 }
 
-const std::vector<Shader::VectorArrayArgument>& Shader::getVectorArrayArguments() const
+std::shared_ptr<std::vector<Shader::VectorArrayArgument>> Shader::getVectorArrayArgumentsPtr() const
 {
-    return m_vectorarray_arguments;
+    return m_vectorarray_arguments_ptr;
 }
 
 void Shader::compute_resource_uid()
