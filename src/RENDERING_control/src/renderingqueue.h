@@ -71,7 +71,8 @@ namespace mage
 			~DrawingControl() = default;
 
 			bool				ready{ false };
-			bool                projected_z_neg{ false }; // for objects that takes their pos from projected position (some 2d sprites...)
+
+			
 
 
 			//shaders params mapping description
@@ -80,9 +81,9 @@ namespace mage
 			std::vector<std::pair<std::string, std::string>> pshaders_map;
 
 
-			
+			std::shared_ptr<bool>					projected_z_neg{ std::make_shared<bool>(false) }; // for objects that takes their pos from projected position (some 2d sprites...)
 
-			std::shared_ptr<bool>				draw{ std::make_shared<bool>(true) };
+			std::shared_ptr<bool>					draw{ std::make_shared<bool>(true) };
 
 		};
 
@@ -98,7 +99,7 @@ namespace mage
 			std::unordered_map<std::string, const core::maths::Matrix*> worlds;
 
 
-			std::unordered_map<std::string, bool*> projected_z_neg_states;
+			std::unordered_map<std::string, std::shared_ptr<bool>> projected_z_neg_states;
 			std::unordered_map<std::string, std::shared_ptr<bool>> draw_states;
 
 			// shaders generic params to apply
