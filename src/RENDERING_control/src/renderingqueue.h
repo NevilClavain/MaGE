@@ -82,7 +82,7 @@ namespace mage
 
 			
 
-			bool				draw{ true };
+			std::shared_ptr<bool>				draw{ std::make_shared<bool>(true) };
 
 		};
 
@@ -99,7 +99,7 @@ namespace mage
 
 
 			std::unordered_map<std::string, bool*> projected_z_neg_states;
-			std::unordered_map<std::string, bool*> draw_states;
+			std::unordered_map<std::string, std::shared_ptr<bool>> draw_states;
 
 			// shaders generic params to apply
 			// dataCloud variable id/shader argument

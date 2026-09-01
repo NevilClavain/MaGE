@@ -389,7 +389,7 @@ void D3D11SystemImpl::forceCurrentMeshe()
 
 bool D3D11SystemImpl::updateMesheTransformers(MesheData& p_meshe_data, 
     const std::unordered_map<std::string, const mage::core::maths::Matrix*>& p_worlds,
-    const std::unordered_map<std::string, bool*>& p_draw_states,
+    const std::unordered_map<std::string, std::shared_ptr<bool>>& p_draw_states,
     const std::unordered_map<std::string, bool*>& p_projected_z_neg_states,
     const mage::core::maths::Matrix& p_view, 
     const mage::core::maths::Matrix& p_proj,
@@ -445,6 +445,7 @@ bool D3D11SystemImpl::updateMesheTransformers(MesheData& p_meshe_data,
         const bool draw{ *p_draw_states.at(e.first) };
         const bool projected_z_neg{ *p_projected_z_neg_states.at(e.first) };
         //check we can draw...
+		
         if (draw && !projected_z_neg)
         {
             mage::transform::MatrixChain chain;

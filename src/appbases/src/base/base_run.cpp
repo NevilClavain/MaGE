@@ -58,7 +58,7 @@ void Base::run(void)
 
 		if (resourceSystem->getNbBusyRunners() > 0)
 		{
-			dc.draw = true;
+			*dc.draw = true;
 
 			const auto& time_aspect{ m_loading_gear->aspectAccess(timeAspect::id) };
 			core::SyncVariable& z_rot{ time_aspect.getComponent<SyncVariable>("z_rot")->getPurpose() };
@@ -68,7 +68,7 @@ void Base::run(void)
 		}
 		else
 		{
-			dc.draw = false;
+			*dc.draw = false;
 		}
 	}	
 }

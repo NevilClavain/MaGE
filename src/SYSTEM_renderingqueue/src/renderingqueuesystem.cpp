@@ -765,7 +765,11 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 	
 
 								pushWorldOutputToQueueDrawingControl(p_entity_id, linesQueueDrawingControl);
-								linesQueueDrawingControl.draw_states[p_entity_id] = &linesDrawingControl.draw;
+								
+								//linesQueueDrawingControl.draw_states[p_entity_id] = &linesDrawingControl.draw;
+								linesQueueDrawingControl.draw_states[p_entity_id] = linesDrawingControl.draw;
+
+
 								linesQueueDrawingControl.projected_z_neg_states[p_entity_id] = &linesDrawingControl.projected_z_neg;
 
 								connect_shaders_args(linesDrawingControl, linesQueueDrawingControl, vshader, pshader);
@@ -807,7 +811,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 									else
 									{
 										pushWorldOutputToQueueDrawingControl(p_entity_id, *matching_qldc);
-										matching_qldc->draw_states[p_entity_id] = &linesDrawingControl.draw;
+										//matching_qldc->draw_states[p_entity_id] = &linesDrawingControl.draw;
+										matching_qldc->draw_states[p_entity_id] = linesDrawingControl.draw;
 										matching_qldc->projected_z_neg_states[p_entity_id] = &linesDrawingControl.projected_z_neg;
 									}
 								}
@@ -839,7 +844,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 								rendering::QueueTrianglesDrawingControl trianglesQueueDrawingControl;
 
 								pushWorldOutputToQueueDrawingControl(p_entity_id, trianglesQueueDrawingControl);
-								trianglesQueueDrawingControl.draw_states[p_entity_id] = &trianglesDrawingControl.draw;
+								//trianglesQueueDrawingControl.draw_states[p_entity_id] = &trianglesDrawingControl.draw;
+								trianglesQueueDrawingControl.draw_states[p_entity_id] = trianglesDrawingControl.draw;
 								trianglesQueueDrawingControl.projected_z_neg_states[p_entity_id] = &trianglesDrawingControl.projected_z_neg;
 
 								connect_shaders_args(trianglesDrawingControl, trianglesQueueDrawingControl, vshader, pshader);
@@ -891,7 +897,8 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 									else
 									{
 										pushWorldOutputToQueueDrawingControl(p_entity_id, *matching_qtdc);
-										matching_qtdc->draw_states[p_entity_id] = &trianglesDrawingControl.draw;
+										//matching_qtdc->draw_states[p_entity_id] = &trianglesDrawingControl.draw;
+										matching_qtdc->draw_states[p_entity_id] = trianglesDrawingControl.draw;
 										matching_qtdc->projected_z_neg_states[p_entity_id] = &trianglesDrawingControl.projected_z_neg;
 									}
 								}

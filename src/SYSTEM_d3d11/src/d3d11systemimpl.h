@@ -434,7 +434,7 @@ public:
 
     bool updateMesheTransformers(MesheData& p_meshe_data, 
         const std::unordered_map<std::string, const mage::core::maths::Matrix*>& p_worlds,
-        const std::unordered_map<std::string, bool*>& p_draw_states,
+        const std::unordered_map<std::string, std::shared_ptr<bool>>& p_draw_states,
         const std::unordered_map<std::string, bool*>& p_projected_z_neg_states,
         const mage::core::maths::Matrix& p_view, 
         const mage::core::maths::Matrix& p_proj,
@@ -446,7 +446,7 @@ public:
     template<Primitives p>
     bool updateMesheTransformersForPrimitive(const std::string& p_meshe_id,
         const std::unordered_map<std::string, const mage::core::maths::Matrix*>& p_worlds,
-        const std::unordered_map<std::string, bool*>& p_draw_states,
+        const std::unordered_map<std::string, std::shared_ptr<bool>>& p_draw_states,
         const std::unordered_map<std::string, bool*>& p_projected_z_neg_states,
         const mage::core::maths::Matrix& p_view, 
         const mage::core::maths::Matrix& p_proj,
