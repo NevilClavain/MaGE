@@ -1041,7 +1041,7 @@ namespace mage
 
             const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
             auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
-            const auto global_pos = entity_worldposition.global_pos;            
+            const auto global_pos = *entity_worldposition.global_pos;            
 
             ///////////////////////////////////////////////
 

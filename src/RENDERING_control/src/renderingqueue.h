@@ -96,7 +96,7 @@ namespace mage
 
 			// transformations to apply;
 
-			std::unordered_map<std::string, const core::maths::Matrix*> worlds;
+			std::unordered_map<std::string, std::shared_ptr<const core::maths::Matrix>> worlds;
 
 
 			std::unordered_map<std::string, std::shared_ptr<bool>> projected_z_neg_states;

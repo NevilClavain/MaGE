@@ -112,7 +112,7 @@ void WorldSystem::extractProjAndViewFromRenderingQueue(const std::string& p_curr
 		else
 		{
 			auto& entity_worldposition{ worldpositions_list.at(0)->getPurpose() };
-			const auto current_cam = entity_worldposition.global_pos;
+			const auto current_cam = *entity_worldposition.global_pos;
 
 			p_current_view = current_cam;
 			p_current_view.inverse();
@@ -242,7 +242,7 @@ void WorldSystem::run()
 		else
 		{
 			auto& entity_worldposition{ worldpositions_list.at(0)->getPurpose() };
-			maths::Matrix entity_world = entity_worldposition.global_pos;
+			const maths::Matrix entity_world = *entity_worldposition.global_pos;
 
 			maths::Matrix inv;
 			inv.identity();
@@ -292,7 +292,7 @@ void WorldSystem::run()
 		else
 		{
 			auto& entity_worldposition{ worldpositions_list.at(0)->getPurpose() };
-			maths::Matrix entity_world = entity_worldposition.global_pos;
+			const maths::Matrix entity_world = *entity_worldposition.global_pos;
 
 			maths::Matrix inv;
 			inv.identity();
@@ -394,13 +394,13 @@ void WorldSystem::compute_entity(core::Entity* p_entity, const ComponentContaine
 			{
 				case transform::WorldPosition::TransformationComposition::TRANSFORMATION_RELATIVE_FROM_PARENT:
 
-					entity_worldposition.global_pos = entity_worldposition.local_pos * parententity_worldposition.global_pos;
+					*entity_worldposition.global_pos = entity_worldposition.local_pos * (*parententity_worldposition.global_pos);
 					entity_worldposition.globalpos_is_valid = true;
 					break;
 
 				case transform::WorldPosition::TransformationComposition::TRANSFORMATION_ABSOLUTE:
 
-					entity_worldposition.global_pos = entity_worldposition.local_pos;
+					*entity_worldposition.global_pos = entity_worldposition.local_pos;
 					entity_worldposition.globalpos_is_valid = true;
 					break;
 
@@ -417,7 +417,7 @@ void WorldSystem::compute_entity(core::Entity* p_entity, const ComponentContaine
 						updated_local_pos(3, 1) += screenposition[1];
 
 						entity_worldposition.wp_projected_z_neg = (screenposition[2] < 0);
-						entity_worldposition.global_pos = updated_local_pos;
+						*entity_worldposition.global_pos = updated_local_pos;
 						entity_worldposition.globalpos_is_valid = true;
 
 						if (p_entity->hasAspect(core::renderingAspect::id))
@@ -457,7 +457,7 @@ void WorldSystem::compute_entity(core::Entity* p_entity, const ComponentContaine
 
 					// no parent -> give WorldPosition with identity
 					transform::WorldPosition fake_parent_pos;
-					fake_parent_pos.global_pos.identity();
+					fake_parent_pos.global_pos->identity();
 					fake_parent_pos.local_pos.identity();
 					fake_parent_pos.globalpos_is_valid = true;
 
@@ -472,7 +472,7 @@ void WorldSystem::compute_entity(core::Entity* p_entity, const ComponentContaine
 
 		///////////////////////
 
-		entity_worldposition.global_pos = entity_worldposition.local_pos;
+		*entity_worldposition.global_pos = entity_worldposition.local_pos;
 		entity_worldposition.globalpos_is_valid = true;
 	}
 

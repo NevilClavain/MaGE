@@ -226,7 +226,7 @@ namespace mage
 					core::maths::Real4Vector source4;
 
 					const auto local_pos { p_world_aspect.getComponent<core::maths::Real3Vector>(p_keys.at("lookatJointAnim.localpos"))->getPurpose() };
-					const core::maths::Matrix absolute_transformation{ core::maths::Matrix::buildTranslation(local_pos) * p_parent_pos.global_pos };
+					const core::maths::Matrix absolute_transformation{ core::maths::Matrix::buildTranslation(local_pos) * (*p_parent_pos.global_pos) };
 												
 					absolute_transformation.transform(&pos, &source4);
 
@@ -240,7 +240,7 @@ namespace mage
 					quat.rotationMatFrom(orientation);
 
 					core::maths::Matrix translation_from_parent; 
-					translation_from_parent.translation( p_parent_pos.global_pos.getPosition() );
+					translation_from_parent.translation( p_parent_pos.global_pos->getPosition() );
 
 					core::maths::Matrix translation_from_current_local;
 					translation_from_current_local.translation(local_pos);

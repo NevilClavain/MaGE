@@ -860,9 +860,11 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
 
                             const transform::WorldPosition& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
 
-                            core::maths::Real3Vector pos(entity_worldposition.global_pos(3, 0),
-                                entity_worldposition.global_pos(3, 1),
-                                entity_worldposition.global_pos(3, 2));
+							const auto global_pos{ *entity_worldposition.global_pos };
+
+                            core::maths::Real3Vector pos(global_pos(3, 0),
+                                global_pos(3, 1),
+                                global_pos(3, 2));
                             return pos;
                         }
                     );
@@ -1609,7 +1611,7 @@ void SceneStreamerSystem::dumpXTree()
 
                             const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
                             auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
-                            const auto global_pos = entity_worldposition.global_pos;
+                            const auto global_pos = *entity_worldposition.global_pos;
 
 
                             _MAGE_DEBUG(m_localLogger, "-> " + tab + e->getId() + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 2)));
@@ -1642,7 +1644,7 @@ void SceneStreamerSystem::dumpXTree()
 
                             const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
                             auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
-                            const auto global_pos = entity_worldposition.global_pos;
+                            const auto global_pos = *entity_worldposition.global_pos;
 
                             _MAGE_DEBUG(m_localLogger, "-> " + tab + e->getId() + " position = " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 0)) + " " + std::to_string(global_pos(3, 2)));
                         }
@@ -1667,7 +1669,7 @@ void SceneStreamerSystem::dumpXTreeEntities()
 
             const auto& entity_worldposition_list{ world_aspect.getComponentsByType<transform::WorldPosition>() };
             auto& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
-            const auto global_pos = entity_worldposition.global_pos;
+            const auto global_pos = *entity_worldposition.global_pos;
 
             if (XtreeType::QUADTREE == m_configuration.xtree_type)
             {

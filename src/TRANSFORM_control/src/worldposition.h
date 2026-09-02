@@ -23,7 +23,10 @@
 /* -*-LIC_END-*- */
 
 #pragma once
+#include <memory>
+
 #include "matrix.h"
+
 
 namespace mage
 {
@@ -34,7 +37,7 @@ namespace mage
             WorldPosition()
             {
                 local_pos.identity();
-                global_pos.identity();
+                global_pos->identity();
             }
 
             WorldPosition(const core::maths::Matrix& p_local)
@@ -54,8 +57,8 @@ namespace mage
             //////////
             core::maths::Matrix local_pos;
 
-            core::maths::Matrix global_pos;
-			bool				globalpos_is_valid{ false }; // was computed at least once
+			std::shared_ptr<core::maths::Matrix> global_pos{ std::make_shared<core::maths::Matrix>() };
+			bool				                globalpos_is_valid{ false }; // was computed at least once
             //////////
 
             bool                wp_projected_z_neg{ false };

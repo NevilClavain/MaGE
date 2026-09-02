@@ -339,7 +339,7 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 		else
 		{
 			auto& entity_worldposition{ worldpositions_list.at(0)->getPurpose() };
-			current_mainview_cam = entity_worldposition.global_pos;
+			current_mainview_cam = *entity_worldposition.global_pos;
 		}
 	}
 	else
@@ -392,7 +392,7 @@ void D3D11System::renderQueue(const rendering::Queue& p_renderingQueue) const
 		else
 		{
 			auto& entity_worldposition{ worldpositions_list.at(0)->getPurpose() };
-			current_secondaryview_cam = entity_worldposition.global_pos;
+			current_secondaryview_cam = *entity_worldposition.global_pos;
 		}
 	}
 

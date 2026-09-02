@@ -388,7 +388,7 @@ void D3D11SystemImpl::forceCurrentMeshe()
 }
 
 bool D3D11SystemImpl::updateMesheTransformers(MesheData& p_meshe_data, 
-    const std::unordered_map<std::string, const mage::core::maths::Matrix*>& p_worlds,
+    const std::unordered_map<std::string, std::shared_ptr<const mage::core::maths::Matrix>>& p_worlds,
     const std::unordered_map<std::string, std::shared_ptr<bool>>& p_draw_states,
     const std::unordered_map<std::string, std::shared_ptr<bool>>& p_projected_z_neg_states,
     const mage::core::maths::Matrix& p_view, 

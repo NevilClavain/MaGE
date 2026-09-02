@@ -177,9 +177,11 @@ void mage::helpers::installShadowsRendering(mage::core::Entitygraph& p_entitygra
 
 			const transform::WorldPosition& entity_worldposition{ entity_worldposition_list.at(0)->getPurpose() };
 
-			core::maths::Real3Vector pos(entity_worldposition.global_pos(3, 0),
-				entity_worldposition.global_pos(3, 1),
-				entity_worldposition.global_pos(3, 2));
+			const auto global_pos{ *entity_worldposition.global_pos };
+
+			core::maths::Real3Vector pos(global_pos(3, 0),
+				global_pos(3, 1),
+				global_pos(3, 2));
 			return pos;
 		}
 	);

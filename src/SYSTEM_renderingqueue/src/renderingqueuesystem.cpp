@@ -329,9 +329,9 @@ void RenderingQueueSystem::manageRenderingQueue()
 					const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 					const auto viewport{ dataCloud->readDataValue<maths::FloatCoords2D>("mage.infos.viewport") };
 					const auto window_dims{ dataCloud->readDataValue<mage::core::maths::IntCoords2D>("mage.infos.window_resol") };
-
-					text.position[0] = ((wp.global_pos(3, 0) + (viewport[0] * 0.5f)) * window_dims[0]) / viewport[0];
-					text.position[1] = (((viewport[1] * 0.5f) - wp.global_pos(3, 1)) * window_dims[1]) / viewport[1];
+					const auto global_pos{ *wp.global_pos };
+					text.position[0] = ((global_pos(3, 0) + (viewport[0] * 0.5f)) * window_dims[0]) / viewport[0];
+					text.position[1] = (((viewport[1] * 0.5f) - global_pos(3, 1)) * window_dims[1]) / viewport[1];
 				}
 				if (!wp_projected_z_neg)
 				{
@@ -1145,7 +1145,7 @@ void RenderingQueueSystem::pushWorldOutputToQueueDrawingControl(const std::strin
 		}
 		const transform::WorldPosition& scene_entity_worldposition{ scene_entity_worldpositions_list.at(0)->getPurpose() };
 
-		p_outqtdc.worlds[p_entity_id] = &scene_entity_worldposition.global_pos;
+		p_outqtdc.worlds[p_entity_id] = scene_entity_worldposition.global_pos;
 	}
 	else
 	{
@@ -1158,6 +1158,6 @@ void RenderingQueueSystem::pushWorldOutputToQueueDrawingControl(const std::strin
 		}
 		const transform::WorldPosition& worldposition{ worldpositions_list.at(0)->getPurpose() };
 
-		p_outqtdc.worlds[p_entity_id] = &worldposition.global_pos;
+		p_outqtdc.worlds[p_entity_id] =	worldposition.global_pos;
 	}
 }
