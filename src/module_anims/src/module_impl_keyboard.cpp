@@ -209,7 +209,9 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 	else if (VK_F9 == p_key)
 	{
-		helpers::logEntitygraph(m_entitygraph, true);
+		helpers::logEntitygraph(m_entitygraph, mage::helpers::EntitygraphDumpMode::ENTITYGRAPH_DUMP_MODE_ENTITY_ID_AND_QUEUES);
+
+		::MessageBox(0, "Log dump done", "Mage", MB_OK | MB_ICONINFORMATION);
 	}
 
 	else if ('Q' == p_key)

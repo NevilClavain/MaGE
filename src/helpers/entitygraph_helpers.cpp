@@ -59,7 +59,7 @@ namespace mage
 {
 	namespace helpers
 	{
-		void logEntitygraph(core::Entitygraph& p_eg, bool p_log_entity_id_only)
+		void logEntitygraph(core::Entitygraph& p_eg, EntitygraphDumpMode p_dump_node)
 		{
 			_MAGE_DEBUG(localLogger, ">>>>>>>>>>>>>>> ENTITY GRAPH DUMP BEGIN <<<<<<<<<<<<<<<<<<<<<<<<");
 
@@ -111,27 +111,36 @@ namespace mage
 
 			// dump to log the built node tree
 
-			std::string hierarchy;
+				std::string hierarchy;
 
-			const std::function<void(const ENode&, int, std::string&)> logMe
-			{
-				[&](const ENode& p_node, int depth, std::string& p_outstr)
-				{
-					const auto& eg_node { p_eg.node(p_node.id) };
-
-					const core::Entity* curr_entity{ eg_node.data() };
-					
-					std::string logstr;
-
-					// entity name
-					logstr += "\n";
-					for (int i = 0; i < depth; i++)
+				// Lambda utilitaire pour ajouter indentation et nouvelle ligne
+				const auto addIndentedNewline
+				{ 
+					[](std::string& p_str, int p_depth)
 					{
-						logstr += "\t";
-					}					
-					logstr += "ENTITY_ID = " + p_node.id;
+						p_str += "\n";
+						for (int i = 0; i < p_depth; i++)
+						{
+							p_str += "\t";
+						}
+					} 
+				};
 
-					if (!p_log_entity_id_only)
+				const std::function<void(const ENode&, int, std::string&)> logMe
+				{
+					[&](const ENode& p_node, int depth, std::string& p_outstr)
+					{
+						const auto& eg_node { p_eg.node(p_node.id) };
+
+						const core::Entity* curr_entity{ eg_node.data() };
+
+						std::string logstr;
+
+						// entity name
+						addIndentedNewline(logstr, depth);
+						logstr += "ENTITY_ID = " + p_node.id;
+
+					if (EntitygraphDumpMode::ENTITYGRAPH_DUMP_MODE_ENTITY_ID_AND_ASPECTS == p_dump_node)
 					{
 						// aspects of this entity
 						const std::map<int, std::string> aspects_translate
@@ -150,13 +159,7 @@ namespace mage
 							if (curr_entity->hasAspect(e.first))
 							{
 								// log aspect name
-
-								logstr += "\n";
-								for (int i = 0; i < depth + 1; i++)
-								{
-									logstr += "\t";
-								}
-
+								addIndentedNewline(logstr, depth + 1);
 								logstr += e.second;
 
 								/////////////////////
@@ -165,11 +168,7 @@ namespace mage
 
 								for (const auto& c : comp_id_list)
 								{
-									logstr += "\n";
-									for (int i = 0; i < depth + 2; i++)
-									{
-										logstr += "\t";
-									}
+									addIndentedNewline(logstr, depth + 2);
 									logstr += c.first;
 									logstr += " ";
 									logstr += c.second;
@@ -177,11 +176,72 @@ namespace mage
 							}
 						}
 					}
+					else if (EntitygraphDumpMode::ENTITYGRAPH_DUMP_MODE_ENTITY_ID_AND_QUEUES == p_dump_node)
+					{
+						if (curr_entity->hasAspect(mage::core::renderingAspect::id))
+						{
+							const auto& rendering_aspect{ curr_entity->aspectAccess(mage::core::renderingAspect::id) };
 
-					//_MAGE_DEBUG(localLogger, logstr);
+							const auto rendering_queues_list{ rendering_aspect.getComponentsByType<rendering::Queue>() };
+							if (rendering_queues_list.size() > 0)
+							{
+								auto& renderingQueue{ rendering_queues_list.at(0)->getPurpose() };
+								rendering::Queue* current_queue = &renderingQueue;
+
+								addIndentedNewline(logstr, depth + 1);
+								logstr += "Rendering Queue details:";
+
+								addIndentedNewline(logstr, depth + 2);
+								logstr += "name : " + current_queue->getName();
+
+								const std::map<rendering::Queue::Purpose, std::string> purpose_translate
+								{
+									{ rendering::Queue::Purpose::UNDEFINED, "UNDEFINED" },
+									{ rendering::Queue::Purpose::SCREEN_RENDERING, "SCREEN_RENDERING" },
+									{ rendering::Queue::Purpose::BUFFER_RENDERING, "BUFFER_RENDERING" },
+								};
+								addIndentedNewline(logstr, depth + 2);
+								logstr += "purpose : " + purpose_translate.at(current_queue->getPurpose());
+
+								const std::map<rendering::Queue::State, std::string> state_translate
+								{
+									{ rendering::Queue::State::WAIT_INIT, "WAIT_INIT" },
+									{ rendering::Queue::State::READY, "READY" }/*,
+									{ rendering::Queue::State::ERROR_ORPHAN, "ERROR_ORPHAN" },*/
+								};
+								// OSEF
+								//addIndentedNewline(logstr, depth + 2);
+								//logstr += "state : " + state_translate.at(current_queue->getState());
+
+								addIndentedNewline(logstr, depth + 2);
+								logstr += "target_stage : " + std::to_string(current_queue->getTargetStage());
+
+								addIndentedNewline(logstr, depth + 2);
+								logstr += "depth_clear_target : " + std::to_string(current_queue->getTargetDepthClearing());
+
+
+								addIndentedNewline(logstr, depth + 2);
+								logstr += "clear_target : " + std::to_string(current_queue->getTargetClearing());
+
+								if (current_queue->getTargetClearing())
+								{
+									const auto clear_color{ current_queue->getTargetClearColor() };
+
+									addIndentedNewline(logstr, depth + 2);
+									logstr += "clear_target_color : " + std::to_string(clear_color.r())
+										+ " " + std::to_string(clear_color.g())
+										+ " " + std::to_string(clear_color.b())
+										+ " " + std::to_string(clear_color.a());
+								}
+
+								addIndentedNewline(logstr, depth + 2);
+								logstr += "target texture id : " + current_queue->getTargetTextureUID();
+								
+							}
+						}
+					}
 
 					p_outstr += logstr;
-
 					for (auto& e : p_node.children)
 					{
 						logMe(e.second, depth+1, p_outstr);

@@ -58,7 +58,14 @@ namespace mage
 
 	namespace helpers
 	{
-		void logEntitygraph(core::Entitygraph& p_eg, bool p_log_entity_id_only = false);
+		enum class EntitygraphDumpMode
+		{
+			ENTITYGRAPH_DUMP_MODE_ENTITY_ID_ONLY,
+			ENTITYGRAPH_DUMP_MODE_ENTITY_ID_AND_ASPECTS,
+			ENTITYGRAPH_DUMP_MODE_ENTITY_ID_AND_QUEUES,
+		};
+
+		void logEntitygraph(core::Entitygraph& p_eg, EntitygraphDumpMode p_dump_node = EntitygraphDumpMode::ENTITYGRAPH_DUMP_MODE_ENTITY_ID_ONLY);
 
 		// LEGACY, TO REMOVE
 		void plugRenderingQuadView(mage::core::Entitygraph& p_entitygraph,

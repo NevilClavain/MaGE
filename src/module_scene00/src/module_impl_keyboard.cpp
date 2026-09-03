@@ -319,7 +319,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 	else if (VK_F9 == p_key)
 	{
-		helpers::logEntitygraph(m_entitygraph, true);
+		helpers::logEntitygraph(m_entitygraph);
 	}
 
 	else if ('Q' == p_key)
