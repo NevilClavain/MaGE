@@ -211,6 +211,8 @@ void ModuleImpl::onEndKeyPress(long p_key)
 	{
 		helpers::logEntitygraph(m_entitygraph, mage::helpers::EntitygraphDumpMode::ENTITYGRAPH_DUMP_MODE_ENTITY_ID_AND_QUEUES);
 
+		//helpers::logEntitygraph(m_entitygraph, mage::helpers::EntitygraphDumpMode::ENTITYGRAPH_DUMP_MODE_ENTITY_ID_AND_ASPECTS);
+
 		::MessageBox(0, "Log dump done", "Mage", MB_OK | MB_ICONINFORMATION);
 	}
 

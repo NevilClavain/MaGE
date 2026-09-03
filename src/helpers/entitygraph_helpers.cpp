@@ -239,6 +239,30 @@ namespace mage
 								
 							}
 						}
+						if (curr_entity->hasAspect(mage::core::resourcesAspect::id))
+						{
+							const mage::core::ComponentContainer& resource_components{ curr_entity->aspectAccess(core::resourcesAspect::id) };
+							const auto textures_list{ resource_components.getComponentsByType<std::pair<unsigned int,class mage::Texture>>() };
+
+							for (auto& e : textures_list)
+							{
+								Texture& texture{ e->getPurpose().second };
+
+								addIndentedNewline(logstr, depth + 1);
+								logstr += "TEXTURE details:";
+
+								addIndentedNewline(logstr, depth + 2);
+								logstr+= "Texture id : " + texture.getResourceUID()
+									+ " source : " + (texture.getSource() == Texture::Source::CONTENT_FROM_FILE ? "CONTENT_FROM_FILE" : "CONTENT_FROM_RENDERINGQUEUE")
+									+ " format : " + std::to_string(static_cast<int>(texture.getFormat()))
+									+ " width : " + std::to_string(texture.getWidth())
+									+ " height : " + std::to_string(texture.getHeight())
+									+ " state : " + std::to_string(static_cast<int>(texture.getState()))
+									+ " content_access_mode : " + std::to_string(static_cast<int>(texture.getContentAccessMode()));
+
+							}
+
+						}
 					}
 
 					p_outstr += logstr;
