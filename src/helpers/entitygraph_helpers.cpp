@@ -200,6 +200,7 @@ namespace mage
 									{ rendering::Queue::Purpose::SCREEN_RENDERING, "SCREEN_RENDERING" },
 									{ rendering::Queue::Purpose::BUFFER_RENDERING, "BUFFER_RENDERING" },
 								};
+
 								addIndentedNewline(logstr, depth + 2);
 								logstr += "purpose : " + purpose_translate.at(current_queue->getPurpose());
 
@@ -251,13 +252,32 @@ namespace mage
 								addIndentedNewline(logstr, depth + 1);
 								logstr += "TEXTURE details:";
 
+								const std::map<Texture::Format, std::string> format_translate
+								{
+									{ Texture::Format::TEXTURE_RGB, "RGB" },
+									{ Texture::Format::TEXTURE_FLOAT, "FLOAT" },
+									{ Texture::Format::TEXTURE_FLOAT32, "FLOAT32" },
+									{ Texture::Format::TEXTURE_FLOATVECTOR, "FLOATVECTOR" },
+									{ Texture::Format::TEXTURE_FLOATVECTOR32, "FLOATVECTOR32" },
+								};
+
+								const std::map<Texture::State, std::string> state_translate
+								{
+									{ Texture::State::INIT, "INIT" },
+									{ Texture::State::BLOBLOADING, "BLOBLOADING" },
+									{ Texture::State::BLOBLOADED, "BLOBLOADED" },
+									{ Texture::State::RENDERERLOADING, "RENDERERLOADING" },
+									{ Texture::State::RENDERERLOADED, "RENDERERLOADED" },
+								};
+
+
 								addIndentedNewline(logstr, depth + 2);
 								logstr+= "Texture id : " + texture.getResourceUID()
 									+ " source : " + (texture.getSource() == Texture::Source::CONTENT_FROM_FILE ? "CONTENT_FROM_FILE" : "CONTENT_FROM_RENDERINGQUEUE")
-									+ " format : " + std::to_string(static_cast<int>(texture.getFormat()))
+									+ " format : " + format_translate.at(texture.getFormat())
 									+ " width : " + std::to_string(texture.getWidth())
 									+ " height : " + std::to_string(texture.getHeight())
-									+ " state : " + std::to_string(static_cast<int>(texture.getState()))
+									+ " state : " + state_translate.at(texture.getState())
 									+ " content_access_mode : " + std::to_string(static_cast<int>(texture.getContentAccessMode()));
 
 							}
