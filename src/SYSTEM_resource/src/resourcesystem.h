@@ -151,7 +151,7 @@ namespace mage
 
         size_t getNbBusyRunners() const;
 
-        void request();
+        
 
     private:
         mage::core::logger::Sink                                                        m_localLogger;
@@ -177,8 +177,6 @@ namespace mage
 
 
         std::unordered_map<std::string, ShaderCacheEntry>                               m_shadersCache;
-
-        bool                                                                            m_requested{ false };
        
         void handleShader(const std::string& p_filename, Shader& p_shaderInfos);
         void handleTexture(const std::string& p_filename, Texture& p_textureInfos );

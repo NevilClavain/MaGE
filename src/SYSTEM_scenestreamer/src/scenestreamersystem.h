@@ -1189,7 +1189,7 @@ namespace mage
                 }
             }
 
-            bool needTriggerResourcesSystem{ false };
+            //bool needTriggerResourcesSystem{ false };
 
             // new entities discovered, to render
             for (mage::core::Entity* entity : found_entities)
@@ -1204,7 +1204,7 @@ namespace mage
                         m_entity_renderings.at(entity->getId()).m_request_rendering = true;
 
                         // at least one entity added to rendergraph, we gonna need to reactivate the resource system
-                        needTriggerResourcesSystem = true;
+                        //needTriggerResourcesSystem = true;
                     }
                 }
             }
@@ -1228,12 +1228,12 @@ namespace mage
             // update...
             m_found_entities_to_render = found_entities;
 
-            if (needTriggerResourcesSystem)
-            {
+            //if (needTriggerResourcesSystem)
+            //{
                 // 
-                auto resourceSystemInstance{ dynamic_cast<mage::ResourceSystem*>(SystemEngine::getInstance()->getSystem(m_resourceSystemSlot)) };
-                resourceSystemInstance->request();
-            }
+                //auto resourceSystemInstance{ dynamic_cast<mage::ResourceSystem*>(SystemEngine::getInstance()->getSystem(m_resourceSystemSlot)) };
+                //resourceSystemInstance->request();
+            //}
         }
     };
 }

@@ -92,7 +92,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		m_sprites.push_back(ball);
 
 		auto resourceSystemInstance{ dynamic_cast<mage::ResourceSystem*>(SystemEngine::getInstance()->getSystem(resourceSystemSlot)) };
-		resourceSystemInstance->request();
+		//resourceSystemInstance->request();
 
 	}
 }

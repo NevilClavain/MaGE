@@ -661,7 +661,10 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 
 					//////////////////////////////// check shaders are D3D11 ready
 
-					if (Shader::State::RENDERERLOADED != vshader.getState() || Shader::State::RENDERERLOADED != pshader.getState())
+					const auto v_shader_state{ vshader.getState() };
+					const auto p_shader_state { pshader.getState() };
+
+					if (Shader::State::RENDERERLOADED != v_shader_state || Shader::State::RENDERERLOADED != p_shader_state)
 					{
 						resources_D3D11ready = false;
 					}
@@ -701,7 +704,9 @@ void RenderingQueueSystem::checkEntityInsertion(const std::string& p_entity_id, 
 					{
 						const auto& staged_texture{ e->getPurpose() };
 
-						if (Texture::State::RENDERERLOADED != staged_texture.second.getState())
+						const auto staged_texture_state { staged_texture.second.getState() };
+
+						if (Texture::State::RENDERERLOADED != staged_texture_state)
 						{
 							resources_D3D11ready = false;
 						}
