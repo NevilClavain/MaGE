@@ -225,13 +225,14 @@ void ModuleImpl::onEndKeyPress(long p_key)
 	else if (VK_F9 == p_key)
 	{
 		//helpers::logEntitygraph(m_entitygraph);
+		helpers::logEntitygraph(m_entitygraph, mage::helpers::EntitygraphDumpMode::ENTITYGRAPH_DUMP_MODE_ENTITY_ID_AND_QUEUES);
 		
-		auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
-		auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
+		//auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
+		//auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
 
-		renderingQueueSystemInstance->requestRenderingqueueLogging("TextureChannelScene_Entity");
-		renderingQueueSystemInstance->requestRenderingqueueLogging("AmbientLitChannelScene_Entity");
-		renderingQueueSystemInstance->requestRenderingqueueLogging("EmissiveLitChannelScene_Entity");
+		//renderingQueueSystemInstance->requestRenderingqueueLogging("TextureChannelScene_Entity");
+		//renderingQueueSystemInstance->requestRenderingqueueLogging("AmbientLitChannelScene_Entity");
+		//renderingQueueSystemInstance->requestRenderingqueueLogging("EmissiveLitChannelScene_Entity");
 		
 		
 
