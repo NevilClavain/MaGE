@@ -122,6 +122,21 @@ namespace mage
         // fwd decl
         struct RendergraphNode;
 
+
+        // NEW !
+        struct Combiner
+        {
+            std::string                         id;
+            int                                 width{ fillWithViewportDims };
+            int                                 height{ fillWithViewportDims };
+            std::vector<ShaderWithArgs>         shaders;
+            std::vector<StagedBufferTexture>    inputs;
+
+            JS_OBJ(id, width, height, shaders, inputs);
+        };
+
+
+
         struct Target
         {
             std::string                         descr;
@@ -911,6 +926,10 @@ namespace mage
 
         void configure(const Configuration& p_config);
 
+		void parseCombiner(const std::string& p_jsonsource);
+
+
+
         void buildRendergraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId,
                                     int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
 
@@ -1001,6 +1020,9 @@ namespace mage
         std::queue<core::Entity*>                                                               m_newly_added_entities;
 
         /////////////////////////////////
+
+
+		std::unordered_map<std::string, json::Combiner>                                         m_combiners;
 
         
         void register_scene_entity(mage::core::Entity* p_entity);

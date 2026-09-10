@@ -108,6 +108,10 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/config_deployment/module_streamed_anims_co
 install(FILES ${CMAKE_SOURCE_DIR}/module_streamed_anims/json/datacloud.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 
 install(FILES ${CMAKE_SOURCE_DIR}/rendergraphs/json/open_env_rendergraph.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
+install(FILES ${CMAKE_SOURCE_DIR}/rendergraphs/json/combiner_mod_2_RGB.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
+install(FILES ${CMAKE_SOURCE_DIR}/rendergraphs/json/combiner_cumul_2_RGB.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
+install(FILES ${CMAKE_SOURCE_DIR}/rendergraphs/json/combiner_cumul_3_RGB.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
+install(FILES ${CMAKE_SOURCE_DIR}/rendergraphs/json/combiner_for_fog.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 
 install(FILES ${CMAKE_SOURCE_DIR}/entities/json/ground.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 install(FILES ${CMAKE_SOURCE_DIR}/entities/json/skydome.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)

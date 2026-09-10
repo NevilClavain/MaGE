@@ -1,0 +1,31 @@
+{
+  "id": "combiner_cumul_3_RGB",
+  "shaders": [
+    {
+      "name": "combiner_accumulate3chan_vs"
+    },
+    {
+      "name": "combiner_accumulate3chan_ps"
+    }
+  ],
+  "inputs": [
+    {
+      "stage": 0,
+      "buffer_texture": {
+        "format_descr": "TEXTURE_RGB"
+      }
+    },
+    {
+      "stage": 1,
+      "buffer_texture": {
+        "format_descr": "TEXTURE_RGB"
+      }
+    },
+    {
+      "stage": 2,
+      "buffer_texture": {
+        "format_descr": "TEXTURE_RGB"
+      }
+    }
+  ]
+}

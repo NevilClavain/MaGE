@@ -195,11 +195,22 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.shadowmap_resol", maths::Real4Vector(2048, 0, 0, 0));
 
 
+
+					mage::core::FileContent<char> combiner_mod_2_RGB("./module_streamed_anims_config/combiner_mod_2_RGB.json");
+					combiner_mod_2_RGB.load();
+					
+					mage::core::FileContent<char> combiner_cumul_2_RGB("./module_streamed_anims_config/combiner_cumul_2_RGB.json");
+					combiner_cumul_2_RGB.load();
+
+					mage::core::FileContent<char> combiner_cumul_3_RGB("./module_streamed_anims_config/combiner_cumul_3_RGB.json");
+					combiner_cumul_3_RGB.load();
+
+					mage::core::FileContent<char> combiner_for_fog("./module_streamed_anims_config/combiner_for_fog.json");
+					combiner_for_fog.load();
+
+
 					mage::core::FileContent<char> rendergraphFileContent("./module_streamed_anims_config/open_env_rendergraph.json");
 					rendergraphFileContent.load();
-
-
-
 
 					auto streamerSystemInstance{ dynamic_cast<mage::StreamerSystem*>(SystemEngine::getInstance()->getSystem(streamerSystemSlot)) };
 
@@ -218,6 +229,10 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 					streamerSystemInstance->configure(ss_config);
 
+					streamerSystemInstance->parseCombiner(combiner_mod_2_RGB.getData());
+					streamerSystemInstance->parseCombiner(combiner_cumul_2_RGB.getData());
+					streamerSystemInstance->parseCombiner(combiner_cumul_3_RGB.getData());
+					streamerSystemInstance->parseCombiner(combiner_for_fog.getData());
 
 					streamerSystemInstance->buildRendergraphPart(rendergraphFileContent.getData(), "screenRendering_Filter_DirectForward_Quad_Entity",
 																		w_width, w_height, characteristics_v_width, characteristics_v_height);

@@ -1,0 +1,25 @@
+{
+  "id": "combiner_mod_2_RGB",
+  "shaders": [
+    {
+      "name": "combiner_modulate_vs"
+    },
+    {
+      "name": "combiner_modulate_ps"
+    }
+  ],
+  "inputs": [
+    {
+      "stage": 0,
+      "buffer_texture": {
+        "format_descr": "TEXTURE_RGB"
+      }
+    },
+    {
+      "stage": 1,
+      "buffer_texture": {
+        "format_descr": "TEXTURE_RGB"
+      }
+    }
+  ]
+}

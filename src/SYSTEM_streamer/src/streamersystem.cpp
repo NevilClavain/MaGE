@@ -1724,3 +1724,17 @@ std::string StreamerSystem::filter_arguments_stack(const std::string p_input, co
     }
 }
 
+void StreamerSystem::parseCombiner(const std::string& p_jsonsource)
+{
+    json::Combiner combiner;
+
+    JS::ParseContext parseContext(p_jsonsource);
+    if (parseContext.parseTo(combiner) != JS::Error::NoError)
+    {
+        const auto errorStr{ parseContext.makeErrorString() };
+        _EXCEPTION("Cannot parse combiner: " + errorStr);
+    }
+
+    m_combiners[combiner.id] = combiner;
+}
+
