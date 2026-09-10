@@ -92,7 +92,7 @@ target_link_libraries(module_sprites
 										SYSTEM_world 
 										SYSTEM_dataprint 
 										SYSTEM_animations 
-										SYSTEM_scenestreamer
+										SYSTEM_streamer
 										d3d11 
 										d3dcompiler 										
 										DirectXTK)

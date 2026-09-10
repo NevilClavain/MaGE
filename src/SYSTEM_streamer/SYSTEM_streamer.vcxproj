@@ -1,0 +1,263 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|Win32">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|Win32">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C66312C4-FE3A-3E89-8FF3-58A6FB56D020}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>Win32</Platform>
+    <ProjectName>SYSTEM_streamer</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\dev\MaGE\src\SYSTEM_streamer\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">SYSTEM_streamer.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">SYSTEM_streamer</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\dev\MaGE\src\SYSTEM_streamer\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">SYSTEM_streamer.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">SYSTEM_streamer</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">D:\dev\MaGE\src\SYSTEM_streamer\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">SYSTEM_streamer.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">SYSTEM_streamer</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">D:\dev\MaGE\src\SYSTEM_streamer\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">SYSTEM_streamer.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">SYSTEM_streamer</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\dev\MaGE\src\commons;D:\dev\MaGE\src\CORE_ecs\src;D:\dev\MaGE\src\CORE_maths\src;D:\dev\MaGE\src\CORE_buffer\src;D:\dev\MaGE\src\CORE_services\src;D:\dev\MaGE\src\CORE_logger\src;D:\dev\MaGE\src\CORE_threads\src;D:\dev\MaGE\src\RENDERING_control\src;D:\dev\MaGE\src\TRANSFORM_control\src;D:\dev\MaGE\src\CORE_time\src;D:\dev\MaGE\src\CORE_filesystem\src;D:\dev\MaGE\src\CORE_xtree\src;D:\dev\MaGE\src\helpers;D:\dev\MaGE\src\SYSTEM_resource\src;D:\dev\MaGE\src\SYSTEM_renderingqueue\src;D:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;D:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX=1;_FROMCMAKE;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX=1;_FROMCMAKE;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\dev\MaGE\src\commons;D:\dev\MaGE\src\CORE_ecs\src;D:\dev\MaGE\src\CORE_maths\src;D:\dev\MaGE\src\CORE_buffer\src;D:\dev\MaGE\src\CORE_services\src;D:\dev\MaGE\src\CORE_logger\src;D:\dev\MaGE\src\CORE_threads\src;D:\dev\MaGE\src\RENDERING_control\src;D:\dev\MaGE\src\TRANSFORM_control\src;D:\dev\MaGE\src\CORE_time\src;D:\dev\MaGE\src\CORE_filesystem\src;D:\dev\MaGE\src\CORE_xtree\src;D:\dev\MaGE\src\helpers;D:\dev\MaGE\src\SYSTEM_resource\src;D:\dev\MaGE\src\SYSTEM_renderingqueue\src;D:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;D:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\dev\MaGE\src\commons;D:\dev\MaGE\src\CORE_ecs\src;D:\dev\MaGE\src\CORE_maths\src;D:\dev\MaGE\src\CORE_buffer\src;D:\dev\MaGE\src\CORE_services\src;D:\dev\MaGE\src\CORE_logger\src;D:\dev\MaGE\src\CORE_threads\src;D:\dev\MaGE\src\RENDERING_control\src;D:\dev\MaGE\src\TRANSFORM_control\src;D:\dev\MaGE\src\CORE_time\src;D:\dev\MaGE\src\CORE_filesystem\src;D:\dev\MaGE\src\CORE_xtree\src;D:\dev\MaGE\src\helpers;D:\dev\MaGE\src\SYSTEM_resource\src;D:\dev\MaGE\src\SYSTEM_renderingqueue\src;D:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;D:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\dev\MaGE\src\commons;D:\dev\MaGE\src\CORE_ecs\src;D:\dev\MaGE\src\CORE_maths\src;D:\dev\MaGE\src\CORE_buffer\src;D:\dev\MaGE\src\CORE_services\src;D:\dev\MaGE\src\CORE_logger\src;D:\dev\MaGE\src\CORE_threads\src;D:\dev\MaGE\src\RENDERING_control\src;D:\dev\MaGE\src\TRANSFORM_control\src;D:\dev\MaGE\src\CORE_time\src;D:\dev\MaGE\src\CORE_filesystem\src;D:\dev\MaGE\src\CORE_xtree\src;D:\dev\MaGE\src\helpers;D:\dev\MaGE\src\SYSTEM_resource\src;D:\dev\MaGE\src\SYSTEM_renderingqueue\src;D:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;D:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX=1;_FROMCMAKE;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX=1;_FROMCMAKE;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\dev\MaGE\src\commons;D:\dev\MaGE\src\CORE_ecs\src;D:\dev\MaGE\src\CORE_maths\src;D:\dev\MaGE\src\CORE_buffer\src;D:\dev\MaGE\src\CORE_services\src;D:\dev\MaGE\src\CORE_logger\src;D:\dev\MaGE\src\CORE_threads\src;D:\dev\MaGE\src\RENDERING_control\src;D:\dev\MaGE\src\TRANSFORM_control\src;D:\dev\MaGE\src\CORE_time\src;D:\dev\MaGE\src\CORE_filesystem\src;D:\dev\MaGE\src\CORE_xtree\src;D:\dev\MaGE\src\helpers;D:\dev\MaGE\src\SYSTEM_resource\src;D:\dev\MaGE\src\SYSTEM_renderingqueue\src;D:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;D:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\dev\MaGE\src\commons;D:\dev\MaGE\src\CORE_ecs\src;D:\dev\MaGE\src\CORE_maths\src;D:\dev\MaGE\src\CORE_buffer\src;D:\dev\MaGE\src\CORE_services\src;D:\dev\MaGE\src\CORE_logger\src;D:\dev\MaGE\src\CORE_threads\src;D:\dev\MaGE\src\RENDERING_control\src;D:\dev\MaGE\src\TRANSFORM_control\src;D:\dev\MaGE\src\CORE_time\src;D:\dev\MaGE\src\CORE_filesystem\src;D:\dev\MaGE\src\CORE_xtree\src;D:\dev\MaGE\src\helpers;D:\dev\MaGE\src\SYSTEM_resource\src;D:\dev\MaGE\src\SYSTEM_renderingqueue\src;D:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;D:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\dev\MaGE\src\commons;D:\dev\MaGE\src\CORE_ecs\src;D:\dev\MaGE\src\CORE_maths\src;D:\dev\MaGE\src\CORE_buffer\src;D:\dev\MaGE\src\CORE_services\src;D:\dev\MaGE\src\CORE_logger\src;D:\dev\MaGE\src\CORE_threads\src;D:\dev\MaGE\src\RENDERING_control\src;D:\dev\MaGE\src\TRANSFORM_control\src;D:\dev\MaGE\src\CORE_time\src;D:\dev\MaGE\src\CORE_filesystem\src;D:\dev\MaGE\src\CORE_xtree\src;D:\dev\MaGE\src\helpers;D:\dev\MaGE\src\SYSTEM_resource\src;D:\dev\MaGE\src\SYSTEM_renderingqueue\src;D:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;D:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX=1;_FROMCMAKE;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX=1;_FROMCMAKE;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\dev\MaGE\src\commons;D:\dev\MaGE\src\CORE_ecs\src;D:\dev\MaGE\src\CORE_maths\src;D:\dev\MaGE\src\CORE_buffer\src;D:\dev\MaGE\src\CORE_services\src;D:\dev\MaGE\src\CORE_logger\src;D:\dev\MaGE\src\CORE_threads\src;D:\dev\MaGE\src\RENDERING_control\src;D:\dev\MaGE\src\TRANSFORM_control\src;D:\dev\MaGE\src\CORE_time\src;D:\dev\MaGE\src\CORE_filesystem\src;D:\dev\MaGE\src\CORE_xtree\src;D:\dev\MaGE\src\helpers;D:\dev\MaGE\src\SYSTEM_resource\src;D:\dev\MaGE\src\SYSTEM_renderingqueue\src;D:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;D:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\dev\MaGE\src\commons;D:\dev\MaGE\src\CORE_ecs\src;D:\dev\MaGE\src\CORE_maths\src;D:\dev\MaGE\src\CORE_buffer\src;D:\dev\MaGE\src\CORE_services\src;D:\dev\MaGE\src\CORE_logger\src;D:\dev\MaGE\src\CORE_threads\src;D:\dev\MaGE\src\RENDERING_control\src;D:\dev\MaGE\src\TRANSFORM_control\src;D:\dev\MaGE\src\CORE_time\src;D:\dev\MaGE\src\CORE_filesystem\src;D:\dev\MaGE\src\CORE_xtree\src;D:\dev\MaGE\src\helpers;D:\dev\MaGE\src\SYSTEM_resource\src;D:\dev\MaGE\src\SYSTEM_renderingqueue\src;D:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;D:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\dev\MaGE\src\commons;D:\dev\MaGE\src\CORE_ecs\src;D:\dev\MaGE\src\CORE_maths\src;D:\dev\MaGE\src\CORE_buffer\src;D:\dev\MaGE\src\CORE_services\src;D:\dev\MaGE\src\CORE_logger\src;D:\dev\MaGE\src\CORE_threads\src;D:\dev\MaGE\src\RENDERING_control\src;D:\dev\MaGE\src\TRANSFORM_control\src;D:\dev\MaGE\src\CORE_time\src;D:\dev\MaGE\src\CORE_filesystem\src;D:\dev\MaGE\src\CORE_xtree\src;D:\dev\MaGE\src\helpers;D:\dev\MaGE\src\SYSTEM_resource\src;D:\dev\MaGE\src\SYSTEM_renderingqueue\src;D:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;D:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX=1;_FROMCMAKE;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX=1;_FROMCMAKE;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\dev\MaGE\src\commons;D:\dev\MaGE\src\CORE_ecs\src;D:\dev\MaGE\src\CORE_maths\src;D:\dev\MaGE\src\CORE_buffer\src;D:\dev\MaGE\src\CORE_services\src;D:\dev\MaGE\src\CORE_logger\src;D:\dev\MaGE\src\CORE_threads\src;D:\dev\MaGE\src\RENDERING_control\src;D:\dev\MaGE\src\TRANSFORM_control\src;D:\dev\MaGE\src\CORE_time\src;D:\dev\MaGE\src\CORE_filesystem\src;D:\dev\MaGE\src\CORE_xtree\src;D:\dev\MaGE\src\helpers;D:\dev\MaGE\src\SYSTEM_resource\src;D:\dev\MaGE\src\SYSTEM_renderingqueue\src;D:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;D:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\dev\MaGE\src\commons;D:\dev\MaGE\src\CORE_ecs\src;D:\dev\MaGE\src\CORE_maths\src;D:\dev\MaGE\src\CORE_buffer\src;D:\dev\MaGE\src\CORE_services\src;D:\dev\MaGE\src\CORE_logger\src;D:\dev\MaGE\src\CORE_threads\src;D:\dev\MaGE\src\RENDERING_control\src;D:\dev\MaGE\src\TRANSFORM_control\src;D:\dev\MaGE\src\CORE_time\src;D:\dev\MaGE\src\CORE_filesystem\src;D:\dev\MaGE\src\CORE_xtree\src;D:\dev\MaGE\src\helpers;D:\dev\MaGE\src\SYSTEM_resource\src;D:\dev\MaGE\src\SYSTEM_renderingqueue\src;D:\dev\MaGE\src\..\thirdparts\json_struct_1.0.1\sdk\include;D:\dev\MaGE\src\..\thirdparts\st_tree\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="D:\dev\MaGE\src\SYSTEM_streamer\src\streamersystem.cpp" />
+    <ClInclude Include="D:\dev\MaGE\src\SYSTEM_streamer\src\streamersystem.h" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -32,7 +32,7 @@
 
 #include <json_struct/json_struct.h>
 
-#include "scenestreamersystem.h"
+#include "streamersystem.h"
 #include "renderingqueuesystem.h"
 
 
@@ -58,13 +58,13 @@ using namespace mage::core;
 using namespace mage::core::maths;
 
 
-SceneStreamerSystem::SceneStreamerSystem(Entitygraph& p_entitygraph) : System(p_entitygraph),
-m_localLogger("SceneStreamerSystem", mage::core::logger::Configuration::getInstance())
+StreamerSystem::StreamerSystem(Entitygraph& p_entitygraph) : System(p_entitygraph),
+m_localLogger("StreamerSystem", mage::core::logger::Configuration::getInstance())
 {
     const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-    dataCloud->registerData<std::string>("mage.timings.scenestreamersystem");
-    dataCloud->registerData<std::string>("mage.timings.scenestreamersystem.3");
-    dataCloud->registerData<std::string>("mage.timings.scenestreamersystem.4");
+    dataCloud->registerData<std::string>("mage.timings.streamersystem");
+    dataCloud->registerData<std::string>("mage.timings.streamersystem.3");
+    dataCloud->registerData<std::string>("mage.timings.streamersystem.4");
 
 
     // Register callback for entitygraph events
@@ -89,17 +89,17 @@ m_localLogger("SceneStreamerSystem", mage::core::logger::Configuration::getInsta
         });
 }
 
-void SceneStreamerSystem::enableSystem(bool p_enabled)
+void StreamerSystem::enableSystem(bool p_enabled)
 {
     m_enabled = p_enabled;
 }
 
-bool SceneStreamerSystem::isEnabled() const
+bool StreamerSystem::isEnabled() const
 {
     return m_enabled;
 }
 
-void SceneStreamerSystem::configure(const Configuration& p_config)
+void StreamerSystem::configure(const Configuration& p_config)
 {
     if (!m_configured)
     {
@@ -108,7 +108,7 @@ void SceneStreamerSystem::configure(const Configuration& p_config)
     }
 }
 
-void SceneStreamerSystem::init_XTree(RendergraphPartData& p_rgpd)
+void StreamerSystem::init_XTree(RendergraphPartData& p_rgpd)
 {
     if (!m_configured)
     {
@@ -292,7 +292,7 @@ void SceneStreamerSystem::init_XTree(RendergraphPartData& p_rgpd)
     }
 }
 
-bool SceneStreamerSystem::compute_entity(core::Entity* p_entity, const core::ComponentContainer& p_world_components)
+bool StreamerSystem::compute_entity(core::Entity* p_entity, const core::ComponentContainer& p_world_components)
 {
     bool computed{ false };
 
@@ -369,7 +369,7 @@ bool SceneStreamerSystem::compute_entity(core::Entity* p_entity, const core::Com
     return computed;
 }
 
-void SceneStreamerSystem::run()
+void StreamerSystem::run()
 {
     const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
 
@@ -409,9 +409,9 @@ void SceneStreamerSystem::run()
 
         if (XtreeType::QUADTREE == m_configuration.xtree_type)
         {
-            const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> has_node
+            const std::function<bool(const StreamerSystem::XTreeEntity&)> has_node
             {
-                [&](const SceneStreamerSystem::XTreeEntity& p_xe) -> bool
+                [&](const StreamerSystem::XTreeEntity& p_xe) -> bool
                 {
                     return (p_xe.quadtree_node != nullptr);
                 } 
@@ -419,9 +419,9 @@ void SceneStreamerSystem::run()
 
             /////////////////////////////////////////////////////////////////////////////////
 
-            const std::function<bool(SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> is_inside
+            const std::function<bool(StreamerSystem::XTreeEntity&, const core::maths::Matrix&)> is_inside
             {
-                [&](SceneStreamerSystem::XTreeEntity& p_xe, const core::maths::Matrix& p_global_pos) -> bool
+                [&](StreamerSystem::XTreeEntity& p_xe, const core::maths::Matrix& p_global_pos) -> bool
                 {
                     return is_inside_quadtreenode(p_xe.quadtree_node->getData(), p_global_pos);
                 }
@@ -431,9 +431,9 @@ void SceneStreamerSystem::run()
         }
         else // XtreeType::OCTREE
         {
-            const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> has_node
+            const std::function<bool(const StreamerSystem::XTreeEntity&)> has_node
             {
-                [&](const SceneStreamerSystem::XTreeEntity& p_xe) -> bool
+                [&](const StreamerSystem::XTreeEntity& p_xe) -> bool
                 {
                     return (p_xe.octree_node != nullptr);
                 }
@@ -441,9 +441,9 @@ void SceneStreamerSystem::run()
 
             /////////////////////////////////////////////////////////////////////////////////
 
-            const std::function<bool(SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> is_inside
+            const std::function<bool(StreamerSystem::XTreeEntity&, const core::maths::Matrix&)> is_inside
             {
-                [&](SceneStreamerSystem::XTreeEntity& p_xe, const core::maths::Matrix& p_global_pos) -> bool
+                [&](StreamerSystem::XTreeEntity& p_xe, const core::maths::Matrix& p_global_pos) -> bool
                 {
                     return is_inside_octreenode(p_xe.octree_node->getData(), p_global_pos);
                 }
@@ -495,7 +495,7 @@ void SceneStreamerSystem::run()
     const auto end_time_3{ std::chrono::high_resolution_clock::now() };
     const auto duration_3{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_3 - start_time_3) };
 
-    dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem.3", std::to_string(duration_3.count()) + " ms");
+    dataCloud->updateDataValue<std::string>("mage.timings.streamersystem.3", std::to_string(duration_3.count()) + " ms");
     
     /////////////////////////////////////////////////////////
     // loop on entity rendering entries
@@ -551,17 +551,17 @@ void SceneStreamerSystem::run()
 
     if (duration_4.count() > 0)
     {
-        dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem.4", std::to_string(duration_4.count()) + " ms");
+        dataCloud->updateDataValue<std::string>("mage.timings.streamersystem.4", std::to_string(duration_4.count()) + " ms");
     }                    
 
     
     const auto end_time{ std::chrono::high_resolution_clock::now() };
     const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
     
-    dataCloud->updateDataValue<std::string>("mage.timings.scenestreamersystem", std::to_string(duration.count()) + " ms");
+    dataCloud->updateDataValue<std::string>("mage.timings.streamersystem", std::to_string(duration.count()) + " ms");
 }
 
-void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId,
+void StreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId,
                                                 int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height)
 {
     json::RendergraphNodesCollection rtc;
@@ -681,7 +681,7 @@ void SceneStreamerSystem::buildRendergraphPart(const std::string& p_jsonsource, 
 }
 
 
-void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId, const mage::core::maths::Matrix p_perspective_projection)
+void StreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId, const mage::core::maths::Matrix p_perspective_projection)
 {
     json::Scenegraph sg;
 
@@ -752,7 +752,7 @@ void SceneStreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, c
     }
 }
 
-void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource, const std::vector<std::string>& p_rendergraph_parts,
+void StreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource, const std::vector<std::string>& p_rendergraph_parts,
                                                                                     const json::Animator& p_animator, 
                                                                                     const std::vector<std::string>& p_tags, 
                                                                                     const std::string& p_parentEntityId, 
@@ -1026,7 +1026,7 @@ void SceneStreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource,
 
 }
 
-void SceneStreamerSystem::register_scene_entity(mage::core::Entity* p_entity)
+void StreamerSystem::register_scene_entity(mage::core::Entity* p_entity)
 {
     const auto entity_id{ p_entity->getId() };
 
@@ -1040,7 +1040,7 @@ void SceneStreamerSystem::register_scene_entity(mage::core::Entity* p_entity)
     }
 }
 
-void SceneStreamerSystem::buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot, int p_resourceSystemSlot)
+void StreamerSystem::buildViewgroup(const std::string& p_jsonsource, int p_renderingQueueSystemSlot, int p_resourceSystemSlot)
 {
     json::ViewGroup vg;
 
@@ -1076,7 +1076,7 @@ void SceneStreamerSystem::buildViewgroup(const std::string& p_jsonsource, int p_
     m_resourceSystemSlot = p_resourceSystemSlot;
 }
 
-core::SyncVariable SceneStreamerSystem::build_syncvariable_fromjson(const json::SyncVariable& p_syncvar)
+core::SyncVariable StreamerSystem::build_syncvariable_fromjson(const json::SyncVariable& p_syncvar)
 {
     std::unordered_map<std::string, core::SyncVariable::State> aig_state
     {
@@ -1113,7 +1113,7 @@ core::SyncVariable SceneStreamerSystem::build_syncvariable_fromjson(const json::
     return sync_variable;
 }
 
-mage::transform::MatrixFactory SceneStreamerSystem::process_matrixfactory_fromjson(const json::MatrixFactory& p_json_matrix_factory, 
+mage::transform::MatrixFactory StreamerSystem::process_matrixfactory_fromjson(const json::MatrixFactory& p_json_matrix_factory, 
                                                                                     mage::core::ComponentContainer& p_world_aspect, 
                                                                                     mage::core::ComponentContainer& p_time_aspect,
                                                                                     const std::unordered_map<std::string, std::unique_ptr<IValueGenerator>>& p_generators)
@@ -1325,7 +1325,7 @@ mage::transform::MatrixFactory SceneStreamerSystem::process_matrixfactory_fromjs
     return matrix_factory;
 }
 
-void SceneStreamerSystem::init_values_generator_from_matrix_factory(const std::vector<json::MatrixFactory>& p_mfs_chain, std::unordered_map<std::string,std::unique_ptr<IValueGenerator>>& p_generators)
+void StreamerSystem::init_values_generator_from_matrix_factory(const std::vector<json::MatrixFactory>& p_mfs_chain, std::unordered_map<std::string,std::unique_ptr<IValueGenerator>>& p_generators)
 {
     for (const auto& json_matrix_factory : p_mfs_chain)
     {
@@ -1396,7 +1396,7 @@ void SceneStreamerSystem::init_values_generator_from_matrix_factory(const std::v
     }
 }
 
-void SceneStreamerSystem::requestEntityRendering(const std::string& p_entity_id, bool p_render_it)
+void StreamerSystem::requestEntityRendering(const std::string& p_entity_id, bool p_render_it)
 {
     if (m_entity_renderings.count(p_entity_id))
     {
@@ -1408,7 +1408,7 @@ void SceneStreamerSystem::requestEntityRendering(const std::string& p_entity_id,
     }
 }
 
-void SceneStreamerSystem::register_to_queues(const json::Channels& p_channels, mage::core::Entity* p_entity)
+void StreamerSystem::register_to_queues(const json::Channels& p_channels, mage::core::Entity* p_entity)
 {
     const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
 
@@ -1532,7 +1532,7 @@ void SceneStreamerSystem::register_to_queues(const json::Channels& p_channels, m
     m_rendering_proxies[p_entity->getId()] = rendering_proxies;
 }
 
-void SceneStreamerSystem::unregister_from_queues(mage::core::Entity* p_entity)
+void StreamerSystem::unregister_from_queues(mage::core::Entity* p_entity)
 {
     const auto rendering_proxies = m_rendering_proxies.at(p_entity->getId());
     
@@ -1549,7 +1549,7 @@ void SceneStreamerSystem::unregister_from_queues(mage::core::Entity* p_entity)
 }
 
 
-bool SceneStreamerSystem::is_inside_quadtreenode(const SceneQuadTreeNode& p_qtn, const core::maths::Matrix& p_global_pos)
+bool StreamerSystem::is_inside_quadtreenode(const SceneQuadTreeNode& p_qtn, const core::maths::Matrix& p_global_pos)
 {
     bool inside{ false };
 
@@ -1563,7 +1563,7 @@ bool SceneStreamerSystem::is_inside_quadtreenode(const SceneQuadTreeNode& p_qtn,
     return inside;
 }
 
-bool SceneStreamerSystem::is_inside_octreenode(const SceneOctreeNode& p_otn, const core::maths::Matrix& p_global_pos)
+bool StreamerSystem::is_inside_octreenode(const SceneOctreeNode& p_otn, const core::maths::Matrix& p_global_pos)
 {
     bool inside{ false };
 
@@ -1578,7 +1578,7 @@ bool SceneStreamerSystem::is_inside_octreenode(const SceneOctreeNode& p_otn, con
     return inside;
 }
 
-void SceneStreamerSystem::dumpXTree()
+void StreamerSystem::dumpXTree()
 {
     _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE DUMP BEGIN <<<<<<<<<<<<<<<<<<<<<<<<")
 
@@ -1654,7 +1654,7 @@ void SceneStreamerSystem::dumpXTree()
     _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE DUMP END <<<<<<<<<<<<<<<<<<<<<<<<")
 }
 
-void SceneStreamerSystem::dumpXTreeEntities()
+void StreamerSystem::dumpXTreeEntities()
 {
     _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE ENTITIES BEGIN <<<<<<<<<<<<<<<<<<<<<<<<")
 
@@ -1712,7 +1712,7 @@ void SceneStreamerSystem::dumpXTreeEntities()
     _MAGE_DEBUG(m_localLogger, ">>>>>>>>>>>>>>> XTREE ENTITIES END <<<<<<<<<<<<<<<<<<<<<<<<")
 }
 
-std::string SceneStreamerSystem::filter_arguments_stack(const std::string p_input, const std::unordered_map<std::string, std::string> p_file_args)
+std::string StreamerSystem::filter_arguments_stack(const std::string p_input, const std::unordered_map<std::string, std::string> p_file_args)
 {
     if (p_file_args.find(p_input) == p_file_args.end())
     {

@@ -21,7 +21,7 @@
 # -*-LIC_END-*-
 
 cmake_minimum_required(VERSION 3.5)
-project(SYSTEM_scenestreamer)
+project(SYSTEM_streamer)
 
 include_directories(${CMAKE_SOURCE_DIR}/commons)
 
@@ -50,11 +50,11 @@ include_directories(${st_tree_include_dir})
 file(
         GLOB_RECURSE
         source_files
-		${CMAKE_SOURCE_DIR}/SYSTEM_scenestreamer/src/*.h
-        ${CMAKE_SOURCE_DIR}/SYSTEM_scenestreamer/src/*.cpp		
+		${CMAKE_SOURCE_DIR}/SYSTEM_streamer/src/*.h
+        ${CMAKE_SOURCE_DIR}/SYSTEM_streamer/src/*.cpp		
 )
 
 add_definitions( -D_FROMCMAKE )
 
-add_library(SYSTEM_scenestreamer ${source_files})
+add_library(SYSTEM_streamer ${source_files})
 

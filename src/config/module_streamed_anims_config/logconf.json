@@ -12,37 +12,37 @@
 		{
 			"source": "D3D11System",
 			"level": "TRACE",
-			"state": "on",
+			"state": "off",
 			"output": "file0"
 		},
 		{
 			"source": "ResourceSystem",
-			"level": "TRACE",
-			"state": "on",
+			"level": "DEBUG",
+			"state": "off",
 			"output": "file0"
 		},
 		{
 			"source": "ResourceSystemRunner",
-			"level": "TRACE",
-			"state": "on",
+			"level": "DEBUG",
+			"state": "off",
 			"output": "file0"
 		},
 		{
 			"source": "RenderingQueueSystem",
 			"level": "TRACE",
-			"state": "on",
+			"state": "off",
 			"output": "file0"
 		},
 		{
-			"source": "SceneStreamerSystem",
-			"level": "TRACE",
+			"source": "StreamerSystem",
+			"level": "DEBUG",
 			"state": "on",
 			"output": "file0"
-		},
+		},		
 		{
 			"source": "Helpers",
 			"level": "TRACE",
-			"state": "on",
+			"state": "off",
 			"output": "file0"
 		}
 	]

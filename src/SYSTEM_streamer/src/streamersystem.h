@@ -65,7 +65,7 @@ namespace mage
     namespace core { class Entitygraph; }
     namespace core { class ComponentContainer; }
 
-    enum class SceneStreamerSystemEvent
+    enum class StreamerSystemEvent
     {
     };
 
@@ -652,10 +652,10 @@ namespace mage
 
         int                 m_rendering_state_current_ttl{ 0 };
 
-        friend class SceneStreamerSystem;
+        friend class StreamerSystem;
     };
    
-    class SceneStreamerSystem : public mage::core::System, public mage::property::EventSource<SceneStreamerSystemEvent, const std::string&>
+    class StreamerSystem : public mage::core::System, public mage::property::EventSource<StreamerSystemEvent, const std::string&>
     {
     private:
 
@@ -714,9 +714,9 @@ namespace mage
         /////////////////////////////////////////////////////////////////////////////////
         // place cam in appropriate xtree leaf : utility lambda
 
-        const std::function<void(core::QuadTreeNode<SceneQuadTreeNode>*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> m_place_cam_on_quadtree_leaf
+        const std::function<void(core::QuadTreeNode<SceneQuadTreeNode>*, const core::maths::Matrix&, core::Entity*, StreamerSystem::XTreeEntity&)> m_place_cam_on_quadtree_leaf
         {
-            [&](core::QuadTreeNode<SceneQuadTreeNode>* p_current_node, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
+            [&](core::QuadTreeNode<SceneQuadTreeNode>* p_current_node, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, StreamerSystem::XTreeEntity& p_xtreeEntity)
             {
                 if (p_current_node->isLeaf())
                 {
@@ -735,7 +735,7 @@ namespace mage
                     {
                         auto child { p_current_node->getChild(i) };
 
-                        if (SceneStreamerSystem::is_inside_quadtreenode(child->getData(), p_global_pos))
+                        if (StreamerSystem::is_inside_quadtreenode(child->getData(), p_global_pos))
                         {
                             m_place_cam_on_quadtree_leaf(child, p_global_pos, p_entity, p_xtreeEntity);
                         }
@@ -744,9 +744,9 @@ namespace mage
             }
         };
 
-        const std::function<void(core::OctreeNode<SceneOctreeNode>*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> m_place_cam_on_octree_leaf
+        const std::function<void(core::OctreeNode<SceneOctreeNode>*, const core::maths::Matrix&, core::Entity*, StreamerSystem::XTreeEntity&)> m_place_cam_on_octree_leaf
         {
-            [&](core::OctreeNode<SceneOctreeNode>* p_current_node, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
+            [&](core::OctreeNode<SceneOctreeNode>* p_current_node, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, StreamerSystem::XTreeEntity& p_xtreeEntity)
             {
                 if (p_current_node->isLeaf())
                 {
@@ -765,7 +765,7 @@ namespace mage
                     {
                         auto child { p_current_node->getChild(i) };
 
-                        if (SceneStreamerSystem::is_inside_octreenode(child->getData(), p_global_pos))
+                        if (StreamerSystem::is_inside_octreenode(child->getData(), p_global_pos))
                         {
                             m_place_cam_on_octree_leaf(child, p_global_pos, p_entity, p_xtreeEntity);
                         }
@@ -778,9 +778,9 @@ namespace mage
         /////////////////////////////////////////////////////////////////////////////////
         // place 3D object in appropriate xtree leaf : utility lambda
 
-        const std::function<void(core::QuadTreeNode<SceneQuadTreeNode>*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> m_place_obj_on_quadtree_leaf
+        const std::function<void(core::QuadTreeNode<SceneQuadTreeNode>*, double, const core::maths::Matrix&, core::Entity*, StreamerSystem::XTreeEntity&)> m_place_obj_on_quadtree_leaf
         {
-            [&](core::QuadTreeNode<SceneQuadTreeNode>* p_current_node, double p_obj_size, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
+            [&](core::QuadTreeNode<SceneQuadTreeNode>* p_current_node, double p_obj_size, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, StreamerSystem::XTreeEntity& p_xtreeEntity)
             {
                 if (p_current_node->isLeaf())
                 {
@@ -797,7 +797,7 @@ namespace mage
                 }
                 else
                 {
-                    if (SceneStreamerSystem::is_inside_quadtreenode(p_current_node->getData(), p_global_pos))
+                    if (StreamerSystem::is_inside_quadtreenode(p_current_node->getData(), p_global_pos))
                     {
                         const double node_size{ p_current_node->getData().side_length };
 
@@ -828,9 +828,9 @@ namespace mage
             }
         };
 
-        const std::function<void(core::OctreeNode<SceneOctreeNode>*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)> m_place_obj_on_octree_leaf
+        const std::function<void(core::OctreeNode<SceneOctreeNode>*, double, const core::maths::Matrix&, core::Entity*, StreamerSystem::XTreeEntity&)> m_place_obj_on_octree_leaf
         {
-            [&](core::OctreeNode<SceneOctreeNode>* p_current_node, double p_obj_size, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, SceneStreamerSystem::XTreeEntity& p_xtreeEntity)
+            [&](core::OctreeNode<SceneOctreeNode>* p_current_node, double p_obj_size, const core::maths::Matrix& p_global_pos, core::Entity* p_entity, StreamerSystem::XTreeEntity& p_xtreeEntity)
             {
                 if (p_current_node->isLeaf())
                 {
@@ -847,7 +847,7 @@ namespace mage
                 }
                 else
                 {
-                    if (SceneStreamerSystem::is_inside_octreenode(p_current_node->getData(), p_global_pos))
+                    if (StreamerSystem::is_inside_octreenode(p_current_node->getData(), p_global_pos))
                     {
                         const double node_size{ p_current_node->getData().side_length };
 
@@ -903,9 +903,9 @@ namespace mage
             core::maths::Real3Vector    center;
         };
 
-        SceneStreamerSystem() = delete;
-        SceneStreamerSystem(core::Entitygraph& p_entitygraph);
-        ~SceneStreamerSystem() = default;
+        StreamerSystem() = delete;
+        StreamerSystem(core::Entitygraph& p_entitygraph);
+        ~StreamerSystem() = default;
 
         void run();
 
@@ -953,15 +953,15 @@ namespace mage
         void update_XTree(XTreeType* p_xtree_root,
                             std::unordered_map<std::string,
                             XTreeEntity>& p_xtree_entities,
-                            const std::function<void(XTreeType*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_cam_on_leaf_func,
-                            const std::function<void(XTreeType*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_obj_on_leaf_func,
-                            const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> p_hasnode_func,
-                            const std::function<bool(SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> p_is_inside_func);
+                            const std::function<void(XTreeType*, const core::maths::Matrix&, core::Entity*, StreamerSystem::XTreeEntity&)>& p_place_cam_on_leaf_func,
+                            const std::function<void(XTreeType*, double, const core::maths::Matrix&, core::Entity*, StreamerSystem::XTreeEntity&)>& p_place_obj_on_leaf_func,
+                            const std::function<bool(const StreamerSystem::XTreeEntity&)> p_hasnode_func,
+                            const std::function<bool(StreamerSystem::XTreeEntity&, const core::maths::Matrix&)> p_is_inside_func);
 
         template<typename SceneXTreeNode, typename XTreeType>
-        void check_XTree(std::unordered_map<std::string, SceneStreamerSystem::XTreeEntity>& p_xtree_entities, 
+        void check_XTree(std::unordered_map<std::string, StreamerSystem::XTreeEntity>& p_xtree_entities, 
                             const json::ViewGroup& p_viewgroup, 
-                            const std::function<XTreeType* (const SceneStreamerSystem::XTreeEntity&)>& p_get_node_func);
+                            const std::function<XTreeType* (const StreamerSystem::XTreeEntity&)>& p_get_node_func);
 
 
         bool compute_entity(core::Entity* p_entity, const core::ComponentContainer& p_world_components);
@@ -1024,15 +1024,15 @@ namespace mage
     /////////////////////////////////////////////////////////////////////////////////
 
     template<typename SceneXTreeNode, typename XTreeType>
-    void SceneStreamerSystem::update_XTree(XTreeType* p_xtree_root, 
-                                                std::unordered_map<std::string, SceneStreamerSystem::XTreeEntity>& p_xtree_entities,
-                                                const std::function<void(XTreeType*, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_cam_on_leaf_func,
-                                                const std::function<void(XTreeType*, double, const core::maths::Matrix&, core::Entity*, SceneStreamerSystem::XTreeEntity&)>& p_place_obj_on_leaf_func,
-                                                const std::function<bool(const SceneStreamerSystem::XTreeEntity&)> p_hasnode_func,
-                                                const std::function<bool(SceneStreamerSystem::XTreeEntity&, const core::maths::Matrix&)> p_is_inside_func)
+    void StreamerSystem::update_XTree(XTreeType* p_xtree_root, 
+                                                std::unordered_map<std::string, StreamerSystem::XTreeEntity>& p_xtree_entities,
+                                                const std::function<void(XTreeType*, const core::maths::Matrix&, core::Entity*, StreamerSystem::XTreeEntity&)>& p_place_cam_on_leaf_func,
+                                                const std::function<void(XTreeType*, double, const core::maths::Matrix&, core::Entity*, StreamerSystem::XTreeEntity&)>& p_place_obj_on_leaf_func,
+                                                const std::function<bool(const StreamerSystem::XTreeEntity&)> p_hasnode_func,
+                                                const std::function<bool(StreamerSystem::XTreeEntity&, const core::maths::Matrix&)> p_is_inside_func)
     {
 		
-        std::vector<SceneStreamerSystem::XTreeEntity > entities_to_remove;
+        std::vector<StreamerSystem::XTreeEntity > entities_to_remove;
 
         for (auto& xe : p_xtree_entities)
         {
@@ -1125,9 +1125,9 @@ namespace mage
 
 
     template<typename SceneXTreeNode, typename XTreeType>
-    void SceneStreamerSystem::check_XTree(std::unordered_map<std::string, SceneStreamerSystem::XTreeEntity>& p_xtree_entities, 
+    void StreamerSystem::check_XTree(std::unordered_map<std::string, StreamerSystem::XTreeEntity>& p_xtree_entities, 
                                             const json::ViewGroup& p_viewgroup, 
-                                            const std::function<XTreeType* (const SceneStreamerSystem::XTreeEntity&)>& p_get_node_func)
+                                            const std::function<XTreeType* (const StreamerSystem::XTreeEntity&)>& p_get_node_func)
     {
         // for current view group, find current camera id 
 

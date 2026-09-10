@@ -46,7 +46,7 @@ include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_renderingqueue/src)
 include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_world/src)
 include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_dataprint/src)
 include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_animations/src)
-include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_scenestreamer/src)
+include_directories(${CMAKE_SOURCE_DIR}/SYSTEM_streamer/src)
 
 include_directories(${CMAKE_SOURCE_DIR}/helpers)
 

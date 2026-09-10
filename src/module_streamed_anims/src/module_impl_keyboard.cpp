@@ -29,7 +29,7 @@
 #include "logger_service.h"
 #include "logging.h"
 #include "renderingqueuesystem.h"
-#include "scenestreamersystem.h"
+#include "streamersystem.h"
 
 #include "sysengine.h"
 #include "datacloud.h"
@@ -216,8 +216,8 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 	else if (VK_F8 == p_key)
 	{
-		auto sceneStreamerSystem{ SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot) };
-		auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(sceneStreamerSystem) };
+		auto streamerSystem{ SystemEngine::getInstance()->getSystem(streamerSystemSlot) };
+		auto streamerSystemInstance{ dynamic_cast<mage::StreamerSystem*>(streamerSystem) };
 
 		//...
 	}
@@ -236,11 +236,11 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		
 		
 
-		//auto sceneStreamerSystem{ SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot) };
-		//auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(sceneStreamerSystem) };
+		//auto streamerSystem{ SystemEngine::getInstance()->getSystem(streamerSystemSlot) };
+		//auto streamerSystemInstance{ dynamic_cast<mage::StreamerSystem*>(streamerSystem) };
 
-		////sceneStreamerSystemInstance->dumpXTreeEntities();
-		//sceneStreamerSystemInstance->dumpXTree();
+		////streamerSystemInstance->dumpXTreeEntities();
+		//streamerSystemInstance->dumpXTree();
 
 		::MessageBox(0, "Log dump done", "Mage", MB_OK | MB_ICONINFORMATION);
 	}
@@ -319,18 +319,18 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 	else if (VK_SPACE == p_key)
 	{
-		auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot)) };
+		auto streamerSystemInstance{ dynamic_cast<mage::StreamerSystem*>(SystemEngine::getInstance()->getSystem(streamerSystemSlot)) };
 
 		static bool draw_it{ true };
 
 		if(draw_it)
 		{ 
-			sceneStreamerSystemInstance->requestEntityRendering("wall_Entity", false);
+			streamerSystemInstance->requestEntityRendering("wall_Entity", false);
 			draw_it = false;
 		}
 		else
 		{
-			sceneStreamerSystemInstance->requestEntityRendering("wall_Entity", true);
+			streamerSystemInstance->requestEntityRendering("wall_Entity", true);
 			draw_it = true;
 		}
 		

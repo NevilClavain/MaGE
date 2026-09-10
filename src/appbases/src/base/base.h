@@ -95,14 +95,14 @@ namespace mage
         //static constexpr int            renderingQueueSystemSlot{ 4 };
         //static constexpr int            dataPrintSystemSlot{ 5 };
         //static constexpr int            animationsSystemSlot{ 6 };
-        //static constexpr int            sceneStreamSystemSlot{ 7 };
+        //static constexpr int            streamerSystemSlot{ 7 };
 
 
         static constexpr int            timeSystemSlot{ 0 };
         static constexpr int            worldSystemSlot{ 1 };
         static constexpr int            d3d11SystemSlot{ 2 };
         static constexpr int            resourceSystemSlot{ 3 };        
-        static constexpr int            sceneStreamSystemSlot{ 4 };
+        static constexpr int            streamerSystemSlot{ 4 };
         static constexpr int            renderingQueueSystemSlot{ 5 };
         static constexpr int            dataPrintSystemSlot{ 6 };
         static constexpr int            animationsSystemSlot{ 7 };

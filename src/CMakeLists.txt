@@ -84,7 +84,7 @@ add_subdirectory(SYSTEM_resource)
 add_subdirectory(SYSTEM_renderingqueue)
 add_subdirectory(SYSTEM_dataprint)
 add_subdirectory(SYSTEM_animations)
-add_subdirectory(SYSTEM_scenestreamer)
+add_subdirectory(SYSTEM_streamer)
 
 add_subdirectory(hlsl50_shaders)
 

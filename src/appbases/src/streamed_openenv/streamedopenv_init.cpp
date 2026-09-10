@@ -40,7 +40,7 @@
 #include "worldsystem.h"
 #include "dataprintsystem.h"
 #include "renderingqueuesystem.h"
-#include "scenestreamersystem.h"
+#include "streamersystem.h"
 
 
 #include "sysengine.h"
@@ -201,32 +201,32 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 
 
-					auto sceneStreamerSystemInstance{ dynamic_cast<mage::SceneStreamerSystem*>(SystemEngine::getInstance()->getSystem(sceneStreamSystemSlot)) };
+					auto streamerSystemInstance{ dynamic_cast<mage::StreamerSystem*>(SystemEngine::getInstance()->getSystem(streamerSystemSlot)) };
 
-					sceneStreamerSystemInstance->enableSystem(true);
+					streamerSystemInstance->enableSystem(true);
 
-					SceneStreamerSystem::Configuration ss_config;
+					StreamerSystem::Configuration ss_config;
 					ss_config.scene_size = 2400.0;
 					ss_config.xtree_max_depth = 6;
 					ss_config.max_neighbourood_depth = 3;
 					ss_config.object_xtreenode_ratio = 0.02;
 					
-					ss_config.xtree_type = SceneStreamerSystem::XtreeType::QUADTREE;
+					ss_config.xtree_type = StreamerSystem::XtreeType::QUADTREE;
 					ss_config.center[0] = 0.0;
 					ss_config.center[1] = skydomeInnerRadius;
 					ss_config.center[0] = 0.0;
 
-					sceneStreamerSystemInstance->configure(ss_config);
+					streamerSystemInstance->configure(ss_config);
 
 
-					sceneStreamerSystemInstance->buildRendergraphPart(rendergraphFileContent.getData(), "screenRendering_Filter_DirectForward_Quad_Entity",
+					streamerSystemInstance->buildRendergraphPart(rendergraphFileContent.getData(), "screenRendering_Filter_DirectForward_Quad_Entity",
 																		w_width, w_height, characteristics_v_width, characteristics_v_height);
 
 
 					mage::core::FileContent<char> openEnvSceneFileContent("./module_streamed_anims_config/open_env_scene.json");
 					openEnvSceneFileContent.load();
 
-					sceneStreamerSystemInstance->buildScenegraphPart(openEnvSceneFileContent.getData(), "app_Entity", m_perpective_projection);
+					streamerSystemInstance->buildScenegraphPart(openEnvSceneFileContent.getData(), "app_Entity", m_perpective_projection);
 
 					const char viewgroup_json[] = R"json(
 					{
@@ -242,7 +242,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					}
 					)json";
 					
-					sceneStreamerSystemInstance->buildViewgroup(viewgroup_json, Base::renderingQueueSystemSlot, Base::resourceSystemSlot);
+					streamerSystemInstance->buildViewgroup(viewgroup_json, Base::renderingQueueSystemSlot, Base::resourceSystemSlot);
 
 					auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(Base::renderingQueueSystemSlot)) };
 					renderingQueueSystemInstance->setViewGroupMainView("openenv_main_graph", "camera_Entity");
