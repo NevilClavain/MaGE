@@ -135,6 +135,18 @@ namespace mage
             JS_OBJ(id, width, height, shaders, inputs);
         };
 
+		// NEW !
+        struct Rendergraph
+        {
+        private:
+			std::string     mininmal_channel_type;
+
+			bool            ambient_lit_enabled{ false };
+            bool            emissive_lit_enabled{ false };
+            bool            directional_lit_enabled{ false };
+			bool			fog_enabled{ false };
+			bool			shadows_enabled{ false };
+        };
 
 
         struct Target
@@ -927,6 +939,7 @@ namespace mage
         void configure(const Configuration& p_config);
 
 		void parseCombiner(const std::string& p_jsonsource);
+        void declareSceneChannelType(const std::string& p_channel_type);
 
 
 
@@ -1023,6 +1036,8 @@ namespace mage
 
 
 		std::unordered_map<std::string, json::Combiner>                                         m_combiners;
+
+        std::unordered_set<std::string>                                                         m_channel_types;
 
         
         void register_scene_entity(mage::core::Entity* p_entity);

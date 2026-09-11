@@ -1738,3 +1738,7 @@ void StreamerSystem::parseCombiner(const std::string& p_jsonsource)
     m_combiners[combiner.id] = combiner;
 }
 
+void StreamerSystem::declareSceneChannelType(const std::string& p_channel_type)
+{
+    m_channel_types.insert(p_channel_type);
+}
