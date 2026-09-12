@@ -1738,7 +1738,10 @@ void StreamerSystem::parseCombiner(const std::string& p_jsonsource)
     m_combiners[combiner.id] = combiner;
 }
 
-void StreamerSystem::declareSceneChannelType(const std::string& p_channel_type)
+RendergraphBlueprint StreamerSystem::diffuseRenderGraphBluePrint()
 {
-    m_channel_types.insert(p_channel_type);
+    RendergraphBlueprint bp;
+    
+    bp.setMinimalChannelType(SceneChannelType::DIFFUSE);
+    return bp;
 }

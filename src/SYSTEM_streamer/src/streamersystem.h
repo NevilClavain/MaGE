@@ -135,20 +135,6 @@ namespace mage
             JS_OBJ(id, width, height, shaders, inputs);
         };
 
-		// NEW !
-        struct Rendergraph
-        {
-        private:
-			std::string     mininmal_channel_type;
-
-			bool            ambient_lit_enabled{ false };
-            bool            emissive_lit_enabled{ false };
-            bool            directional_lit_enabled{ false };
-			bool			fog_enabled{ false };
-			bool			shadows_enabled{ false };
-        };
-
-
         struct Target
         {
             std::string                         descr;
@@ -520,6 +506,37 @@ namespace mage
         };
 
     } // json
+
+
+    enum class SceneChannelType
+    {
+        DIFFUSE,
+        AMBIENT,
+        EMISSIVE,
+        DIRECTIONAL,
+        FOG,
+        ZDEPTH
+	};
+
+    // NEW !
+    struct RendergraphBlueprint
+    {
+    private:
+        SceneChannelType     mininmal_channel_type;
+
+        bool                ambient_lit_enabled{ false };
+        bool                emissive_lit_enabled{ false };
+        bool                directional_lit_enabled{ false };
+        bool                fog_enabled{ false };
+        bool                shadows_enabled{ false };
+
+    public:
+        void setMinimalChannelType(const SceneChannelType& p_channel_type)
+        {
+            mininmal_channel_type = p_channel_type;
+		}
+    };
+
 
     class IValueGenerator
     {
@@ -939,8 +956,10 @@ namespace mage
         void configure(const Configuration& p_config);
 
 		void parseCombiner(const std::string& p_jsonsource);
-        void declareSceneChannelType(const std::string& p_channel_type);
+        
 
+
+        RendergraphBlueprint diffuseRenderGraphBluePrint();
 
 
         void buildRendergraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId,
@@ -1037,7 +1056,15 @@ namespace mage
 
 		std::unordered_map<std::string, json::Combiner>                                         m_combiners;
 
-        std::unordered_set<std::string>                                                         m_channel_types;
+        const std::unordered_map<SceneChannelType, std::string>                                 m_channel_types = 
+            { 
+                { SceneChannelType::DIFFUSE, "diffuse" },
+                { SceneChannelType::AMBIENT, "ambient" },
+                { SceneChannelType::EMISSIVE, "emissive" },
+                { SceneChannelType::DIRECTIONAL, "directional" },
+                { SceneChannelType::FOG, "fog" },
+                { SceneChannelType::ZDEPTH, "zdepth" }
+        };
 
         
         void register_scene_entity(mage::core::Entity* p_entity);
@@ -1226,7 +1253,7 @@ namespace mage
                 }
             }
 
-            //bool needTriggerResourcesSystem{ false };
+
 
             // new entities discovered, to render
             for (mage::core::Entity* entity : found_entities)
@@ -1239,9 +1266,6 @@ namespace mage
 						_MAGE_DEBUG(m_localLogger, "Now discovered = " + entity->getId() + " -> START_rendering");
                      
                         m_entity_renderings.at(entity->getId()).m_request_rendering = true;
-
-                        // at least one entity added to rendergraph, we gonna need to reactivate the resource system
-                        //needTriggerResourcesSystem = true;
                     }
                 }
             }
@@ -1265,12 +1289,6 @@ namespace mage
             // update...
             m_found_entities_to_render = found_entities;
 
-            //if (needTriggerResourcesSystem)
-            //{
-                // 
-                //auto resourceSystemInstance{ dynamic_cast<mage::ResourceSystem*>(SystemEngine::getInstance()->getSystem(m_resourceSystemSlot)) };
-                //resourceSystemInstance->request();
-            //}
         }
     };
 }

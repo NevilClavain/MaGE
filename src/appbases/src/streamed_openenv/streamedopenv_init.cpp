@@ -234,14 +234,6 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					streamerSystemInstance->parseCombiner(combiner_cumul_3_RGB.getData());
 					streamerSystemInstance->parseCombiner(combiner_for_fog.getData());
 
-					streamerSystemInstance->declareSceneChannelType("diffuse");
-					streamerSystemInstance->declareSceneChannelType("ambient_lit");
-					streamerSystemInstance->declareSceneChannelType("emissive_lit");
-					streamerSystemInstance->declareSceneChannelType("directional_lit");
-					streamerSystemInstance->declareSceneChannelType("zdepth");
-
-
-
 					streamerSystemInstance->buildRendergraphPart(rendergraphFileContent.getData(), "screenRendering_Filter_DirectForward_Quad_Entity",
 																		w_width, w_height, characteristics_v_width, characteristics_v_height);
 
