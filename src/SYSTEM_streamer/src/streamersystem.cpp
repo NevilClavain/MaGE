@@ -1742,6 +1742,6 @@ RendergraphBlueprint StreamerSystem::diffuseRenderGraphBluePrint()
 {
     RendergraphBlueprint bp;
     
-    bp.setMinimalChannelType(SceneChannelType::DIFFUSE);
+    bp.setMinimalChannelType("diffuse");
     return bp;
 }

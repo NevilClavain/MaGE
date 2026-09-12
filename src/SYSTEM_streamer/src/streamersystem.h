@@ -508,21 +508,12 @@ namespace mage
     } // json
 
 
-    enum class SceneChannelType
-    {
-        DIFFUSE,
-        AMBIENT,
-        EMISSIVE,
-        DIRECTIONAL,
-        FOG,
-        ZDEPTH
-	};
 
     // NEW !
     struct RendergraphBlueprint
     {
     private:
-        SceneChannelType     mininmal_channel_type;
+        std::string         mininmal_channel_type;
 
         bool                ambient_lit_enabled{ false };
         bool                emissive_lit_enabled{ false };
@@ -531,7 +522,7 @@ namespace mage
         bool                shadows_enabled{ false };
 
     public:
-        void setMinimalChannelType(const SceneChannelType& p_channel_type)
+        void setMinimalChannelType(const std::string& p_channel_type)
         {
             mininmal_channel_type = p_channel_type;
 		}
@@ -1055,17 +1046,6 @@ namespace mage
 
 
 		std::unordered_map<std::string, json::Combiner>                                         m_combiners;
-
-        const std::unordered_map<SceneChannelType, std::string>                                 m_channel_types = 
-            { 
-                { SceneChannelType::DIFFUSE, "diffuse" },
-                { SceneChannelType::AMBIENT, "ambient" },
-                { SceneChannelType::EMISSIVE, "emissive" },
-                { SceneChannelType::DIRECTIONAL, "directional" },
-                { SceneChannelType::FOG, "fog" },
-                { SceneChannelType::ZDEPTH, "zdepth" }
-        };
-
         
         void register_scene_entity(mage::core::Entity* p_entity);
 
