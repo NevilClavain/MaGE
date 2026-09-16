@@ -520,7 +520,6 @@ namespace mage
         //bool                directional_lit_enabled{ true };
 
 		bool                lit_enabled{ true };    
-
         bool                fog_enabled{ true };
         bool                shadows_enabled{ false };
 
@@ -1018,7 +1017,7 @@ namespace mage
 
         bool compute_entity(core::Entity* p_entity, const core::ComponentContainer& p_world_components);
 
-        std::string build_combiner(Combiners p_combiner, const std::string& p_current_parent, int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
+        std::string build_combiner(Combiners p_combiner, const std::string& p_current_parent, int p_target_stage, int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
 
 
         bool                                                                                    m_enabled{ false };

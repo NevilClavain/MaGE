@@ -1746,7 +1746,7 @@ RendergraphBlueprint StreamerSystem::diffuseRenderGraphBluePrint()
     return bp;
 }
 
-std::string StreamerSystem::build_combiner(StreamerSystem::Combiners p_combiner, const std::string& p_current_parent, int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height)
+std::string StreamerSystem::build_combiner(StreamerSystem::Combiners p_combiner, const std::string& p_current_parent, int p_target_stage, int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height)
 { 
     std::vector<std::pair<size_t, Texture>> inputs;
 
@@ -1759,7 +1759,7 @@ std::string StreamerSystem::build_combiner(StreamerSystem::Combiners p_combiner,
         { "TEXTURE_FLOATVECTOR32", mage::Texture::Format::TEXTURE_FLOATVECTOR32 },
     };
 
-    const auto combiner{ m_combiners.at(Combiners::COMBINER_FOG) };
+    const auto combiner{ m_combiners.at(p_combiner) };
 
     for (const auto& input : combiner.inputs)
     {
@@ -1779,7 +1779,7 @@ std::string StreamerSystem::build_combiner(StreamerSystem::Combiners p_combiner,
     const std::string entity_target_name{ combiner.id + "Target_quad_Entity" };
     const std::string entity_view_name{ combiner.id + "Target_view_Entity" };
 
-    const int target_stage{ 0 };
+    const int target_stage{ p_target_stage };
 
     mage::helpers::plugRenderingTarget(m_entitygraph,
         queue_name,
@@ -1820,7 +1820,7 @@ void StreamerSystem::generateRendergraph(const RendergraphBlueprint& p_blueprint
     if(p_blueprint.fog_enabled)
     {        
         // update current parent to connect to
-        current_parent = build_combiner(Combiners::COMBINER_FOG, current_parent, p_w_width, p_w_height, p_characteristics_v_width, p_characteristics_v_height);
+        current_parent = build_combiner(Combiners::COMBINER_FOG, current_parent, 0, p_w_width, p_w_height, p_characteristics_v_width, p_characteristics_v_height);
 
         // create zdepth channel !
 
@@ -1843,11 +1843,27 @@ void StreamerSystem::generateRendergraph(const RendergraphBlueprint& p_blueprint
     }
 
     if (p_blueprint.lit_enabled)
-    {
+    {        
+        current_parent = build_combiner(Combiners::COMBINER_MODULATE_2_RGB, current_parent, 0, p_w_width, p_w_height, p_characteristics_v_width, p_characteristics_v_height);
 
+        // create lit channel !
 
+        rendering::Queue zdepthRenderingQueue("DirectionalLitChannelScene_Entity");
 
+        zdepthRenderingQueue.setTargetClearColor({ 0,
+                                        0,
+                                        0,
+                                        255 });
 
+        zdepthRenderingQueue.enableTargetClearing(true);
+        zdepthRenderingQueue.enableTargetDepthClearing(true);
+        zdepthRenderingQueue.setTargetStage(1);
+
+        mage::helpers::plugRenderingQueue(m_entitygraph, zdepthRenderingQueue, current_parent, "DirectionalLitChannelScene_Entity");
+
+        // register passe default configs
+        const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
+        renderingHelper->createDefaultChannelConfig("DirectionalLitChannelScene_Entity", "directional_lit");
     }
 
     // plug diffuse channel
