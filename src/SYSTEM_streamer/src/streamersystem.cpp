@@ -1724,7 +1724,7 @@ std::string StreamerSystem::filter_arguments_stack(const std::string p_input, co
     }
 }
 
-void StreamerSystem::parseCombiner(const std::string& p_jsonsource)
+void StreamerSystem::parseCombiner(StreamerSystem::Combiners p_combiner, const std::string& p_jsonsource)
 {
     json::Combiner combiner;
 
@@ -1735,13 +1735,128 @@ void StreamerSystem::parseCombiner(const std::string& p_jsonsource)
         _EXCEPTION("Cannot parse combiner: " + errorStr);
     }
 
-    m_combiners[combiner.id] = combiner;
+    m_combiners[p_combiner] = combiner;
 }
 
 RendergraphBlueprint StreamerSystem::diffuseRenderGraphBluePrint()
 {
     RendergraphBlueprint bp;
     
-    bp.setMinimalChannelType("diffuse");
+    bp.mininmal_channel_type = "diffuse";
     return bp;
+}
+
+void StreamerSystem::generateRendergraph(const RendergraphBlueprint& p_blueprint, const std::string& p_parentEntityId, int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height)
+{
+    const std::unordered_map<std::string, mage::Texture::Format> texture_format_translation
+    {
+        { "TEXTURE_RGB", mage::Texture::Format::TEXTURE_RGB },
+        { "TEXTURE_FLOAT", mage::Texture::Format::TEXTURE_FLOAT },
+        { "TEXTURE_FLOAT32", mage::Texture::Format::TEXTURE_FLOAT32 },
+        { "TEXTURE_FLOATVECTOR", mage::Texture::Format::TEXTURE_FLOATVECTOR },
+        { "TEXTURE_FLOATVECTOR32", mage::Texture::Format::TEXTURE_FLOATVECTOR32 },
+    };
+
+	std::string current_parent{ p_parentEntityId };
+
+    if(p_blueprint.fog_enabled)
+    { 
+        std::vector<std::pair<size_t, Texture>> inputs;
+
+        const auto combiner_fog{ m_combiners.at(Combiners::COMBINER_FOG) };
+
+        for (const auto& input : combiner_fog.inputs)
+        {
+            int final_w_width = (json::fillWithWindowDims == input.buffer_texture.width ? p_w_width : input.buffer_texture.width);
+            int final_h_width = (json::fillWithWindowDims == input.buffer_texture.height ? p_w_height : input.buffer_texture.height);
+
+            const auto input_channnel{ Texture(texture_format_translation.at(input.buffer_texture.format_descr), final_w_width, final_h_width) };
+            inputs.push_back(std::make_pair(input.stage, input_channnel));
+        }
+
+        int final_v_width = (json::fillWithViewportDims == combiner_fog.width ? p_w_width : p_characteristics_v_width);
+        int final_v_height = (json::fillWithViewportDims == combiner_fog.height ? p_w_height : p_characteristics_v_height);
+
+        const std::string queue_name{ combiner_fog.id + "_queue" };
+
+        const std::string entity_queue_name{ combiner_fog.id + "Target_queue_Entity" };
+        const std::string entity_target_name{ combiner_fog.id + "Target_quad_Entity" };
+        const std::string entity_view_name{ combiner_fog.id + "Target_view_Entity" };
+
+        const int target_stage{ 0 };
+
+        mage::helpers::plugRenderingTarget(m_entitygraph,
+            queue_name,
+            final_v_width, final_v_height,
+            current_parent,
+            entity_queue_name,
+            entity_target_name,
+            entity_view_name,
+            combiner_fog.shaders.at(0).name,
+            combiner_fog.shaders.at(1).name,
+            inputs,
+            target_stage);
+
+        Entity* quad_ent{ m_entitygraph.node(entity_target_name).data() };
+        auto& rendering_aspect{ quad_ent->aspectAccess(core::renderingAspect::id) };
+
+        rendering::DrawingControl& dc{ rendering_aspect.getComponent<mage::rendering::DrawingControl>("drawingControl")->getPurpose() };
+
+        const auto& vshader{ combiner_fog.shaders.at(0) };
+        for (const auto& arg : vshader.args)
+        {
+            dc.vshaders_map.push_back(std::make_pair(arg.source, arg.destination));
+        }
+
+        const auto& pshader{ combiner_fog.shaders.at(1) };
+        for (const auto& arg : pshader.args)
+        {
+            dc.pshaders_map.push_back(std::make_pair(arg.source, arg.destination));
+        }
+
+        // update current parent to connect to
+        current_parent = entity_target_name;
+
+
+
+        // create zdepth channel !
+
+        rendering::Queue zdepthRenderingQueue("ZdepthChannelScene_Entity");
+
+        zdepthRenderingQueue.setTargetClearColor({ 0,
+                                        0,
+                                        0,
+                                        255 });
+
+        zdepthRenderingQueue.enableTargetClearing(true);
+        zdepthRenderingQueue.enableTargetDepthClearing(true);
+        zdepthRenderingQueue.setTargetStage(1);
+
+        mage::helpers::plugRenderingQueue(m_entitygraph, zdepthRenderingQueue, current_parent, "ZdepthChannelScene_Entity");
+
+        // register passe default configs
+        const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
+        renderingHelper->createDefaultChannelConfig("ZdepthChannelScene_Entity", "zdepth");
+    }
+
+    // plug diffuse channel
+
+    rendering::Queue diffuseRenderingQueue("TextureChannelScene_Entity");
+
+    diffuseRenderingQueue.setTargetClearColor({ 0,
+                                    0,
+                                    0,
+                                    255 });
+
+    diffuseRenderingQueue.enableTargetClearing(true);
+    diffuseRenderingQueue.enableTargetDepthClearing(true);
+    diffuseRenderingQueue.setTargetStage(0);
+
+    mage::helpers::plugRenderingQueue(m_entitygraph, diffuseRenderingQueue, current_parent, "TextureChannelScene_Entity");
+
+    // register passe default configs
+    const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
+    renderingHelper->createDefaultChannelConfig("TextureChannelScene_Entity", /*"diffuse"*/ "texture");
+
+
 }

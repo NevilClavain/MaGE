@@ -518,14 +518,10 @@ namespace mage
         bool                ambient_lit_enabled{ false };
         bool                emissive_lit_enabled{ false };
         bool                directional_lit_enabled{ false };
-        bool                fog_enabled{ false };
+        bool                fog_enabled{ true };
         bool                shadows_enabled{ false };
 
-    public:
-        void setMinimalChannelType(const std::string& p_channel_type)
-        {
-            mininmal_channel_type = p_channel_type;
-		}
+        friend class StreamerSystem;
     };
 
 
@@ -921,6 +917,15 @@ namespace mage
             OCTREE
         };
 
+        enum class Combiners
+        {
+            COMBINER_CUMULATE_2_RGB,
+            COMBINER_CUMULATE_3_RGB,
+            COMBINER_MODULATE_2_RGB,
+            COMBINER_FOG,
+        };
+
+
         struct Configuration
         {
             Configuration()
@@ -946,11 +951,13 @@ namespace mage
 
         void configure(const Configuration& p_config);
 
-		void parseCombiner(const std::string& p_jsonsource);
+		void parseCombiner(Combiners p_combiner, const std::string& p_jsonsource);
         
 
 
-        RendergraphBlueprint diffuseRenderGraphBluePrint();
+        static RendergraphBlueprint diffuseRenderGraphBluePrint();
+
+		void generateRendergraph(const RendergraphBlueprint& p_blueprint, const std::string& p_parentEntityId, int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
 
 
         void buildRendergraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId,
@@ -1045,7 +1052,7 @@ namespace mage
         /////////////////////////////////
 
 
-		std::unordered_map<std::string, json::Combiner>                                         m_combiners;
+		std::unordered_map<Combiners, json::Combiner>                                           m_combiners;
         
         void register_scene_entity(mage::core::Entity* p_entity);
 

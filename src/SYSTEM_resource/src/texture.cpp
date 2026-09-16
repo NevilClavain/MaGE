@@ -147,5 +147,5 @@ std::string Texture::getSourceID() const
 
 void Texture::computeResourceUid()
 {
-    compute_resource_uid();
+    computeResourceUid();
 }
