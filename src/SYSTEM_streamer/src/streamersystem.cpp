@@ -1813,6 +1813,29 @@ std::string StreamerSystem::build_combiner(StreamerSystem::Combiners p_combiner,
 	return entity_target_name;
 }
 
+void StreamerSystem::build_scene_channel(bool p_target_clear, 
+                                            const core::maths::RGBAColor& p_color,
+                                            bool p_zbuffer_clear,
+                                            const std::string& p_channel_type,
+                                            const std::string& p_current_parent,
+                                            const std::string& p_entity_name,
+                                            int p_target_stage)
+{
+    rendering::Queue q(p_entity_name);
+    q.setTargetClearColor(p_color);
+
+    q.enableTargetClearing(p_target_clear);
+    q.enableTargetDepthClearing(p_zbuffer_clear);
+    q.setTargetStage(p_target_stage);
+
+    mage::helpers::plugRenderingQueue(m_entitygraph, q, p_current_parent, p_entity_name);
+
+    // register passe default configs
+    const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
+    renderingHelper->createDefaultChannelConfig(p_entity_name, p_channel_type);
+}
+
+
 void StreamerSystem::generateRendergraph(const RendergraphBlueprint& p_blueprint, const std::string& p_parentEntityId, int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height)
 {
 	std::string current_parent{ p_parentEntityId };
@@ -1823,23 +1846,7 @@ void StreamerSystem::generateRendergraph(const RendergraphBlueprint& p_blueprint
         current_parent = build_combiner(Combiners::COMBINER_FOG, current_parent, 0, p_w_width, p_w_height, p_characteristics_v_width, p_characteristics_v_height);
 
         // create zdepth channel !
-
-        rendering::Queue zdepthRenderingQueue("ZdepthChannelScene_Entity");
-
-        zdepthRenderingQueue.setTargetClearColor({ 0,
-                                        0,
-                                        0,
-                                        255 });
-
-        zdepthRenderingQueue.enableTargetClearing(true);
-        zdepthRenderingQueue.enableTargetDepthClearing(true);
-        zdepthRenderingQueue.setTargetStage(1);
-
-        mage::helpers::plugRenderingQueue(m_entitygraph, zdepthRenderingQueue, current_parent, "ZdepthChannelScene_Entity");
-
-        // register passe default configs
-        const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
-        renderingHelper->createDefaultChannelConfig("ZdepthChannelScene_Entity", "zdepth");
+		build_scene_channel(true, { 0, 0, 0, 255 }, true, "zdepth", current_parent, "ZdepthChannelScene_Entity", 1);
     }
 
     if (p_blueprint.lit_enabled)
@@ -1847,43 +1854,11 @@ void StreamerSystem::generateRendergraph(const RendergraphBlueprint& p_blueprint
         current_parent = build_combiner(Combiners::COMBINER_MODULATE_2_RGB, current_parent, 0, p_w_width, p_w_height, p_characteristics_v_width, p_characteristics_v_height);
 
         // create lit channel !
-
-        rendering::Queue zdepthRenderingQueue("DirectionalLitChannelScene_Entity");
-
-        zdepthRenderingQueue.setTargetClearColor({ 0,
-                                        0,
-                                        0,
-                                        255 });
-
-        zdepthRenderingQueue.enableTargetClearing(true);
-        zdepthRenderingQueue.enableTargetDepthClearing(true);
-        zdepthRenderingQueue.setTargetStage(1);
-
-        mage::helpers::plugRenderingQueue(m_entitygraph, zdepthRenderingQueue, current_parent, "DirectionalLitChannelScene_Entity");
-
-        // register passe default configs
-        const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
-        renderingHelper->createDefaultChannelConfig("DirectionalLitChannelScene_Entity", "directional_lit");
+		build_scene_channel(true, { 0, 0, 0, 255 }, true, "directional_lit", current_parent, "DirectionalLitChannelScene_Entity", 1);
     }
 
     // plug diffuse channel
 
-    rendering::Queue diffuseRenderingQueue("TextureChannelScene_Entity");
-
-    diffuseRenderingQueue.setTargetClearColor({ 0,
-                                    0,
-                                    0,
-                                    255 });
-
-    diffuseRenderingQueue.enableTargetClearing(true);
-    diffuseRenderingQueue.enableTargetDepthClearing(true);
-    diffuseRenderingQueue.setTargetStage(0);
-
-    mage::helpers::plugRenderingQueue(m_entitygraph, diffuseRenderingQueue, current_parent, "TextureChannelScene_Entity");
-
-    // register passe default configs
-    const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
-    renderingHelper->createDefaultChannelConfig("TextureChannelScene_Entity", /*"diffuse"*/ "texture");
-
+	build_scene_channel(true, { 0, 0, 0, 255 }, true, "texture", current_parent, "TextureChannelScene_Entity", 0);
 
 }
