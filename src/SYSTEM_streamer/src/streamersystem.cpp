@@ -1746,7 +1746,7 @@ RendergraphBlueprint StreamerSystem::diffuseRenderGraphBluePrint()
     return bp;
 }
 
-std::string StreamerSystem::build_combiner(StreamerSystem::Combiners p_combiner, const std::string& p_current_parent, int p_target_stage, int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height)
+std::string StreamerSystem::build_combiner(StreamerSystem::Combiners p_combiner, const std::string& p_namesuffix, const std::string& p_current_parent, int p_target_stage, int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height)
 { 
     std::vector<std::pair<size_t, Texture>> inputs;
 
@@ -1775,9 +1775,9 @@ std::string StreamerSystem::build_combiner(StreamerSystem::Combiners p_combiner,
 
     const std::string queue_name{ combiner.id + "_queue" };
 
-    const std::string entity_queue_name{ combiner.id + "Target_queue_Entity" };
-    const std::string entity_target_name{ combiner.id + "Target_quad_Entity" };
-    const std::string entity_view_name{ combiner.id + "Target_view_Entity" };
+    const std::string entity_queue_name{ combiner.id + "Target_queue_Entity" + p_namesuffix };
+    const std::string entity_target_name{ combiner.id + "Target_quad_Entity" + p_namesuffix };
+    const std::string entity_view_name{ combiner.id + "Target_view_Entity" + p_namesuffix };
 
     const int target_stage{ p_target_stage };
 
@@ -1843,7 +1843,7 @@ void StreamerSystem::generateRendergraph(const RendergraphBlueprint& p_blueprint
     if(p_blueprint.fog_enabled)
     {        
         // update current parent to connect to
-        current_parent = build_combiner(Combiners::COMBINER_FOG, current_parent, 0, p_w_width, p_w_height, p_characteristics_v_width, p_characteristics_v_height);
+        current_parent = build_combiner(Combiners::COMBINER_FOG, "_0", current_parent, 0, p_w_width, p_w_height, p_characteristics_v_width, p_characteristics_v_height);
 
         // create zdepth channel !
 		build_scene_channel(true, { 0, 0, 0, 255 }, true, "zdepth", current_parent, "ZdepthChannelScene_Entity", 1);
@@ -1851,7 +1851,7 @@ void StreamerSystem::generateRendergraph(const RendergraphBlueprint& p_blueprint
 
     if (p_blueprint.lit_enabled)
     {        
-        current_parent = build_combiner(Combiners::COMBINER_MODULATE_2_RGB, current_parent, 0, p_w_width, p_w_height, p_characteristics_v_width, p_characteristics_v_height);
+        current_parent = build_combiner(Combiners::COMBINER_MODULATE_2_RGB, "_0", current_parent, 0, p_w_width, p_w_height, p_characteristics_v_width, p_characteristics_v_height);
 
         // create lit channel !
 		build_scene_channel(true, { 0, 0, 0, 255 }, true, "directional_lit", current_parent, "DirectionalLitChannelScene_Entity", 1);

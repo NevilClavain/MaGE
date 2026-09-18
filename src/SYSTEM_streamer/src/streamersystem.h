@@ -1017,7 +1017,9 @@ namespace mage
 
         bool compute_entity(core::Entity* p_entity, const core::ComponentContainer& p_world_components);
 
-        std::string build_combiner(Combiners p_combiner, const std::string& p_current_parent, int p_target_stage, int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
+        std::string build_combiner(Combiners p_combiner, const std::string& p_namesuffix, 
+                                    const std::string& p_current_parent, int p_target_stage, 
+                                    int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
 
 		void build_scene_channel(bool p_target_clear, const core::maths::RGBAColor& p_color,
                                     bool p_zbuffer_clear, 
