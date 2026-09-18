@@ -515,11 +515,7 @@ namespace mage
     private:
         std::string         mininmal_channel_type;
 
-        //bool                ambient_lit_enabled{ false };
-        //bool                emissive_lit_enabled{ false };
-        //bool                directional_lit_enabled{ true };
-
-		bool                lit_enabled{ true };    
+		bool                lit_enabled{ true };
         bool                fog_enabled{ true };
         bool                shadows_enabled{ false };
 

@@ -1853,8 +1853,11 @@ void StreamerSystem::generateRendergraph(const RendergraphBlueprint& p_blueprint
     {        
         current_parent = build_combiner(Combiners::COMBINER_MODULATE_2_RGB, "_0", current_parent, 0, p_w_width, p_w_height, p_characteristics_v_width, p_characteristics_v_height);
 
-        // create lit channel !
-		build_scene_channel(true, { 0, 0, 0, 255 }, true, "directional_lit", current_parent, "DirectionalLitChannelScene_Entity", 1);
+        const auto parent_2 = build_combiner(Combiners::COMBINER_CUMULATE_3_RGB, "_0", current_parent, 1, p_w_width, p_w_height, p_characteristics_v_width, p_characteristics_v_height);
+
+        build_scene_channel(true, { 0, 0, 0, 255 }, true, "directional_lit", parent_2, "DirectionalLitChannelScene_Entity", 0);
+        build_scene_channel(true, { 0, 0, 0, 255 }, true, "ambient_lit", parent_2, "AmbientLitChannelScene_Entity", 1);
+        build_scene_channel(true, { 0, 0, 0, 255 }, true, "emissive_lit", parent_2, "EmissiveLitChannelScene_Entity", 2);
     }
 
     // plug diffuse channel
