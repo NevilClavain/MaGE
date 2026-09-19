@@ -19,7 +19,7 @@
       ],
 
       "rendergraph_parts": [
-        "TextureChannelScene_Entity",
+        "DiffuseChannelScene_Entity",
         "AmbientLitChannelScene_Entity",
         "EmissiveLitChannelScene_Entity",
         "DirectionalLitChannelScene_Entity",
@@ -112,7 +112,7 @@
       ],
 
       "rendergraph_parts": [
-        "TextureChannelScene_Entity",
+        "DiffuseChannelScene_Entity",
         "AmbientLitChannelScene_Entity",
         "EmissiveLitChannelScene_Entity",
         "DirectionalLitChannelScene_Entity",
@@ -222,7 +222,7 @@
       ],
 
       "rendergraph_parts": [
-        "TextureChannelScene_Entity",
+        "DiffuseChannelScene_Entity",
         "AmbientLitChannelScene_Entity",
         "EmissiveLitChannelScene_Entity",
         "DirectionalLitChannelScene_Entity",
@@ -313,7 +313,7 @@
       ],
 
       "rendergraph_parts": [
-        "TextureChannelScene_Entity",
+        "DiffuseChannelScene_Entity",
         "AmbientLitChannelScene_Entity",
         "DirectionalLitChannelScene_Entity",
         "EmissiveLitChannelScene_Entity",
@@ -386,7 +386,7 @@
       ],
 
       "rendergraph_parts": [
-        "TextureChannelScene_Entity",
+        "DiffuseChannelScene_Entity",
         "AmbientLitChannelScene_Entity",
         "DirectionalLitChannelScene_Entity",
         "EmissiveLitChannelScene_Entity",
@@ -501,7 +501,7 @@
       ],
 
       "rendergraph_parts": [
-        "TextureChannelScene_Entity",
+        "DiffuseChannelScene_Entity",
         "AmbientLitChannelScene_Entity",
         "EmissiveLitChannelScene_Entity",
         "DirectionalLitChannelScene_Entity",
@@ -584,7 +584,7 @@
       ],
 
       "rendergraph_parts": [
-        "TextureChannelScene_Entity",
+        "DiffuseChannelScene_Entity",
         "AmbientLitChannelScene_Entity",
         "EmissiveLitChannelScene_Entity",
         "DirectionalLitChannelScene_Entity",
@@ -687,7 +687,7 @@
       ],
 
       "rendergraph_parts": [
-        "TextureChannelScene_Entity",
+        "DiffuseChannelScene_Entity",
         "AmbientLitChannelScene_Entity",
         "EmissiveLitChannelScene_Entity",
         "DirectionalLitChannelScene_Entity",
@@ -784,7 +784,7 @@
       ],
 
       "rendergraph_parts": [
-        "TextureChannelScene_Entity",
+        "DiffuseChannelScene_Entity",
         "AmbientLitChannelScene_Entity",
         "EmissiveLitChannelScene_Entity",
         "DirectionalLitChannelScene_Entity",
@@ -870,7 +870,7 @@
       ],
 
       "rendergraph_parts": [
-        "TextureChannelScene_Entity",
+        "DiffuseChannelScene_Entity",
         "EmissiveLitChannelScene_Entity"
       ],
 
@@ -959,7 +959,7 @@
       ],
 
       "rendergraph_parts": [
-        "TextureChannelScene_Entity",
+        "DiffuseChannelScene_Entity",
         "EmissiveLitChannelScene_Entity"
       ],
 

@@ -1743,6 +1743,6 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
 
     // plug diffuse channel
 
-	build_scene_channel(true, { 0, 0, 0, 255 }, true, "diffuse", current_parent, "TextureChannelScene_Entity", 0);
+	build_scene_channel(true, { 0, 0, 0, 255 }, true, "diffuse", current_parent, "DiffuseChannelScene_Entity", 0);
 
 }

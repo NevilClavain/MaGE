@@ -230,7 +230,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		//auto renderingQueueSystem{ SystemEngine::getInstance()->getSystem(renderingQueueSystemSlot) };
 		//auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(renderingQueueSystem) };
 
-		//renderingQueueSystemInstance->requestRenderingqueueLogging("TextureChannelScene_Entity");
+		//renderingQueueSystemInstance->requestRenderingqueueLogging("DiffuseChannelScene_Entity");
 		//renderingQueueSystemInstance->requestRenderingqueueLogging("AmbientLitChannelScene_Entity");
 		//renderingQueueSystemInstance->requestRenderingqueueLogging("EmissiveLitChannelScene_Entity");
 		

@@ -248,7 +248,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 						"name": "openenv_main_graph",
 						"queue_entities":
 						[
-							"TextureChannelScene_Entity",
+							"DiffuseChannelScene_Entity",
 							"AmbientLitChannelScene_Entity",
 							"EmissiveLitChannelScene_Entity",
 							"DirectionalLitChannelScene_Entity",
@@ -256,17 +256,6 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 						]
 					}
 					)json";
-
-					//const char viewgroup_json[] = R"json(
-					//{
-					//	"name": "openenv_main_graph",
-					//	"queue_entities":
-					//	[
-					//		"diffuse_channel_queue_entity",
-					//		"zdepth_channel_queue_entity"
-					//	]
-					//}
-					//)json";
 					
 					streamerSystemInstance->buildViewgroup(viewgroup_json, Base::renderingQueueSystemSlot, Base::resourceSystemSlot);
 
