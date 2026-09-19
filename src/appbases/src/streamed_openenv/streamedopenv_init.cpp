@@ -235,15 +235,8 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					streamerSystemInstance->parseCombiner(StreamerSystem::Combiners::COMBINER_FOG, combiner_for_fog.getData());
 
 					mage::RendergraphBlueprint bp{ StreamerSystem::diffuseRenderGraphBluePrint() };
-
-					
-
-					streamerSystemInstance->generateRendergraph(bp, "screenRendering_Filter_DirectForward_Quad_Entity", w_width, w_height, characteristics_v_width, characteristics_v_height);
-
-
-					//streamerSystemInstance->buildRendergraphPart(rendergraphFileContent.getData(), "screenRendering_Filter_DirectForward_Quad_Entity",
-					//													w_width, w_height, characteristics_v_width, characteristics_v_height);
-
+				
+					streamerSystemInstance->buildRendergraphPart(bp, "screenRendering_Filter_DirectForward_Quad_Entity", w_width, w_height, characteristics_v_width, characteristics_v_height);
 
 					mage::core::FileContent<char> openEnvSceneFileContent("./module_streamed_anims_config/open_env_scene.json");
 					openEnvSceneFileContent.load();
