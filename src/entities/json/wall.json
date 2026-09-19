@@ -15,7 +15,7 @@
       "channels": {
         "configs": [
           {
-            "rendering_channel_type": "texture",
+            "rendering_channel_type": "diffuse",
             "textures_files_list": [
               {
                 "stage": 0,

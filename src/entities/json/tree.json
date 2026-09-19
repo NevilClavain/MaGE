@@ -16,7 +16,7 @@
       "channels": {
         "configs": [
           {
-            "rendering_channel_type": "texture",
+            "rendering_channel_type": "diffuse",
 
             "textures_files_list": [
               {
@@ -123,7 +123,7 @@
 
         "pixel_shaders_params": [
           {
-            "rendering_channel_type": "texture",
+            "rendering_channel_type": "diffuse",
             "shaders_params": [
               {
                 "datacloud_name": "mage.rendering.texture_keycolor_ps.key_color",

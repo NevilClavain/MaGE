@@ -15,7 +15,7 @@
         "configs": [
 
           {
-            "rendering_channel_type": "texture",
+            "rendering_channel_type": "diffuse",
 
             "rs_list": [
               {
