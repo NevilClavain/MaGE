@@ -231,10 +231,12 @@ void mage::helpers::installShadowsRendering(mage::core::Entitygraph& p_entitygra
 
 	for (auto& shadowSourceEntity : p_shadows_rendering_params.shadow_source_entites)
 	{
-		for (auto& config : shadowSourceEntity.channelsRendering.configs)
-		{
-			config.second.textures_ptr_list.push_back(sm_texture_ptr);
-		}
+		//for (auto& config : shadowSourceEntity.channelsRendering.configs)
+		//{
+		//	config.second.textures_ptr_list.push_back(sm_texture_ptr);
+		//}
+		shadowSourceEntity.channelsRendering.configs.at("bufferRendering_Scene_ShadowsChannel_Queue_Entity").textures_ptr_list.push_back(sm_texture_ptr);
+		// hardcoded value :(
 
 		renderingHelper->registerToQueues(p_entitygraph, shadowSourceEntity.entity, shadowSourceEntity.channelsRendering);
 	}
