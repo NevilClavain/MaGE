@@ -404,7 +404,7 @@ void RenderingQueueSystem::handleRenderingQueuesState(Entity* p_entity, renderin
 									}
 									else
 									{
-										_EXCEPTION("Missing rendertarget texture on requested stage for BUFFER_RENDERING queue : " + p_renderingQueue.getName());
+										_EXCEPTION("Missing rendertarget texture on requested stage for BUFFER_RENDERING queue : " + p_renderingQueue.getName() + " stage " + std::to_string(queue_target_stage));
 									}
 
 									_MAGE_DEBUG(m_localLogger, "rendering queue " + p_renderingQueue.getName() + " set to READY, BUFFER_RENDERING")

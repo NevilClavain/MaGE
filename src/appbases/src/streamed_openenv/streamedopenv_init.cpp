@@ -252,6 +252,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 							"AmbientLitChannelScene_Entity",
 							"EmissiveLitChannelScene_Entity",
 							"DirectionalLitChannelScene_Entity",
+							"ShadowsChannelScene_Entity",
 							"ZdepthChannelScene_Entity"
 						]
 					}

@@ -517,7 +517,7 @@ namespace mage
 
 		bool                lit_enabled{ true };
         bool                fog_enabled{ true };
-        bool                shadows_enabled{ false };
+        bool                shadows_enabled{ true };
 
         friend class StreamerSystem;
     };

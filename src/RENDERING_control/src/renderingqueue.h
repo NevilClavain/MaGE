@@ -56,6 +56,16 @@ namespace mage
 
 	namespace rendering
 	{
+		static constexpr int TARGET_0{ 0 };
+		static constexpr int TARGET_1{ 1 };
+		static constexpr int TARGET_2{ 2 };
+		static constexpr int TARGET_3{ 3 };
+		static constexpr int TARGET_4{ 4 };
+		static constexpr int TARGET_5{ 5 };
+		static constexpr int TARGET_6{ 6 };
+		static constexpr int TARGET_7{ 7 };
+		static constexpr int TARGET_8{ 8 };
+
 		//fwd decl
 		struct PrimitiveDrawing;	
 		class RenderingQueueSystem;
