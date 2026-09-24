@@ -256,6 +256,53 @@ namespace mage
 			return animator;
 		}
 
+		auto makeLookat3DPosJointAnimator()
+		{
+			const auto animator
+			{
+				[](const core::ComponentContainer& p_world_aspect,
+					const core::ComponentContainer& p_time_aspect,
+					const transform::WorldPosition& p_parent_pos,
+					const std::unordered_map<std::string, std::string>& p_keys)
+				{					
+						const auto target_pos { p_world_aspect.getComponent<core::maths::Real3Vector>(p_keys.at("lookatJointAnim.targetPos"))->getPurpose() };
+
+						// compute source (current node) absolute position : parent global pos + actual local pos
+						core::maths::Real4Vector pos(0.0, 0.0, 0.0, 1.0);
+						core::maths::Real4Vector source4;
+
+						const auto local_pos { p_world_aspect.getComponent<core::maths::Real3Vector>(p_keys.at("lookatJointAnim.localpos"))->getPurpose() };
+						const core::maths::Matrix absolute_transformation{ core::maths::Matrix::buildTranslation(local_pos) * (*p_parent_pos.global_pos) };
+
+						absolute_transformation.transform(&pos, &source4);
+
+						core::maths::Real3Vector source3(source4[0], source4[1], source4[2]);
+
+						const core::maths::Real3Vector forward(source3[0] - target_pos[0], source3[1] - target_pos[1], source3[2] - target_pos[2]);
+
+						const auto quat{ core::maths::Quaternion::lookRotation(forward, core::maths::YAxisVector) };
+
+						core::maths::Matrix orientation;
+						quat.rotationMatFrom(orientation);
+
+						core::maths::Matrix translation_from_parent;
+						translation_from_parent.translation(p_parent_pos.global_pos->getPosition());
+
+						core::maths::Matrix translation_from_current_local;
+						translation_from_current_local.translation(local_pos);
+
+						// store result
+
+						transform::WorldPosition& wp{ p_world_aspect.getComponent<transform::WorldPosition>(p_keys.at("lookatJointAnim.output"))->getPurpose() };
+						wp.composition_operation = transform::WorldPosition::TransformationComposition::TRANSFORMATION_ABSOLUTE;
+						wp.local_pos = wp.local_pos * orientation * translation_from_current_local * translation_from_parent;
+					}
+			};
+
+			return animator;
+		}
+
+
 		auto makeSliderJointAnimator()
 		{
 			const auto animator
