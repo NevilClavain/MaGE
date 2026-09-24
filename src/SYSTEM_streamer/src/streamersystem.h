@@ -1013,7 +1013,7 @@ namespace mage
                                     const std::string& p_current_parent, int p_target_stage, 
                                     int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
 
-		void build_scene_channel(bool p_target_clear, const core::maths::RGBAColor& p_color,
+        std::string build_scene_channel(bool p_target_clear, const core::maths::RGBAColor& p_color,
                                     bool p_zbuffer_clear, 
                                     const std::string& p_channel_type, 
                                     const std::string& p_current_parent, 

@@ -204,7 +204,7 @@ namespace mage
 			return animator;
 		}
 
-		auto makeLookatJointAnimator()
+		auto makeLookatEntityJointAnimator()
 		{
 			const auto animator
 			{

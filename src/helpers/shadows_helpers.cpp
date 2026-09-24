@@ -196,7 +196,7 @@ void mage::helpers::installShadowsRendering(mage::core::Entitygraph& p_entitygra
 			{"lookatJointAnim.gettargetpos", "lookat_gettargetpos"},
 
 		},
-		helpers::makeLookatJointAnimator())
+		helpers::makeLookatEntityJointAnimator())
 	);
 
 	helpers::plugCamera(p_entitygraph, p_shadows_rendering_params.orthogonal_projection, p_shadows_rendering_params.shadowmap_lookatJoint_entity_id, p_shadows_rendering_params.shadowmap_camera_entity_id);

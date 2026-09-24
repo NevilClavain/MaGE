@@ -759,7 +759,7 @@ void StreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource, cons
                             {"lookatJointAnim.target", target_entity_id},
                             {"lookatJointAnim.gettargetpos", "lookat_gettargetpos"},
 
-                        }, helpers::makeLookatJointAnimator())
+                        }, helpers::makeLookatEntityJointAnimator())
                     );
                 }
 
@@ -1694,7 +1694,7 @@ std::string StreamerSystem::build_combiner(StreamerSystem::Combiners p_combiner,
 	return entity_target_name;
 }
 
-void StreamerSystem::build_scene_channel(bool p_target_clear, 
+std::string StreamerSystem::build_scene_channel(bool p_target_clear,
                                             const core::maths::RGBAColor& p_color,
                                             bool p_zbuffer_clear,
                                             const std::string& p_channel_type,
@@ -1714,6 +1714,8 @@ void StreamerSystem::build_scene_channel(bool p_target_clear,
     // register passe default configs
     const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
     renderingHelper->createDefaultChannelConfig(p_entity_name, p_channel_type);
+
+    return p_entity_name;
 }
 
 
@@ -1746,7 +1748,27 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
             build_scene_channel(true, { 0, 0, 0, 255 }, true, "directional_lit", parent_combiner_for_shadows, "DirectionalLitChannelScene_Entity", rendering::TARGET_0);
 
 			// TEMP : set { 0, 0, 0, 255 } later
-			build_scene_channel(true, { 255, 255, 255, 255 }, true, "shadows", parent_combiner_for_shadows, "ShadowsChannelScene_Entity", rendering::TARGET_1);
+            const auto parent_3 = build_scene_channel(true, { 255, 255, 255, 255 }, true, "shadows", parent_combiner_for_shadows, "ShadowsChannelScene_Entity", rendering::TARGET_1);
+
+            //TEMP 
+            //helpers::plugTargetTexture(m_entitygraph, parent_3, "ShadowMapTexture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 2048, 2048)));
+            helpers::plugTargetTexture(m_entitygraph, parent_3, "ShadowMapTexture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_RGB, 2048, 2048)));
+
+
+            /*
+            rendering::Queue shadowMapChannelRenderingQueue("ShadowMapTexture_Entity");
+            
+            // TEMP
+            //shadowMapChannelRenderingQueue.setTargetClearColor({ 255, 255, 255, 255 });
+            shadowMapChannelRenderingQueue.setTargetClearColor({ 255, 0, 255, 255 });
+            
+            shadowMapChannelRenderingQueue.enableTargetClearing(true);
+            shadowMapChannelRenderingQueue.enableTargetDepthClearing(true);
+            shadowMapChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
+
+            mage::helpers::plugRenderingQueue(m_entitygraph, shadowMapChannelRenderingQueue, "ShadowMapTexture_Entity", "ShadowMapChannelScene_Entity");
+            */
+
 		}
         else
         { 

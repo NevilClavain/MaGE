@@ -511,7 +511,7 @@ void ModuleImpl::d3d11_system_events()
 								{"lookatJointAnim.target", "quadEntity2"},
 								{"lookatJointAnim.gettargetpos", "lookat_gettargetpos"},
 							},
-							helpers::makeLookatJointAnimator())
+							helpers::makeLookatEntityJointAnimator())
 						);
 
 						// add camera to scene
