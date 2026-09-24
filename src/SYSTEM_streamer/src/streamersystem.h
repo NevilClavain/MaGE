@@ -980,6 +980,9 @@ namespace mage
 
         bool isEnabled() const;
 
+        void setAppWindowsEntityName(const std::string& p_entityName);
+        void setOrthogonalProjection(const mage::core::maths::Matrix& p_matrix);
+
     private:
 
 
@@ -1058,6 +1061,10 @@ namespace mage
 
 
 		std::unordered_map<Combiners, json::Combiner>                                           m_combiners;
+
+        std::string                                                                             m_appWindowsEntityName;
+
+        mage::core::maths::Matrix                                                               m_orthogonal_projection;
         
         void register_scene_entity(mage::core::Entity* p_entity);
 

@@ -99,6 +99,17 @@ bool StreamerSystem::isEnabled() const
     return m_enabled;
 }
 
+void StreamerSystem::setAppWindowsEntityName(const std::string& p_entityName)
+{
+    m_appWindowsEntityName = p_entityName;
+}
+
+void StreamerSystem::setOrthogonalProjection(const mage::core::maths::Matrix& p_matrix)
+{
+	m_orthogonal_projection = p_matrix;
+}
+
+
 void StreamerSystem::configure(const Configuration& p_config)
 {
     if (!m_configured)
@@ -1768,6 +1779,53 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
 
             mage::helpers::plugRenderingQueue(m_entitygraph, shadowMapChannelRenderingQueue, "ShadowMapTexture_Entity", "ShadowMapChannelScene_Entity");
             */
+
+            if("" == m_appWindowsEntityName)
+            {
+                _EXCEPTION("No app window entity name set !");
+			}
+
+            auto& lookatJointEntityNode{ m_entitygraph.add(m_entitygraph.node(m_appWindowsEntityName), "shadowmap_lookatJoint_Entity") };
+
+            const auto lookatJointEntity{ lookatJointEntityNode.data() };
+
+            auto& lookat_time_aspect{ lookatJointEntity->makeAspect(core::timeAspect::id) };
+            auto& lookat_world_aspect{ lookatJointEntity->makeAspect(core::worldAspect::id) };
+            auto& tags_aspect{ lookatJointEntity->makeAspect(core::tagsAspect::id) };
+
+            tags_aspect.addComponent<core::tagsAspect::GraphDomain>("domain", core::tagsAspect::GraphDomain::SCENEGRAPH);
+
+            lookat_world_aspect.addComponent<transform::WorldPosition>("lookat_output");
+            lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_localpos");
+            lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_targetpos");
+
+
+            // TEMP
+            m_scene_entities_rg_parts["shadowmap_lookatJoint_Entity"].insert("DiffuseChannelScene_Entity");
+            m_scene_entities_rg_parts["shadowmap_lookatJoint_Entity"].insert("AmbientLitChannelScene_Entity");
+            m_scene_entities_rg_parts["shadowmap_lookatJoint_Entity"].insert("EmissiveLitChannelScene_Entity");
+            m_scene_entities_rg_parts["shadowmap_lookatJoint_Entity"].insert("DirectionalLitChannelScene_Entity");
+            m_scene_entities_rg_parts["shadowmap_lookatJoint_Entity"].insert("ZdepthChannelScene_Entity");
+
+            lookat_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
+                {
+                    {"lookatJointAnim.output", "lookat_output"},
+                    {"lookatJointAnim.localpos", "lookat_localpos"},
+                    {"lookatJointAnim.targetpos", "lookat_targetpos"}
+
+                },
+                helpers::makeLookat3DPosJointAnimator())
+                );
+
+            helpers::plugCamera(m_entitygraph, m_orthogonal_projection, "shadowmap_lookatJoint_Entity", "shadowmap_camera_Entity");
+
+            // TEMP
+            m_scene_entities_rg_parts["shadowmap_camera_Entity"].insert("DiffuseChannelScene_Entity");
+            m_scene_entities_rg_parts["shadowmap_camera_Entity"].insert("AmbientLitChannelScene_Entity");
+            m_scene_entities_rg_parts["shadowmap_camera_Entity"].insert("EmissiveLitChannelScene_Entity");
+            m_scene_entities_rg_parts["shadowmap_camera_Entity"].insert("DirectionalLitChannelScene_Entity");
+            m_scene_entities_rg_parts["shadowmap_camera_Entity"].insert("ZdepthChannelScene_Entity");
+
 
 		}
         else

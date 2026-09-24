@@ -214,6 +214,10 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 					auto streamerSystemInstance{ dynamic_cast<mage::StreamerSystem*>(SystemEngine::getInstance()->getSystem(streamerSystemSlot)) };
 
+
+					streamerSystemInstance->setAppWindowsEntityName(m_appWindowsEntityName);
+					streamerSystemInstance->setOrthogonalProjection(m_perpective_projection);
+
 					streamerSystemInstance->enableSystem(true);
 
 					StreamerSystem::Configuration ss_config;

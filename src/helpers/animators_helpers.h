@@ -265,7 +265,7 @@ namespace mage
 					const transform::WorldPosition& p_parent_pos,
 					const std::unordered_map<std::string, std::string>& p_keys)
 				{					
-						const auto target_pos { p_world_aspect.getComponent<core::maths::Real3Vector>(p_keys.at("lookatJointAnim.targetPos"))->getPurpose() };
+						const auto target_pos { p_world_aspect.getComponent<core::maths::Real3Vector>(p_keys.at("lookatJointAnim.targetpos"))->getPurpose() };
 
 						// compute source (current node) absolute position : parent global pos + actual local pos
 						core::maths::Real4Vector pos(0.0, 0.0, 0.0, 1.0);
