@@ -194,11 +194,13 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		}
 		else if ("camera3_Entity" == mainView)
 		{
+			renderingQueueSystemInstance->setViewGroupMainView("openenv_main_graph", "shadowmap_camera_Entity");
+		}
+		else if ("shadowmap_camera_Entity" == mainView)
+		{
 			renderingQueueSystemInstance->setViewGroupMainView("openenv_main_graph", "camera_Entity");
 		}
 	}
-
-
 	else if (VK_F7 == p_key)
 	{
 		auto tc{ TimeControl::getInstance() };

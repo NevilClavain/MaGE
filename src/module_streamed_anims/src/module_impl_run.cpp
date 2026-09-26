@@ -30,7 +30,7 @@
 #include "datacloud.h"
 #include "sysengine.h"
 
-
+#include "streamersystem.h"
 
 #include "maths_helpers.h"
 
@@ -56,5 +56,9 @@ void ModuleImpl::run(void)
 
 		dataCloud->updateDataValue<maths::Real4Vector>("mage.scene.light0.dir", light_cartesian);
 
+		auto streamerSystemInstance{ dynamic_cast<mage::StreamerSystem*>(SystemEngine::getInstance()->getSystem(streamerSystemSlot)) };
+
+		streamerSystemInstance->updateLightDirection(mage::core::maths::Real3Vector(light_cartesian[0], light_cartesian[1], light_cartesian[2]));
 	}
+
 }

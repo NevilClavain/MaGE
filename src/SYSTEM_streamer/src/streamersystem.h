@@ -983,6 +983,11 @@ namespace mage
         void setAppWindowsEntityName(const std::string& p_entityName);
         void setOrthogonalProjection(const mage::core::maths::Matrix& p_matrix);
 
+        void updateLightDirection(const mage::core::maths::Real3Vector& p_light_vector);
+
+		void setLightdirectionBasePosition(const mage::core::maths::Real3Vector& p_light_vector);
+
+
     private:
 
 
@@ -1065,6 +1070,12 @@ namespace mage
         std::string                                                                             m_appWindowsEntityName;
 
         mage::core::maths::Matrix                                                               m_orthogonal_projection;
+
+        core::Entity*                                                                           m_shadowmap_lookatJoint_Entity { nullptr };
+
+
+        mage::core::maths::Real3Vector                                                          m_lightdirection_base_position;
+
         
         void register_scene_entity(mage::core::Entity* p_entity);
 

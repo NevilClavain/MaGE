@@ -169,6 +169,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					const auto skydomeKr{ dataCloud->readDataValue<double>("app.skydomeKr") };
 					const auto skydomeScaleDepth{ dataCloud->readDataValue<double>("app.skydomeScaleDepth") };
 
+					const auto groundLevel{ dataCloud->readDataValue<double>("app.groundLevel") };
 
 					dataCloud->registerData<maths::Real4Vector>("mage.rendering.scene_skydome_ps.atmo_scattering_flag_0");
 					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.scene_skydome_ps.atmo_scattering_flag_0", maths::Real4Vector(skydomeOuterRadius, skydomeInnerRadius, skydomeOuterRadius * skydomeOuterRadius, skydomeInnerRadius * skydomeInnerRadius));
@@ -217,6 +218,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 					streamerSystemInstance->setAppWindowsEntityName(m_appWindowsEntityName);
 					streamerSystemInstance->setOrthogonalProjection(m_perpective_projection);
+					streamerSystemInstance->setLightdirectionBasePosition(core::maths::Real3Vector(0.0, skydomeInnerRadius + groundLevel, 0.0));
 
 					streamerSystemInstance->enableSystem(true);
 
