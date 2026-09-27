@@ -30,7 +30,7 @@
 #include "logging.h"
 #include "renderingqueuesystem.h"
 #include "streamersystem.h"
-
+#include "d3d11system.h"
 #include "sysengine.h"
 #include "datacloud.h"
 #include "aspects.h"
@@ -218,10 +218,17 @@ void ModuleImpl::onEndKeyPress(long p_key)
 
 	else if (VK_F8 == p_key)
 	{
-		auto streamerSystem{ SystemEngine::getInstance()->getSystem(streamerSystemSlot) };
-		auto streamerSystemInstance{ dynamic_cast<mage::StreamerSystem*>(streamerSystem) };
+		//auto streamerSystem{ SystemEngine::getInstance()->getSystem(streamerSystemSlot) };
+		//auto streamerSystemInstance{ dynamic_cast<mage::StreamerSystem*>(streamerSystem) };
 
 		//...
+
+		auto d3d11System{ SystemEngine::getInstance()->getSystem(d3d11SystemSlot) };
+		auto d3d11SystemInstance{ dynamic_cast<mage::D3D11System*>(d3d11System) };
+
+		d3d11SystemInstance->dumpRenderingBuffer("CONTENT_FROM_RENDERINGQUEUE_DiffuseChannelScene_Entity", "dump_rendering_buffer.png");
+
+		::MessageBox(0, "Render target dump done", "Mage", MB_OK | MB_ICONINFORMATION);
 	}
 
 	else if (VK_F9 == p_key)

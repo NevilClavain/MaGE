@@ -61,3 +61,16 @@ DirectX::XMFLOAT4X4 D3D11SystemImpl::convertMatrixToXMFloat44(const mage::core::
 
 	return xm_mat;
 }
+
+void D3D11SystemImpl::dumpRenderingBuffer(const std::string& p_texture_id, const std::string& p_filename) const
+{
+    if(m_textures.find(p_texture_id) == m_textures.end())
+    {
+		_EXCEPTION("D3D11SystemImpl::dumpRenderingBuffer : texture id not found : " + p_texture_id);
+        return;
+	}
+
+    const TextureData& textureData{ m_textures.at(p_texture_id) };
+
+    _asm nop
+}

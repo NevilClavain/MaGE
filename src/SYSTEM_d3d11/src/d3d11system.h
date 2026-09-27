@@ -26,6 +26,7 @@
 #pragma once
 
 #include <mutex>
+#include <string>
 
 #include "system.h"
 #include "shaders_service.h"
@@ -87,6 +88,8 @@ namespace mage
         {
             return m_texturecontentcopy_invocation_cb;
         };
+
+		void dumpRenderingBuffer(const std::string& p_texture_id, const std::string& p_filename) const;
 
     private:
         bool	                                                m_initialized{ false };

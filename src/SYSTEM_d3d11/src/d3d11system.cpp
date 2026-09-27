@@ -1082,3 +1082,8 @@ void D3D11System::handleTextureCreation(Texture& p_texture)
 
 	m_runner.m_mailbox_in.push(task);
 }
+
+void D3D11System::dumpRenderingBuffer(const std::string& p_texture_id, const std::string& p_filename) const
+{
+	d3dimpl->dumpRenderingBuffer(p_texture_id, p_filename);
+}

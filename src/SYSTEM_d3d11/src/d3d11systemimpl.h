@@ -472,4 +472,6 @@ public:
         }
         return updateMesheTransformers(ml->at(p_meshe_id), p_worlds, p_draw_states, p_projected_z_neg_states, p_view, p_proj, p_view2, p_proj2, p_number_of_instances);
     }
+
+    void dumpRenderingBuffer(const std::string& p_texture_id, const std::string& p_filename) const;
 };
