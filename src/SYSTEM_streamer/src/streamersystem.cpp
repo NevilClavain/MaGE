@@ -1802,8 +1802,7 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
             lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_localpos", localpos);
 
 
-            core::maths::Real3Vector targetpos{ 0.0, 0.0, 0.0 };
-            lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_targetpos", targetpos);
+            lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_targetpos", m_lightdirection_base_position);
 
 
             // TEMP
