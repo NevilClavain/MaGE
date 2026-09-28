@@ -226,7 +226,7 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		auto d3d11System{ SystemEngine::getInstance()->getSystem(d3d11SystemSlot) };
 		auto d3d11SystemInstance{ dynamic_cast<mage::D3D11System*>(d3d11System) };
 
-		d3d11SystemInstance->dumpRenderingBuffer("CONTENT_FROM_RENDERINGQUEUE_DiffuseChannelScene_Entity", "dump_rendering_buffer.png");
+		d3d11SystemInstance->dumpRenderingBuffer("CONTENT_FROM_RENDERINGQUEUE_DiffuseChannelScene_Entity", "CONTENT_FROM_RENDERINGQUEUE_DiffuseChannelScene_Entity.jpg");
 
 		::MessageBox(0, "Render target dump done", "Mage", MB_OK | MB_ICONINFORMATION);
 	}
