@@ -987,6 +987,9 @@ namespace mage
 
 		void setLightdirectionBasePosition(const mage::core::maths::Real3Vector& p_light_vector);
 
+        void setRenderingQueueSystemSlot(int p_renderingQueueSystemSlot);
+        void setResourceSystemSlot(int p_resourceSystemSlot);
+
 
     private:
 
@@ -1210,95 +1213,98 @@ namespace mage
 
         const std::string main_camera_id{ current_views.first };
 
-        XTreeEntity camera_xe{ p_xtree_entities.at(main_camera_id) };
-
-        std::unordered_set<mage::core::Entity*> found_entities; // search entities in camera's neighbourood
-
-        const std::function<void(std::unordered_set<mage::core::Entity*>&, XTreeType*, int)> search_near_entities
+        if (main_camera_id != "" && /*main_camera_id != "shadowmap_camera_Entity" && */  p_xtree_entities.count(main_camera_id))
         {
-            [&](std::unordered_set<mage::core::Entity*>& p_found_entities, XTreeType* p_node, int p_neighbourood_depth)
-            {
-                if (p_neighbourood_depth > m_configuration.max_neighbourood_depth)
-                {
-                    return;
-                }
+            XTreeEntity camera_xe{ p_xtree_entities.at(main_camera_id) };
 
-                ////////// search in current node
-                const SceneXTreeNode& scene_xtree_node{ p_node->getData() };
-                for (mage::core::Entity* e : scene_xtree_node.entities)
+            std::unordered_set<mage::core::Entity*> found_entities; // search entities in camera's neighbourood
+
+            const std::function<void(std::unordered_set<mage::core::Entity*>&, XTreeType*, int)> search_near_entities
+            {
+                [&](std::unordered_set<mage::core::Entity*>& p_found_entities, XTreeType* p_node, int p_neighbourood_depth)
                 {
-                    if (m_entity_renderings.count(e->getId()) > 0)
+                    if (p_neighbourood_depth > m_configuration.max_neighbourood_depth)
                     {
-                        // store only those than can be rendered
-                        p_found_entities.insert(e);
+                        return;
+                    }
+
+                    ////////// search in current node
+                    const SceneXTreeNode& scene_xtree_node{ p_node->getData() };
+                    for (mage::core::Entity* e : scene_xtree_node.entities)
+                    {
+                        if (m_entity_renderings.count(e->getId()) > 0)
+                        {
+                            // store only those than can be rendered
+                            p_found_entities.insert(e);
+                        }
+                    }
+
+                    ////////// search in current node neighbours
+
+                    std::vector<XTreeType*> neighbours{ p_node->getNeighbours() };
+                    for (XTreeType* n : neighbours)
+                    {
+                        if (nullptr != n)
+                        {
+                            search_near_entities(p_found_entities, n, p_neighbourood_depth + 1);
+                        }
+                    }
+                }
+            };
+
+            // XTree node where camera is actualy locat
+            XTreeType* node_containing_camera = p_get_node_func(camera_xe); // get xe.quadtree or xe.octree regarding XTreeType used :)
+
+            if (node_containing_camera)
+            {
+                while (1)
+                {
+                    search_near_entities(found_entities, node_containing_camera, 0);
+
+                    node_containing_camera = node_containing_camera->getParent();
+                    if (nullptr == node_containing_camera)
+                    {
+                        break;
                     }
                 }
 
-                ////////// search in current node neighbours
 
-                std::vector<XTreeType*> neighbours{ p_node->getNeighbours() };
-                for (XTreeType* n : neighbours)
+
+                // new entities discovered, to render
+                for (mage::core::Entity* entity : found_entities)
                 {
-                    if (nullptr != n)
+                    if (!m_found_entities_to_render.count(entity))
                     {
-                        search_near_entities(p_found_entities, n, p_neighbourood_depth + 1);
+                        // just discovered -> ask for rendering
+                        if (!m_entity_renderings.at(entity->getId()).m_rendered)
+                        {
+                            _MAGE_DEBUG(m_localLogger, "Now discovered = " + entity->getId() + " -> START_rendering");
+
+                            m_entity_renderings.at(entity->getId()).m_request_rendering = true;
+                        }
                     }
                 }
-            }
-        };
 
-        // XTree node where camera is actualy locat
-        XTreeType* node_containing_camera = p_get_node_func(camera_xe); // get xe.quadtree or xe.octree regarding XTreeType used :)
-
-        if (node_containing_camera)
-        {
-            while (1)
-            {
-                search_near_entities(found_entities, node_containing_camera, 0);
-
-                node_containing_camera = node_containing_camera->getParent();
-                if (nullptr == node_containing_camera)
+                // entities not in neigbourood no more, to remove from rendering...
+                for (mage::core::Entity* rendered_entity : m_found_entities_to_render)
                 {
-                    break;
-                }
-            }
-
-
-
-            // new entities discovered, to render
-            for (mage::core::Entity* entity : found_entities)
-            {
-                if (!m_found_entities_to_render.count(entity))
-                {
-                    // just discovered -> ask for rendering
-                    if (!m_entity_renderings.at(entity->getId()).m_rendered)
+                    if (!found_entities.count(rendered_entity))
                     {
-						_MAGE_DEBUG(m_localLogger, "Now discovered = " + entity->getId() + " -> START_rendering");
-                     
-                        m_entity_renderings.at(entity->getId()).m_request_rendering = true;
+                        // not found no more -> ask to stop rendering
+
+                        if (m_entity_renderings.at(rendered_entity->getId()).m_rendered)
+                        {
+                            _MAGE_DEBUG(m_localLogger, "Not found no more in neigbourood: " + rendered_entity->getId() + " -> STOP_rendering");
+
+                            m_entity_renderings.at(rendered_entity->getId()).m_request_rendering = false;
+                        }
                     }
                 }
+
+                // update...
+                m_found_entities_to_render = found_entities;
+
             }
-
-            // entities not in neigbourood no more, to remove from rendering...
-            for (mage::core::Entity* rendered_entity : m_found_entities_to_render)
-            {
-                if (!found_entities.count(rendered_entity))
-                {
-                    // not found no more -> ask to stop rendering
-
-                    if (m_entity_renderings.at(rendered_entity->getId()).m_rendered)
-                    {
-                        _MAGE_DEBUG(m_localLogger, "Not found no more in neigbourood: " + rendered_entity->getId() + " -> STOP_rendering");
-
-                        m_entity_renderings.at(rendered_entity->getId()).m_request_rendering = false;
-                    }
-                }
-            }
-
-            // update...
-            m_found_entities_to_render = found_entities;
-
         }
     };
 }

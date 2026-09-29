@@ -194,10 +194,6 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		}
 		else if ("camera3_Entity" == mainView)
 		{
-			renderingQueueSystemInstance->setViewGroupMainView("openenv_main_graph", "shadowmap_camera_Entity");
-		}
-		else if ("shadowmap_camera_Entity" == mainView)
-		{
 			renderingQueueSystemInstance->setViewGroupMainView("openenv_main_graph", "camera_Entity");
 		}
 	}
@@ -226,9 +222,11 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		auto d3d11System{ SystemEngine::getInstance()->getSystem(d3d11SystemSlot) };
 		auto d3d11SystemInstance{ dynamic_cast<mage::D3D11System*>(d3d11System) };
 
-		d3d11SystemInstance->dumpRenderingBuffer("CONTENT_FROM_RENDERINGQUEUE_DiffuseChannelScene_Entity", "CONTENT_FROM_RENDERINGQUEUE_DiffuseChannelScene_Entity.jpg");
-		d3d11SystemInstance->dumpRenderingBuffer("CONTENT_FROM_RENDERINGQUEUE_combiner_cumul_3_RGB__0_queue", "CONTENT_FROM_RENDERINGQUEUE_combiner_cumul_3_RGB__0_queue.jpg");
-		d3d11SystemInstance->dumpRenderingBuffer("CONTENT_FROM_RENDERINGQUEUE_DirectionalLitChannelScene_Entity", "CONTENT_FROM_RENDERINGQUEUE_DirectionalLitChannelScene_Entity.jpg");
+		//d3d11SystemInstance->dumpRenderingBuffer("CONTENT_FROM_RENDERINGQUEUE_DiffuseChannelScene_Entity", "CONTENT_FROM_RENDERINGQUEUE_DiffuseChannelScene_Entity.jpg");
+		//d3d11SystemInstance->dumpRenderingBuffer("CONTENT_FROM_RENDERINGQUEUE_combiner_cumul_3_RGB__0_queue", "CONTENT_FROM_RENDERINGQUEUE_combiner_cumul_3_RGB__0_queue.jpg");
+		//d3d11SystemInstance->dumpRenderingBuffer("CONTENT_FROM_RENDERINGQUEUE_DirectionalLitChannelScene_Entity", "CONTENT_FROM_RENDERINGQUEUE_DirectionalLitChannelScene_Entity.jpg");
+
+		d3d11SystemInstance->dumpRenderingBuffer("CONTENT_FROM_RENDERINGQUEUE_ShadowMapChannelScene_Entity", "CONTENT_FROM_RENDERINGQUEUE_ShadowMapChannelScene_Entity.jpg");
 
 		::MessageBox(0, "Render target dump done", "Mage", MB_OK | MB_ICONINFORMATION);
 	}

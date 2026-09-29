@@ -219,6 +219,8 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					streamerSystemInstance->setAppWindowsEntityName(m_appWindowsEntityName);
 					streamerSystemInstance->setOrthogonalProjection(m_perpective_projection);
 					streamerSystemInstance->setLightdirectionBasePosition(core::maths::Real3Vector(0.0, skydomeInnerRadius + groundLevel, 0.0));
+					streamerSystemInstance->setRenderingQueueSystemSlot(Base::renderingQueueSystemSlot);
+					streamerSystemInstance->setResourceSystemSlot(Base::resourceSystemSlot);
 
 					streamerSystemInstance->enableSystem(true);
 

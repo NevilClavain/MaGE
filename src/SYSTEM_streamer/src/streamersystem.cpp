@@ -1753,6 +1753,7 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
         build_scene_channel(true, { 0, 0, 0, 255 }, true, "emissive_lit", parent_2, "EmissiveLitChannelScene_Entity", rendering::TARGET_1);
 
         if(p_blueprint.shadows_enabled)
+        //if (0)
         {
             const auto parent_combiner_for_shadows( build_combiner(Combiners::COMBINER_MODULATE_2_RGB, "_forshadows", parent_2, rendering::TARGET_2, p_w_width, p_w_height, p_characteristics_v_width, p_characteristics_v_height) );
             
@@ -1762,12 +1763,12 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
             const auto parent_3 = build_scene_channel(true, { 255, 255, 255, 255 }, true, "shadows", parent_combiner_for_shadows, "ShadowsChannelScene_Entity", rendering::TARGET_1);
 
             //TEMP 
-            //helpers::plugTargetTexture(m_entitygraph, parent_3, "ShadowMapTexture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 2048, 2048)));
-            helpers::plugTargetTexture(m_entitygraph, parent_3, "ShadowMapTexture_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_RGB, 2048, 2048)));
+            //helpers::plugTargetTexture(m_entitygraph, parent_3, "ShadowMapTarget_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 2048, 2048)));
+            helpers::plugTargetTexture(m_entitygraph, parent_3, "ShadowMapTarget_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_RGB, 2048, 2048)));
 
 
-            /*
-            rendering::Queue shadowMapChannelRenderingQueue("ShadowMapTexture_Entity");
+            
+            rendering::Queue shadowMapChannelRenderingQueue("ShadowMapChannelScene_Entity");
             
             // TEMP
             //shadowMapChannelRenderingQueue.setTargetClearColor({ 255, 255, 255, 255 });
@@ -1777,8 +1778,8 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
             shadowMapChannelRenderingQueue.enableTargetDepthClearing(true);
             shadowMapChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
 
-            mage::helpers::plugRenderingQueue(m_entitygraph, shadowMapChannelRenderingQueue, "ShadowMapTexture_Entity", "ShadowMapChannelScene_Entity");
-            */
+            mage::helpers::plugRenderingQueue(m_entitygraph, shadowMapChannelRenderingQueue, "ShadowMapTarget_Entity", "ShadowMapChannelScene_Entity");
+            
 
 
             if("" == m_appWindowsEntityName)
@@ -1805,13 +1806,6 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
             lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_targetpos", m_lightdirection_base_position);
 
 
-            // TEMP
-            m_scene_entities_rg_parts["shadowmap_lookatJoint_Entity"].insert("DiffuseChannelScene_Entity");
-            m_scene_entities_rg_parts["shadowmap_lookatJoint_Entity"].insert("AmbientLitChannelScene_Entity");
-            m_scene_entities_rg_parts["shadowmap_lookatJoint_Entity"].insert("EmissiveLitChannelScene_Entity");
-            m_scene_entities_rg_parts["shadowmap_lookatJoint_Entity"].insert("DirectionalLitChannelScene_Entity");
-            m_scene_entities_rg_parts["shadowmap_lookatJoint_Entity"].insert("ZdepthChannelScene_Entity");
-
             lookat_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
                 {
                     {"lookatJointAnim.output", "lookat_output"},
@@ -1824,14 +1818,30 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
 
             helpers::plugCamera(m_entitygraph, m_orthogonal_projection, "shadowmap_lookatJoint_Entity", "shadowmap_camera_Entity");
 
-            // TEMP
-            m_scene_entities_rg_parts["shadowmap_camera_Entity"].insert("DiffuseChannelScene_Entity");
-            m_scene_entities_rg_parts["shadowmap_camera_Entity"].insert("AmbientLitChannelScene_Entity");
-            m_scene_entities_rg_parts["shadowmap_camera_Entity"].insert("EmissiveLitChannelScene_Entity");
-            m_scene_entities_rg_parts["shadowmap_camera_Entity"].insert("DirectionalLitChannelScene_Entity");
-            m_scene_entities_rg_parts["shadowmap_camera_Entity"].insert("ZdepthChannelScene_Entity");
+
+            m_scene_entities_rg_parts["shadowmap_lookatJoint_Entity"].insert("ShadowMapChannelScene_Entity");
+            m_scene_entities_rg_parts["shadowmap_camera_Entity"].insert("ShadowMapChannelScene_Entity");
+
 
 			m_shadowmap_lookatJoint_Entity = lookatJointEntity;
+
+
+            const char shadowmap_viewgroup_json[] = R"json(
+					{
+						"name": "shadowmap",
+						"queue_entities":
+						[
+							"ShadowMapChannelScene_Entity"
+						]
+					}
+					)json";
+
+            buildViewgroup(shadowmap_viewgroup_json, m_renderingQueueSystemSlot, m_resourceSystemSlot);
+
+            auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(m_renderingQueueSystemSlot)) };
+            renderingQueueSystemInstance->setViewGroupMainView("shadowmap", "shadowmap_camera_Entity");
+
+
 		}
         else
         { 
@@ -1862,4 +1872,14 @@ void StreamerSystem::updateLightDirection(const mage::core::maths::Real3Vector& 
 void StreamerSystem::setLightdirectionBasePosition(const mage::core::maths::Real3Vector& p_light_vector)
 {
 	m_lightdirection_base_position = p_light_vector;
+}
+
+void StreamerSystem::setRenderingQueueSystemSlot(int p_renderingQueueSystemSlot)
+{
+    m_renderingQueueSystemSlot = p_renderingQueueSystemSlot;
+}
+
+void StreamerSystem::setResourceSystemSlot(int p_resourceSystemSlot)
+{
+    m_resourceSystemSlot = p_resourceSystemSlot;
 }
