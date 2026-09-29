@@ -845,7 +845,7 @@ void D3D11System::handleShaderCreation(Shader& p_shaderInfos, int p_shaderType)
 
 	m_runner.m_mailbox_in.push(task);
 }
-
+/*
 void D3D11System::handleShaderRelease(Shader& p_shaderInfos, int p_shaderType)
 {
 	const auto shaderType{ p_shaderType };
@@ -887,6 +887,7 @@ void D3D11System::handleShaderRelease(Shader& p_shaderInfos, int p_shaderType)
 
 	m_runner.m_mailbox_in.push(task);
 }
+*/
 
 void D3D11System::handleLinemesheCreation(LineMeshe& p_lm)
 {

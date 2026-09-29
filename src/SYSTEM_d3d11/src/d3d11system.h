@@ -107,7 +107,7 @@ namespace mage
         void    manageInitialization();       
 
         void    handleShaderCreation(Shader& p_shaderInfos, int p_shaderType);
-        void    handleShaderRelease(Shader& p_shaderInfos, int p_shaderType);
+        //void    handleShaderRelease(Shader& p_shaderInfos, int p_shaderType);
 
         void    handleLinemesheCreation(LineMeshe& p_lm);
         //void    handleLinemesheRelease(LineMeshe& p_lm);
