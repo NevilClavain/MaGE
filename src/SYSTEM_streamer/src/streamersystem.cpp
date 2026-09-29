@@ -1839,7 +1839,7 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
             buildViewgroup(shadowmap_viewgroup_json, m_renderingQueueSystemSlot, m_resourceSystemSlot);
 
             auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(m_renderingQueueSystemSlot)) };
-            renderingQueueSystemInstance->setViewGroupMainView("shadowmap", "shadowmap_camera_Entity");
+            //renderingQueueSystemInstance->setViewGroupMainView("shadowmap", "shadowmap_camera_Entity");
 
 
 		}

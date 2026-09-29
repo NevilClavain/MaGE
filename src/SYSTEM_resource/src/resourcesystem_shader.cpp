@@ -74,9 +74,9 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 
 					m_shadersCache_mutex.lock();
 					m_shadersCache.at(resourceUID).shader_source = std::string(shader_src_content.getData(), shader_src_content.getDataSize());
-					m_shadersCache_mutex.unlock();
 
 					p_shaderInfos.setFileContent(m_shadersCache.at(resourceUID).shader_source.c_str(), m_shadersCache.at(resourceUID).shader_source.size());
+					m_shadersCache_mutex.unlock();
 
 					_MAGE_TRACE(m_localLoggerRunner, std::string("loading shader ") + filename + " type = " + std::to_string(shaderType) + ", resource uid = " + resourceUID);
 
@@ -224,9 +224,9 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 
 							m_shadersCache_mutex.lock();
 							m_shadersCache.at(resourceUID).shader_code.fill(shaderBytes.get(), shaderBytesLength);
-							m_shadersCache_mutex.unlock();
 
 							p_shaderInfos.setCode(m_shadersCache.at(resourceUID).shader_code.getData(), m_shadersCache.at(resourceUID).shader_code.getDataSize());
+							m_shadersCache_mutex.unlock();
 						}
 						else
 						{
@@ -260,9 +260,9 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 
 						m_shadersCache_mutex.lock();
 						m_shadersCache.at(resourceUID).shader_code.fill(cache_code_content.getData(), cache_code_content.getDataSize());
-						m_shadersCache_mutex.unlock();
 
 						p_shaderInfos.setCode(m_shadersCache.at(resourceUID).shader_code.getData(), m_shadersCache.at(resourceUID).shader_code.getDataSize());
+						m_shadersCache_mutex.unlock();
 
 						_MAGE_DEBUG(eventsLogger, "EMIT EVENT -> RESOURCE_SHADER_LOAD_SUCCESS : " + filename);
 						for (const auto& call : m_callbacks)

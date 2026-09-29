@@ -82,10 +82,9 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 					texture_content.load();
 
 					m_texturesBlobCache_mutex.lock();
-					m_texturesBlobCache.at(resourceUID).texture_content.fill(texture_content.getData(), texture_content.getDataSize());
-					m_texturesBlobCache_mutex.unlock();
-
+					m_texturesBlobCache.at(resourceUID).texture_content.fill(texture_content.getData(), texture_content.getDataSize());				
 					p_textureInfos.setFileContent(m_texturesBlobCache.at(resourceUID).texture_content.getData(), m_texturesBlobCache.at(resourceUID).texture_content.getDataSize());
+					m_texturesBlobCache_mutex.unlock();
 
 					_MAGE_DEBUG(m_localLoggerRunner, std::string("task has loaded texture ") + p_textureInfos.getSourceID() + ", resource uid = " + p_textureInfos.getResourceUID());
 
