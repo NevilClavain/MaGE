@@ -39,11 +39,10 @@ Shader::Shader(const Shader& p_other)
     m_source_id = p_other.m_source_id;
     m_resource_uid = p_other.m_resource_uid;
     
-    //m_content = p_other.m_content;
-    //m_contentSize = p_other.m_contentSize;
-
+	m_file_content_mutex.lock();
     m_file_content = p_other.m_file_content;
     m_file_content_size = p_other.m_file_content_size;
+	m_file_content_mutex.unlock();
 
     m_code = p_other.m_code;
     m_code_size = p_other.m_code_size;
@@ -78,18 +77,28 @@ void Shader::setSourceID(const std::string& p_source_id)
 
 const char* Shader::getFileContent() const
 {
-    return m_file_content;
+	m_file_content_mutex.lock();
+	auto fc{ m_file_content };
+	m_file_content_mutex.unlock();
+
+    return fc;
 }
 
 size_t Shader::getFileContentSize() const
 {
-    return m_file_content_size;
+	m_file_content_mutex.lock();
+	const size_t size{ m_file_content_size };
+	m_file_content_mutex.unlock();
+
+    return size;
 }
 
 void Shader::setFileContent(const char* p_file_content, size_t p_file_content_size)
 {
+	m_file_content_mutex.lock();
     m_file_content = p_file_content;
     m_file_content_size = p_file_content_size;
+    m_file_content_mutex.unlock();
 
     compute_content_hash();
 }

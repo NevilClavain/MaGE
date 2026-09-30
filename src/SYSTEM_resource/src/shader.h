@@ -72,11 +72,11 @@ namespace mage
             m_source_id = p_other.m_source_id;
             m_resource_uid = p_other.m_resource_uid;
 
-            //m_content = p_other.m_content;
-            //m_contentSize = p_other.m_contentSize;
 
+			m_file_content_mutex.lock();
             m_file_content = p_other.m_file_content;
             m_file_content_size = p_other.m_file_content_size;
+			m_file_content_mutex.unlock();
 
             m_code = p_other.m_code;
             m_code_size = p_other.m_code_size;
@@ -141,7 +141,7 @@ namespace mage
 
         int                                 m_type; //0 = vertex shader, 1 = pixel shader
 
-
+        mutable std::mutex	                m_file_content_mutex;
         const char*                         m_file_content{ nullptr };
         size_t                              m_file_content_size{ 0 };
 
