@@ -533,11 +533,50 @@ void StreamerSystem::run()
             }
             else if (!e.second.m_request_rendering && e.second.m_rendered)
             {
-                unregister_from_queues(m_scene_entities.at(e.first));
-                e.second.m_rendered = false;
+				Entity* entity_ptr{ m_scene_entities.at(e.first) };
 
-                one_treated = true;
-                e.second.m_rendering_state_current_ttl = EntityRendering::m_rendering_state_ttl_max;
+				bool can_remove{ true };
+
+                if(entity_ptr->hasAspect(mage::core::resourcesAspect::id))
+                {
+					const auto& resource_components{ entity_ptr->aspectAccess(mage::core::resourcesAspect::id) };
+
+                    const auto shaders_list{ resource_components.getComponentsByType<std::pair<std::string, Shader>>() };
+                    for (auto& e : shaders_list)
+                    {
+                        auto& shader{ e->getPurpose().second };
+                        const auto filename{ e->getPurpose().first };
+
+                        const auto state{ shader.getState() };
+                        if (Shader::State::BLOBLOADING == state || Shader::State::RENDERERLOADING == state)
+                        {
+                            can_remove = false;
+                        }
+                    }
+
+                    const auto textures_list{ resource_components.getComponentsByType<std::pair<size_t, std::pair<std::string, Texture>>>() };
+                    for (auto& e : textures_list)
+                    {
+                        auto& staged_texture{ e->getPurpose() };
+                        Texture& texture{ staged_texture.second.second };
+                        const auto filename{ staged_texture.second.first };
+
+                        const auto state{ texture.getState() };
+                        if (Texture::State::BLOBLOADING == state || Texture::State::RENDERERLOADING == state)
+                        {
+                            can_remove = false;
+                        }
+                    }
+				}
+
+                if (can_remove)
+                {
+                    unregister_from_queues(entity_ptr);
+                    e.second.m_rendered = false;
+
+                    one_treated = true;
+                    e.second.m_rendering_state_current_ttl = EntityRendering::m_rendering_state_ttl_max;
+                }
             }
         }
 
@@ -1839,7 +1878,7 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
             buildViewgroup(shadowmap_viewgroup_json, m_renderingQueueSystemSlot, m_resourceSystemSlot);
 
             auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(m_renderingQueueSystemSlot)) };
-            //renderingQueueSystemInstance->setViewGroupMainView("shadowmap", "shadowmap_camera_Entity");
+            renderingQueueSystemInstance->setViewGroupMainView("shadowmap", "shadowmap_camera_Entity");
 
 
 		}
