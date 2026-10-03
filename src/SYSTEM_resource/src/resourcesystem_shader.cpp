@@ -328,10 +328,12 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 
 					ResourceStateControler::getInstance()->update(p_shaderInfos, Shader::State::BLOBLOADED);
 
+					_MAGE_DEBUG(m_localLoggerRunner, "updating m_shadersCache, " + filename);
 					m_shadersCache_mutex.lock();
 					m_shadersCache.at(resourceUID).state = ShaderCacheEntry::State::BLOBLOADED;
 					m_shadersCache_mutex.unlock();
-
+					_MAGE_DEBUG(m_localLoggerRunner, "m_shadersCache updated," + filename);
+					_MAGE_DEBUG(m_localLoggerRunner, "shader load task terminated... ");
 				}
 				catch (const std::exception& e)
 				{
@@ -376,6 +378,7 @@ void ResourceSystem::handleShader(const std::string& p_filename, Shader& p_shade
 			}
 
 			ResourceStateControler::getInstance()->update(p_shaderInfos, Shader::State::BLOBLOADED);
+			//p_shaderInfos.setState(Shader::State::BLOBLOADED);
 		}
 
 		m_shadersCache_mutex.unlock();

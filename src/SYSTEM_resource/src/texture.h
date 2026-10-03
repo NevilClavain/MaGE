@@ -38,7 +38,6 @@ namespace mage
 {
     //fwd decl
     //class ResourceSystem;
-    //class D3D11System;
     class ResourceStateControler;
 
     namespace rendering
@@ -182,11 +181,7 @@ namespace mage
         void compute_resource_uid();
         
         //friend class mage::ResourceSystem;
-        //friend class mage::D3D11System;
-        //friend class D3D11SystemImpl;
         friend class mage::ResourceStateControler;
-
-        //friend struct mage::rendering::Queue;
     };
 
     template<typename T>

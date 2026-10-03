@@ -491,6 +491,8 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 
 
 				ResourceStateControler::getInstance()->update(p_mesheInfos, TriangleMeshe::State::BLOBLOADED);
+
+				_MAGE_DEBUG(m_localLoggerRunner, "meshe load task terminated... ");
 			}
 			catch (const std::exception& e)
 			{

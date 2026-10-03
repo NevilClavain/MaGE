@@ -39,7 +39,6 @@ namespace mage
 {
     //fwd decl
     //class ResourceSystem;
-    //class D3D11System;
     class ResourceStateControler;
 
     static constexpr int            vertexShader{ 0 };
@@ -168,7 +167,6 @@ namespace mage
         void compute_content_hash();
 
         //friend class mage::ResourceSystem;
-        //friend class mage::D3D11System;
         friend class mage::ResourceStateControler;
     };
 }

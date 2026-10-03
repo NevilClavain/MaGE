@@ -100,12 +100,13 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 					
 					ResourceStateControler::getInstance()->update(p_textureInfos, Texture::State::BLOBLOADED);
 
-
+					_MAGE_DEBUG(m_localLoggerRunner, "updating m_texturesBlobCache, " + filename);
 					m_texturesBlobCache_mutex.lock();
 					m_texturesBlobCache.at(resourceUID).state = TextureCacheEntry::State::BLOBLOADED;
 					m_texturesBlobCache_mutex.unlock();
+					_MAGE_DEBUG(m_localLoggerRunner, "m_texturesBlobCache updated," + filename);
 
-
+					_MAGE_DEBUG(m_localLoggerRunner, "texture load task terminated... ");
 				}
 				catch (const std::exception& e)
 				{
@@ -137,6 +138,8 @@ void ResourceSystem::handleTexture(const std::string& p_filename, Texture& p_tex
 		{
 			p_textureInfos.setFileContent(m_texturesBlobCache.at(resourceUID).texture_content.getData(), m_texturesBlobCache.at(resourceUID).texture_content.getDataSize());
 			ResourceStateControler::getInstance()->update(p_textureInfos, Texture::State::BLOBLOADED);
+			//p_textureInfos.setState(Texture::State::BLOBLOADED);
+
 		}
 
 		m_texturesBlobCache_mutex.unlock();
