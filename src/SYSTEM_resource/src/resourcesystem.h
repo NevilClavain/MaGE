@@ -163,7 +163,7 @@ namespace mage
 
         std::mutex                                                                      m_jsonparser_mutex;
 
-        static constexpr unsigned int                                                   nbRunners{ 1 };
+        static constexpr unsigned int                                                   nbRunners{ 10 };
 
         std::vector<std::unique_ptr<mage::core::Runner>>                                m_runner;
         int                                                                             m_runnerIndex{ 0 };

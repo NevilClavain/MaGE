@@ -548,7 +548,7 @@ void StreamerSystem::run()
                         const auto filename{ e->getPurpose().first };
 
                         const auto state{ shader.getState() };
-                        if (Shader::State::BLOBLOADING == state || Shader::State::RENDERERLOADING == state)
+                        if (Shader::State::BLOBLOADING == state || Shader::State::BLOBLOADED == state || Shader::State::RENDERERLOADING == state)
                         {
                             can_remove = false;
                         }
@@ -562,7 +562,7 @@ void StreamerSystem::run()
                         const auto filename{ staged_texture.second.first };
 
                         const auto state{ texture.getState() };
-                        if (Texture::State::BLOBLOADING == state || Texture::State::RENDERERLOADING == state)
+                        if (Texture::State::BLOBLOADING == state || Texture::State::BLOBLOADED == state || Texture::State::RENDERERLOADING == state)
                         {
                             can_remove = false;
                         }

@@ -817,7 +817,9 @@ void D3D11System::handleShaderCreation(Shader& p_shaderInfos, int p_shaderType)
 		else
 		{
 			_MAGE_DEBUG(d3dimpl->logger(), "Successful creation of shader " + p_shaderInfos.getSourceID() + " in D3D11 ");
+			_MAGE_DEBUG(d3dimpl->logger(), "Try to update shader state " + p_shaderInfos.getSourceID());
 			ResourceStateControler::getInstance()->update(p_shaderInfos, Shader::State::RENDERERLOADED);
+			_MAGE_DEBUG(d3dimpl->logger(), "Successful shader state update " + p_shaderInfos.getSourceID());
 		}
 	}
 	catch (const std::exception& e)
@@ -942,7 +944,10 @@ void D3D11System::handleTrianglemesheCreation(TriangleMeshe& p_tm)
 		else
 		{
 			_MAGE_DEBUG(d3dimpl->logger(), "Successful creation of trianglemeshe " + p_tm.getSourceID() + " in D3D11 ");
+
+			_MAGE_DEBUG(d3dimpl->logger(), "Try to update trianglemeshe state " + p_tm.getSourceID());
 			ResourceStateControler::getInstance()->update(p_tm, TriangleMeshe::State::RENDERERLOADED);
+			_MAGE_DEBUG(d3dimpl->logger(), "Successful trianglemeshe state update " + p_tm.getSourceID());
 		}
 	}
 	catch (const std::exception& e)
@@ -997,7 +1002,10 @@ void D3D11System::handleTextureCreation(Texture& p_texture)
 		else
 		{
 			_MAGE_DEBUG(d3dimpl->logger(), "Successful creation of texture " + p_texture.getSourceID() + " in D3D11 ");
+
+			_MAGE_DEBUG(d3dimpl->logger(), "Try to update texture state " + p_texture.getSourceID());
 			ResourceStateControler::getInstance()->update(p_texture, Texture::State::RENDERERLOADED);
+			_MAGE_DEBUG(d3dimpl->logger(), "Successful texture state update " + p_texture.getSourceID());
 		}
 	}
 	catch (const std::exception& e)
