@@ -108,8 +108,13 @@ namespace mage
             m_width = p_other.m_width;
             m_height = p_other.m_height;
             m_format = p_other.m_format;
+
+			m_file_content_mutex.lock();
             m_file_content = p_other.m_file_content;
             m_file_content_size = p_other.m_file_content_size;
+			m_file_content_mutex.unlock();
+
+
             m_content_access_mode = p_other.m_content_access_mode;
 
             m_state_mutex.lock();
@@ -156,6 +161,7 @@ namespace mage
         Source                              m_source            { Source::CONTENT_FROM_FILE };
         std::string                         m_source_id;        
 
+        mutable std::mutex	                m_file_content_mutex;
         unsigned char*                      m_file_content{ nullptr }; // ptr to core::Buffer data in resource system textures cache
         size_t                              m_file_content_size{ 0 };
 
