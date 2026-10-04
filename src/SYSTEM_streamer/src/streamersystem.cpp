@@ -1791,8 +1791,8 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
         build_scene_channel(true, { 0, 0, 0, 255 }, true, "ambient_lit", parent_2, "AmbientLitChannelScene_Entity", rendering::TARGET_0);        
         build_scene_channel(true, { 0, 0, 0, 255 }, true, "emissive_lit", parent_2, "EmissiveLitChannelScene_Entity", rendering::TARGET_1);
 
-        if(p_blueprint.shadows_enabled)
-        //if (0)
+        //if(p_blueprint.shadows_enabled)
+        if (0)
         {
             const auto parent_combiner_for_shadows( build_combiner(Combiners::COMBINER_MODULATE_2_RGB, "_forshadows", parent_2, rendering::TARGET_2, p_w_width, p_w_height, p_characteristics_v_width, p_characteristics_v_height) );
             
@@ -1878,9 +1878,9 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
             buildViewgroup(shadowmap_viewgroup_json, m_renderingQueueSystemSlot, m_resourceSystemSlot);
 
             auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(m_renderingQueueSystemSlot)) };
-            renderingQueueSystemInstance->setViewGroupMainView("shadowmap", "shadowmap_camera_Entity");
+            //renderingQueueSystemInstance->setViewGroupMainView("shadowmap", "shadowmap_camera_Entity");
 
-
+            m_shadows_rendered = true;
 		}
         else
         { 
@@ -1895,17 +1895,20 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
 
 void StreamerSystem::updateLightDirection(const mage::core::maths::Real3Vector& p_light_vector)
 {
-    auto light_cartesian{ p_light_vector };
-    light_cartesian.normalize();
-    light_cartesian.scale(500);
+    if(m_shadows_rendered)
+    {
+        auto light_cartesian{ p_light_vector };
+        light_cartesian.normalize();
+        light_cartesian.scale(500);
 
-    auto& lookat_world_aspect{ m_shadowmap_lookatJoint_Entity->aspectAccess(core::worldAspect::id) };
+        auto& lookat_world_aspect{ m_shadowmap_lookatJoint_Entity->aspectAccess(core::worldAspect::id) };
 
-    core::maths::Real3Vector& lookat_localpos{ lookat_world_aspect.getComponent<core::maths::Real3Vector>("lookat_localpos")->getPurpose() };
-    
-    lookat_localpos[0] = -light_cartesian[0] + m_lightdirection_base_position[0];
-    lookat_localpos[1] = -light_cartesian[1] + m_lightdirection_base_position[1];
-    lookat_localpos[2] = -light_cartesian[2] + m_lightdirection_base_position[2];
+        core::maths::Real3Vector& lookat_localpos{ lookat_world_aspect.getComponent<core::maths::Real3Vector>("lookat_localpos")->getPurpose() };
+
+        lookat_localpos[0] = -light_cartesian[0] + m_lightdirection_base_position[0];
+        lookat_localpos[1] = -light_cartesian[1] + m_lightdirection_base_position[1];
+        lookat_localpos[2] = -light_cartesian[2] + m_lightdirection_base_position[2];
+	}
 }
 
 void StreamerSystem::setLightdirectionBasePosition(const mage::core::maths::Real3Vector& p_light_vector)

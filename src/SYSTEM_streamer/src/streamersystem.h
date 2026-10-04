@@ -1079,6 +1079,9 @@ namespace mage
 
         mage::core::maths::Real3Vector                                                          m_lightdirection_base_position;
 
+
+        bool                                                                                    m_shadows_rendered{ false };
+
         
         void register_scene_entity(mage::core::Entity* p_entity);
 
