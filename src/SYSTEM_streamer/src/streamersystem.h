@@ -1013,8 +1013,9 @@ namespace mage
                             const std::function<bool(StreamerSystem::XTreeEntity&, const core::maths::Matrix&)> p_is_inside_func);
 
         template<typename SceneXTreeNode, typename XTreeType>
-        void check_XTree(std::unordered_map<std::string, StreamerSystem::XTreeEntity>& p_xtree_entities, 
-                            const json::ViewGroup& p_viewgroup, 
+        void check_XTree(const std::string& p_viewgroup_name,
+                            const std::unordered_map<std::string, StreamerSystem::XTreeEntity>& p_xtree_entities,
+                            const json::ViewGroup& p_viewgroup,
                             const std::function<XTreeType* (const StreamerSystem::XTreeEntity&)>& p_get_node_func);
 
 
@@ -1048,9 +1049,23 @@ namespace mage
 
         std::unordered_map<std::string, EntityRendering>                                        m_entity_renderings;        // entities rendering infos (channels, etc...)
 
-        std::unordered_map<std::string, RendergraphPartData>                                    m_rendergraphpart_data;
+		std::unordered_map<std::string, RendergraphPartData>                                    m_rendergraphpart_data;     // indexed by viewgroup id : "view" of each xtrees + entities to monitor + viewgroup infos (including viewgroup related queues
 
-        std::unordered_set<mage::core::Entity*>                                                 m_found_entities_to_render;   // entities actually rendered
+
+
+
+        //std::unordered_set<mage::core::Entity*>                                                 m_found_entities_to_render;   // entities actually rendered
+
+        // for each viewgroup (id)
+        // list of Entities to render regarding viewgroup camera current pos
+        std::unordered_map<std::string, 
+			std::unordered_set<mage::core::Entity*>>                                            m_found_entities_to_render;   // entities actually rendered foreach viewgroup (id) regarding viewgroup camera current pos
+			                    
+
+
+
+
+
         /////////////////////////////////
       
         Configuration                                                                           m_configuration;
@@ -1205,7 +1220,8 @@ namespace mage
 
 
     template<typename SceneXTreeNode, typename XTreeType>
-    void StreamerSystem::check_XTree(std::unordered_map<std::string, StreamerSystem::XTreeEntity>& p_xtree_entities, 
+    void StreamerSystem::check_XTree(const std::string& p_viewgroup_name, 
+                                        const std::unordered_map<std::string, StreamerSystem::XTreeEntity>& p_xtree_entities, 
                                             const json::ViewGroup& p_viewgroup, 
                                             const std::function<XTreeType* (const StreamerSystem::XTreeEntity&)>& p_get_node_func)
     {
@@ -1216,11 +1232,11 @@ namespace mage
 
         const std::string main_camera_id{ current_views.first };
 
-        if (main_camera_id != "" && /*main_camera_id != "shadowmap_camera_Entity" && */  p_xtree_entities.count(main_camera_id))
+        if (main_camera_id != "" && p_xtree_entities.count(main_camera_id))
         {
             XTreeEntity camera_xe{ p_xtree_entities.at(main_camera_id) };
-
-            std::unordered_set<mage::core::Entity*> found_entities; // search entities in camera's neighbourood
+            // XTree node where camera is actualy locat
+            XTreeType* node_containing_camera = p_get_node_func(camera_xe); // get xe.quadtree or xe.octree regarding XTreeType used :)
 
             const std::function<void(std::unordered_set<mage::core::Entity*>&, XTreeType*, int)> search_near_entities
             {
@@ -1255,8 +1271,8 @@ namespace mage
                 }
             };
 
-            // XTree node where camera is actualy locat
-            XTreeType* node_containing_camera = p_get_node_func(camera_xe); // get xe.quadtree or xe.octree regarding XTreeType used :)
+
+            std::unordered_set<mage::core::Entity*> found_entities; // search entities in camera's neighbourood
 
             if (node_containing_camera)
             {
@@ -1271,42 +1287,47 @@ namespace mage
                     }
                 }
 
+                // TO BE CONTINUED
 
 
                 // new entities discovered, to render
                 for (mage::core::Entity* entity : found_entities)
                 {
-                    if (!m_found_entities_to_render.count(entity))
-                    {
-                        // just discovered -> ask for rendering
-                        if (!m_entity_renderings.at(entity->getId()).m_rendered)
-                        {
-                            _MAGE_DEBUG(m_localLogger, "Now discovered = " + entity->getId() + " -> START_rendering");
+                    m_found_entities_to_render[p_viewgroup.name].insert(entity);
 
-                            m_entity_renderings.at(entity->getId()).m_request_rendering = true;
-                        }
+                    // just discovered -> ask for rendering
+                    if (!m_entity_renderings.at(entity->getId()).m_rendered)
+                    {
+                        _MAGE_DEBUG(m_localLogger, "Now discovered = " + entity->getId() + " -> START_rendering");
+                        m_entity_renderings.at(entity->getId()).m_request_rendering = true;
                     }
                 }
 
-                // entities not in neigbourood no more, to remove from rendering...
-                for (mage::core::Entity* rendered_entity : m_found_entities_to_render)
+                if (m_found_entities_to_render.count(p_viewgroup.name))
                 {
-                    if (!found_entities.count(rendered_entity))
+                    std::vector<mage::core::Entity*> to_remove;
+
+                    for (mage::core::Entity* rendered_entity : m_found_entities_to_render.at(p_viewgroup.name))
                     {
-                        // not found no more -> ask to stop rendering
-
-                        if (m_entity_renderings.at(rendered_entity->getId()).m_rendered)
+                        if (!found_entities.count(rendered_entity))
                         {
-                            _MAGE_DEBUG(m_localLogger, "Not found no more in neigbourood: " + rendered_entity->getId() + " -> STOP_rendering");
+                            // not found no more -> ask to stop rendering
+                            if (m_entity_renderings.at(rendered_entity->getId()).m_rendered)
+                            {
+                                _MAGE_DEBUG(m_localLogger, "Not found no more in neigbourood: " + rendered_entity->getId() + " -> STOP_rendering");
 
-                            m_entity_renderings.at(rendered_entity->getId()).m_request_rendering = false;
+                                m_entity_renderings.at(rendered_entity->getId()).m_request_rendering = false;
+                            }
+
+                            // and remove from m_found_entities_to_render
+                            to_remove.push_back(rendered_entity);
                         }
                     }
+                    for (mage::core::Entity* entity : to_remove)
+                    {
+                        m_found_entities_to_render.at(p_viewgroup.name).erase(entity);
+                    }
                 }
-
-                // update...
-                m_found_entities_to_render = found_entities;
-
             }
         }
     };

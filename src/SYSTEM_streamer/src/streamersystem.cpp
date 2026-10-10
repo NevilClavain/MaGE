@@ -474,7 +474,7 @@ void StreamerSystem::run()
         //
         for (auto& rgpd : m_rendergraphpart_data)
         {
-            auto& rgpd_data = rgpd.second;
+            RendergraphPartData& rgpd_data = rgpd.second;
 
             if (XtreeType::QUADTREE == m_configuration.xtree_type)
             {
@@ -486,7 +486,7 @@ void StreamerSystem::run()
                     }
                 };
 
-                check_XTree<SceneQuadTreeNode, core::QuadTreeNode<SceneQuadTreeNode>>(rgpd_data.entities_to_monitor, rgpd_data.viewgroup, get_quadtree_node_func);
+                check_XTree<SceneQuadTreeNode, core::QuadTreeNode<SceneQuadTreeNode>>(rgpd.first, rgpd_data.entities_to_monitor, rgpd_data.viewgroup, get_quadtree_node_func);
             }
             else // XtreeType::OCTREE
             {
@@ -498,7 +498,7 @@ void StreamerSystem::run()
                     }
                 };
 
-                check_XTree<SceneOctreeNode, core::OctreeNode<SceneOctreeNode>>(rgpd_data.entities_to_monitor, rgpd_data.viewgroup, get_octree_node_func);
+                check_XTree<SceneOctreeNode, core::OctreeNode<SceneOctreeNode>>(rgpd.first, rgpd_data.entities_to_monitor, rgpd_data.viewgroup, get_octree_node_func);
             }
         }
     }
@@ -1791,8 +1791,8 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
         build_scene_channel(true, { 0, 0, 0, 255 }, true, "ambient_lit", parent_2, "AmbientLitChannelScene_Entity", rendering::TARGET_0);        
         build_scene_channel(true, { 0, 0, 0, 255 }, true, "emissive_lit", parent_2, "EmissiveLitChannelScene_Entity", rendering::TARGET_1);
 
-        //if(p_blueprint.shadows_enabled)
-        if (0)
+        if(p_blueprint.shadows_enabled)
+        //if (0)
         {
             const auto parent_combiner_for_shadows( build_combiner(Combiners::COMBINER_MODULATE_2_RGB, "_forshadows", parent_2, rendering::TARGET_2, p_w_width, p_w_height, p_characteristics_v_width, p_characteristics_v_height) );
             
@@ -1878,7 +1878,7 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
             buildViewgroup(shadowmap_viewgroup_json, m_renderingQueueSystemSlot, m_resourceSystemSlot);
 
             auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(m_renderingQueueSystemSlot)) };
-            //renderingQueueSystemInstance->setViewGroupMainView("shadowmap", "shadowmap_camera_Entity");
+            renderingQueueSystemInstance->setViewGroupMainView("shadowmap", "shadowmap_camera_Entity");
 
             m_shadows_rendered = true;
 		}
