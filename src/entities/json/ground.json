@@ -36,6 +36,27 @@
           },
 
           {
+            "rendering_channel_type": "shadows_map",
+
+            "rs_list": [
+              {
+                "operation": "SETTEXTUREFILTERTYPE",
+                "argument": "linear_uvwrap"
+              }
+            ],
+
+            "textures_files_list": [
+              {
+                "stage": 0,
+                "filename": "grass08.jpg"
+              }
+            ],
+
+            "vshader": "scene_recursive_texture_vs",
+            "pshader": "scene_recursive_texture_ps"
+          },
+
+          {
             "rendering_channel_type": "ambient_lit",
 
             "vshader": "scene_flatcolor_vs",

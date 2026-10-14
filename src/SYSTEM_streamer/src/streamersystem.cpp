@@ -1362,7 +1362,7 @@ void StreamerSystem::register_to_queues(const json::Channels& p_channels, mage::
     const std::unordered_map<std::string, helpers::ChannelConfig>& default_channel_configs_list{ renderingHelper->getPassConfigsList() };
 
     for (const auto& config : p_channels.configs)
-    {            
+    {  
         for (const auto& e : default_channel_configs_list)
         {
             if (m_scene_entities_rg_parts.at(p_entity->getId()).count(e.first) > 0 && e.second.rendering_channel_type == config.rendering_channel_type)
@@ -1802,8 +1802,8 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
             const auto parent_3 = build_scene_channel(true, { 255, 255, 255, 255 }, true, "shadows", parent_combiner_for_shadows, "ShadowsChannelScene_Entity", rendering::TARGET_1);
 
             //TEMP 
-            //helpers::plugTargetTexture(m_entitygraph, parent_3, "ShadowMapTarget_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 2048, 2048)));
-            helpers::plugTargetTexture(m_entitygraph, parent_3, "ShadowMapTarget_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_RGB, 2048, 2048)));
+            //helpers::plugTargetTexture(m_entitygraph, parent_3, "ShadowMapTarget_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 4096, 4096)));
+            helpers::plugTargetTexture(m_entitygraph, parent_3, "ShadowMapTarget_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_RGB, 4096, 4096)));
 
 
             
@@ -1819,6 +1819,12 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
 
             mage::helpers::plugRenderingQueue(m_entitygraph, shadowMapChannelRenderingQueue, "ShadowMapTarget_Entity", "ShadowMapChannelScene_Entity");
             
+
+            // register passe default configs
+            const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
+            renderingHelper->createDefaultChannelConfig("ShadowMapChannelScene_Entity", "shadows_map");
+
+
 
 
             if("" == m_appWindowsEntityName)
