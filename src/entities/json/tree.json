@@ -37,6 +37,27 @@
           },
 
           {
+            "rendering_channel_type": "shadows_map",
+
+            "textures_files_list": [
+              {
+                "stage": 0,
+                "filename": "tree2_tex.bmp"
+              }
+            ],
+
+            "vshader": "scene_texture1stage_keycolor_vs",
+            "pshader": "scene_texture1stage_keycolor_ps",
+
+            "rs_list": [
+              {
+                "operation": "SETCULLING",
+                "argument": "none"
+              }
+            ]
+          },
+
+          {
             "rendering_channel_type": "ambient_lit",
 
             "textures_files_list": [
@@ -124,6 +145,16 @@
         "pixel_shaders_params": [
           {
             "rendering_channel_type": "diffuse",
+            "shaders_params": [
+              {
+                "datacloud_name": "mage.rendering.texture_keycolor_ps.key_color",
+                "param_name": "key_color"
+              }
+            ]
+          },
+
+          {
+            "rendering_channel_type": "shadows_map",
             "shaders_params": [
               {
                 "datacloud_name": "mage.rendering.texture_keycolor_ps.key_color",
