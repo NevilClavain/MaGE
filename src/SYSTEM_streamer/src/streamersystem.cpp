@@ -469,6 +469,8 @@ void StreamerSystem::run()
 
     if (m_xtree_check_enabled)
     {
+        auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(m_renderingQueueSystemSlot)) };
+
         /////////////////////////////////////////////////////////
         // XTree check
         //
@@ -487,6 +489,22 @@ void StreamerSystem::run()
                 };
 
                 check_XTree<SceneQuadTreeNode, core::QuadTreeNode<SceneQuadTreeNode>>(rgpd.first, rgpd_data.entities_to_monitor, rgpd_data.viewgroup, get_quadtree_node_func);
+
+				//////////////////////////////////////////////////////////////////////////////
+				////// feed current quadtree leaves for this viewgroup
+
+                const auto current_views{ renderingQueueSystemInstance->getViewGroupCurrentViews(rgpd_data.viewgroup.name) };
+                const std::string main_camera_id{ current_views.first };
+
+                if (main_camera_id != "" && rgpd_data.entities_to_monitor.count(main_camera_id))
+                {
+                    XTreeEntity camera_xe{ rgpd_data.entities_to_monitor.at(main_camera_id) };
+
+                    core::QuadTreeNode<SceneQuadTreeNode>* node_containing_camera{ camera_xe.quadtree_node };
+					m_current_quadtree_leaves[rgpd.first] = node_containing_camera;
+                }
+
+                //////////////////////////////////////////////////////////////////////////////
             }
             else // XtreeType::OCTREE
             {
@@ -499,6 +517,23 @@ void StreamerSystem::run()
                 };
 
                 check_XTree<SceneOctreeNode, core::OctreeNode<SceneOctreeNode>>(rgpd.first, rgpd_data.entities_to_monitor, rgpd_data.viewgroup, get_octree_node_func);
+
+                //////////////////////////////////////////////////////////////////////////////
+                ////// feed current octree leaves for this viewgroup
+
+                const auto current_views{ renderingQueueSystemInstance->getViewGroupCurrentViews(rgpd_data.viewgroup.name) };
+                const std::string main_camera_id{ current_views.first };
+
+                if (main_camera_id != "" && rgpd_data.entities_to_monitor.count(main_camera_id))
+                {
+                    XTreeEntity camera_xe{ rgpd_data.entities_to_monitor.at(main_camera_id) };
+
+                    core::OctreeNode<SceneOctreeNode>* node_containing_camera{ camera_xe.octree_node };
+                    m_current_octree_leaves[rgpd.first] = node_containing_camera;
+                }
+
+                //////////////////////////////////////////////////////////////////////////////
+
             }
         }
     }

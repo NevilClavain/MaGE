@@ -1052,19 +1052,11 @@ namespace mage
 		std::unordered_map<std::string, RendergraphPartData>                                    m_rendergraphpart_data;     // indexed by viewgroup id : "view" of each xtrees + entities to monitor + viewgroup infos (including viewgroup related queues
 
 
-
-
-        //std::unordered_set<mage::core::Entity*>                                                 m_found_entities_to_render;   // entities actually rendered
-
         // for each viewgroup (id)
         // list of Entities to render regarding viewgroup camera current pos
         std::unordered_map<std::string, 
 			std::unordered_set<mage::core::Entity*>>                                            m_found_entities_to_render;   // entities actually rendered foreach viewgroup (id) regarding viewgroup camera current pos
 			                    
-
-
-
-
 
         /////////////////////////////////
       
@@ -1096,6 +1088,10 @@ namespace mage
 
 
         bool                                                                                    m_shadows_rendered{ false };
+
+
+		std::unordered_map<std::string, core::QuadTreeNode<SceneQuadTreeNode>*>                 m_current_quadtree_leaves; // indexed by viewgroup id
+        std::unordered_map<std::string, core::OctreeNode<SceneOctreeNode>*>                     m_current_octree_leaves; // indexed by viewgroup id
 
         
         void register_scene_entity(mage::core::Entity* p_entity);
@@ -1236,7 +1232,7 @@ namespace mage
         {
             XTreeEntity camera_xe{ p_xtree_entities.at(main_camera_id) };
             // XTree node where camera is actualy locat
-            XTreeType* node_containing_camera = p_get_node_func(camera_xe); // get xe.quadtree or xe.octree regarding XTreeType used :)
+            XTreeType* node_containing_camera{ p_get_node_func(camera_xe) }; // get xe.quadtree or xe.octree regarding XTreeType used :)
 
             const std::function<void(std::unordered_set<mage::core::Entity*>&, XTreeType*, int)> search_near_entities
             {
@@ -1286,9 +1282,6 @@ namespace mage
                         break;
                     }
                 }
-
-                // TO BE CONTINUED
-
 
                 // new entities discovered, to render
                 for (mage::core::Entity* entity : found_entities)
