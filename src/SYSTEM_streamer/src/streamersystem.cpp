@@ -505,6 +505,20 @@ void StreamerSystem::run()
                 }
 
                 //////////////////////////////////////////////////////////////////////////////
+
+                if (m_shadows_rendered)
+                {
+                    auto& lookat_world_aspect{ m_shadowmap_lookatJoint_Entity->aspectAccess(core::worldAspect::id) };
+
+                    core::maths::Real3Vector& lookat_targetpos{ lookat_world_aspect.getComponent<core::maths::Real3Vector>("lookat_targetpos")->getPurpose() };
+
+                    if (m_current_quadtree_leaves.count("openenv_main_graph"))
+                    {
+                        lookat_targetpos[0] = m_current_quadtree_leaves.at("openenv_main_graph")->getData().local_position[0];
+                        lookat_targetpos[2] = m_current_quadtree_leaves.at("openenv_main_graph")->getData().local_position[1];
+                    }
+                }
+
             }
             else // XtreeType::OCTREE
             {
