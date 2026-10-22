@@ -39,15 +39,8 @@
           {
             "rendering_channel_type": "shadows_map",
 
-            "textures_files_list": [
-              {
-                "stage": 0,
-                "filename": "tree2_tex.bmp"
-              }
-            ],
-
-            "vshader": "scene_texture1stage_keycolor_vs",
-            "pshader": "scene_texture1stage_keycolor_ps",
+            "vshader": "scene_zdepth_vs",
+            "pshader": "scene_zdepth_ps",
 
             "rs_list": [
               {
