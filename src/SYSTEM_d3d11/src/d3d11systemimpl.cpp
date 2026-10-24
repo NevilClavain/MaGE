@@ -138,6 +138,8 @@ void D3D11SystemImpl::dumpRenderingBuffer(const std::string& p_texture_id, const
 
 	HRESULT hr = S_OK;
 
+	ID3D11Texture2D* grayTexture = nullptr;
+
 	// Créer une texture temporaire en staging pour la copie CPU
 	D3D11_TEXTURE2D_DESC stagingDesc = textureData.desc;
 	stagingDesc.Usage = D3D11_USAGE_STAGING;
@@ -272,8 +274,6 @@ void D3D11SystemImpl::dumpRenderingBuffer(const std::string& p_texture_id, const
 		initData.pSysMem = rgba.data();
 		initData.SysMemPitch = desc2.Width * 4;
 
-		ID3D11Texture2D* grayTexture = nullptr;
-
 		hr = m_lpd3ddevice->CreateTexture2D(
 			&texDesc,
 			&initData,
@@ -297,4 +297,10 @@ void D3D11SystemImpl::dumpRenderingBuffer(const std::string& p_texture_id, const
 	// Nettoyer les ressources
 	m_lpd3ddevcontext->Unmap(stagingTexture, 0);
 	stagingTexture->Release();
+
+	if(grayTexture)
+	{
+		m_lpd3ddevcontext->Unmap(grayTexture, 0);
+		grayTexture->Release();
+	}
 }
