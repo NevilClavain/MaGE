@@ -1848,8 +1848,8 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
             build_scene_channel(true, { 0, 0, 0, 255 }, true, "directional_lit", parent_combiner_for_shadows, "DirectionalLitChannelScene_Entity", rendering::TARGET_0);
 
 			// TEMP : set { 0, 0, 0, 255 } later
-            const auto parent_3 = build_scene_channel(true, { 0, 0, 0, 255 }, true, "shadows", parent_combiner_for_shadows, "ShadowsChannelScene_Entity", rendering::TARGET_1);
-            //const auto parent_3 = build_scene_channel(true, { 255, 255, 255, 255 }, true, "shadows", parent_combiner_for_shadows, "ShadowsChannelScene_Entity", rendering::TARGET_1);
+            //const auto parent_3 = build_scene_channel(true, { 0, 0, 0, 255 }, true, "shadows", parent_combiner_for_shadows, "ShadowsChannelScene_Entity", rendering::TARGET_1);
+            const auto parent_3 = build_scene_channel(true, { 255, 255, 255, 255 }, true, "shadows", parent_combiner_for_shadows, "ShadowsChannelScene_Entity", rendering::TARGET_1);
 
             //TEMP 
             helpers::plugTargetTexture(m_entitygraph, parent_3, "ShadowMapTarget_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 4096, 4096)));
@@ -1861,8 +1861,7 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
             
             // TEMP
             shadowMapChannelRenderingQueue.setTargetClearColor({ 255, 255, 255, 255 });
-            //shadowMapChannelRenderingQueue.setTargetClearColor({ 255, 0, 255, 255 });
-            
+                        
             shadowMapChannelRenderingQueue.enableTargetClearing(true);
             shadowMapChannelRenderingQueue.enableTargetDepthClearing(true);
             shadowMapChannelRenderingQueue.setTargetStage(Texture::STAGE_0);
