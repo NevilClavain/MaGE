@@ -512,10 +512,10 @@ void StreamerSystem::run()
 
                     core::maths::Real3Vector& lookat_targetpos{ lookat_world_aspect.getComponent<core::maths::Real3Vector>("lookat_targetpos")->getPurpose() };
 
-                    if (m_current_quadtree_leaves.count("openenv_main_graph"))
+                    if (m_current_quadtree_leaves.count(m_viewgroup_name_for_shadows_rendering))
                     {
-                        lookat_targetpos[0] = m_current_quadtree_leaves.at("openenv_main_graph")->getData().local_position[0];
-                        lookat_targetpos[2] = m_current_quadtree_leaves.at("openenv_main_graph")->getData().local_position[1];
+                        lookat_targetpos[0] = m_current_quadtree_leaves.at(m_viewgroup_name_for_shadows_rendering)->getData().local_position[0];
+                        lookat_targetpos[2] = m_current_quadtree_leaves.at(m_viewgroup_name_for_shadows_rendering)->getData().local_position[1];
                     }
                 }
 
@@ -548,6 +548,19 @@ void StreamerSystem::run()
 
                 //////////////////////////////////////////////////////////////////////////////
 
+                if (m_shadows_rendered)
+                {
+                    auto& lookat_world_aspect{ m_shadowmap_lookatJoint_Entity->aspectAccess(core::worldAspect::id) };
+
+                    core::maths::Real3Vector& lookat_targetpos{ lookat_world_aspect.getComponent<core::maths::Real3Vector>("lookat_targetpos")->getPurpose() };
+
+                    if (m_current_octree_leaves.count(m_viewgroup_name_for_shadows_rendering))
+                    {
+                        lookat_targetpos[0] = m_current_octree_leaves.at(m_viewgroup_name_for_shadows_rendering)->getData().local_position[0];
+                        lookat_targetpos[1] = m_current_octree_leaves.at(m_viewgroup_name_for_shadows_rendering)->getData().local_position[1];
+                        lookat_targetpos[2] = m_current_octree_leaves.at(m_viewgroup_name_for_shadows_rendering)->getData().local_position[2];
+                    }
+                }
             }
         }
     }
@@ -1935,12 +1948,16 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
             auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(m_renderingQueueSystemSlot)) };
             renderingQueueSystemInstance->setViewGroupMainView("shadowmap", "shadowmap_camera_Entity");
 
+			// set shadowmap main cam as secondary for main viewgroup
+            renderingQueueSystemInstance->setViewGroupSecondaryView(m_viewgroup_name_for_shadows_rendering, "shadowmap_camera_Entity");
+
+
             m_shadows_rendered = true;
 		}
         else
         { 
             build_scene_channel(true, { 0, 0, 0, 255 }, true, "directional_lit", parent_2, "DirectionalLitChannelScene_Entity", rendering::TARGET_2);
-        }        
+        }
     }
 
     // plug diffuse channel
@@ -1979,4 +1996,9 @@ void StreamerSystem::setRenderingQueueSystemSlot(int p_renderingQueueSystemSlot)
 void StreamerSystem::setResourceSystemSlot(int p_resourceSystemSlot)
 {
     m_resourceSystemSlot = p_resourceSystemSlot;
+}
+
+void StreamerSystem::setViewgroupNameForShadowsRendering(const std::string& p_viewgroup_name)
+{
+	m_viewgroup_name_for_shadows_rendering = p_viewgroup_name;
 }

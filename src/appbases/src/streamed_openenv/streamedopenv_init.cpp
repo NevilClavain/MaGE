@@ -222,6 +222,8 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					streamerSystemInstance->setRenderingQueueSystemSlot(Base::renderingQueueSystemSlot);
 					streamerSystemInstance->setResourceSystemSlot(Base::resourceSystemSlot);
 
+					streamerSystemInstance->setViewgroupNameForShadowsRendering("openenv_main_graph");
+
 					streamerSystemInstance->enableSystem(true);
 
 					StreamerSystem::Configuration ss_config;
@@ -242,14 +244,6 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					streamerSystemInstance->parseCombiner(StreamerSystem::Combiners::COMBINER_CUMULATE_3_RGB, combiner_cumul_3_RGB.getData());
 					streamerSystemInstance->parseCombiner(StreamerSystem::Combiners::COMBINER_FOG, combiner_for_fog.getData());
 
-					mage::RendergraphBlueprint bp{ StreamerSystem::diffuseRenderGraphBluePrint() };
-				
-					streamerSystemInstance->buildRendergraphPart(bp, "screenRendering_Filter_DirectForward_Quad_Entity", w_width, w_height, characteristics_v_width, characteristics_v_height);
-
-					mage::core::FileContent<char> openEnvSceneFileContent("./module_streamed_anims_config/open_env_scene.json");
-					openEnvSceneFileContent.load();
-
-					streamerSystemInstance->buildScenegraphPart(openEnvSceneFileContent.getData(), "app_Entity", m_perpective_projection);
 
 					const char viewgroup_json[] = R"json(
 					{
@@ -265,16 +259,25 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 						]
 					}
 					)json";
-					
+
 					streamerSystemInstance->buildViewgroup(viewgroup_json, Base::renderingQueueSystemSlot, Base::resourceSystemSlot);
+
+
+					mage::RendergraphBlueprint bp{ StreamerSystem::diffuseRenderGraphBluePrint() };
+				
+					streamerSystemInstance->buildRendergraphPart(bp, "screenRendering_Filter_DirectForward_Quad_Entity", w_width, w_height, characteristics_v_width, characteristics_v_height);
+
+					mage::core::FileContent<char> openEnvSceneFileContent("./module_streamed_anims_config/open_env_scene.json");
+					openEnvSceneFileContent.load();
+
+					streamerSystemInstance->buildScenegraphPart(openEnvSceneFileContent.getData(), "app_Entity", m_perpective_projection);
+
+
+
+					
 
 					auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(Base::renderingQueueSystemSlot)) };
 					renderingQueueSystemInstance->setViewGroupMainView("openenv_main_graph", "camera_Entity");
-
-
-
-					auto resourceSystemInstance{ dynamic_cast<mage::ResourceSystem*>(SystemEngine::getInstance()->getSystem(resourceSystemSlot)) };
-					//resourceSystemInstance->request();
 				}
 				break;
 			}

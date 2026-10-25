@@ -990,6 +990,8 @@ namespace mage
         void setRenderingQueueSystemSlot(int p_renderingQueueSystemSlot);
         void setResourceSystemSlot(int p_resourceSystemSlot);
 
+		void setViewgroupNameForShadowsRendering(const std::string& p_viewgroup_name);
+
 
     private:
 
@@ -1093,6 +1095,8 @@ namespace mage
 		std::unordered_map<std::string, core::QuadTreeNode<SceneQuadTreeNode>*>                 m_current_quadtree_leaves; // indexed by viewgroup id
         std::unordered_map<std::string, core::OctreeNode<SceneOctreeNode>*>                     m_current_octree_leaves; // indexed by viewgroup id
 
+
+		std::string																			    m_viewgroup_name_for_shadows_rendering{ "" };
         
         void register_scene_entity(mage::core::Entity* p_entity);
 
