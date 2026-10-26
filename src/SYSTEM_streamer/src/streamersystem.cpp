@@ -1484,6 +1484,21 @@ void StreamerSystem::register_to_queues(const json::Channels& p_channels, mage::
                     default_channel_config.rendering_order = config.rendering_order;
                 }
 
+                // shadows rendering if applicable
+
+                if (m_shadows_rendered)
+                {
+                    if (e.second.queue_entity_id == "ShadowsChannelScene_Entity")
+                    {                       
+                        auto& shadowMapNode{ m_entitygraph.node("ShadowMapTarget_Entity") };
+                        const auto shadowmap_texture_entity{ shadowMapNode.data() };
+                        auto& sm_resource_aspect{ shadowmap_texture_entity->aspectAccess(core::resourcesAspect::id) };
+                        std::pair<size_t, Texture>* sm_texture_ptr{ &sm_resource_aspect.getComponent<std::pair<size_t, Texture>>("standalone_rendering_target_texture")->getPurpose() };
+
+                        default_channel_config.textures_ptr_list = { sm_texture_ptr };
+                    }
+                }
+
                 default_channel_config.queue_entity_id = e.second.queue_entity_id;
                 channelsRendering.configs[e.second.queue_entity_id] = default_channel_config;
 
