@@ -226,7 +226,9 @@ void ModuleImpl::onEndKeyPress(long p_key)
 		//d3d11SystemInstance->dumpRenderingBuffer("CONTENT_FROM_RENDERINGQUEUE_combiner_cumul_3_RGB__0_queue", "CONTENT_FROM_RENDERINGQUEUE_combiner_cumul_3_RGB__0_queue.jpg");
 		//d3d11SystemInstance->dumpRenderingBuffer("CONTENT_FROM_RENDERINGQUEUE_DirectionalLitChannelScene_Entity", "CONTENT_FROM_RENDERINGQUEUE_DirectionalLitChannelScene_Entity.jpg");
 
-		d3d11SystemInstance->dumpRenderingBuffer("CONTENT_FROM_RENDERINGQUEUE_ShadowMapChannelScene_Entity", "CONTENT_FROM_RENDERINGQUEUE_ShadowMapChannelScene_Entity.jpg");
+		//d3d11SystemInstance->dumpRenderingBuffer("CONTENT_FROM_RENDERINGQUEUE_ShadowMapChannelScene_Entity", "CONTENT_FROM_RENDERINGQUEUE_ShadowMapChannelScene_Entity.jpg");
+
+		d3d11SystemInstance->dumpRenderingBuffer("CONTENT_FROM_RENDERINGQUEUE_ShadowsChannelScene_Entity", "CONTENT_FROM_RENDERINGQUEUE_ShadowsChannelScene_Entity.jpg");
 
 		::MessageBox(0, "Render target dump done", "Mage", MB_OK | MB_ICONINFORMATION);
 	}
