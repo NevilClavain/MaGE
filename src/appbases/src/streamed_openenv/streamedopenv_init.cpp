@@ -189,11 +189,6 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					dataCloud->registerData<maths::Real4Vector>("mage.rendering.scene_skydome_ps.atmo_scattering_flag_5");
 					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.scene_skydome_ps.atmo_scattering_flag_5", maths::Real4Vector(0.0, 0.0, 0.0, 1));
 
-					dataCloud->registerData<maths::Real4Vector>("mage.rendering.shadow_bias");
-					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.shadow_bias", maths::Real4Vector(0.005, 0, 0, 0));
-
-					dataCloud->registerData<maths::Real4Vector>("mage.rendering.shadowmap_resol");
-					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.shadowmap_resol", maths::Real4Vector(2048, 0, 0, 0));
 
 
 
@@ -217,7 +212,8 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 
 					streamerSystemInstance->setAppWindowsEntityName(m_appWindowsEntityName);
-					streamerSystemInstance->setOrthogonalProjection(m_perpective_projection);
+					//streamerSystemInstance->setOrthogonalProjection(m_perpective_projection);
+					streamerSystemInstance->setOrthogonalProjection(m_orthogonal_projection);
 					streamerSystemInstance->setLightdirectionBasePosition(core::maths::Real3Vector(0.0, skydomeInnerRadius + groundLevel, 0.0));
 					streamerSystemInstance->setRenderingQueueSystemSlot(Base::renderingQueueSystemSlot);
 					streamerSystemInstance->setResourceSystemSlot(Base::resourceSystemSlot);

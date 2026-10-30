@@ -43,6 +43,13 @@
           },
 
           {
+            "rendering_channel_type": "shadows",
+
+            "vshader": "scene_shadowsmask_vs",
+            "pshader": "scene_shadowsmask_ps"
+          },
+
+          {
             "rendering_channel_type": "ambient_lit",
 
             "vshader": "scene_flatcolor_vs",
@@ -98,6 +105,20 @@
               {
                 "datacloud_name": "mage.scene.light0.dir",
                 "param_name": "light_dir"
+              }
+            ]
+          },
+
+          {
+            "rendering_channel_type": "shadows",
+            "shaders_params": [
+              {
+                "datacloud_name": "mage.rendering.shadow_bias",
+                "param_name": "shadow_bias"
+              },
+              {
+                "datacloud_name": "mage.rendering.shadowmap_resol",
+                "param_name": "shadowmap_resol"
               }
             ]
           }

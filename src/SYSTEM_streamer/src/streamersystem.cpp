@@ -1967,6 +1967,16 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
             renderingQueueSystemInstance->setViewGroupSecondaryView(m_viewgroup_name_for_shadows_rendering, "shadowmap_camera_Entity");
 
 
+			// shaders params for shadows rendering
+            const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
+
+            dataCloud->registerData<maths::Real4Vector>("mage.rendering.shadow_bias");
+            dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.shadow_bias", maths::Real4Vector(0.005, 0, 0, 0));
+
+            dataCloud->registerData<maths::Real4Vector>("mage.rendering.shadowmap_resol");
+            dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.shadowmap_resol", maths::Real4Vector(4096, 0, 0, 0));
+
+
             m_shadows_rendered = true;
 		}
         else
