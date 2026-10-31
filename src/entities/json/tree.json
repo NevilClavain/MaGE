@@ -49,6 +49,12 @@
               }
             ]
           },
+          {
+            "rendering_channel_type": "shadows",
+
+            "vshader": "scene_shadowsmask_keycolor_vs",
+            "pshader": "scene_shadowsmask_keycolor_ps"
+          },
 
           {
             "rendering_channel_type": "ambient_lit",

@@ -33,6 +33,12 @@
             "pshader": "scene_zdepth_ps"
           },
           {
+            "rendering_channel_type": "shadows",
+
+            "vshader": "scene_shadowsmask_vs",
+            "pshader": "scene_shadowsmask_ps"
+          },
+          {
             "rendering_channel_type": "ambient_lit",
 
             "vshader": "scene_flatcolor_vs",

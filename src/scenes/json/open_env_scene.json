@@ -393,7 +393,8 @@
         "DirectionalLitChannelScene_Entity",
         "EmissiveLitChannelScene_Entity",
         "ZdepthChannelScene_Entity",
-        "ShadowMapChannelScene_Entity"
+        "ShadowMapChannelScene_Entity",
+        "ShadowsChannelScene_Entity"
       ],
 
       "instances_factory": {
@@ -509,7 +510,8 @@
         "EmissiveLitChannelScene_Entity",
         "DirectionalLitChannelScene_Entity",
         "ZdepthChannelScene_Entity",
-        "ShadowMapChannelScene_Entity"
+        "ShadowMapChannelScene_Entity",
+        "ShadowsChannelScene_Entity"
       ],
 
       "instances_factory": {
@@ -593,7 +595,8 @@
         "EmissiveLitChannelScene_Entity",
         "DirectionalLitChannelScene_Entity",
         "ZdepthChannelScene_Entity",
-        "ShadowMapChannelScene_Entity"
+        "ShadowMapChannelScene_Entity",
+        "ShadowsChannelScene_Entity"
       ],
 
       "instances_factory": {
@@ -794,7 +797,8 @@
         "EmissiveLitChannelScene_Entity",
         "DirectionalLitChannelScene_Entity",
         "ZdepthChannelScene_Entity",
-        "ShadowMapChannelScene_Entity"
+        "ShadowMapChannelScene_Entity",
+        "ShadowsChannelScene_Entity"
       ],
 
       "instances_factory": {
