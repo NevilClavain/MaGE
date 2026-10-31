@@ -97,6 +97,19 @@
                 "param_name": "light_dir"
               }
             ]
+          },
+          {
+            "rendering_channel_type": "shadows",
+            "shaders_params": [
+              {
+                "datacloud_name": "mage.rendering.shadow_bias",
+                "param_name": "shadow_bias"
+              },
+              {
+                "datacloud_name": "mage.rendering.shadowmap_resol",
+                "param_name": "shadowmap_resol"
+              }
+            ]
           }
         ]
       }
