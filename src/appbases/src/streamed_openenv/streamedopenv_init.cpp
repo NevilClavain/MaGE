@@ -212,7 +212,6 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 
 					streamerSystemInstance->setAppWindowsEntityName(m_appWindowsEntityName);
-					//streamerSystemInstance->setOrthogonalProjection(m_perpective_projection);
 					streamerSystemInstance->setOrthogonalProjection(m_orthogonal_projection);
 					streamerSystemInstance->setLightdirectionBasePosition(core::maths::Real3Vector(0.0, skydomeInnerRadius + groundLevel, 0.0));
 					streamerSystemInstance->setRenderingQueueSystemSlot(Base::renderingQueueSystemSlot);
@@ -259,7 +258,10 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					streamerSystemInstance->buildViewgroup(viewgroup_json, Base::renderingQueueSystemSlot, Base::resourceSystemSlot);
 
 
-					mage::RendergraphBlueprint bp{ StreamerSystem::diffuseRenderGraphBluePrint() };
+					mage::RendergraphBlueprint bp;
+					bp.lit_enabled = true;
+					bp.fog_enabled = true;
+					bp.shadows_enabled = true;
 				
 					streamerSystemInstance->buildRendergraphPart(bp, "screenRendering_Filter_DirectForward_Quad_Entity", w_width, w_height, characteristics_v_width, characteristics_v_height);
 

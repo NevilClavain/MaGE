@@ -1746,13 +1746,6 @@ void StreamerSystem::parseCombiner(StreamerSystem::Combiners p_combiner, const s
     m_combiners[p_combiner] = combiner;
 }
 
-RendergraphBlueprint StreamerSystem::diffuseRenderGraphBluePrint()
-{
-    RendergraphBlueprint bp;
-    
-    bp.mininmal_channel_type = "diffuse";
-    return bp;
-}
 
 std::string StreamerSystem::build_combiner(StreamerSystem::Combiners p_combiner, const std::string& p_namesuffix, const std::string& p_current_parent, int p_target_stage, int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height)
 { 
@@ -1869,19 +1862,15 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
         build_scene_channel(true, { 0, 0, 0, 255 }, true, "emissive_lit", parent_2, "EmissiveLitChannelScene_Entity", rendering::TARGET_1);
 
         if(p_blueprint.shadows_enabled)
-        //if (0)
         {
             const auto parent_combiner_for_shadows( build_combiner(Combiners::COMBINER_MODULATE_2_RGB, "_forshadows", parent_2, rendering::TARGET_2, p_w_width, p_w_height, p_characteristics_v_width, p_characteristics_v_height) );
             
             build_scene_channel(true, { 0, 0, 0, 255 }, true, "directional_lit", parent_combiner_for_shadows, "DirectionalLitChannelScene_Entity", rendering::TARGET_0);
+            const auto parent_3 = build_scene_channel(true, { 0, 0, 0, 255 }, true, "shadows", parent_combiner_for_shadows, "ShadowsChannelScene_Entity", rendering::TARGET_1);
 
-			// TEMP : set { 0, 0, 0, 255 } later
-            //const auto parent_3 = build_scene_channel(true, { 0, 0, 0, 255 }, true, "shadows", parent_combiner_for_shadows, "ShadowsChannelScene_Entity", rendering::TARGET_1);
-            const auto parent_3 = build_scene_channel(true, { 255, 255, 255, 255 }, true, "shadows", parent_combiner_for_shadows, "ShadowsChannelScene_Entity", rendering::TARGET_1);
 
-            //TEMP 
+
             helpers::plugTargetTexture(m_entitygraph, parent_3, "ShadowMapTarget_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 4096, 4096)));
-            //helpers::plugTargetTexture(m_entitygraph, parent_3, "ShadowMapTarget_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_RGB, 4096, 4096)));
 
 
             
@@ -1900,8 +1889,6 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
             // register passe default configs
             const auto renderingHelper{ mage::helpers::RenderingChannels::getInstance() };
             renderingHelper->createDefaultChannelConfig("ShadowMapChannelScene_Entity", "shadows_map");
-
-
 
 
             if("" == m_appWindowsEntityName)

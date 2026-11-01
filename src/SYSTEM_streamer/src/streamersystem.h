@@ -512,14 +512,9 @@ namespace mage
     // NEW !
     struct RendergraphBlueprint
     {
-    private:
-        std::string         mininmal_channel_type;
-
-		bool                lit_enabled{ true };
-        bool                fog_enabled{ true };
-        bool                shadows_enabled{ true };
-
-        friend class StreamerSystem;
+		bool                lit_enabled{ false };
+        bool                fog_enabled{ false };
+        bool                shadows_enabled{ false };
     };
 
 
@@ -952,8 +947,6 @@ namespace mage
 		void parseCombiner(Combiners p_combiner, const std::string& p_jsonsource);
         
 
-
-        static RendergraphBlueprint diffuseRenderGraphBluePrint();
 
 		void buildRendergraphPart(const RendergraphBlueprint& p_blueprint, const std::string& p_parentEntityId, int p_w_width, int p_w_height, float p_characteristics_v_width, float p_characteristics_v_height);
 
