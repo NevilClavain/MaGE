@@ -52,6 +52,14 @@
           {
             "rendering_channel_type": "shadows",
 
+            "textures_files_list": [
+              {
+                "stage": 1,
+                "filename": "tree2_tex.bmp"
+              }
+            ],
+
+
             "vshader": "scene_shadowsmask_keycolor_vs",
             "pshader": "scene_shadowsmask_keycolor_ps"
           },
