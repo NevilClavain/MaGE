@@ -508,13 +508,21 @@ namespace mage
     } // json
 
 
+    struct ShadowsMapConfig
+    {
+        mage::core::maths::Real3Vector  view_direction_base_position;
+        double                          view_distance;
+        mage::core::maths::Matrix       shadowmap_projectionmatrix;
+		int                             shadowmap_resol;
+    };
 
-    // NEW !
     struct RendergraphBlueprint
     {
 		bool                lit_enabled{ false };
         bool                fog_enabled{ false };
         bool                shadows_enabled{ false };
+
+		ShadowsMapConfig    shadowsmap_config;
     };
 
 
@@ -1079,7 +1087,7 @@ namespace mage
         core::Entity*                                                                           m_shadowmap_lookatJoint_Entity { nullptr };
 
 
-        mage::core::maths::Real3Vector                                                          m_lightdirection_base_position;
+        mage::core::maths::Real3Vector                                                          m_shadowsmap_view_direction_base_position;
 
 
         bool                                                                                    m_shadows_rendered{ false };

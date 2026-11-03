@@ -191,6 +191,12 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 
 
+					dataCloud->registerData<maths::Real4Vector>("mage.rendering.shadow_bias");
+					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.shadow_bias", maths::Real4Vector(0.005, 0, 0, 0));
+
+					dataCloud->registerData<maths::Real4Vector>("mage.rendering.shadowmap_resol");
+					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.shadowmap_resol", maths::Real4Vector(4096, 0, 0, 0));
+
 
 					mage::core::FileContent<char> combiner_mod_2_RGB("./module_streamed_anims_config/combiner_mod_2_RGB.json");
 					combiner_mod_2_RGB.load();
@@ -262,6 +268,14 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					bp.lit_enabled = true;
 					bp.fog_enabled = true;
 					bp.shadows_enabled = true;
+
+					bp.shadowsmap_config.view_direction_base_position = core::maths::Real3Vector(0.0, skydomeInnerRadius + groundLevel, 0.0);
+					bp.shadowsmap_config.view_distance = 500.0;
+					bp.shadowsmap_config.shadowmap_projectionmatrix = m_orthogonal_projection;
+					bp.shadowsmap_config.shadowmap_resol = 4096;
+
+					
+						
 				
 					streamerSystemInstance->buildRendergraphPart(bp, "screenRendering_Filter_DirectForward_Quad_Entity", w_width, w_height, characteristics_v_width, characteristics_v_height);
 

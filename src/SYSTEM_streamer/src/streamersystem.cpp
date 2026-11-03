@@ -1866,7 +1866,8 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
             const auto parent_combiner_for_shadows( build_combiner(Combiners::COMBINER_MODULATE_2_RGB, "_forshadows", parent_2, rendering::TARGET_2, p_w_width, p_w_height, p_characteristics_v_width, p_characteristics_v_height) );
             
             build_scene_channel(true, { 0, 0, 0, 255 }, true, "directional_lit", parent_combiner_for_shadows, "DirectionalLitChannelScene_Entity", rendering::TARGET_0);
-            const auto parent_3 = build_scene_channel(true, { 0, 0, 0, 255 }, true, "shadows", parent_combiner_for_shadows, "ShadowsChannelScene_Entity", rendering::TARGET_1);
+
+            const auto parent_3 = build_scene_channel(true, { 255, 255, 255, 255 }, true, "shadows", parent_combiner_for_shadows, "ShadowsChannelScene_Entity", rendering::TARGET_1);
 
 
 
@@ -1876,7 +1877,7 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
             
             rendering::Queue shadowMapChannelRenderingQueue("ShadowMapChannelScene_Entity");
             
-            // TEMP
+
             shadowMapChannelRenderingQueue.setTargetClearColor({ 255, 255, 255, 255 });
                         
             shadowMapChannelRenderingQueue.enableTargetClearing(true);
@@ -1912,7 +1913,7 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
             lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_localpos", localpos);
 
 
-            lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_targetpos", m_lightdirection_base_position);
+            lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_targetpos", m_shadowsmap_view_direction_base_position);
 
 
             lookat_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
@@ -1953,17 +1954,6 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
 			// set shadowmap main cam as secondary for main viewgroup
             renderingQueueSystemInstance->setViewGroupSecondaryView(m_viewgroup_name_for_shadows_rendering, "shadowmap_camera_Entity");
 
-
-			// shaders params for shadows rendering
-            const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
-
-            dataCloud->registerData<maths::Real4Vector>("mage.rendering.shadow_bias");
-            dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.shadow_bias", maths::Real4Vector(0.005, 0, 0, 0));
-
-            dataCloud->registerData<maths::Real4Vector>("mage.rendering.shadowmap_resol");
-            dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.shadowmap_resol", maths::Real4Vector(4096, 0, 0, 0));
-
-
             m_shadows_rendered = true;
 		}
         else
@@ -1989,15 +1979,15 @@ void StreamerSystem::updateLightDirection(const mage::core::maths::Real3Vector& 
 
         core::maths::Real3Vector& lookat_localpos{ lookat_world_aspect.getComponent<core::maths::Real3Vector>("lookat_localpos")->getPurpose() };
 
-        lookat_localpos[0] = -light_cartesian[0] + m_lightdirection_base_position[0];
-        lookat_localpos[1] = -light_cartesian[1] + m_lightdirection_base_position[1];
-        lookat_localpos[2] = -light_cartesian[2] + m_lightdirection_base_position[2];
+        lookat_localpos[0] = -light_cartesian[0] + m_shadowsmap_view_direction_base_position[0];
+        lookat_localpos[1] = -light_cartesian[1] + m_shadowsmap_view_direction_base_position[1];
+        lookat_localpos[2] = -light_cartesian[2] + m_shadowsmap_view_direction_base_position[2];
 	}
 }
 
 void StreamerSystem::setLightdirectionBasePosition(const mage::core::maths::Real3Vector& p_light_vector)
 {
-	m_lightdirection_base_position = p_light_vector;
+    m_shadowsmap_view_direction_base_position = p_light_vector;
 }
 
 void StreamerSystem::setRenderingQueueSystemSlot(int p_renderingQueueSystemSlot)
