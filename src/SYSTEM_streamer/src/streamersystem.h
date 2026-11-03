@@ -982,11 +982,11 @@ namespace mage
         bool isEnabled() const;
 
         void setAppWindowsEntityName(const std::string& p_entityName);
-        void setOrthogonalProjection(const mage::core::maths::Matrix& p_matrix);
+
 
         void updateLightDirection(const mage::core::maths::Real3Vector& p_light_vector);
 
-		void setLightdirectionBasePosition(const mage::core::maths::Real3Vector& p_light_vector);
+
 
         void setRenderingQueueSystemSlot(int p_renderingQueueSystemSlot);
         void setResourceSystemSlot(int p_resourceSystemSlot);
@@ -1082,12 +1082,16 @@ namespace mage
 
         std::string                                                                             m_appWindowsEntityName;
 
+        // for shadows rendering
         mage::core::maths::Matrix                                                               m_orthogonal_projection;
+        mage::core::maths::Real3Vector                                                          m_view_direction_base_position;
+        double                                                                                  m_view_distance;
+
 
         core::Entity*                                                                           m_shadowmap_lookatJoint_Entity { nullptr };
 
 
-        mage::core::maths::Real3Vector                                                          m_shadowsmap_view_direction_base_position;
+        
 
 
         bool                                                                                    m_shadows_rendered{ false };

@@ -104,12 +104,6 @@ void StreamerSystem::setAppWindowsEntityName(const std::string& p_entityName)
     m_appWindowsEntityName = p_entityName;
 }
 
-void StreamerSystem::setOrthogonalProjection(const mage::core::maths::Matrix& p_matrix)
-{
-	m_orthogonal_projection = p_matrix;
-}
-
-
 void StreamerSystem::configure(const Configuration& p_config)
 {
     if (!m_configured)
@@ -1863,6 +1857,11 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
 
         if(p_blueprint.shadows_enabled)
         {
+            m_orthogonal_projection = p_blueprint.shadowsmap_config.shadowmap_projectionmatrix;
+			m_view_direction_base_position = p_blueprint.shadowsmap_config.view_direction_base_position;
+			m_view_distance = p_blueprint.shadowsmap_config.view_distance;
+
+
             const auto parent_combiner_for_shadows( build_combiner(Combiners::COMBINER_MODULATE_2_RGB, "_forshadows", parent_2, rendering::TARGET_2, p_w_width, p_w_height, p_characteristics_v_width, p_characteristics_v_height) );
             
             build_scene_channel(true, { 0, 0, 0, 255 }, true, "directional_lit", parent_combiner_for_shadows, "DirectionalLitChannelScene_Entity", rendering::TARGET_0);
@@ -1871,7 +1870,7 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
 
 
 
-            helpers::plugTargetTexture(m_entitygraph, parent_3, "ShadowMapTarget_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 4096, 4096)));
+            helpers::plugTargetTexture(m_entitygraph, parent_3, "ShadowMapTarget_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, p_blueprint.shadowsmap_config.shadowmap_resol, p_blueprint.shadowsmap_config.shadowmap_resol)));
 
 
             
@@ -1913,7 +1912,7 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
             lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_localpos", localpos);
 
 
-            lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_targetpos", m_shadowsmap_view_direction_base_position);
+            lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_targetpos", m_view_direction_base_position);
 
 
             lookat_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
@@ -1973,22 +1972,18 @@ void StreamerSystem::updateLightDirection(const mage::core::maths::Real3Vector& 
     {
         auto light_cartesian{ p_light_vector };
         light_cartesian.normalize();
-        light_cartesian.scale(500);
+        light_cartesian.scale(m_view_distance);
 
         auto& lookat_world_aspect{ m_shadowmap_lookatJoint_Entity->aspectAccess(core::worldAspect::id) };
 
         core::maths::Real3Vector& lookat_localpos{ lookat_world_aspect.getComponent<core::maths::Real3Vector>("lookat_localpos")->getPurpose() };
 
-        lookat_localpos[0] = -light_cartesian[0] + m_shadowsmap_view_direction_base_position[0];
-        lookat_localpos[1] = -light_cartesian[1] + m_shadowsmap_view_direction_base_position[1];
-        lookat_localpos[2] = -light_cartesian[2] + m_shadowsmap_view_direction_base_position[2];
+        lookat_localpos[0] = -light_cartesian[0] + m_view_direction_base_position[0];
+        lookat_localpos[1] = -light_cartesian[1] + m_view_direction_base_position[1];
+        lookat_localpos[2] = -light_cartesian[2] + m_view_direction_base_position[2];
 	}
 }
 
-void StreamerSystem::setLightdirectionBasePosition(const mage::core::maths::Real3Vector& p_light_vector)
-{
-    m_shadowsmap_view_direction_base_position = p_light_vector;
-}
 
 void StreamerSystem::setRenderingQueueSystemSlot(int p_renderingQueueSystemSlot)
 {

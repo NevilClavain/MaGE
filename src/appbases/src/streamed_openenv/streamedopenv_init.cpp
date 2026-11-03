@@ -218,8 +218,6 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 
 					streamerSystemInstance->setAppWindowsEntityName(m_appWindowsEntityName);
-					streamerSystemInstance->setOrthogonalProjection(m_orthogonal_projection);
-					streamerSystemInstance->setLightdirectionBasePosition(core::maths::Real3Vector(0.0, skydomeInnerRadius + groundLevel, 0.0));
 					streamerSystemInstance->setRenderingQueueSystemSlot(Base::renderingQueueSystemSlot);
 					streamerSystemInstance->setResourceSystemSlot(Base::resourceSystemSlot);
 
@@ -272,7 +270,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					bp.shadowsmap_config.view_direction_base_position = core::maths::Real3Vector(0.0, skydomeInnerRadius + groundLevel, 0.0);
 					bp.shadowsmap_config.view_distance = 500.0;
 					bp.shadowsmap_config.shadowmap_projectionmatrix = m_orthogonal_projection;
-					bp.shadowsmap_config.shadowmap_resol = 4096;
+					bp.shadowsmap_config.shadowmap_resol = 8192;
 
 					
 						
