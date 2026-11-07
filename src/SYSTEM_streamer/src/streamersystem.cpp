@@ -508,8 +508,19 @@ void StreamerSystem::run()
 
                     if (m_current_quadtree_leaves.count(m_viewgroup_name_for_shadows_rendering))
                     {
-                        lookat_targetpos[0] = m_current_quadtree_leaves.at(m_viewgroup_name_for_shadows_rendering)->getData().local_position[0];
-                        lookat_targetpos[2] = m_current_quadtree_leaves.at(m_viewgroup_name_for_shadows_rendering)->getData().local_position[1];
+                        core::QuadTreeNode<SceneQuadTreeNode>* quadtree_leaf{ m_current_quadtree_leaves.at(m_viewgroup_name_for_shadows_rendering) };
+
+                        for(int i = 0; i < m_view_target_parent_level; i++)
+                        {
+                            core::QuadTreeNode<SceneQuadTreeNode>* parent = quadtree_leaf->getParent();
+                            if(parent != nullptr)
+                            {
+                                quadtree_leaf = parent;
+							}
+						}
+                        
+                        lookat_targetpos[0] = quadtree_leaf->getData().local_position[0];
+                        lookat_targetpos[2] = quadtree_leaf->getData().local_position[1];
                     }
                 }
 
@@ -550,9 +561,21 @@ void StreamerSystem::run()
 
                     if (m_current_octree_leaves.count(m_viewgroup_name_for_shadows_rendering))
                     {
-                        lookat_targetpos[0] = m_current_octree_leaves.at(m_viewgroup_name_for_shadows_rendering)->getData().local_position[0];
-                        lookat_targetpos[1] = m_current_octree_leaves.at(m_viewgroup_name_for_shadows_rendering)->getData().local_position[1];
-                        lookat_targetpos[2] = m_current_octree_leaves.at(m_viewgroup_name_for_shadows_rendering)->getData().local_position[2];
+                        core::OctreeNode<SceneOctreeNode>* octree_leaf{ m_current_octree_leaves.at(m_viewgroup_name_for_shadows_rendering) };
+
+                        for (int i = 0; i < m_view_target_parent_level; i++)
+                        {
+                            core::OctreeNode<SceneOctreeNode>* parent = octree_leaf->getParent();
+                            if (parent != nullptr)
+                            {
+                                octree_leaf = parent;
+                            }
+
+                        }
+                        
+                        lookat_targetpos[0] = octree_leaf->getData().local_position[0];
+                        lookat_targetpos[1] = octree_leaf->getData().local_position[1];
+                        lookat_targetpos[2] = octree_leaf->getData().local_position[2];                        
                     }
                 }
             }
@@ -1957,7 +1980,7 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
 			// set shadowmap main cam as secondary for main viewgroup
             renderingQueueSystemInstance->setViewGroupSecondaryView(m_viewgroup_name_for_shadows_rendering, "shadowmap_camera_Entity");
 
-
+            m_view_target_parent_level = p_blueprint.shadowsmap_config.view_target_parent_level;
 
             m_shadows_rendered = true;
 		}

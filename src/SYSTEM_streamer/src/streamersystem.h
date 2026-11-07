@@ -511,7 +511,8 @@ namespace mage
     struct ShadowsMapConfig
     {
         mage::core::maths::Real3Vector  view_direction_base_position;
-        double                          view_distance;        
+        double                          view_distance;
+        int							    view_target_parent_level;
 		int                             output_resol;
         double						    size;
     };
@@ -1104,6 +1105,8 @@ namespace mage
 
         float                                                                                   m_characteristics_v_width;
         float                                                                                   m_characteristics_v_height;
+
+		int																					    m_view_target_parent_level{ 0 };
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////

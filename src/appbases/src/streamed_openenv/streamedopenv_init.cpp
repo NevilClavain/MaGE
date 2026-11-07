@@ -270,7 +270,8 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					bp.shadowsmap_config.view_direction_base_position = core::maths::Real3Vector(0.0, skydomeInnerRadius + groundLevel, 0.0);
 					bp.shadowsmap_config.view_distance = 500.0;					
 					bp.shadowsmap_config.output_resol = 8196;
-					bp.shadowsmap_config.size = 400.0;
+					bp.shadowsmap_config.size = 800.0;
+					bp.shadowsmap_config.view_target_parent_level = 1;
 
 					
 						
