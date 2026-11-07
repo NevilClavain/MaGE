@@ -55,7 +55,7 @@ float computeShadows(float p_current_depth, float3 p_projected_pos_secondaryview
     
     if (shadowmap_texcoords.y < 0.0)
     {
-        return 0.5;
+        return 1.0;
     }
     
     
@@ -66,7 +66,7 @@ float computeShadows(float p_current_depth, float3 p_projected_pos_secondaryview
             
     if (p_current_depth + bias > shadowmap_depth)
     {
-        shadow += 0.5;
+        shadow = 1.0;
     }
         
     float mask_val = saturate(shadow);
