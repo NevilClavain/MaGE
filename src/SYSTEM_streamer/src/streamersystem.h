@@ -511,9 +511,9 @@ namespace mage
     struct ShadowsMapConfig
     {
         mage::core::maths::Real3Vector  view_direction_base_position;
-        double                          view_distance;
-        mage::core::maths::Matrix       shadowmap_projectionmatrix;
-		int                             shadowmap_resol;
+        double                          view_distance;        
+		int                             output_resol;
+        double						    size;
     };
 
     struct RendergraphBlueprint
@@ -993,6 +993,7 @@ namespace mage
 
 		void setViewgroupNameForShadowsRendering(const std::string& p_viewgroup_name);
 
+		void setCharacteristicsViewSize(float p_characteristics_v_width, float p_characteristics_v_height);
 
     private:
 
@@ -1082,6 +1083,8 @@ namespace mage
 
         std::string                                                                             m_appWindowsEntityName;
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // for shadows rendering
         mage::core::maths::Matrix                                                               m_orthogonal_projection;
         mage::core::maths::Real3Vector                                                          m_view_direction_base_position;
@@ -1089,10 +1092,6 @@ namespace mage
 
 
         core::Entity*                                                                           m_shadowmap_lookatJoint_Entity { nullptr };
-
-
-        
-
 
         bool                                                                                    m_shadows_rendered{ false };
 
@@ -1102,6 +1101,13 @@ namespace mage
 
 
 		std::string																			    m_viewgroup_name_for_shadows_rendering{ "" };
+
+        float                                                                                   m_characteristics_v_width;
+        float                                                                                   m_characteristics_v_height;
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         
         void register_scene_entity(mage::core::Entity* p_entity);
 

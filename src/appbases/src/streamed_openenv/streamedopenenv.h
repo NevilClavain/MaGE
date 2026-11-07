@@ -53,8 +53,6 @@ namespace mage
        
 
         mage::core::maths::Matrix       m_perpective_projection;
-        mage::core::maths::Matrix       m_orthogonal_projection;
-
         void                            d3d11_system_events_openenv();
 
     };

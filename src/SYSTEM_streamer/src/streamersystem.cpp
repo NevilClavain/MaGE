@@ -1857,7 +1857,10 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
 
         if(p_blueprint.shadows_enabled)
         {
-            m_orthogonal_projection = p_blueprint.shadowsmap_config.shadowmap_projectionmatrix;
+            // compute orthogonal projection matrix for shadowmap camera
+            m_orthogonal_projection.orthogonal(m_characteristics_v_width * p_blueprint.shadowsmap_config.size, m_characteristics_v_height * p_blueprint.shadowsmap_config.size, 1.0, 100000.00000000000);
+
+
 			m_view_direction_base_position = p_blueprint.shadowsmap_config.view_direction_base_position;
 			m_view_distance = p_blueprint.shadowsmap_config.view_distance;
 
@@ -1870,7 +1873,8 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
 
 
 
-            helpers::plugTargetTexture(m_entitygraph, parent_3, "ShadowMapTarget_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, p_blueprint.shadowsmap_config.shadowmap_resol, p_blueprint.shadowsmap_config.shadowmap_resol)));
+            helpers::plugTargetTexture(m_entitygraph, parent_3, "ShadowMapTarget_Entity", std::make_pair(Texture::STAGE_0, Texture(Texture::Format::TEXTURE_FLOAT32, 
+                                        p_blueprint.shadowsmap_config.output_resol, p_blueprint.shadowsmap_config.output_resol)));
 
 
             
@@ -1953,6 +1957,8 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
 			// set shadowmap main cam as secondary for main viewgroup
             renderingQueueSystemInstance->setViewGroupSecondaryView(m_viewgroup_name_for_shadows_rendering, "shadowmap_camera_Entity");
 
+
+
             m_shadows_rendered = true;
 		}
         else
@@ -1998,4 +2004,10 @@ void StreamerSystem::setResourceSystemSlot(int p_resourceSystemSlot)
 void StreamerSystem::setViewgroupNameForShadowsRendering(const std::string& p_viewgroup_name)
 {
 	m_viewgroup_name_for_shadows_rendering = p_viewgroup_name;
+}
+
+void StreamerSystem::setCharacteristicsViewSize(float p_characteristics_v_width, float p_characteristics_v_height)
+{
+    m_characteristics_v_width = p_characteristics_v_width;
+    m_characteristics_v_height = p_characteristics_v_height;
 }

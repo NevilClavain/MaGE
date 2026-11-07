@@ -116,8 +116,6 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 
 					m_perpective_projection.perspective(characteristics_v_width, characteristics_v_height, 1.0, 100000.00000000000);
-					m_orthogonal_projection.orthogonal(characteristics_v_width * 400, characteristics_v_height * 400, 1.0, 100000.00000000000);
-
 
 
 					//////////////////////////////////////////
@@ -220,6 +218,8 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					streamerSystemInstance->setAppWindowsEntityName(m_appWindowsEntityName);
 					streamerSystemInstance->setRenderingQueueSystemSlot(Base::renderingQueueSystemSlot);
 					streamerSystemInstance->setResourceSystemSlot(Base::resourceSystemSlot);
+					streamerSystemInstance->setCharacteristicsViewSize(characteristics_v_width, characteristics_v_height);
+
 
 					streamerSystemInstance->setViewgroupNameForShadowsRendering("openenv_main_graph");
 
@@ -268,9 +268,9 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					bp.shadows_enabled = true;
 
 					bp.shadowsmap_config.view_direction_base_position = core::maths::Real3Vector(0.0, skydomeInnerRadius + groundLevel, 0.0);
-					bp.shadowsmap_config.view_distance = 500.0;
-					bp.shadowsmap_config.shadowmap_projectionmatrix = m_orthogonal_projection;
-					bp.shadowsmap_config.shadowmap_resol = 8196;
+					bp.shadowsmap_config.view_distance = 500.0;					
+					bp.shadowsmap_config.output_resol = 8196;
+					bp.shadowsmap_config.size = 400.0;
 
 					
 						
