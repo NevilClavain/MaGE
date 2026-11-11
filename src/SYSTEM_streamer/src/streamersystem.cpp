@@ -503,9 +503,7 @@ void StreamerSystem::run()
                 if (m_shadows_rendered)
                 {
                     auto& lookat_world_aspect{ m_shadowmap_lookatJoint_Entity->aspectAccess(core::worldAspect::id) };
-
-                    core::maths::Real3Vector& lookat_targetpos{ lookat_world_aspect.getComponent<core::maths::Real3Vector>("lookat_targetpos")->getPurpose() };
-
+ 
                     if (m_current_quadtree_leaves.count(m_viewgroup_name_for_shadows_rendering))
                     {
                         core::QuadTreeNode<SceneQuadTreeNode>* quadtree_leaf{ m_current_quadtree_leaves.at(m_viewgroup_name_for_shadows_rendering) };
@@ -518,9 +516,28 @@ void StreamerSystem::run()
                                 quadtree_leaf = parent;
 							}
 						}
-                        
+
+                        // update shadowmap lookat_localpos
+                        core::maths::Real3Vector& lookat_targetpos{ lookat_world_aspect.getComponent<core::maths::Real3Vector>("lookat_targetpos")->getPurpose() };                        
                         lookat_targetpos[0] = quadtree_leaf->getData().local_position[0];
                         lookat_targetpos[2] = quadtree_leaf->getData().local_position[1];
+
+
+                        // update shadowmap lookat_localpos
+                        auto& lookat_world_aspect{ m_shadowmap_lookatJoint_Entity->aspectAccess(core::worldAspect::id) };
+                        core::maths::Real3Vector& lookat_localpos{ lookat_world_aspect.getComponent<core::maths::Real3Vector>("lookat_localpos")->getPurpose() };
+
+                        auto light_locale{ m_light_vector };
+                        light_locale.normalize();
+                        light_locale.scale(m_view_distance);
+                        light_locale.negate();
+
+						core::maths::Real3Vector new_lookat_localpos{ lookat_targetpos[0] + light_locale[0], 
+                                                                        lookat_targetpos[1] + light_locale[1],
+                                                                        lookat_targetpos[2] + light_locale[2] };
+
+						lookat_localpos = new_lookat_localpos;
+
                     }
                 }
 
@@ -557,8 +574,6 @@ void StreamerSystem::run()
                 {
                     auto& lookat_world_aspect{ m_shadowmap_lookatJoint_Entity->aspectAccess(core::worldAspect::id) };
 
-                    core::maths::Real3Vector& lookat_targetpos{ lookat_world_aspect.getComponent<core::maths::Real3Vector>("lookat_targetpos")->getPurpose() };
-
                     if (m_current_octree_leaves.count(m_viewgroup_name_for_shadows_rendering))
                     {
                         core::OctreeNode<SceneOctreeNode>* octree_leaf{ m_current_octree_leaves.at(m_viewgroup_name_for_shadows_rendering) };
@@ -573,9 +588,16 @@ void StreamerSystem::run()
 
                         }
                         
+                        core::maths::Real3Vector& lookat_targetpos{ lookat_world_aspect.getComponent<core::maths::Real3Vector>("lookat_targetpos")->getPurpose() };
                         lookat_targetpos[0] = octree_leaf->getData().local_position[0];
                         lookat_targetpos[1] = octree_leaf->getData().local_position[1];
-                        lookat_targetpos[2] = octree_leaf->getData().local_position[2];                        
+                        lookat_targetpos[2] = octree_leaf->getData().local_position[2];     
+
+                        // update shadowmap lookat_localpos
+                        auto& lookat_world_aspect{ m_shadowmap_lookatJoint_Entity->aspectAccess(core::worldAspect::id) };
+                        core::maths::Real3Vector& lookat_localpos{ lookat_world_aspect.getComponent<core::maths::Real3Vector>("lookat_localpos")->getPurpose() };
+
+
                     }
                 }
             }
@@ -1995,21 +2017,26 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
 	build_scene_channel(true, { 0, 0, 0, 255 }, true, "diffuse", current_parent, "DiffuseChannelScene_Entity", rendering::TARGET_0);
 }
 
+
 void StreamerSystem::updateLightDirection(const mage::core::maths::Real3Vector& p_light_vector)
 {
     if(m_shadows_rendered)
     {
+        /*
         auto light_cartesian{ p_light_vector };
         light_cartesian.normalize();
         light_cartesian.scale(m_view_distance);
 
+        
         auto& lookat_world_aspect{ m_shadowmap_lookatJoint_Entity->aspectAccess(core::worldAspect::id) };
-
         core::maths::Real3Vector& lookat_localpos{ lookat_world_aspect.getComponent<core::maths::Real3Vector>("lookat_localpos")->getPurpose() };
-
+        
         lookat_localpos[0] = -light_cartesian[0] + m_view_direction_base_position[0];
         lookat_localpos[1] = -light_cartesian[1] + m_view_direction_base_position[1];
         lookat_localpos[2] = -light_cartesian[2] + m_view_direction_base_position[2];
+        */
+
+		m_light_vector = p_light_vector;
 	}
 }
 

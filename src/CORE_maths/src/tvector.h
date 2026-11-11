@@ -135,6 +135,14 @@ namespace mage
                     }
                 }
 
+                void negate(void)
+                {
+                    for (int i = 0; i < Size; i++)
+                    {
+                        m_vector[i] = -m_vector[i];
+                    }
+				}
+
                 static Vector<T, Size> lerp(const Vector<T, Size>& p_v1, const Vector<T, Size>& p_v2, float p_blend)
                 {
                     Vector<T, Size> out;

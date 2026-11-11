@@ -1087,6 +1087,9 @@ namespace mage
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // for shadows rendering
+
+        mage::core::maths::Real3Vector                                                          m_light_vector;
+
         mage::core::maths::Matrix                                                               m_orthogonal_projection;
         mage::core::maths::Real3Vector                                                          m_view_direction_base_position;
         double                                                                                  m_view_distance;

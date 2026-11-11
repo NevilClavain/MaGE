@@ -51,10 +51,9 @@ void ModuleImpl::run(void)
 
 		mage::core::maths::Real4Vector light_spherical { m_light_ray, m_light_theta, m_light_phi, 1.0 };
 		mage::core::maths::Real4Vector light_cartesian;
-
 		mage::core::maths::sphericaltoCartesian(light_spherical, light_cartesian);
-
 		dataCloud->updateDataValue<maths::Real4Vector>("mage.scene.light0.dir", light_cartesian);
+
 
 		auto streamerSystemInstance{ dynamic_cast<mage::StreamerSystem*>(SystemEngine::getInstance()->getSystem(streamerSystemSlot)) };
 
