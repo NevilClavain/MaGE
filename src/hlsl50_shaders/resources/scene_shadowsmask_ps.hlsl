@@ -53,7 +53,12 @@ float computeShadows(float p_current_depth, float3 p_projected_pos_secondaryview
     shadowmap_texcoords.x = (p_projected_pos_secondaryview.x + 1.0) / 2.0;
     shadowmap_texcoords.y = 1.0 - (p_projected_pos_secondaryview.y + 1.0) / 2.0;
     
-    if (shadowmap_texcoords.y < 0.0)
+    if (shadowmap_texcoords.y > 1.0 || shadowmap_texcoords.y < 0.0)
+    {
+        return 1.0;
+    }
+
+    if (shadowmap_texcoords.x > 1.0 || shadowmap_texcoords.x < 0.0)
     {
         return 1.0;
     }
