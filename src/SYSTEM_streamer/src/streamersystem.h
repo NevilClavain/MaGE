@@ -1091,7 +1091,7 @@ namespace mage
         mage::core::maths::Real3Vector                                                          m_light_vector;
 
         mage::core::maths::Matrix                                                               m_orthogonal_projection;
-        mage::core::maths::Real3Vector                                                          m_view_direction_base_position;
+        mage::core::maths::Real3Vector                                                          m_view_direction_base_position; // for quadtree mode only :(
         double                                                                                  m_view_distance;
 
 

@@ -520,6 +520,7 @@ void StreamerSystem::run()
                         // update shadowmap lookat_localpos
                         core::maths::Real3Vector& lookat_targetpos{ lookat_world_aspect.getComponent<core::maths::Real3Vector>("lookat_targetpos")->getPurpose() };                        
                         lookat_targetpos[0] = quadtree_leaf->getData().local_position[0];
+                        lookat_targetpos[1] = m_view_direction_base_position[1];
                         lookat_targetpos[2] = quadtree_leaf->getData().local_position[1];
 
 
@@ -537,7 +538,6 @@ void StreamerSystem::run()
                                                                         lookat_targetpos[2] + light_locale[2] };
 
 						lookat_localpos = new_lookat_localpos;
-
                     }
                 }
 
@@ -597,6 +597,16 @@ void StreamerSystem::run()
                         auto& lookat_world_aspect{ m_shadowmap_lookatJoint_Entity->aspectAccess(core::worldAspect::id) };
                         core::maths::Real3Vector& lookat_localpos{ lookat_world_aspect.getComponent<core::maths::Real3Vector>("lookat_localpos")->getPurpose() };
 
+                        auto light_locale{ m_light_vector };
+                        light_locale.normalize();
+                        light_locale.scale(m_view_distance);
+                        light_locale.negate();
+
+                        core::maths::Real3Vector new_lookat_localpos{ lookat_targetpos[0] + light_locale[0],
+                                                                        lookat_targetpos[1] + light_locale[1],
+                                                                        lookat_targetpos[2] + light_locale[2] };
+
+                        lookat_localpos = new_lookat_localpos;
 
                     }
                 }
@@ -1957,12 +1967,13 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
 
             lookat_world_aspect.addComponent<transform::WorldPosition>("lookat_output");
 
-			core::maths::Real3Vector localpos{ 0.0, 0.0, 0.0 };
-            lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_localpos", localpos);
+			//core::maths::Real3Vector localpos{ 0.0, 0.0, 0.0 };
+            //lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_localpos", localpos);
+            lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_localpos");
 
 
-            lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_targetpos", m_view_direction_base_position);
-
+            //lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_targetpos", m_view_direction_base_position);
+            lookat_world_aspect.addComponent<core::maths::Real3Vector>("lookat_targetpos");
 
             lookat_world_aspect.addComponent<transform::Animator>("animator", transform::Animator(
                 {
