@@ -481,8 +481,6 @@ void ModuleImpl::complete_install_shadows_renderer_objects()
 			{
 				{ "bufferRendering_Scene_ShadowsChannel_Queue_Entity",
 					{
-						{ std::make_pair("mage.rendering.shadow_bias", "shadow_bias") },
-						{ std::make_pair("mage.rendering.shadowmap_resol", "shadowmap_resol") }
 					}
 				}
 			}

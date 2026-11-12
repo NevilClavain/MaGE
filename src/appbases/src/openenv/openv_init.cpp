@@ -183,14 +183,6 @@ void OpenEnv::d3d11_system_events_openenv()
 					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.scene_skydome_ps.atmo_scattering_flag_5", maths::Real4Vector(0.0, 0.0, 0.0, 1));
 
 
-
-					dataCloud->registerData<maths::Real4Vector>("mage.rendering.shadow_bias");
-					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.shadow_bias", maths::Real4Vector(0.005, 0, 0, 0));
-
-					dataCloud->registerData<maths::Real4Vector>("mage.rendering.shadowmap_resol");
-					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.shadowmap_resol", maths::Real4Vector(2048, 0, 0, 0));
-
-
 					create_openenv_scenegraph(p_id);
 
 					create_openenv_rendergraph("screenRendering_Filter_DirectForward_Quad_Entity", w_width, w_height, characteristics_v_width, characteristics_v_height);
@@ -1146,8 +1138,6 @@ void OpenEnv::enable_shadows()
 				{
 					"bufferRendering_Scene_ShadowsChannel_Queue_Entity",
 					{
-						{ std::make_pair("mage.rendering.shadow_bias", "shadow_bias") },
-						{ std::make_pair("mage.rendering.shadowmap_resol", "shadowmap_resol") }
 					}
 				}
 			}
@@ -1182,8 +1172,6 @@ void OpenEnv::enable_shadows()
 			{
 				{ "bufferRendering_Scene_ShadowsChannel_Queue_Entity",
 					{
-						{ std::make_pair("mage.rendering.shadow_bias", "shadow_bias") },
-						{ std::make_pair("mage.rendering.shadowmap_resol", "shadowmap_resol") }
 					}
 				}
 			}
@@ -1221,8 +1209,6 @@ void OpenEnv::enable_shadows()
 			{
 				{ "bufferRendering_Scene_ShadowsChannel_Queue_Entity",
 					{
-						{ std::make_pair("mage.rendering.shadow_bias", "shadow_bias") },
-						{ std::make_pair("mage.rendering.shadowmap_resol", "shadowmap_resol") }
 					}
 				}
 			}
@@ -1266,8 +1252,6 @@ void OpenEnv::enable_shadows()
 			{
 				{ "bufferRendering_Scene_ShadowsChannel_Queue_Entity",
 					{
-						{ std::make_pair("mage.rendering.shadow_bias", "shadow_bias") },
-						{ std::make_pair("mage.rendering.shadowmap_resol", "shadowmap_resol") },
 						{ std::make_pair("mage.rendering.texture_keycolor_ps.key_color", "key_color") }
 					}
 				},
@@ -1288,7 +1272,7 @@ void OpenEnv::enable_shadows()
 	helpers::ShadowsRenderingParams shadowsRenderingParams =
 	{
 		m_orthogonal_projection,
-		dataCloud->readDataValue<maths::Real4Vector>("mage.rendering.shadowmap_resol")[0],
+		2048,
 
 		"bufferRendering_Scene_LitChannel_Queue_Entity",
 		"bufferRendering_Combiner_Accumulate_Quad_Entity",

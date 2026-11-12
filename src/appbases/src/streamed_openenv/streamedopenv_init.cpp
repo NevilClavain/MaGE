@@ -189,11 +189,6 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 
 
 
-					dataCloud->registerData<maths::Real4Vector>("mage.rendering.shadow_bias");
-					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.shadow_bias", maths::Real4Vector(0.005, 0, 0, 0));
-
-					dataCloud->registerData<maths::Real4Vector>("mage.rendering.shadowmap_resol");
-					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.shadowmap_resol", maths::Real4Vector(4096, 0, 0, 0));
 
 
 					mage::core::FileContent<char> combiner_mod_2_RGB("./module_streamed_anims_config/combiner_mod_2_RGB.json");
