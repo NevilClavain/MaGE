@@ -42,12 +42,9 @@ struct PS_INTPUT
 //#include "generic_rendering.hlsl"
 
 
-
 // compute shadow mask value with help of shadow map
-float computeShadows(float p_current_depth, float3 p_projected_pos_secondaryview, Texture2D p_shadowMap, SamplerState p_shadowMapSampler)
-{      
-    
-    
+float computeShadows(float p_bias,float p_current_depth, float3 p_projected_pos_secondaryview, Texture2D p_shadowMap, SamplerState p_shadowMapSampler)
+{             
     // compute text coord in shadow map, from projected_pos_secondaryview
     float2 shadowmap_texcoords;
     shadowmap_texcoords.x = (p_projected_pos_secondaryview.x + 1.0) / 2.0;
@@ -62,26 +59,23 @@ float computeShadows(float p_current_depth, float3 p_projected_pos_secondaryview
     {
         return 1.0;
     }
-    
-    
-    float shadow = 0.0;                               
+        
+    float shadow = 0.0;                                   
     float shadowmap_depth = p_shadowMap.Sample(p_shadowMapSampler, shadowmap_texcoords);
-    
-    float bias = 0.075;
-            
-    if (p_current_depth + bias > shadowmap_depth)
+                
+    if (p_current_depth + p_bias > shadowmap_depth)
     {
         shadow = 1.0;
-    }
-        
-    float mask_val = saturate(shadow);
-
-    return mask_val;
+    }       
+    return shadow;
 }
 
 float4 ps_main(PS_INTPUT input) : SV_Target
 {    
-    float4 color;        
-    color.rgba = computeShadows(input.TexCoord2.z, input.TexCoord1, shadowMap, shadowMapSampler);
+    float4 color;
+    float bias = 0.075;
+    float shadow_attenuation = 0.0;
+    
+    color.rgba = computeShadows(bias, input.TexCoord2.z, input.TexCoord1, shadowMap, shadowMapSampler);
     return color;
 }
