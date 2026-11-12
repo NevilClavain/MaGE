@@ -55,7 +55,7 @@ struct VS_OUTPUT
 {
     float4 Position : SV_POSITION;
     float2 TexCoord0 : TEXCOORD0;
-    float2 TexCoord1 : TEXCOORD1;
+    float3 TexCoord1 : TEXCOORD1;
     float4 TexCoord2 : TEXCOORD2;
 };
 
@@ -78,7 +78,7 @@ VS_OUTPUT vs_main( VS_INPUT Input )
     Output.TexCoord0 = Input.TexCoord0.xy;
     
     
-    Output.TexCoord1 = projected_pos_secondaryview.xy;
+    Output.TexCoord1 = projected_pos_secondaryview.xyz;
     
     float4x4 world = float4x4(Input.row4, Input.row5, Input.row6, Input.row7);
     float4x4 view2 = mat[matSecondaryView];
