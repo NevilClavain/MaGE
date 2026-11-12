@@ -98,6 +98,11 @@
                 "param_name": "light_dir"
               }
             ]
+          },
+
+          {
+            "rendering_channel_type": "shadows",
+            "shaders_params": []
           }
         ]
       }
