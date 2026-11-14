@@ -2,14 +2,14 @@
   "real4vector_inputs":
   [
     {
-      "argument_id": "shadow_bias",
+      "argument_id": "shadows_bias",
       "register_index": 56,
       "description": "bias for shadows computation"
     },
     {
-      "argument_id": "shadowmap_resol",
+      "argument_id": "shadows_attenuation",
       "register_index": 57,
-      "description": "shadow map width"
+      "description": "shadows attenuation"
     }
   ],
 

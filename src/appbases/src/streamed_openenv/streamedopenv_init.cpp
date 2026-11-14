@@ -187,7 +187,11 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					dataCloud->registerData<maths::Real4Vector>("mage.rendering.scene_skydome_ps.atmo_scattering_flag_5");
 					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.scene_skydome_ps.atmo_scattering_flag_5", maths::Real4Vector(0.0, 0.0, 0.0, 1));
 
+					dataCloud->registerData<maths::Real4Vector>("mage.rendering.shadows_bias");
+					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.shadows_bias", maths::Real4Vector(0.075, 0, 0, 1.0));
 
+					dataCloud->registerData<maths::Real4Vector>("mage.rendering.shadows_attenuation");
+					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.shadows_attenuation", maths::Real4Vector(0.0, 0.0, 0.0, 1.0));
 
 
 
