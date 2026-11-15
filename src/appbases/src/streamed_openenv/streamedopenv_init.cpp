@@ -264,13 +264,17 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					mage::RendergraphBlueprint bp;
 					bp.lit_enabled = true;
 					bp.fog_enabled = true;
+					
 					bp.shadows_enabled = true;
 
 					bp.shadowsmap_config.view_direction_base_position = core::maths::Real3Vector(0.0, skydomeInnerRadius + groundLevel, 0.0);
 					bp.shadowsmap_config.view_distance = 500.0;					
 					bp.shadowsmap_config.output_resol = 8196;
-					bp.shadowsmap_config.size = 800.0;
+					bp.shadowsmap_config.size = 1000.0;
 					bp.shadowsmap_config.view_target_parent_level = 1;
+
+					bp.shadowsmask_width = 512;
+					bp.shadowsmask_height = 512;
 
 					
 						

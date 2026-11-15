@@ -524,6 +524,10 @@ namespace mage
         bool                shadows_enabled{ false };
 
 		ShadowsMapConfig    shadowsmap_config;
+
+        // resol for shadows rendering target texture
+        int                 shadowsmask_width;
+        int                 shadowsmask_height;
     };
 
 
@@ -1028,7 +1032,8 @@ namespace mage
 
         std::string build_combiner(Combiners p_combiner, const std::string& p_namesuffix, 
                                     const std::string& p_current_parent, int p_target_stage, 
-                                    int p_w_width, int p_w_height);
+			                        int p_target_width, int p_target_height,
+                                    std::vector<std::pair<int, int>> p_textures_resolutions);
 
         std::string build_scene_channel(bool p_target_clear, const core::maths::RGBAColor& p_color,
                                     bool p_zbuffer_clear, 

@@ -1796,7 +1796,9 @@ void StreamerSystem::parseCombiner(StreamerSystem::Combiners p_combiner, const s
 }
 
 
-std::string StreamerSystem::build_combiner(StreamerSystem::Combiners p_combiner, const std::string& p_namesuffix, const std::string& p_current_parent, int p_target_stage, int p_w_width, int p_w_height)
+std::string StreamerSystem::build_combiner(StreamerSystem::Combiners p_combiner, const std::string& p_namesuffix, const std::string& p_current_parent, int p_target_stage, 
+                                            int p_target_width, int p_target_height,
+                                            std::vector<std::pair<int, int>> p_textures_resolutions)
 { 
     std::vector<std::pair<size_t, Texture>> inputs;
 
@@ -1811,8 +1813,13 @@ std::string StreamerSystem::build_combiner(StreamerSystem::Combiners p_combiner,
 
     const auto combiner{ m_combiners.at(p_combiner) };
 
-    for (const auto& input : combiner.inputs)
+    for(int i = 0; i < combiner.inputs.size(); i++)
     {
+        const auto& input{ combiner.inputs.at(i) };
+
+        int p_w_width = p_textures_resolutions.at(i).first;
+        int p_w_height = p_textures_resolutions.at(i).second;
+
         int final_w_width = (json::fillWithWindowDims == input.buffer_texture.width ? p_w_width : input.buffer_texture.width);
         int final_h_width = (json::fillWithWindowDims == input.buffer_texture.height ? p_w_height : input.buffer_texture.height);
 
@@ -1820,8 +1827,8 @@ std::string StreamerSystem::build_combiner(StreamerSystem::Combiners p_combiner,
         inputs.push_back(std::make_pair(input.stage, input_channnel));
     }
 
-    int final_v_width = (json::fillWithViewportDims == combiner.width ? p_w_width : combiner.width);
-    int final_v_height = (json::fillWithViewportDims == combiner.height ? p_w_height : combiner.height);
+    int final_v_width = (json::fillWithViewportDims == combiner.width ? p_target_width : combiner.width);
+    int final_v_height = (json::fillWithViewportDims == combiner.height ? p_target_height : combiner.height);
 
     const std::string queue_name{ combiner.id + "_" + p_namesuffix + "_queue" };
 
@@ -1895,7 +1902,9 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
     if(p_blueprint.fog_enabled)
     {        
         // update current parent to connect to
-        current_parent = build_combiner(Combiners::COMBINER_FOG, "_0", current_parent, rendering::TARGET_0 , p_w_width, p_w_height);
+        current_parent = build_combiner(Combiners::COMBINER_FOG, "_0", current_parent, rendering::TARGET_0, p_w_width, p_w_height, 
+                                                                                                            { std::make_pair(p_w_width, p_w_height), 
+                                                                                                              std::make_pair(p_w_width, p_w_height) });
 
         // create zdepth channel !
 		build_scene_channel(true, { 0, 0, 0, 255 }, true, "zdepth", current_parent, "ZdepthChannelScene_Entity", rendering::TARGET_1);
@@ -1903,9 +1912,15 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
 
     if (p_blueprint.lit_enabled)
     {        
-        current_parent = build_combiner(Combiners::COMBINER_MODULATE_2_RGB, "_0", current_parent, rendering::TARGET_0, p_w_width, p_w_height);
+        current_parent = build_combiner(Combiners::COMBINER_MODULATE_2_RGB, "_0", current_parent, rendering::TARGET_0, p_w_width, p_w_height, 
+                                                                                                                        { std::make_pair(p_w_width, p_w_height), 
+                                                                                                                          std::make_pair(p_w_width, p_w_height) });
 
-        const auto parent_2 = build_combiner(Combiners::COMBINER_CUMULATE_3_RGB, "_0", current_parent, rendering::TARGET_1, p_w_width, p_w_height);
+
+        const auto parent_2 = build_combiner(Combiners::COMBINER_CUMULATE_3_RGB, "_0", current_parent, rendering::TARGET_1, p_w_width, p_w_height, 
+                                                { std::make_pair(p_w_width, p_w_height), 
+                                                  std::make_pair(p_w_width, p_w_height), 
+                                                  std::make_pair(p_w_width, p_w_height) });
 
         build_scene_channel(true, { 0, 0, 0, 255 }, true, "ambient_lit", parent_2, "AmbientLitChannelScene_Entity", rendering::TARGET_0);        
         build_scene_channel(true, { 0, 0, 0, 255 }, true, "emissive_lit", parent_2, "EmissiveLitChannelScene_Entity", rendering::TARGET_1);
@@ -1920,7 +1935,9 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
 			m_view_distance = p_blueprint.shadowsmap_config.view_distance;
 
 
-            const auto parent_combiner_for_shadows( build_combiner(Combiners::COMBINER_MODULATE_2_RGB, "_forshadows", parent_2, rendering::TARGET_2, p_w_width, p_w_height) );
+            const auto parent_combiner_for_shadows( build_combiner(Combiners::COMBINER_MODULATE_2_RGB, "_forshadows", parent_2, rendering::TARGET_2, p_w_width, p_w_height, 
+                                                                    { std::make_pair(p_w_width, p_w_height),
+                                                                      std::make_pair(p_blueprint.shadowsmask_width, p_blueprint.shadowsmask_height) }) );
             
             build_scene_channel(true, { 0, 0, 0, 255 }, true, "directional_lit", parent_combiner_for_shadows, "DirectionalLitChannelScene_Entity", rendering::TARGET_0);
 
