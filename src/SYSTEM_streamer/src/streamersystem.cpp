@@ -1935,7 +1935,7 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
 			m_view_distance = p_blueprint.shadowsmap_config.view_distance;
 
 
-            const auto parent_combiner_for_shadows( build_combiner(Combiners::COMBINER_MODULATE_2_RGB, "_forshadows", parent_2, rendering::TARGET_2, p_w_width, p_w_height, 
+            const auto parent_combiner_for_shadows( build_combiner(Combiners::COMBINER_SHADOWS, "_forshadows", parent_2, rendering::TARGET_2, p_w_width, p_w_height,
                                                                     { std::make_pair(p_w_width, p_w_height),
                                                                       std::make_pair(p_blueprint.shadowsmask_width, p_blueprint.shadowsmask_height) }) );
             

@@ -207,6 +207,9 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					mage::core::FileContent<char> combiner_for_fog("./module_streamed_anims_config/combiner_for_fog.json");
 					combiner_for_fog.load();
 
+					mage::core::FileContent<char> combiner_for_shadows("./module_streamed_anims_config/combiner_for_shadows.json");
+					combiner_for_shadows.load();
+
 
 					mage::core::FileContent<char> rendergraphFileContent("./module_streamed_anims_config/open_env_rendergraph.json");
 					rendergraphFileContent.load();
@@ -241,7 +244,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					streamerSystemInstance->parseCombiner(StreamerSystem::Combiners::COMBINER_CUMULATE_2_RGB, combiner_cumul_2_RGB.getData());
 					streamerSystemInstance->parseCombiner(StreamerSystem::Combiners::COMBINER_CUMULATE_3_RGB, combiner_cumul_3_RGB.getData());
 					streamerSystemInstance->parseCombiner(StreamerSystem::Combiners::COMBINER_FOG, combiner_for_fog.getData());
-
+					streamerSystemInstance->parseCombiner(StreamerSystem::Combiners::COMBINER_SHADOWS, combiner_for_shadows.getData());
 
 					const char viewgroup_json[] = R"json(
 					{

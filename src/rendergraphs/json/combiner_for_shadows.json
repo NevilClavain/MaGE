@@ -1,0 +1,25 @@
+{
+  "id": "combiner_for_shadows",
+  "shaders": [
+    {
+      "name": "combiner_shadows_vs"
+    },
+    {
+      "name": "combiner_shadows_ps"
+    }
+  ],
+  "inputs": [
+    {
+      "stage": 0,
+      "buffer_texture": {
+        "format_descr": "TEXTURE_RGB"
+      }
+    },
+    {
+      "stage": 1,
+      "buffer_texture": {
+        "format_descr": "TEXTURE_RGB"
+      }
+    }
+  ]
+}

@@ -929,6 +929,7 @@ namespace mage
             COMBINER_CUMULATE_3_RGB,
             COMBINER_MODULATE_2_RGB,
             COMBINER_FOG,
+            COMBINER_SHADOWS,
         };
 
 

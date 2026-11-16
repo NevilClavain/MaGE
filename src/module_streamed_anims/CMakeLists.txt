@@ -111,6 +111,7 @@ install(FILES ${CMAKE_SOURCE_DIR}/rendergraphs/json/combiner_mod_2_RGB.json DEST
 install(FILES ${CMAKE_SOURCE_DIR}/rendergraphs/json/combiner_cumul_2_RGB.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 install(FILES ${CMAKE_SOURCE_DIR}/rendergraphs/json/combiner_cumul_3_RGB.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 install(FILES ${CMAKE_SOURCE_DIR}/rendergraphs/json/combiner_for_fog.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
+install(FILES ${CMAKE_SOURCE_DIR}/rendergraphs/json/combiner_for_shadows.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 
 install(FILES ${CMAKE_SOURCE_DIR}/entities/json/ground.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 install(FILES ${CMAKE_SOURCE_DIR}/entities/json/skydome.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
