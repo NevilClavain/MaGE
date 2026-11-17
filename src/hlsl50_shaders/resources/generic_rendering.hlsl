@@ -56,6 +56,7 @@ float computeShadows(float p_bias, float p_shadow_attenuation, float p_current_d
     shadowmap_texcoords.x = (p_projected_pos_secondaryview.x + 1.0) / 2.0;
     shadowmap_texcoords.y = 1.0 - (p_projected_pos_secondaryview.y + 1.0) / 2.0;
     
+    
     if (shadowmap_texcoords.y > 1.0 || shadowmap_texcoords.y < 0.0)
     {
         return 1.0;
@@ -66,12 +67,28 @@ float computeShadows(float p_bias, float p_shadow_attenuation, float p_current_d
         return 1.0;
     }
         
-    float shadow = p_shadow_attenuation;
-    float shadowmap_depth = p_shadowMap.Sample(p_shadowMapSampler, shadowmap_texcoords);
+    //float shadow = p_shadow_attenuation;
+    //float shadowmap_depth = p_shadowMap.Sample(p_shadowMapSampler, shadowmap_texcoords);
                 
-    if (p_current_depth + p_bias > shadowmap_depth)
+    //if (p_current_depth + p_bias > shadowmap_depth)
+    //{
+    //    shadow = 1.0;
+    //}
+    
+
+    float shadow = 0.0;
+    float2 texelSize = 1.0 / 8096;
+    
+    for (int x = -1; x <= 1; ++x)
     {
-        shadow = 1.0;
+        for (int y = -1; y <= 1; ++y)
+        {            
+            float pcfDepth = p_shadowMap.Sample(p_shadowMapSampler, shadowmap_texcoords + float2(x, y) * texelSize).r;
+            
+            shadow += p_current_depth + p_bias > pcfDepth ? 1.0 : 0.0;
+        }
     }
+    shadow /= 9.0;
+    
     return shadow;
 }
