@@ -1,0 +1,18 @@
+{
+  "real4vector_inputs":
+  [
+    {
+      "argument_id": "shadows_bias",
+      "register_index": 56,
+      "description": "bias for shadows computation"
+    },
+    {
+      "argument_id": "shadows_attenuation",
+      "register_index": 57,
+      "description": "shadows attenuation"
+    }
+  ],
+
+  "real4vectorsarray_inputs":
+  []
+}

@@ -46,8 +46,8 @@ float4 ps_main(PS_INTPUT input) : SV_Target
     float4 color;
     
     float bias = vec[56].x;
-    float shadow_attenuation = vec[57].x;
-        
-    color.rgba = computeShadows(bias, shadow_attenuation, input.TexCoord2.z, input.TexCoord1, shadowMap, shadowMapSampler);
+    //float shadow_attenuation = vec[57].x;
+            
+    color.rgba = computeShadowsBinary(bias, input.TexCoord2.z, input.TexCoord1, shadowMap, shadowMapSampler);
     return color;
 }

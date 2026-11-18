@@ -37,8 +37,8 @@
           {
             "rendering_channel_type": "shadows",
 
-            "vshader": "scene_shadowsmask_vs",
-            "pshader": "scene_shadowsmask_ps"
+            "vshader": "scene_shadowsmaskPCF_vs",
+            "pshader": "scene_shadowsmaskPCF_ps"
           },
 
           {
