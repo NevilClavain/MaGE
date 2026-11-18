@@ -93,11 +93,7 @@ float4 ps_main(PS_INTPUT input) : SV_Target
 
     float4 colorShadowsH = PS_BlurH(texelSize, input.TexCoord0);
     float4 colorShadowsV = PS_BlurV(texelSize, input.TexCoord0);
-    float4 colorShadows = ((0.5 * colorShadowsH) + (0.5 * colorShadowsV) * PS_Dilate(texelSize, input.TexCoord0));
-
-
-    //float4 colorShadows = txInputB.Sample(samInputB, input.TexCoord0);
-
+    float4 colorShadows = ((0.5 * colorShadowsH) + (0.5 * colorShadowsV));
 
     float4 final_color = colorA * colorShadows;
 
