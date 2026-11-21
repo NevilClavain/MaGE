@@ -6,12 +6,7 @@
       "register_index": 56,
       "description": "bias for shadows computation"
     },
-    {
-      "argument_id": "shadows_attenuation",
-      "register_index": 57,
-      "description": "shadows attenuation"
-    },
-	{
+	  {
       "argument_id": "key_color",
       "register_index": 58,
       "description": "key color value for pixels to clip"

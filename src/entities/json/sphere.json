@@ -104,10 +104,6 @@
               {
                 "datacloud_name": "mage.rendering.shadows_bias",
                 "param_name": "shadows_bias"
-              },
-              {
-                "datacloud_name": "mage.rendering.shadows_attenuation",
-                "param_name": "shadows_attenuation"
               }
             ]
           }

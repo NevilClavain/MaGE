@@ -185,8 +185,6 @@ void OpenEnv::d3d11_system_events_openenv()
 					dataCloud->registerData<maths::Real4Vector>("mage.rendering.shadows_bias");
 					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.shadows_bias", maths::Real4Vector(0.075, 0, 0, 1.0));
 
-					dataCloud->registerData<maths::Real4Vector>("mage.rendering.shadows_attenuation");
-					dataCloud->updateDataValue<maths::Real4Vector>("mage.rendering.shadows_attenuation", maths::Real4Vector(0.0, 0.0, 0.0, 1.0));
 
 
 
@@ -1146,8 +1144,7 @@ void OpenEnv::enable_shadows()
 				{
 					"bufferRendering_Scene_ShadowsChannel_Queue_Entity",
 					{
-						{ std::make_pair("mage.rendering.shadows_bias", "shadows_bias") },
-						{ std::make_pair("mage.rendering.shadows_attenuation", "shadows_attenuation") }
+						{ std::make_pair("mage.rendering.shadows_bias", "shadows_bias") }
 					}
 				}
 			}
@@ -1182,8 +1179,7 @@ void OpenEnv::enable_shadows()
 			{
 				{ "bufferRendering_Scene_ShadowsChannel_Queue_Entity",
 					{
-						{ std::make_pair("mage.rendering.shadows_bias", "shadows_bias") },
-						{ std::make_pair("mage.rendering.shadows_attenuation", "shadows_attenuation") }
+						{ std::make_pair("mage.rendering.shadows_bias", "shadows_bias") }
 					}
 				}
 			}
@@ -1221,8 +1217,7 @@ void OpenEnv::enable_shadows()
 			{
 				{ "bufferRendering_Scene_ShadowsChannel_Queue_Entity",
 					{
-						{ std::make_pair("mage.rendering.shadows_bias", "shadows_bias") },
-						{ std::make_pair("mage.rendering.shadows_attenuation", "shadows_attenuation") }
+						{ std::make_pair("mage.rendering.shadows_bias", "shadows_bias") }
 					}
 				}
 			}
@@ -1267,8 +1262,7 @@ void OpenEnv::enable_shadows()
 				{ "bufferRendering_Scene_ShadowsChannel_Queue_Entity",
 					{
 						{ std::make_pair("mage.rendering.texture_keycolor_ps.key_color", "key_color") },
-						{ std::make_pair("mage.rendering.shadows_bias", "shadows_bias") },
-						{ std::make_pair("mage.rendering.shadows_attenuation", "shadows_attenuation") }
+						{ std::make_pair("mage.rendering.shadows_bias", "shadows_bias") }
 					}
 				},
 				{ "bufferRendering_Scene_ShadowMapChannel_Queue_Entity",

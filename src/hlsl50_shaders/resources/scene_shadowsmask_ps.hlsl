@@ -43,10 +43,8 @@ struct PS_INTPUT
 
 float4 ps_main(PS_INTPUT input) : SV_Target
 {    
-    float4 color;
-    
+    float4 color;    
     float bias = vec[56].x;
-    //float shadow_attenuation = vec[57].x;
     
     color.rgba = computeShadowsBinary(bias, input.TexCoord2.z, input.TexCoord1, shadowMap, shadowMapSampler);
     return color;
