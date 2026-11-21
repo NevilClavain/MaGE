@@ -38,11 +38,6 @@ TimeMark::TimeMark(TimeControl& p_tc)
     m_freeze = &p_tc.m_freeze;
 }
 
-TimeMark TimeControl::buildTimeMark()
-{
-    return TimeMark(*this);
-}
-
 void TimeMark::reset(void)
 {
     m_previous_tick = 0;
@@ -109,6 +104,11 @@ TimeControl::TimeControl()
     m_tm.registerTimer(&m_timer);
 }
     
+TimeMark TimeControl::buildTimeMark()
+{
+    return TimeMark(*this);
+}
+
 void TimeControl::update(void)
 {
 	m_tm.update();
