@@ -118,8 +118,8 @@ namespace mage
 
 		void													push(const TrianglePrimitive<unsigned int>& p_triangle);
 		void													push(const Vertex& p_vertex);
-		void													push(const AnimationBone& p_bone, const std::string& p_boneId);
-		void													push(AnimationKeys p_animation_keys);
+		void													pushAnimationBone(const AnimationBone& p_bone, const std::string& p_boneId);
+		void													pushAnimationKeys(AnimationKeys p_animation_keys);
 
 		void													setSceneNodes(const std::map<std::string, SceneNode>& p_scene_nodes, const std::string& p_scene_root_node_id);
 

@@ -262,7 +262,7 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 							animation_keys.channels.emplace(node_animation.node_name, node_animation);
 						}
 
-						p_mesheInfos.push(animation_keys);
+						p_mesheInfos.pushAnimationKeys(animation_keys);
 					}
 
 					/////////////////////////////////////////////////////
@@ -407,7 +407,7 @@ void ResourceSystem::handleSceneFile(const std::string& p_filename, const std::s
 
 							AnimationBone bone_output;
 							bone_output.offset_matrix = convertFromAssimpMatrix(bone->mOffsetMatrix);
-							p_mesheInfos.push(bone_output, std::string(bone->mName.C_Str()));
+							p_mesheInfos.pushAnimationBone(bone_output, std::string(bone->mName.C_Str()));
 
 							for (size_t k = 0; k < bone->mNumWeights; k++)
 							{

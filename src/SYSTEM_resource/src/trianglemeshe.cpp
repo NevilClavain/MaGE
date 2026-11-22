@@ -135,14 +135,14 @@ void TriangleMeshe::push(const TrianglePrimitive<unsigned int>& p_triangle)
 	m_triangles_for_vertex[p_triangle[2]].push_back(p_triangle);
 }
 
-void TriangleMeshe::push(const AnimationBone& p_bone, const std::string& p_boneId)
+void TriangleMeshe::pushAnimationBone(const AnimationBone& p_bone, const std::string& p_boneId)
 {
 	int last_object_index = m_animation_bones.size();
 	m_animation_bones.push_back(p_bone);
 	m_animation_bones_names_mapping[p_boneId] = last_object_index;
 }
 
-void TriangleMeshe::push(AnimationKeys p_animation_keys)
+void TriangleMeshe::pushAnimationKeys(AnimationKeys p_animation_keys)
 {
 	m_animations_keys.emplace(p_animation_keys.name, p_animation_keys);
 }
