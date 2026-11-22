@@ -1,0 +1,114 @@
+{
+  "subs": [
+    {
+      "id": "@id",
+
+      "resource_aspect": {
+        "meshe": {
+          "descr": "raptor_Entity_meshe",
+          "filename": "raptor.fbx",
+          "meshe_id": "raptorMesh"
+        }
+      },
+
+
+      "channels": {
+        "configs": [
+          {
+            "rendering_channel_type": "diffuse",
+            "textures_files_list": [
+              {
+                "stage": 0,
+                "filename": "raptorDif2.png"
+              }
+            ],
+
+            "vshader": "scene_texture1stage_skinning_vs",
+            "pshader": "scene_texture1stage_skinning_ps"
+          },
+          {
+            "rendering_channel_type": "shadows_map",
+
+            "vshader": "scene_zdepth_skinning_vs",
+            "pshader": "scene_zdepth_skinning_ps"
+          },
+          {
+            "rendering_channel_type": "shadows",
+
+            "vshader": "scene_shadowsmask_skinning_vs",
+            "pshader": "scene_shadowsmask_skinning_ps"
+          },
+          {
+            "rendering_channel_type": "ambient_lit",
+
+            "vshader": "scene_flatcolor_skinning_vs",
+            "pshader": "scene_flatcolor_skinning_ps"
+          },
+
+          {
+            "rendering_channel_type": "emissive_lit",
+
+            "vshader": "scene_flatcolor_skinning_vs",
+            "pshader": "scene_flatcolor_skinning_ps"
+          },
+
+          {
+            "rendering_channel_type": "directional_lit",
+
+            "vshader": "scene_lit_skinning_vs",
+            "pshader": "scene_lit_skinning_ps"
+          },
+
+          {
+            "rendering_channel_type": "zdepth",
+
+            "vshader": "scene_zdepth_skinning_vs",
+            "pshader": "scene_zdepth_skinning_ps"
+          }
+        ],
+
+
+        "pixel_shaders_params": [
+          {
+            "rendering_channel_type": "ambient_lit",
+            "shaders_params": [
+              {
+                "datacloud_name": "mage.scene.ambientlight.color",
+                "param_name": "color"
+              }
+            ]
+          },
+
+          {
+            "rendering_channel_type": "emissive_lit",
+            "shaders_params": [
+              {
+                "datacloud_name": "mage.rendering.black_color",
+                "param_name": "color"
+              }
+            ]
+          },
+
+          {
+            "rendering_channel_type": "directional_lit",
+            "shaders_params": [
+              {
+                "datacloud_name": "mage.scene.light0.dir",
+                "param_name": "light_dir"
+              }
+            ]
+          },
+          {
+            "rendering_channel_type": "shadows",
+            "shaders_params": [
+              {
+                "datacloud_name": "mage.rendering.shadows_bias",
+                "param_name": "shadows_bias"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

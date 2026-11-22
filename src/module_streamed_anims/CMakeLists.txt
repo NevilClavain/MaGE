@@ -113,6 +113,7 @@ install(FILES ${CMAKE_SOURCE_DIR}/rendergraphs/json/combiner_cumul_3_RGB.json DE
 install(FILES ${CMAKE_SOURCE_DIR}/rendergraphs/json/combiner_for_fog.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 install(FILES ${CMAKE_SOURCE_DIR}/rendergraphs/json/combiner_for_shadows.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 
+install(FILES ${CMAKE_SOURCE_DIR}/entities/json/raptor.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 install(FILES ${CMAKE_SOURCE_DIR}/entities/json/ground.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 install(FILES ${CMAKE_SOURCE_DIR}/entities/json/skydome.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)
 install(FILES ${CMAKE_SOURCE_DIR}/entities/json/wall.json DESTINATION ${CMAKE_SOURCE_DIR}/apps/$<CONFIGURATION>/module_streamed_anims_config)

@@ -836,7 +836,7 @@ void StreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource, cons
                 auto& entityNode{ m_entitygraph.add(m_entitygraph.node(p_parent_id), entity_id) };
                 const auto entity{ entityNode.data() };
 
-                // create aspects
+                // create base aspects
                 auto& time_aspect{ entity->makeAspect(core::timeAspect::id) };
                 auto& world_aspect{ entity->makeAspect(core::worldAspect::id) };
                 auto& resource_aspect{ entity->makeAspect(core::resourcesAspect::id) };
@@ -1035,6 +1035,34 @@ void StreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource, cons
                 {
                     resource_aspect.addComponent< std::pair<std::pair<std::string, std::string>, TriangleMeshe>>("meshe", std::make_pair(std::make_pair(p_node.resource_aspect.meshe.meshe_id, p_node.resource_aspect.meshe.filename), TriangleMeshe()));
                 }
+
+
+                const bool skinning_tag{ mage::helpers::checkTag(entity, "#skinning") };
+
+                if(skinning_tag)
+                {
+                    auto& meshe_animations_aspect{ entity->makeAspect(core::animationsAspect::id) };
+                    meshe_animations_aspect.addComponent<int>("eg.std.animationbonesArrayArgIndex", 0);
+
+
+                    meshe_animations_aspect.addComponent<std::list<std::string>>("eg.std.animationsIdList");
+                    meshe_animations_aspect.addComponent<std::list<std::pair<std::string, AnimationKeys>>>("eg.std.animationsList");
+
+                    meshe_animations_aspect.addComponent<core::TimeMark>("eg.std.animationsTimeMark", TimeControl::getInstance()->buildTimeMark());
+
+                    meshe_animations_aspect.addComponent<std::string>("eg.std.currentAnimationId");
+                    meshe_animations_aspect.addComponent<AnimationKeys>("eg.std.currentAnimation");
+
+
+                    meshe_animations_aspect.addComponent<double>("eg.std.currentAnimationTicksDuration");
+                    meshe_animations_aspect.addComponent<double>("eg.std.currentAnimationSecondsDuration");
+                    meshe_animations_aspect.addComponent<double>("eg.std.currentAnimationTicksProgress");
+                    meshe_animations_aspect.addComponent<double>("eg.std.currentAnimationSecondsProgress");
+
+                    meshe_animations_aspect.addComponent<std::vector<std::pair<std::string, Shader>*>>("target_vshaders");
+				}
+
+
 
                 register_scene_entity(entity);
 
