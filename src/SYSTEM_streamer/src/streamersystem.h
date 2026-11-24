@@ -490,13 +490,15 @@ namespace mage
 
             std::vector<Real3Vector>                    file_realvector3_args;
 
+            double                                      meshe_size{ 1.0 };
+
             std::vector<std::string>                    tags;
 
             std::vector<std::string>                    rendergraph_parts;
 
             InstancesFactory                            instances_factory;
             
-            JS_OBJ(file, file_string_args, file_realvector3_args, tags, rendergraph_parts, instances_factory);
+            JS_OBJ(file, file_string_args, file_realvector3_args, meshe_size, tags, rendergraph_parts, instances_factory);
         };
 
         struct Scenegraph
@@ -839,6 +841,10 @@ namespace mage
                         const double node_size{ p_current_node->getData().side_length };
 
                         const auto ratio{ p_obj_size / node_size };
+
+                        // m_configuration.object_xtreenode_ratio the higher, the deepest in the tree the object will be stored (object will be stored in xtree node with dims close to object size)
+                        // m_configuration.object_xtreenode_ratio the lower, the highest in the tree the object will be stored (object will be stored in xtree node with dims really big compared to object size)
+
                         if (ratio > m_configuration.object_xtreenode_ratio)
                         {
                             //place it
@@ -968,7 +974,12 @@ namespace mage
         void buildScenegraphPart(const std::string& p_jsonsource, const std::string& p_parentEntityId, const mage::core::maths::Matrix p_perspective_projection);
 
 
-        void buildScenegraphEntity(const std::string& p_jsonsource, const std::vector<std::string>& p_rendergraph_parts, const json::Animator& p_animator, const std::vector<std::string>& p_tags, const std::string& p_parentEntityId,
+        void buildScenegraphEntity(const std::string& p_jsonsource, 
+                                    const std::vector<std::string>& p_rendergraph_parts, 
+                                    const json::Animator& p_animator, 
+                                    const std::vector<std::string>& p_tags, 
+                                    double p_meshe_size,
+                                    const std::string& p_parentEntityId,
                                     const mage::core::maths::Matrix p_perspective_projection,                                     
                                     const std::unordered_map<std::string, std::string> p_file_args, 
                                     const std::vector<json::Real3Vector>& p_file_realvector3_args,
@@ -1068,6 +1079,9 @@ namespace mage
         std::unordered_map<std::string, 
 			std::unordered_set<mage::core::Entity*>>                                            m_found_entities_to_render;   // entities actually rendered foreach viewgroup (id) regarding viewgroup camera current pos
 			                    
+
+        std::unordered_map<std::string, double>                                                 m_objects_sizes;   // key = entity id
+
 
         /////////////////////////////////
       
@@ -1185,7 +1199,8 @@ namespace mage
 
                         if (TriangleMeshe::State::RENDERERLOADED == meshe.getState())
                         {
-                            const double meshe_size{ meshe.getSize() };
+                            //const double meshe_size{ meshe.getSize() }; /// ICI !!!
+                            const double meshe_size{ m_objects_sizes.at(entity->getId()) };
                             p_place_obj_on_leaf_func(p_xtree_root, meshe_size, global_pos, entity, xe.second);                            
                         }
                     }

@@ -761,7 +761,7 @@ void StreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, const 
                 }
             }
 
-            buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_string_args_1, e.file_realvector3_args, generators);
+            buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, e.meshe_size, p_parentEntityId, p_perspective_projection, file_string_args_1, e.file_realvector3_args, generators);
             index++;
         }
 
@@ -786,7 +786,7 @@ void StreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, const 
 
                 const auto instance_animator{ instance_animator_repeat.animator };
 
-                buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, p_parentEntityId, p_perspective_projection, file_string_args_2, e.file_realvector3_args, generators);
+                buildScenegraphEntity(entityFileContent.getData(), e.rendergraph_parts, instance_animator, e.tags, e.meshe_size, p_parentEntityId, p_perspective_projection, file_string_args_2, e.file_realvector3_args, generators);
                 index++;
             }
         }
@@ -797,6 +797,7 @@ void StreamerSystem::buildScenegraphPart(const std::string& p_jsonsource, const 
 void StreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource, const std::vector<std::string>& p_rendergraph_parts,
                                                                                     const json::Animator& p_animator, 
                                                                                     const std::vector<std::string>& p_tags, 
+                                                                                    double p_meshe_size,
                                                                                     const std::string& p_parentEntityId, 
                                                                                     const mage::core::maths::Matrix p_perspective_projection,
                                                                                     const std::unordered_map<std::string, std::string> p_file_args,
@@ -817,6 +818,8 @@ void StreamerSystem::buildScenegraphEntity(const std::string& p_jsonsource, cons
         [&](const json::ScenegraphEntity& p_node, const std::string& p_parent_id, const json::Animator& p_animator, int depth)
         {
             const std::string entity_id { filter_arguments_stack(p_node.id, p_file_args) };
+
+			m_objects_sizes[entity_id] = p_meshe_size;
             
             for (size_t i = 0; i < p_rendergraph_parts.size(); i++)
             {

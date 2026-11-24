@@ -312,6 +312,8 @@
         "#frozen"
       ],
 
+      "meshe_size": 2600.0,
+
       "rendergraph_parts": [
         "DiffuseChannelScene_Entity",
         "AmbientLitChannelScene_Entity",
@@ -386,6 +388,8 @@
         "#static",
         "#frozen"
       ],
+
+      "meshe_size": 20.0,
 
       "rendergraph_parts": [
         "DiffuseChannelScene_Entity",
@@ -504,6 +508,8 @@
         "#frozen"
       ],
 
+      "meshe_size": 20.0,
+
       "rendergraph_parts": [
         "DiffuseChannelScene_Entity",
         "AmbientLitChannelScene_Entity",
@@ -593,6 +599,8 @@
         "#frozen",
         "#skinning"
       ],
+
+      "meshe_size": 15.0,
 
       "rendergraph_parts": [
         "DiffuseChannelScene_Entity",
@@ -692,6 +700,8 @@
         "#static",
         "#frozen"
       ],
+
+      "meshe_size": 10.0,
 
       "rendergraph_parts": [
         "DiffuseChannelScene_Entity",
@@ -806,6 +816,8 @@
         "ZdepthChannelScene_Entity"
       ],
 
+      "meshe_size": 1.5,
+
       "instances_factory": {
         "animators": [
         ],
@@ -894,6 +906,8 @@
         "#static",
         "#frozen"
       ],
+
+      "meshe_size": 20.0,
 
       "rendergraph_parts": [
         "DiffuseChannelScene_Entity",

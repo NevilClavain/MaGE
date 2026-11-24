@@ -227,7 +227,11 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					ss_config.scene_size = 2400.0;
 					ss_config.xtree_max_depth = 6;
 					ss_config.max_neighbourood_depth = 3;
-					ss_config.object_xtreenode_ratio = 0.02;
+					ss_config.object_xtreenode_ratio = 0.04;
+					
+
+					// m_configuration.object_xtreenode_ratio the higher, the deepest in the tree the object will be stored (object will be stored in xtree node with dims close to object size)
+
 					
 					ss_config.xtree_type = StreamerSystem::XtreeType::QUADTREE;
 					ss_config.center[0] = 0.0;
