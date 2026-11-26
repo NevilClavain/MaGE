@@ -274,13 +274,7 @@ void StreamedOpenEnv::d3d11_system_events_openenv()
 					bp.shadowsmap_config.view_distance = 500.0;					
 					bp.shadowsmap_config.output_resol = 8196;
 					bp.shadowsmap_config.size = 1000.0;
-					bp.shadowsmap_config.view_target_parent_level = 1;
-
-					bp.shadowsmask_width = 512;
-					bp.shadowsmask_height = 512;
-
-					
-						
+					bp.shadowsmap_config.view_target_parent_level = 1;						
 				
 					streamerSystemInstance->buildRendergraphPart(bp, "screenRendering_Filter_DirectForward_Quad_Entity", w_width, w_height, characteristics_v_width, characteristics_v_height);
 

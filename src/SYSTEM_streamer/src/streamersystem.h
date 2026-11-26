@@ -526,10 +526,6 @@ namespace mage
         bool                shadows_enabled{ false };
 
 		ShadowsMapConfig    shadowsmap_config;
-
-        // resol for shadows rendering target texture
-        int                 shadowsmask_width;
-        int                 shadowsmask_height;
     };
 
 

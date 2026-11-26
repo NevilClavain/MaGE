@@ -1968,7 +1968,7 @@ void StreamerSystem::buildRendergraphPart(const RendergraphBlueprint& p_blueprin
 
             const auto parent_combiner_for_shadows( build_combiner(Combiners::COMBINER_SHADOWS, "_forshadows", parent_2, rendering::TARGET_2, p_w_width, p_w_height,
                                                                     { std::make_pair(p_w_width, p_w_height),
-                                                                      std::make_pair(p_blueprint.shadowsmask_width, p_blueprint.shadowsmask_height) }) );
+                                                                      std::make_pair(p_w_width, p_w_height) }) );
             
             build_scene_channel(true, { 0, 0, 0, 255 }, true, "directional_lit", parent_combiner_for_shadows, "DirectionalLitChannelScene_Entity", rendering::TARGET_0);
 
