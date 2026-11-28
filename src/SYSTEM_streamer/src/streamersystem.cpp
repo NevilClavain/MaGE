@@ -63,8 +63,6 @@ m_localLogger("StreamerSystem", mage::core::logger::Configuration::getInstance()
 {
     const auto dataCloud{ mage::rendering::Datacloud::getInstance() };
     dataCloud->registerData<std::string>("mage.timings.streamersystem");
-    dataCloud->registerData<std::string>("mage.timings.streamersystem.3");
-    dataCloud->registerData<std::string>("mage.timings.streamersystem.4");
 
 
     // Register callback for entitygraph events
@@ -459,8 +457,6 @@ void StreamerSystem::run()
         }
     }
 
-    const auto start_time_3{ std::chrono::high_resolution_clock::now() };
-
     if (m_xtree_check_enabled)
     {
         auto renderingQueueSystemInstance{ dynamic_cast<mage::RenderingQueueSystem*>(SystemEngine::getInstance()->getSystem(m_renderingQueueSystemSlot)) };
@@ -614,16 +610,11 @@ void StreamerSystem::run()
         }
     }
 
-    const auto end_time_3{ std::chrono::high_resolution_clock::now() };
-    const auto duration_3{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_3 - start_time_3) };
-
-    dataCloud->updateDataValue<std::string>("mage.timings.streamersystem.3", std::to_string(duration_3.count()) + " ms");
     
     /////////////////////////////////////////////////////////
     // loop on entity rendering entries
     /////////////////////////////////////////////////////////
 
-    const auto start_time_4{ std::chrono::high_resolution_clock::now() };
 
     //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
     //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
@@ -706,15 +697,6 @@ void StreamerSystem::run()
     //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
     //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
     //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-
-    const auto end_time_4{ std::chrono::high_resolution_clock::now() };
-    const auto duration_4{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time_4 - start_time_4) };
-
-    if (duration_4.count() > 0)
-    {
-        dataCloud->updateDataValue<std::string>("mage.timings.streamersystem.4", std::to_string(duration_4.count()) + " ms");
-    }                    
-
     
     const auto end_time{ std::chrono::high_resolution_clock::now() };
     const auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time) };
